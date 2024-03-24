@@ -1,8 +1,14 @@
 VgF={}
-vgf=VgF
 POS_FACEUP_DEFENCE=POS_FACEUP_DEFENSE
 POS_FACEDOWN_DEFENCE=POS_FACEDOWN_DEFENSE
 
+function VgF.VgMonster(c)
+    VgD.Rule(c)
+    VgD.RideUp(c)
+    VgD.CallToV(c)
+    VgD.MonsterBattle(c)
+    VgD.MonsterTrigger(c)
+end
 function GetID()
 	local offset=self_code<100000000 and 1 or 100
 	return self_table,self_code,offset

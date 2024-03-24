@@ -1,15 +1,4 @@
 VgD={}
-vg=VgD
-
---函数装封
---单位卡
-function VgD.VgMonster(c)
-    VgD.Rule(c)
-    VgD.RideUp(c)
-    VgD.CallToV(c)
-    VgD.MonsterBattle(c)
-    VgD.MonsterTrigger(c)
-end
 
 --骑升
 function VgD.RideUp(c)
