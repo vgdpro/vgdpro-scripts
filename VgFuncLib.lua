@@ -2,13 +2,6 @@ VgF={}
 POS_FACEUP_DEFENCE=POS_FACEUP_DEFENSE
 POS_FACEDOWN_DEFENCE=POS_FACEDOWN_DEFENSE
 
-function VgF.VgMonster(c)
-    VgD.Rule(c)
-    VgD.RideUp(c)
-    VgD.CallToV(c)
-    VgD.MonsterBattle(c)
-    VgD.MonsterTrigger(c)
-end
 function GetID()
 	local offset=self_code<100000000 and 1 or 100
 	return self_table,self_code,offset
@@ -138,4 +131,27 @@ function VgF.LvCondition(e)
 end
 function VgF.LvConditionFilter(c,lv)
     return VgF.RMonsterFilter(c) and c:IsLevelAbove(lv)
+end
+function VgF.AtkUp(c,tc,val)
+    if not tc then return end
+    local e1=Effect.CreateEffect(c)
+    e1:SetType(EFFECT_TYPE_SINGLE)
+    e1:SetCode(EFFECT_UPDATE_ATTACK)
+    e1:SetValue(val)
+    e1:SetReset(RESET_EVENT+RESETS_STANDARD+RESET_PHASE+PHASE_END)
+    tc:RegisterEffect(e1)
+end
+function VgF.StarUp(c,tc,val)
+    if not tc then return end
+    local e1=Effect.CreateEffect(c)
+    e1:SetType(EFFECT_TYPE_SINGLE)
+    e1:SetCode(EFFECT_UPDATE_LSCALE)
+    e1:SetProperty(EFFECT_FLAG_SINGLE_RANGE)
+    e1:SetRange(LOCATION_MZONE)
+    e1:SetValue(val)
+    e1:SetReset(RESET_EVENT+RESETS_STANDARD+RESET_PHASE+PHASE_END)
+    tc:RegisterEffect(e1)
+    local e2=e1:Clone()
+    e2:SetCode(EFFECT_UPDATE_RSCALE)
+    tc:RegisterEffect(e2)
 end

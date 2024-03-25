@@ -15,10 +15,10 @@ LOCATION_REMOVED	=0x20		--封锁区
 LOCATION_EXTRA		=0x40		--额外
 LOCATION_OVERLAY	=0x80		--灵魂
 LOCATION_ONFIELD	=0x0c		--场上（LOCATION_MZONE+LOCATION_SZONE）
---LOCATION_EXILE                  --除外区
---LOCATION_DAMAGE                 --伤害区
---LOCATION_ORDER                  --指令区
---LOCATION_SPARE                  --备用格子（用于怪物箱等）
+LOCATION_SPARE      =0x110      --备用格子（用于怪物箱等）
+LOCATION_EXILE      =0x120      --除外区
+LOCATION_DAMAGE     =0x140      --伤害区
+LOCATION_ORDER      =0x180      --指令区
 LOCATION_RIDE       =LOCATION_EXTRA
 LOCATION_DROP       =LOCATION_GRAVE
 LOCATION_LOCK	    =LOCATION_REMOVED
@@ -74,7 +74,7 @@ TYPE_LINK			=0x4000000	--连接
 TYPES_TOKEN_MONSTER	=0x4011
 TYPES_NORMAL_TRAP_MONSTER	=0x111
 TYPES_EFFECT_TRAP_MONSTER	=0x121
---技能
+--技能              --属性
 SKILL_ALL		    =0x7f		--All
 SKILL_NONE		    =0x01		--无
 SKILL_SUPPORT	    =0x02		--支援
@@ -83,7 +83,7 @@ SKILL_THRICE_TRIGGER=0x08       --双判
 SKILL_TWICE_TRIGGER =0x10       --三判
 SKILL_SELF_RIDE		=0x20		--人格骑升
 SKILL_DEBRIS	    =0x40		--结晶碎片
---触发类型
+--触发类型          --种族
 TRRIGGER_ALL			=0x3ffffff	--All
 TRRIGGER_NONE		    =0x1		--无
 TRRIGGER_CRITICAL_STRIKE=0x2		--暴击触发
@@ -124,6 +124,7 @@ REASON_MAINTENANCE	=0x40000000	--维持代价
 REASON_ACTION		=0x80000000	--攻击宣言之际等
 REASON_PHASEG       =REASON_RULE    --G辅助
 REASON_PHASEDRAW    =REASON_RULE    --抽卡
+REASON_TRIGGER      =REASON_EFFECT  --判定
 --Location Reason
 LOCATION_REASON_TOFIELD		=0x1	--Duel.GetLocationCount()預設值,凱薩競技場
 LOCATION_REASON_CONTROL		=0x2	--Card.IsControlerCanBeChanged()使用
@@ -387,7 +388,7 @@ EFFECT_TO_GRAVE_REDIRECT		=63		--去墓地时重新指定去向
 EFFECT_REMOVE_REDIRECT			=64		--除外时重新指定去向
 EFFECT_CANNOT_TO_HAND			=65		--不能加入手牌
 EFFECT_CANNOT_TO_DECK			=66		--不能回卡组
-EFFECT_CANNOT_REMOVE			=67		--不能除外
+EFFECT_CANNOT_REMOVE			=67		--不能封锁
 EFFECT_CANNOT_TO_GRAVE			=68		--不能去墓地
 EFFECT_CANNOT_TURN_SET			=69		--不能变里侧
 EFFECT_CANNOT_BE_BATTLE_TARGET	=70		--不能成为攻击对象
@@ -585,6 +586,7 @@ EFFECT_TUNER					=369	--同调召唤时可以当作调整（百檎龙-苹果鳞�
 EFFECT_KAISER_COLOSSEUM			=370	--皇帝斗技场
 EFFECT_REPLACE_DAMAGE			=371	--伤害由特定行动代替
 EFFECT_FLAG_EFFECT				=0x20000000	--标记类效果，即RegisterFlagEffect()创建的效果
+EFFECT_CANNOT_TO_EXILE          =0x688  ----不能除外
 
 --下面是诱发效果的诱发事件、时点 （如果是TYPE_SINGLE则自己发生以下事件后触发，如果TYPE_FIELD则场上任何卡发生以下事件都触发）
 EVENT_STARTUP					=1000	--N/A
@@ -745,7 +747,7 @@ HINTMSG_ATOHAND			=506	--请选择要加入手牌的卡
 HINTMSG_TODECK			=507	--请选择要返回卡组的卡
 HINTMSG_SUMMON			=508	--请选择要召唤的卡
 HINTMSG_SPSUMMON		=509	--请选择要特殊召唤的卡
-HINTMSG_DAMAGE			=510	--请选择要消耗的费用
+HINTMSG_SET				=510	--请选择要盖放的卡
 HINTMSG_FMATERIAL		=511	--请选择要作为融合素材的卡
 HINTMSG_SMATERIAL		=512	--请选择要作为同调素材的卡
 HINTMSG_XMATERIAL		=513	--请选择要作为超量素材的卡
@@ -792,7 +794,11 @@ HINTMSG_COUNTER			=572	--请选择要放置指示物的卡
 HINTMSG_DISABLE			=573	--请选择要无效的卡
 HINTMSG_OPERATECARD		=574	--请选择要操作的卡
 HINTMSG_LEAVEONFIELD	=HINTMSG_RELEASE	--请选择要退场的卡
+HINTMSG_TODROP			=HINTMSG_TOGRAVE	--请选择要置入弃牌区的卡
 HINTMSG_RIDEUP			=HINTMSG_SUMMON	    --请选择要骑升的卡
+HINTMSG_DAMAGE			=HINTMSG_SET	    --请选择要消耗的费用
+HINTMSG_ATKUP		    =HINTMSG_FMATERIAL	--请选择力量上升的卡
+HINTMSG_CRITICAL_STRIKE	=HINTMSG_SMATERIAL	--请选择☆值上升的卡
 --Select	--请选择
 SELECT_HEADS				=60	--正面
 SELECT_TAILS				=61	--反面

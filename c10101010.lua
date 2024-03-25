@@ -1,5 +1,9 @@
 --
 local cm,m,o=GetID()
 function cm.initial_effect(c)
-    VgF.VgMonster(c)
+    VgD.Rule(c)
+    VgD.RideUp(c)
+    VgD.CallToV(c)
+    VgD.MonsterBattle(c)
+    VgD.MonsterTrigger(c,nil)
 end
