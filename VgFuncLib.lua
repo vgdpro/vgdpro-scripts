@@ -39,6 +39,24 @@ function VgF.Next(g)
 				else return g:GetNext() end
 			end
 end
+function VgF.GetValueType(v)
+	local t=type(v)
+	if t=="userdata" then
+		local mt=getmetatable(v)
+		if mt==Group then return "Group"
+		elseif mt==Effect then return "Effect"
+		else return "Card" end
+	else return t end
+end
+function VgF.ReturnCard(g)
+    local tc
+    if VgF.GetValueType(g)=="Group" then
+        tc=g:GetFirst()
+    elseif VgF.GetValueType(g)=="Card" then
+        tc=g
+    end
+    return tc
+end
 bit={}
 function bit.band(a,b)
 	return a&b
@@ -58,17 +76,17 @@ end
 function bit.bnot(a)
 	return ~a
 end
-function VgF.RMonsterFilter(c)
+function VgF.VMonsterFilter(c)
     return VgF.IsSequence(c,5)
 end
-function VgF.VMonsterFilter(c)
+function VgF.RMonsterFilter(c)
     return c:GetSequence()<5
-end
-function VgF.VMonsterCondition(e,c)
-    return VgF.VMonsterFilter(e:GetHandler())
 end
 function VgF.RMonsterCondition(e,c)
     return VgF.RMonsterFilter(e:GetHandler())
+end
+function VgF.VMonsterCondition(e,c)
+    return VgF.VMonsterFilter(e:GetHandler())
 end
 function VgF.IsSequence(c,...)
     for i,v in ipairs{...} do
@@ -130,10 +148,11 @@ function VgF.LvCondition(e)
     return Duel.IsExistingMatchingCard(VgF.LvConditionFilter,tp,LOCATION_MZONE,0,1,nil,lv)
 end
 function VgF.LvConditionFilter(c,lv)
-    return VgF.RMonsterFilter(c) and c:IsLevelAbove(lv)
+    return VgF.VMonsterFilter(c) and c:IsLevelAbove(lv)
 end
-function VgF.AtkUp(c,tc,val)
-    if not tc then return end
+function VgF.AtkUp(c,g,val)
+    if not g then return end
+    local tc=VgF.ReturnCard(g)
     local e1=Effect.CreateEffect(c)
     e1:SetType(EFFECT_TYPE_SINGLE)
     e1:SetCode(EFFECT_UPDATE_ATTACK)
@@ -141,8 +160,9 @@ function VgF.AtkUp(c,tc,val)
     e1:SetReset(RESET_EVENT+RESETS_STANDARD+RESET_PHASE+PHASE_END)
     tc:RegisterEffect(e1)
 end
-function VgF.StarUp(c,tc,val)
-    if not tc then return end
+function VgF.StarUp(c,g,val)
+    if not g then return end
+    local tc=VgF.ReturnCard(g)
     local e1=Effect.CreateEffect(c)
     e1:SetType(EFFECT_TYPE_SINGLE)
     e1:SetCode(EFFECT_UPDATE_LSCALE)
