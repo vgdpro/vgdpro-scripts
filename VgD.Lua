@@ -685,9 +685,6 @@ function VgD.SpellOperation(op)
     return function (e,tp,eg,ep,ev,re,r,rp,bool)
         local c=e:GetHandler()
         if op then op(e,tp,eg,ep,ev,re,r,rp) end
-        if c:IsType(TYPE_CONTINUOUS) then
-            Duel.Sendto(c,tp,LOCATION_ORDER,POS_FACEUP,REASON_EFFECT)
-        end
         local mc=e:GetLabelObject()
         if bool or not mc then return end
         local te=mc:GetActivateEffect()
