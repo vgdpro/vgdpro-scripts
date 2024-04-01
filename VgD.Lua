@@ -42,7 +42,7 @@ function VgD.RideUpCondition(e,tp,eg,ep,ev,re,r,rp)
     local rg2=Duel.GetMatchingGroup(VgD.RideUpFilter2,tp,LOCATION_HAND,0,nil,lv,code,rc)
     local a=rg1:GetCount()>0
     local b=rg2:GetCount()>0
-    return Duel.GetTurnPlayer()==tp and VgD.RuleCardCondtion(e) and (a or b)
+    return Duel.GetTurnPlayer()==tp and VgF.RuleCardCondtion(e) and (a or b)
 end
 function VgD.RideUpOperation(e,tp,eg,ep,ev,re,r,rp)
     local c=e:GetHandler()
@@ -69,7 +69,6 @@ function VgD.RideUpOperation(e,tp,eg,ep,ev,re,r,rp)
     if sel==0 and a then
         Duel.Hint(HINT_SELECTMSG,tp,HINTMSG_DISCARD)
         local g=Duel.SelectMatchingCard(tp,VgD.DisCardRideUpFilter,tp,LOCATION_HAND,0,1,1,nil,lv,code,rc)
-        --Duel.Sendto(g,REASON_TRIGGER,LOCATION_DAMAGE,POS_FACEUP)
         Duel.SendtoGrave(g,REASON_COST+REASON_DISCARD)
         Duel.Hint(HINT_SELECTMSG,tp,HINTMSG_CALL)
         local sg=rg1:FilterSelect(tp,Card.IsLocation,1,1,nil,LOCATION_HAND+LOCATION_RIDE)
@@ -103,20 +102,16 @@ function VgD.RideUpOperation(e,tp,eg,ep,ev,re,r,rp)
     end
 end
 function VgD.RideZeroFilter(c,tp)
-    local loc=LOCATION_RIDE
-    if Duel.GetMatchingGroupCount(nil,tp,LOCATION_RIDE,0,nil)<=0 then
-        loc=LOCATION_DECK
-    end
-    return c:IsLevel(1) and c:IsLocation(loc)
+    return c:IsLevel(1)
 end
 function VgD.RideZeroCondition(e,tp,eg,ep,ev,re,r,rp)
     local rc=Duel.GetMatchingGroup(VgF.VMonsterFilter,tp,LOCATION_MZONE,0,nil):GetFirst()
     if rc then return false end
-    local ct=Duel.GetMatchingGroupCount(VgD.RideZeroFilter,tp,LOCATION_RIDE+LOCATION_DECK,0,nil,tp)
-    return Duel.GetTurnCount(tp)+Duel.GetTurnCount(1-tp)==1 and ct>0 and VgD.RuleCardCondtion(e)
+    local ct=Duel.GetMatchingGroupCount(Card.IsLevel,tp,LOCATION_RIDE,0,nil,1)
+    return VgF.RuleTurnCondtion(e) and ct>0 and VgF.RuleCardCondtion(e)
 end
 function VgD.RideZeroOperation(e,tp,eg,ep,ev,re,r,rp)
-    local g=Duel.GetMatchingGroup(VgD.RideZeroFilter,tp,LOCATION_RIDE+LOCATION_DECK,0,nil,tp)
+    local g=Duel.GetMatchingGroup(Card.IsLevel,tp,LOCATION_RIDE,0,nil,1)
     if g:GetCount()>0 then
         Duel.Hint(HINT_SELECTMSG,tp,HINTMSG_CALL)
         g=g:Select(tp,1,1,nil)
@@ -209,12 +204,20 @@ function VgD.MonsterBattle(c)
     --支援
     local e6=Effect.CreateEffect(c)
     e6:SetType(EFFECT_TYPE_FIELD+EFFECT_TYPE_CONTINUOUS)
-    e6:SetProperty(EFFECT_FLAG_DAMAGE_STEP)
     e6:SetRange(LOCATION_MZONE)
     e6:SetCode(EVENT_PRE_DAMAGE_CALCULATE)
     e6:SetCondition(VgD.SupportCondition)
     e6:SetOperation(VgD.SupportOperation)
     c:RegisterEffect(e6)
+    --防御
+    local e7=Effect.CreateEffect(c)
+    e7:SetType(EFFECT_TYPE_FIELD+EFFECT_TYPE_TRIGGER_O)
+    e7:SetCode(EVENT_ATTACK_ANNOUNCE)
+    e7:SetRange(LOCATION_HAND+LOCATION_MZONE)
+    e7:SetCountLimit(1)
+    e7:SetCondition(VgD.SendToGCondition)
+    e7:SetOperation(VgD.SendToGOperation)
+    c:RegisterEffect(e7)
     --其他永续
     local e10=Effect.CreateEffect(c)
     e10:SetType(EFFECT_TYPE_SINGLE)
@@ -245,25 +248,21 @@ function VgD.MonsterBattle(c)
     c:RegisterEffect(e14)
     local e15=Effect.CreateEffect(c)
     e15:SetType(EFFECT_TYPE_SINGLE)
-    e15:SetCode(EFFECT_SET_DEFENSE_FINAL)
-    e15:SetValue(VgD.MonsterDefVal)
+    e15:SetCode(EFFECT_EXTRA_ATTACK)
+    e15:SetValue(100)
     c:RegisterEffect(e15)
     local e16=e15:Clone()
-    e16:SetCode(EFFECT_EXTRA_ATTACK)
-    e16:SetValue(100)
+    e16:SetType(EFFECT_TYPE_SINGLE)
+    e16:SetCode(EFFECT_CANNOT_BE_BATTLE_TARGET)
+    e16:SetProperty(EFFECT_FLAG_SINGLE_RANGE)
+    e16:SetCondition(VgD.MonsterCannotBeAttackedCondition)
+    e16:SetValue(VgF.True)
     c:RegisterEffect(e16)
-    local e17=e15:Clone()
-    e17:SetType(EFFECT_TYPE_SINGLE)
-    e17:SetCode(EFFECT_CANNOT_BE_BATTLE_TARGET)
-    e17:SetProperty(EFFECT_FLAG_SINGLE_RANGE)
-    e17:SetCondition(VgD.MonsterCannotBeAttackedCondition)
-    e17:SetValue(VgF.True)
-    c:RegisterEffect(e17)
 end
 function VgD.TriggerCard(e,tp,eg,ep,ev,re,r,rp)
     local tg=Duel.GetDecktopGroup(tp,1)
     Duel.DisableShuffleCheck()
-    Duel.Sendto(tg:GetFirst(),REASON_TRIGGER,LOCATION_TRIGGER,POS_FACEUP)
+    Duel.MoveToField(tg:GetFirst(),tp,tp,LOCATION_TRIGGER,POS_FACEUP,true)
 end
 function VgD.MonsterPosDefenseOperation(e,tp,eg,ep,ev,re,r,rp)
     local c=e:GetHandler()
@@ -318,6 +317,35 @@ function VgD.SupportOperation(e,tp,eg,ep,ev,re,r,rp)
     e1:SetValue(c:GetAttack())
     Duel.GetAttacker():RegisterEffect(e1)
 end
+function VgD.SendToGCost(e,tp,eg,ep,ev,re,r,rp,chk)
+    local c=e:GetHandler()
+    if chk==0 then return c:IsPublic() and (not Duel.IsPlayerAffectedByEffect(tp,AFFECT_CODE_SendtoG) or Duel.IsExistingMatchingCard(VgF.Not(Card.IsPublic),tp,LOCATION_HAND,0,1,c)) end
+    local g=Group.FromCards(c)
+    if Duel.IsPlayerAffectedByEffect(tp,AFFECT_CODE_SendtoG) then
+        local sg=Duel.SelectMatchingCard(tp,VgF.Not(Card.IsPublic),tp,LOCATION_HAND,0,1,1,c)
+        g:Merge(sg)
+    end
+    for tc in VgF.Next(g) do
+        local e1=Effect.CreateEffect(c)
+        e1:SetType(EFFECT_TYPE_SINGLE)
+        e1:SetCode(EFFECT_PUBLIC)
+        e1:SetReset(RESET_EVENT+RESETS_STANDARD+EVENT_CHAIN_SOLVED)
+        tc:RegisterEffect(e1)
+    end
+end
+function VgD.SendToGCondition(e,tp,eg,ep,ev,re,r,rp)
+    local c=e:GetHandler()
+    local bc=Duel.GetAttackTarget()
+    return bc and bc:IsControler(tp) and bc~=c and VgF.IsAbleToGZone(c)
+end
+function VgD.SendToGOperation(e,tp,eg,ep,ev,re,r,rp)
+    local c=e:GetHandler()
+    local bc=Duel.GetAttackTarget()
+    if not bc or not VgF.IsAbleToGZone(c) or not c:IsRelateToEffect(e) then return false end
+    Duel.Sendto(c,tp,LOCATION_GZONE,POS_FACEUP,REASON_EFFECT)
+    local atk=c:GetAttack()
+    VgF.AtkUp(c,bc,atk,nil)
+end
 function VgD.MonsterAttackAnnounceCondition(e,c)
     return e:GetHandler():IsPosition(POS_DEFENSE) or VgF.IsSequence(e:GetHandler(),1,2,3)
 end
@@ -330,9 +358,6 @@ function VgD.MonsterAttackCost(e,tp,eg,ep,ev,re,r,rp,chk)
     local c=e:GetHandler()
     if chk==0 then return c:GetFlagEffect(CountTriggerFlag)==0 end
     c:RegisterFlagEffect(CountTriggerFlag,RESET_EVENT+RESETS_STANDARD+RESET_PHASE+PHASE_DAMAGE_CAL,0,1)
-end
-function VgD.MonsterDefVal(e,c)
-    return e:GetHandler():GetAttack()
 end
 function VgD.MonsterCannotBeAttackedCondition(e,c)
     return VgF.IsSequence(e:GetHandler(),1,2,3)
@@ -368,17 +393,17 @@ function VgD.CardTriggerOperation(chkop,f)
             Duel.Hint(HINT_SELECTMSG,tp,HINTMSG_CRITICAL_STRIKE)
             local g1=Duel.SelectMatchingCard(tp,nil,tp,LOCATION_MZONE,0,1,1,nil)
             Duel.HintSelection(g1)
-            VgF.StarUp(c,g1,1)
+            VgF.StarUp(c,g1,1,nil)
             Duel.Hint(HINT_SELECTMSG,tp,HINTMSG_ATKUP)
             local g2=Duel.SelectMatchingCard(tp,nil,tp,LOCATION_MZONE,0,1,1,nil)
             Duel.HintSelection(g2)
-            VgF.AtkUp(c,g2,10000)
+            VgF.AtkUp(c,g2,10000,nil)
         elseif c:IsRace(TRRIGGER_DRAW) then
             Duel.Draw(tp,1,REASON_TRIGGER)
             Duel.Hint(HINT_SELECTMSG,tp,HINTMSG_ATKUP)
             local g=Duel.SelectMatchingCard(tp,nil,tp,LOCATION_MZONE,0,1,1,nil)
             Duel.HintSelection(g)
-            VgF.AtkUp(c,g,10000)
+            VgF.AtkUp(c,g,10000,nil)
         elseif c:IsRace(TRRIGGER_HEAL) then
             Duel.Hint(HINT_SELECTMSG,tp,HINTMSG_TODROP)
             local tc=Duel.SelectMatchingCard(tp,nil,tp,LOCATION_DAMAGE,0,1,1,nil):GetFirst()
@@ -388,11 +413,11 @@ function VgD.CardTriggerOperation(chkop,f)
             Duel.Hint(HINT_SELECTMSG,tp,HINTMSG_ATKUP)
             local g=Duel.SelectMatchingCard(tp,nil,tp,LOCATION_MZONE,0,1,1,nil)
             Duel.HintSelection(g)
-            VgF.AtkUp(c,g,10000)
+            VgF.AtkUp(c,g,10000,nil)
         elseif c:IsRace(TRRIGGER_ADVANCE) then
             local g=Duel.GetMatchingGroup(VgF.IsSequence,tp,LOCATION_MZONE,0,nil,0,4,5)
             for tc in VgF.Next(g) do
-                VgF.AtkUp(c,tc,10000)
+                VgF.AtkUp(c,tc,10000,nil)
             end
         end
         if chkop==0 then
@@ -402,9 +427,9 @@ function VgD.CardTriggerOperation(chkop,f)
                 Duel.Hint(HINT_SELECTMSG,tp,HINTMSG_ATKUP)
                 local g=Duel.SelectMatchingCard(tp,nil,tp,LOCATION_MZONE,0,1,1,nil)
                 Duel.HintSelection(g)
-                VgF.AtkUp(c,g,100000000)
+                VgF.AtkUp(c,g,100000000,nil)
             else
-                Duel.Sendto(c,REASON_TRIGGER,LOCATION_DAMAGE,POS_FACEUP)
+                Duel.Sendto(c,tp,LOCATION_DAMAGE,POS_FACEUP,REASON_EFFECT)
                 Duel.Damage(tp,1,REASON_TRIGGER)
             end
             local rc=Duel.GetMatchingGroup(VgF.VMonsterFilter,tp,LOCATION_MZONE,0,nil):GetFirst()
@@ -425,7 +450,7 @@ function VgD.CardTriggerOperation(chkop,f)
                 Duel.Hint(HINT_SELECTMSG,tp,HINTMSG_ATKUP)
                 local g=Duel.SelectMatchingCard(tp,nil,tp,LOCATION_MZONE,0,1,1,nil)
                 Duel.HintSelection(g)
-                VgF.AtkUp(c,g,100000000)
+                VgF.AtkUp(c,g,100000000,nil)
                 if f then f(e,tp,eg,ep,ev,re,r,rp) end
                 Duel.Exile(c,REASON_TRIGGER)
             else
@@ -450,18 +475,10 @@ end
 --vg规则
 function VgD.Rule(c)
     local e1=Effect.CreateEffect(c)
-    e1:SetType(EFFECT_TYPE_FIELD+EFFECT_TYPE_CONTINUOUS)
-    e1:SetCode(EVENT_PHASE_START+PHASE_STANDBY)
-    e1:SetRange(LOCATION_ALL)
-    e1:SetCountLimit(1)
-    e1:SetCondition(VgD.RuelGCondition)
-    e1:SetOperation(VgD.RuleGOperation)
+    e1:SetCode(EVENT_PHASE+PHASE_DRAW)
+    e1:SetCondition(VgD.RuelDrawCondition)
+    e1:SetOperation(VgD.RuelDrawOperation)
 	c:RegisterEffect(e1)
-    local e2=e1:Clone()
-    e2:SetCode(EVENT_PHASE+PHASE_DRAW)
-    e2:SetCondition(VgD.RuelDrawCondition)
-    e2:SetOperation(VgD.RuelDrawOperation)
-	c:RegisterEffect(e2)
     local e10=Effect.CreateEffect(c)
     e10:SetType(EFFECT_TYPE_FIELD)
     e10:SetCode(EFFECT_HAND_LIMIT)
@@ -469,13 +486,13 @@ function VgD.Rule(c)
     e10:SetRange(LOCATION_ALL)
     e10:SetTargetRange(1,0)
     e10:SetValue(100)
-    e10:SetCondition(VgD.RuleCardCondtion)
+    e10:SetCondition(VgF.RuleCardCondtion)
     c:RegisterEffect(e10)
     local e11=Effect.CreateEffect(c)
     e11:SetType(EFFECT_TYPE_FIELD+EFFECT_TYPE_CONTINUOUS)
     e11:SetCode(EVENT_ADJUST)
     e11:SetRange(LOCATION_ALL)
-    e11:SetCondition(VgD.RuleCardCondtion)
+    e11:SetCondition(VgF.RuleCardCondtion)
     e11:SetOperation(VgD.RuleWin)
     c:RegisterEffect(e11)
     local e12=Effect.CreateEffect(c)
@@ -484,7 +501,6 @@ function VgD.Rule(c)
     e12:SetCode(EFFECT_SKIP_M2)
     e12:SetRange(LOCATION_ALL)
     e12:SetTargetRange(1,0)
-    e12:SetCondition(VgD.RuleCardCondtion)
     c:RegisterEffect(e12)
     local e13=e12:Clone()
     e13:SetCode(EFFECT_CANNOT_SUMMON)
@@ -495,17 +511,6 @@ function VgD.Rule(c)
     local e15=e12:Clone()
     e15:SetCode(EFFECT_CANNOT_SSET)
     c:RegisterEffect(e15)
-end
-function VgD.RuleCardCondtion(e)
-    local tp=e:GetHandlerPlayer()
-    local g=Duel.GetMatchingGroup(nil,tp,LOCATION_ALL,0,nil)
-    return e:GetHandler()==g:GetFirst()
-end
-function VgD.RuleTurnCondtion(e)
-    local tp=e:GetHandlerPlayer()
-    local a=Duel.GetTurnCount(tp)
-    local b=Duel.GetTurnCount(1-tp)
-    return a+b==1
 end
 function VgD.RuleWin(e,tp,eg,ep,ev,re,r,rp)
     if Duel.GetCurrentChain()>0 then return end
@@ -523,40 +528,8 @@ function VgD.RuleWin(e,tp,eg,ep,ev,re,r,rp)
         end
     end
 end
-function VgD.RuelGFilter(c,lv)
-    return c:IsLevel(lv) and c:IsType(TYPE_MONSTER)
-end
-function VgD.RuelGCondition(e,tp,eg,ep,ev,re,r,rp)
-    local rc=Duel.GetMatchingGroup(VgF.VMonsterFilter,tp,LOCATION_MZONE,0,nil):GetFirst()
-    if not rc then return false end
-    local lv=rc:GetLevel()+1
-    local ct1=Duel.GetMatchingGroupCount(VgD.RuelGFilter,tp,LOCATION_HAND,0,nil,lv)
-    local ct2=Duel.GetMatchingGroupCount(nil,tp,LOCATION_RIDE,0,nil)
-    return Duel.GetTurnPlayer()==tp and rc:IsLevelBelow(2) and ct1==0 and ct2==0 and VgD.RuleCardCondtion(e)
-end
-function VgD.RuleGOperation(e,tp,eg,ep,ev,re,r,rp)
-    if Duel.SelectYesNo(tp,VgF.Stringid(VgID,1)) then
-        local g=Duel.GetFieldGroup(tp,LOCATION_HAND,0)
-        if g:GetCount()>0 then
-            Duel.ConfirmCards(1-tp,g)
-            if Duel.SelectOption(1-tp,VgF.Stringid(VgID,2)) then
-                local tg=Duel.GetDecktopGroup(tp,5)
-                Duel.Hint(HINT_SELECTMSG,tp,HINTMSG_ATOHAND)
-                local sg=tg:Select(tp,0,1,nil)
-                if sg:GetCount()>0 then
-                    Duel.SendtoHand(sg,nil,REASON_PHASEG)
-                    Duel.ConfirmCards(1-tp,sg)
-                    Duel.Hint(HINT_SELECTMSG,tp,HINTMSG_REMOVE)
-                    local rg=Duel.GetFieldGroup(tp,LOCATION_HAND,0):Select(tp,2,2,nil)
-                    Duel.Exile(rg,REASON_PHASEG)
-                end
-                Duel.ShuffleDeck(tp)
-            end
-        end
-    end
-end
 function VgD.RuelDrawCondition(e,tp,eg,ep,ev,re,r,rp)
-    return VgD.RuleTurnCondtion(e) and VgD.RuleCardCondtion(e)
+    return VgF.RuleTurnCondtion(e) and VgF.RuleCardCondtion(e)
 end
 function VgD.RuelDrawOperation(e,tp,eg,ep,ev,re,r,rp)
     local ct=Duel.GetFieldGroupCount(tp,LOCATION_HAND,0)

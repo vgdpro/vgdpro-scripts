@@ -1,6 +1,4 @@
 VgF={}
-POS_FACEUP_DEFENCE=POS_FACEUP_DEFENSE
-POS_FACEDOWN_DEFENCE=POS_FACEDOWN_DEFENSE
 
 function GetID()
 	local offset=self_code<100000000 and 1 or 100
@@ -96,6 +94,20 @@ function VgF.IsSequence(c,...)
     end
     return false
 end
+function VgF.RuleCardCondtion(e)
+    local tp=e:GetHandlerPlayer()
+    local g=Duel.GetMatchingGroup(nil,tp,LOCATION_ALL,0,nil)
+    return e:GetHandler()==g:GetFirst()
+end
+function VgF.RuleTurnCondtion(e)
+    local tp=e:GetHandlerPlayer()
+    local a=Duel.GetTurnCount(tp)
+    local b=Duel.GetTurnCount(1-tp)
+    return a+b==1
+end
+function VgF.Not(c,f)
+    return not f(c)
+end
 function VgF.GetColumnGroup(c)
     local tp=c:GetControler()
     local g=Group.CreateGroup()
@@ -150,18 +162,20 @@ end
 function VgF.LvConditionFilter(c,lv)
     return VgF.VMonsterFilter(c) and c:IsLevelAbove(lv)
 end
-function VgF.AtkUp(c,g,val)
-    if not g then return end
+function VgF.AtkUp(c,g,val,reset)
+    if not c or not g then return end
+    if not reset then reset=RESET_PHASE+PHASE_END end
     local tc=VgF.ReturnCard(g)
     local e1=Effect.CreateEffect(c)
     e1:SetType(EFFECT_TYPE_SINGLE)
     e1:SetCode(EFFECT_UPDATE_ATTACK)
     e1:SetValue(val)
-    e1:SetReset(RESET_EVENT+RESETS_STANDARD+RESET_PHASE+PHASE_END)
+    e1:SetReset(RESET_EVENT+RESETS_STANDARD+reset)
     tc:RegisterEffect(e1)
 end
-function VgF.StarUp(c,g,val)
-    if not g then return end
+function VgF.StarUp(c,g,val,reset)
+    if not c or not g then return end
+    if not reset then reset=RESET_PHASE+PHASE_END end
     local tc=VgF.ReturnCard(g)
     local e1=Effect.CreateEffect(c)
     e1:SetType(EFFECT_TYPE_SINGLE)
@@ -169,9 +183,15 @@ function VgF.StarUp(c,g,val)
     e1:SetProperty(EFFECT_FLAG_SINGLE_RANGE)
     e1:SetRange(LOCATION_MZONE)
     e1:SetValue(val)
-    e1:SetReset(RESET_EVENT+RESETS_STANDARD+RESET_PHASE+PHASE_END)
+    e1:SetReset(RESET_EVENT+RESETS_STANDARD+reset)
     tc:RegisterEffect(e1)
     local e2=e1:Clone()
     e2:SetCode(EFFECT_UPDATE_RSCALE)
     tc:RegisterEffect(e2)
+end
+function VgF.IsAbleToGZone(c)
+    if c:IsLocation(LOCATION_MZONE) then
+        return c:IsAttribute(SKILL_BLOCK)
+    end
+    return c:IsLocation(LOCATION_HAND)
 end

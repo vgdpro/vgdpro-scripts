@@ -20,6 +20,7 @@ LOCATION_DAMAGE     =0x800      --伤害区
 LOCATION_ORDER      =0x1000     --指令区
 LOCATION_SPARE      =0x2000     --备用格子（用于怪物箱等）
 LOCATION_GZONE      =0x4000     --G区域
+LOCATION_EMBLEM     =0x8000     --纹章区
 LOCATION_RIDE       =LOCATION_EXTRA
 LOCATION_DROP       =LOCATION_GRAVE
 LOCATION_LOCK	    =LOCATION_REMOVED
@@ -123,7 +124,6 @@ REASON_LINK			=0x10000000	--用于连接召唤
 REASON_LOST_OVERLAY =0x20000000	--超量素材随着超量怪兽离场
 REASON_MAINTENANCE	=0x40000000	--维持代价
 REASON_ACTION		=0x80000000	--攻击宣言之际等
-REASON_PHASEG       =REASON_RULE    --G辅助
 REASON_PHASEDRAW    =REASON_RULE    --抽卡
 REASON_TRIGGER      =REASON_EFFECT  --判定
 --Location Reason
@@ -880,8 +880,13 @@ AttackTriggerFlag       =VgID+1 --多次攻击判定标识
 DamageTriggerFlag       =VgID+2 --多次伤害判定标识
 --AffectedByEffect
 AFFECT_CODE_MIX         =VgID   --魔合成
+AFFECT_CODE_SendtoG     =VgID+1 --
 --Counter
 COUNTER_ENERGE          =0x1    --能量爆发
 --自定时点
 EVENT_TRIGGER           =VgID   --判定时点
 EVENT_CRITICAL_STRIKE   =VgID+1 --暴击值结算时点
+
+
+POS_FACEUP_DEFENCE=POS_FACEUP_DEFENSE
+POS_FACEDOWN_DEFENCE=POS_FACEDOWN_DEFENSE
