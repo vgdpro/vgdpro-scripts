@@ -683,7 +683,11 @@ function VgD.SpellCostOp(e,tp,eg,ep,ev,re,r,rp,chk,c,mc,num1,num2,num3,num4,num5
 end
 function VgD.SpellOperation(op)
     return function (e,tp,eg,ep,ev,re,r,rp,bool)
+        local c=e:GetHandler()
         if op then op(e,tp,eg,ep,ev,re,r,rp) end
+        if c:IsType(TYPE_CONTINUOUS) then
+            Duel.Sendto(c,tp,LOCATION_ORDER,POS_FACEUP,REASON_EFFECT)
+        end
         local mc=e:GetLabelObject()
         if bool or not mc then return end
         local te=mc:GetActivateEffect()
