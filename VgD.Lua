@@ -14,32 +14,32 @@ function VgD.RideUp(c)
     e2:SetType(EFFECT_TYPE_FIELD+EFFECT_TYPE_CONTINUOUS)
     e2:SetCode(EVENT_PHASE+PHASE_STANDBY)
     e2:SetRange(LOCATION_ALL)
-    e2:SetCountLimit(1)
+    e2:SetCountLimit(1,VgID+1)
     e2:SetCondition(VgD.RideUpCondition)
     e2:SetOperation(VgD.RideUpOperation)
 	c:RegisterEffect(e2)
 end
-function VgD.RideUpFilter1(c,lv,code,rc)
+function VgD.RideUpFilter1(c,e,lv,code,rc)
     local tp=c:GetControler()
     if rc:IsAttribute(SKILL_SELF_RIDE) and c:IsCode(code) then
         return false
     end
-    return ((c:IsLevel(lv,lv+1) and c:IsLocation(LOCATION_HAND)) or (c:IsLevel(lv+1) and c:IsLocation(LOCATION_RIDE))) and c:IsType(TYPE_MONSTER) and Duel.IsExistingMatchingCard(Card.IsDiscardable,tp,LOCATION_HAND,0,1,c)
+    return ((c:IsLevel(lv,lv+1) and c:IsLocation(LOCATION_HAND)) or (c:IsLevel(lv+1) and c:IsLocation(LOCATION_RIDE))) and c:IsType(TYPE_MONSTER) and Duel.IsExistingMatchingCard(Card.IsDiscardable,tp,LOCATION_HAND,0,1,c) and c:IsCanBeSpecialSummoned(e,SUMMON_TYPE_RIDE,tp,false,false,POS_FACEUP_ATTACK)
 end
-function VgD.DisCardRideUpFilter(c,lv,code,rc)
+function VgD.DisCardRideUpFilter(c,e,lv,code,rc)
     local tp=c:GetControler()
-    return c:IsDiscardable() and Duel.IsExistingMatchingCard(VgD.RideUpFilter1,tp,LOCATION_HAND+LOCATION_RIDE,0,1,c,lv,code,rc)
+    return c:IsDiscardable() and Duel.IsExistingMatchingCard(VgD.RideUpFilter1,tp,LOCATION_HAND+LOCATION_RIDE,0,1,c,e,lv,code,rc)
 end
-function VgD.RideUpFilter2(c,lv,code,rc)
-    return c:IsLevel(lv) and c:IsType(TYPE_MONSTER) and c:IsCode(code) and rc:IsAttribute(SKILL_SELF_RIDE)
+function VgD.RideUpFilter2(c,e,lv,code,rc)
+    return c:IsLevel(lv) and c:IsType(TYPE_MONSTER) and c:IsCode(code) and rc:IsAttribute(SKILL_SELF_RIDE) and c:IsCanBeSpecialSummoned(e,SUMMON_TYPE_RIDE,tp,false,false,POS_FACEUP_ATTACK)
 end
 function VgD.RideUpCondition(e,tp,eg,ep,ev,re,r,rp)
     local rc=Duel.GetMatchingGroup(VgF.VMonsterFilter,tp,LOCATION_MZONE,0,nil):GetFirst()
     if not rc then return false end
     local lv=rc:GetLevel()
     local code=rc:GetCode()
-    local rg1=Duel.GetMatchingGroup(VgD.RideUpFilter1,tp,LOCATION_HAND+LOCATION_RIDE,0,nil,lv,code,rc)
-    local rg2=Duel.GetMatchingGroup(VgD.RideUpFilter2,tp,LOCATION_HAND,0,nil,lv,code,rc)
+    local rg1=Duel.GetMatchingGroup(VgD.RideUpFilter1,tp,LOCATION_HAND+LOCATION_RIDE,0,nil,e,lv,code,rc)
+    local rg2=Duel.GetMatchingGroup(VgD.RideUpFilter2,tp,LOCATION_HAND,0,nil,e,lv,code,rc)
     local a=rg1:GetCount()>0
     local b=rg2:GetCount()>0
     return Duel.GetTurnPlayer()==tp and VgF.RuleCardCondtion(e) and (a or b)
@@ -50,8 +50,8 @@ function VgD.RideUpOperation(e,tp,eg,ep,ev,re,r,rp)
     if not rc then return end
     local lv=rc:GetLevel()
     local code=rc:GetCode()
-    local rg1=Duel.GetMatchingGroup(VgD.RideUpFilter1,tp,LOCATION_HAND+LOCATION_RIDE,0,nil,lv,code,rc)
-    local rg2=Duel.GetMatchingGroup(VgD.RideUpFilter2,tp,LOCATION_HAND,0,nil,lv,code,rc)
+    local rg1=Duel.GetMatchingGroup(VgD.RideUpFilter1,tp,LOCATION_HAND+LOCATION_RIDE,0,nil,e,lv,code,rc)
+    local rg2=Duel.GetMatchingGroup(VgD.RideUpFilter2,tp,LOCATION_HAND,0,nil,e,lv,code,rc)
     local a=rg1:GetCount()>0
     local b=rg2:GetCount()>0
     local off=1
@@ -68,7 +68,7 @@ function VgD.RideUpOperation(e,tp,eg,ep,ev,re,r,rp)
     local sel=Duel.SelectOption(tp,table.unpack(ops))
     if sel==0 and a then
         Duel.Hint(HINT_SELECTMSG,tp,HINTMSG_DISCARD)
-        local g=Duel.SelectMatchingCard(tp,VgD.DisCardRideUpFilter,tp,LOCATION_HAND,0,1,1,nil,lv,code,rc)
+        local g=Duel.SelectMatchingCard(tp,VgD.DisCardRideUpFilter,tp,LOCATION_HAND,0,1,1,nil,e,lv,code,rc)
         Duel.SendtoGrave(g,REASON_COST+REASON_DISCARD)
         Duel.Hint(HINT_SELECTMSG,tp,HINTMSG_CALL)
         local sg=rg1:FilterSelect(tp,Card.IsLocation,1,1,nil,LOCATION_HAND+LOCATION_RIDE)
@@ -101,22 +101,22 @@ function VgD.RideUpOperation(e,tp,eg,ep,ev,re,r,rp)
         Duel.RegisterEffect(e1,tp)
     end
 end
-function VgD.RideZeroFilter(c,tp)
-    return c:IsLevel(1)
-end
 function VgD.RideZeroCondition(e,tp,eg,ep,ev,re,r,rp)
     local rc=Duel.GetMatchingGroup(VgF.VMonsterFilter,tp,LOCATION_MZONE,0,nil):GetFirst()
     if rc then return false end
-    local ct=Duel.GetMatchingGroupCount(Card.IsLevel,tp,LOCATION_RIDE,0,nil,1)
+    local ct=Duel.GetMatchingGroupCount(VgD.RideZeroFilter,tp,LOCATION_RIDE,0,nil,e,tp)
     return VgF.RuleTurnCondtion(e) and ct>0 and VgF.RuleCardCondtion(e)
 end
 function VgD.RideZeroOperation(e,tp,eg,ep,ev,re,r,rp)
-    local g=Duel.GetMatchingGroup(Card.IsLevel,tp,LOCATION_RIDE,0,nil,1)
+    local g=Duel.GetMatchingGroup(VgD.RideZeroFilter,tp,LOCATION_RIDE,0,nil,e,tp)
     if g:GetCount()>0 then
         Duel.Hint(HINT_SELECTMSG,tp,HINTMSG_CALL)
         g=g:Select(tp,1,1,nil)
     end
     VgF.Call(g,SUMMON_TYPE_RIDE,tp,0x20)
+end
+function VgD.RideZeroFilter(c,e,tp)
+    return c:IsLevel(1) and c:IsCanBeSpecialSummoned(e,SUMMON_TYPE_RIDE,tp,false,false,POS_FACEUP_ATTACK)
 end
 
 --Call到R位
@@ -127,6 +127,7 @@ function VgD.CallToR(c)
     e1:SetRange(LOCATION_HAND)
     e1:SetProperty(EFFECT_FLAG_SPSUM_PARAM)
     e1:SetTargetRange(POS_FACEUP_ATTACK,0)
+    e1:SetValue(SUMMON_TYPE_CALL)
     e1:SetCondition(VgD.CallCondition)
     e1:SetOperation(VgD.CallOperation)
     c:RegisterEffect(e1)
@@ -144,7 +145,7 @@ function VgD.CallVal(zone)
 end
 function VgD.CallCondition(e,c)
     if c==nil then return true end
-    return VgF.LvCondition(e)
+    return VgF.LvCondition(e) and c:IsCanBeSpecialSummoned(e,SUMMON_TYPE_CALL,tp,false,false,POS_FACEUP_ATTACK)
 end
 function VgD.CallOperation(e,tp,eg,ep,ev,re,r,rp)
     local c=e:GetHandler()
@@ -475,7 +476,10 @@ end
 --vg规则
 function VgD.Rule(c)
     local e1=Effect.CreateEffect(c)
+    e1:SetType(EFFECT_TYPE_FIELD+EFFECT_TYPE_CONTINUOUS)
     e1:SetCode(EVENT_PHASE+PHASE_DRAW)
+    e1:SetRange(LOCATION_ALL)
+    e1:SetCountLimit(1,VgID+2)
     e1:SetCondition(VgD.RuelDrawCondition)
     e1:SetOperation(VgD.RuelDrawOperation)
 	c:RegisterEffect(e1)
@@ -683,7 +687,6 @@ function VgD.SpellCostOp(e,tp,eg,ep,ev,re,r,rp,chk,c,mc,num1,num2,num3,num4,num5
 end
 function VgD.SpellOperation(op)
     return function (e,tp,eg,ep,ev,re,r,rp,bool)
-        local c=e:GetHandler()
         if op then op(e,tp,eg,ep,ev,re,r,rp) end
         local mc=e:GetLabelObject()
         if bool or not mc then return end
