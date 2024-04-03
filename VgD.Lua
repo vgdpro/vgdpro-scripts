@@ -12,7 +12,7 @@ function VgD.RideUp(c)
 	c:RegisterEffect(e1)
     local e2=Effect.CreateEffect(c)
     e2:SetType(EFFECT_TYPE_FIELD+EFFECT_TYPE_CONTINUOUS)
-    e2:SetCode(EVENT_PHASE+PHASE_STANDBY)
+    e2:SetCode(EVENT_PHASE_START+PHASE_STANDBY)
     e2:SetRange(LOCATION_ALL)
     e2:SetCountLimit(1,VgID+1)
     e2:SetCondition(VgD.RideUpCondition)
@@ -80,6 +80,10 @@ function VgD.RideUpOperation(e,tp,eg,ep,ev,re,r,rp)
         sc:SetMaterial(Group.FromCards(rc))
         Duel.Overlay(sc,Group.FromCards(rc))
         VgF.Call(sc,SUMMON_TYPE_RIDE,tp,0x20)
+        if Duel.IsExistingMatchingCard(Card.IsCode,tp,LOCATION_RIDE,0,1,nil,10400855) then
+            local tc=Duel.GetMatchingGroup(Card.IsCode,tp,LOCATION_RIDE,0,nil,10400855):GetFirst()
+            Duel.Sendto(tc,tp,LOCATION_EMBLEM,POS_FACEUP,REASON_EFFECT)
+        end
     elseif sel==0 or (sel==1 and a and b) then
         Duel.Hint(HINT_SELECTMSG,tp,HINTMSG_CALL)
         local sg=rg2:Select(tp,1,1,nil)
@@ -344,8 +348,8 @@ function VgD.SendToGOperation(e,tp,eg,ep,ev,re,r,rp)
     local bc=Duel.GetAttackTarget()
     if not bc or not VgF.IsAbleToGZone(c) or not c:IsRelateToEffect(e) then return false end
     Duel.Sendto(c,tp,LOCATION_GZONE,POS_FACEUP,REASON_EFFECT)
-    local atk=c:GetAttack()
-    VgF.AtkUp(c,bc,atk,nil)
+    local def=c:GetDefense()
+    VgF.AtkUp(c,bc,def,nil)
 end
 function VgD.MonsterAttackAnnounceCondition(e,c)
     return e:GetHandler():IsPosition(POS_DEFENSE) or VgF.IsSequence(e:GetHandler(),1,2,3)
@@ -670,11 +674,11 @@ function VgD.SpellCostOp(e,tp,eg,ep,ev,re,r,rp,chk,c,mc,num1,num2,num3,num4,num5
         Duel.RemoveCounter(tp,1,0,COUNTER_ENERGE,num2,REASON_COST)
     end
     if num3>0 then
-        local g=Duel.GetMatchingGroup(VgF.VMonsterFilter,tp,LOCATION_MZONE,0,mg,c):GetFirst():Filter(Card.IsAbleToGraveAsCost,mg)
+        local g=Duel.GetMatchingGroup(VgF.VMonsterFilter,tp,LOCATION_MZONE,0,nil):GetFirst():GetOverlayGroup():FilterSelect(tp,Card.IsAbleToGraveAsCost,num3,num3,mg)
         Duel.SendtoGrave(g,REASON_COST)
     end
     if num4>0 then
-        local rc=Duel.GetMatchingGroup(VgF.VMonsterFilter,tp,LOCATION_MZONE,0,mg,c):GetFirst()
+        local rc=Duel.GetMatchingGroup(VgF.VMonsterFilter,tp,LOCATION_MZONE,0,nil):GetFirst()
         local g=Duel.GetDecktopGroup(tp,num4)
         Duel.DisableShuffleCheck()
         Duel.Overlay(rc,g)
@@ -693,5 +697,5 @@ function VgD.SpellOperation(op)
         local te=mc:GetActivateEffect()
         local op2=te:GetOperation()
         if op2 then op2(e,tp,eg,ep,ev,re,r,rp,true) end
-    end
+    end 
 end
