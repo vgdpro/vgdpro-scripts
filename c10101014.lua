@@ -1,9 +1,9 @@
 --
 local cm,m,o=GetID()
 function cm.initial_effect(c)
-	VgD.Rule(c)
-	VgD.RideUp(c)
-	VgD.CallToR(c)
-	VgD.MonsterBattle(c)
-	VgD.CardTrigger(c,nil)
+	vgd.Rule(c)
+	vgd.RideUp(c)
+	vgd.CallToR(c)
+	vgd.MonsterBattle(c)
+	vgd.CardTrigger(c,nil)
 end

@@ -1,5 +1,5 @@
-VgDefinition={}
-VgID=10101001
+vgdefinition={}
+vgID=10101001
 --min/max value
 MIN_ID		=1000		--4 digits, by DataManager::GetDesc()
 MAX_ID		=268435455	--28 bits, by DataManager::GetDesc()
@@ -875,17 +875,17 @@ FLAG_ID_CHAINING		=1
 FLAG_ID_UNION			=2
 FLAG_ID_NO_NORMAL_DRAW	=3
 --Flag
-CountTriggerFlag        =VgID   --计数标识
-AttackTriggerFlag       =VgID+1 --多次攻击判定标识
-DamageTriggerFlag       =VgID+2 --多次伤害判定标识
+CountTriggerFlag        =vgID   --计数标识
+AttackTriggerFlag       =vgID+1 --多次攻击判定标识
+DamageTriggerFlag       =vgID+2 --多次伤害判定标识
 --AffectedByEffect
-AFFECT_CODE_MIX         =VgID   --魔合成
-AFFECT_CODE_SendtoG     =VgID+1 --
+AFFECT_CODE_MIX         =vgID   --魔合成
+AFFECT_CODE_SendtoG     =vgID+1 --
 --Counter
 COUNTER_ENERGE          =0x1    --能量爆发
 --自定时点
-EVENT_TRIGGER           =VgID   --判定时点
-EVENT_CRITICAL_STRIKE   =VgID+1 --暴击值结算时点
+EVENT_TRIGGER           =vgID   --判定时点
+EVENT_CRITICAL_STRIKE   =vgID+1 --暴击值结算时点
 
 
 POS_FACEUP_DEFENCE=POS_FACEUP_DEFENSE

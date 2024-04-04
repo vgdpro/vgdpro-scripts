@@ -1,10 +1,10 @@
 --
 local cm,m,o=GetID()
 function cm.initial_effect(c)
-	VgD.Rule(c)
-	VgD.RideUp(c)
-	VgD.CardTrigger(c,nil)
-	VgD.SpellActivate(c,m,cm.op)
+	vgd.Rule(c)
+	vgd.RideUp(c)
+	vgd.CardTrigger(c,nil)
+	vgd.SpellActivate(c,m,cm.op)
 end
 function cm.op(e,tp,eg,ep,ev,re,r,rp)
     Duel.Hint(HINT_SELECTMSG,tp,HINTMSG_RTOHAND)
