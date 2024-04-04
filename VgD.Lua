@@ -137,33 +137,22 @@ function VgD.CallToR(c)
     e1:SetOperation(VgD.CallOperation)
     c:RegisterEffect(e1)
 end
-function VgD.CallVal(zone)
-    if zone>0 then
-        return function (e,c)
-            return 0,zone
-        end
-    else
-        return function (e,c)
-            return 0,0x3f
-        end
-    end
-end
 function VgD.CallCondition(e,c)
     if c==nil then return true end
+    local tp=e:GetHandlerPlayer()
     return VgF.LvCondition(e) and c:IsCanBeSpecialSummoned(e,SUMMON_TYPE_CALL,tp,false,false,POS_FACEUP_ATTACK)
+end
+function VgD.CallFilter(c,tp,zone)
+    return VgF.RMonsterFilter(c) and zone==VgF.SequenceToGlobal(tp,c:GetLocation(),c:GetSequence())
 end
 function VgD.CallOperation(e,tp,eg,ep,ev,re,r,rp)
     local c=e:GetHandler()
-    local zone=0
-    if Duel.IsExistingMatchingCard(VgF.RMonsterFilter,tp,LOCATION_MZONE,0,1,nil) and Duel.SelectYesNo(tp,VgF.Stringid(VgID,7)) then
-        Duel.Hint(HINT_SELECTMSG,tp,HINTMSG_LEAVEONFIELD)
-        local tc=Duel.SelectMatchingCard(tp,VgF.RMonsterFilter,tp,LOCATION_MZONE,0,1,1,nil):GetFirst()
-        if tc then
-            zone=VgF.SequenceToGlobal(tp,tc:GetLocation(),tc:GetSequence())
-            Duel.SendtoGrave(tc,REASON_COST)
-        end
+    local zone=Duel.SelectDisableField(tp,1,LOCATION_MZONE,0,nil,0x0000e0)
+    if Duel.IsExistingMatchingCard(VgD.CallFilter,tp,LOCATION_MZONE,0,1,nil,tp,zone) then
+        local tc=Duel.GetMatchingGroup(tp,VgD.CallFilter,tp,LOCATION_MZONE,0,1,1,nil,tp,zone):GetFirst()
+        Duel.SendtoGrave(tc,REASON_COST)
     end
-    e:SetValue(VgD.CallVal(zone))
+    e:SetValue(function () return 0,zone end)
 end
 
 --战斗阶段
@@ -224,6 +213,14 @@ function VgD.MonsterBattle(c)
     e7:SetCondition(VgD.SendToGCondition)
     e7:SetOperation(VgD.SendToGOperation)
     c:RegisterEffect(e7)
+    local e8=Effect.CreateEffect(c)
+    e8:SetType(EFFECT_TYPE_FIELD+EFFECT_TYPE_CONTINUOUS)
+    e8:SetProperty(EFFECT_FLAG_DELAY)
+    e8:SetCode(EVENT_DAMAGE_STEP_END)
+    e8:SetProperty(EFFECT_FLAG_DAMAGE_STEP)
+    e8:SetRange(LOCATION_GZONE)
+    e8:SetOperation(VgD.GToGraveOperation)
+    c:RegisterEffect(e8)
     --其他永续
     local e10=Effect.CreateEffect(c)
     e10:SetType(EFFECT_TYPE_SINGLE)
@@ -351,11 +348,13 @@ function VgD.SendToGOperation(e,tp,eg,ep,ev,re,r,rp)
     Duel.Sendto(c,tp,LOCATION_GZONE,POS_FACEUP,REASON_EFFECT)
     local def=c:GetDefense()
     if def==0 then
-        Duel.RegisterFlagEffect(tp,DefenseEntirelyFlag,RESET_EVENT+EVENT_DAMAGE_STEP_END,0)
+        Duel.RegisterFlagEffect(tp,DefenseEntirelyFlag,RESET_EVENT+EVENT_DAMAGE_STEP_END,0,1)
     else
         VgF.AtkUp(c,bc,def,nil)
     end
-    Duel.BreakEffect()
+end
+function VgD.GToGraveOperation(e,tp,eg,ep,ev,re,r,rp)
+    local c=e:GetHandler()
     Duel.SendtoGrave(c,REASON_RULE)
 end
 function VgD.MonsterAttackAnnounceCondition(e,c)

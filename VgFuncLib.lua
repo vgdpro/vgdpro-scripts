@@ -194,7 +194,7 @@ function VgF.StarUp(c,g,val,reset)
 end
 function VgF.IsAbleToGZone(c)
     if c:IsLocation(LOCATION_MZONE) then
-        return c:IsAttribute(SKILL_BLOCK)
+        return c:IsAttribute(SKILL_BLOCK) and VgF.IsSequence(c,0,4)
     end
     return c:IsLocation(LOCATION_HAND)
 end
