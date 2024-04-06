@@ -1,6 +1,17 @@
 VgF={}
 vgf=VgF
 
+function VgF.VgCard(c)
+    VgD.Rule(c)
+    if c:IsType(TYPE_MONSTER) then
+        VgD.RideUp(c)
+        VgD.CallToR(c)
+        VgD.MonsterBattle(c)
+    end
+    if not c:IsRace(TRRIGGER_SUPER) then
+	    VgD.CardTrigger(c,nil)
+    end
+end
 function GetID()
 	local offset=self_code<100000000 and 1 or 100
 	return self_table,self_code,offset
@@ -87,6 +98,15 @@ end
 function VgF.VMonsterCondition(e,c)
     return VgF.VMonsterFilter(e:GetHandler())
 end
+function VgF.IsLevel(c,...)
+    for i,v in ipairs{...} do
+        local lv=v+1
+        if c:IsLevel(lv) then
+            return true
+        end
+    end
+    return false
+end
 function VgF.IsSequence(c,...)
     for i,v in ipairs{...} do
         if c:GetSequence()==v then
@@ -150,6 +170,9 @@ function VgF.GetColumnGroup(c)
     end
     return g
 end
+function VgF.tgoval(e,re,rp)
+	return rp==1-e:GetHandlerPlayer()
+end
 function VgF.Call(g,sumtype,sp,zone)
     if not zone then zone=0x7f end
 	return Duel.SpecialSummon(g,sumtype,sp,sp,true,true,POS_FACEUP_ATTACK,zone)
@@ -194,7 +217,7 @@ function VgF.StarUp(c,g,val,reset)
 end
 function VgF.IsAbleToGZone(c)
     if c:IsLocation(LOCATION_MZONE) then
-        return c:IsAttribute(SKILL_BLOCK) and VgF.IsSequence(c,0,4)
+        return c:IsAttribute(SKILL_BLOCK)
     end
     return c:IsLocation(LOCATION_HAND)
 end
@@ -211,9 +234,9 @@ end
 function VgF.EnegyCost(num)
     return function (e,tp,eg,ep,ev,re,r,rp,chk)
         if chk==0 then
-            return Duel.IsExistingMatchingCard(Card.IsCode,tp,LOCATION_EMBLEM,0,num,nil,20401001)
+            return Duel.IsExistingMatchingCard(Card.IsCode,tp,LOCATION_EMBLEM,0,num,nil,10800730)
         end
-        local g=Duel.SelectMatchingCard(tp,Card.IsCode,tp,LOCATION_EMBLEM,0,1,1,nil,20401001)
+        local g=Duel.SelectMatchingCard(tp,Card.IsCode,tp,LOCATION_EMBLEM,0,1,1,nil,10800730)
         Duel.SendtoGrave(g,REASON_COST)
     end
 end
@@ -247,17 +270,12 @@ function VgF.DamageCost(num)
         Duel.ChangePosition(g,POS_FACEDOWN)
     end
 end
-function VgF.SearchCard(loc,code,setcard,country,trigger,skil)
+function VgF.SearchCard(loc,f)
     if not loc then return end
-    if not code and not setcard and not country and not trigger and not skil then return end
     return function (e,tp,eg,ep,ev,re,r,rp)
         Duel.Hint(HINT_SELECTMSG,tp,HINTMSG_ATOHAND)
         local g=Duel.SelectMatchingCard(tp,function (c)
-            if code and not c:IsCode(code) then return end
-            if setcard and not c:IsSetCard(setcard) then return end
-            if country and not c:GetCountry()&country>0 then return end
-            if trigger and not c:IsRace(trigger) then return end
-            if skil and not c:IsAttribute(skil) then return end
+            if VgF.GetValueType(f)=="function" and not f(c) then return false end
             return c:IsAbleToHand()
         end
         ,tp,loc,0,1,1,nil)
@@ -267,23 +285,18 @@ function VgF.SearchCard(loc,code,setcard,country,trigger,skil)
         end
     end
 end
-function VgF.SearchCardSpecialSummon(loc,code,setcard,country,trigger,skil)
+function VgF.SearchCardSpecialSummon(loc,f)
     if not loc then return end
-    if not code and not setcard and not country and not trigger and not skil then return end
     return function (e,tp,eg,ep,ev,re,r,rp)
         Duel.Hint(HINT_SELECTMSG,tp,HINTMSG_ATOHAND)
         local g=Duel.SelectMatchingCard(tp,function (c)
-            if code and not c:IsCode(code) then return end
-            if setcard and not c:IsSetCard(setcard) then return end
-            if country and not c:GetCountry()&country>0 then return end
-            if trigger and not c:IsRace(trigger) then return end
-            if skil and not c:IsAttribute(skil) then return end
-            return c:IsCanBeSpecialSummoned(e,SUMMON_TYPE_CALL,tp,false,false,POS_FACEUP_ATTACK)
+            if VgF.GetValueType(f)=="function" and not f(c) then return false end
+            return c:IsCanBeSpecialSummoned(e,0,tp,false,false,POS_FACEUP_ATTACK)
         end
         ,tp,loc,0,1,1,nil)
         if g:GetCount()>0 then
             if loc&LOCATION_DECK+LOCATION_HAND+LOCATION_EXTRA==0 then Duel.HintSelection(g) end
-            VgF.Call(g,SUMMON_TYPE_CALL,tp)
+            VgF.Call(g,0,tp)
         end
     end
 end

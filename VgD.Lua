@@ -81,8 +81,8 @@ function VgD.RideUpOperation(e,tp,eg,ep,ev,re,r,rp)
         sc:SetMaterial(Group.FromCards(rc))
         Duel.Overlay(sc,Group.FromCards(rc))
         VgF.Call(sc,SUMMON_TYPE_RIDE,tp,0x20)
-        if Duel.IsExistingMatchingCard(Card.IsCode,tp,LOCATION_RIDE,0,1,nil,10400855) then
-            local tc=Duel.GetMatchingGroup(Card.IsCode,tp,LOCATION_RIDE,0,nil,10400855):GetFirst()
+        if Duel.IsExistingMatchingCard(Card.IsType,tp,LOCATION_RIDE,0,1,nil,TYPE_EMBLEM) then
+            local tc=Duel.GetMatchingGroup(Card.IsType,tp,LOCATION_RIDE,0,nil,TYPE_EMBLEM):GetFirst()
             Duel.Sendto(tc,tp,LOCATION_EMBLEM,POS_FACEUP,REASON_EFFECT)
         end
     elseif sel==0 or (sel==1 and a and b) then
@@ -121,18 +121,18 @@ function VgD.RideZeroOperation(e,tp,eg,ep,ev,re,r,rp)
     VgF.Call(g,SUMMON_TYPE_RIDE,tp,0x20)
 end
 function VgD.RideZeroFilter(c,e,tp)
-    return c:IsLevel(1) and c:IsCanBeSpecialSummoned(e,SUMMON_TYPE_RIDE,tp,false,false,POS_FACEUP_ATTACK)
+    return VgF.IsLevel(c,0) and c:IsCanBeSpecialSummoned(e,SUMMON_TYPE_RIDE,tp,false,false,POS_FACEUP_ATTACK)
 end
 
 --Call到R位
 function VgD.CallToR(c)
     local e1=Effect.CreateEffect(c)
+    e1:SetDescription(1152)
     e1:SetType(EFFECT_TYPE_FIELD)
     e1:SetCode(EFFECT_SPSUMMON_PROC)
     e1:SetRange(LOCATION_HAND)
     e1:SetProperty(EFFECT_FLAG_SPSUM_PARAM)
     e1:SetTargetRange(POS_FACEUP_ATTACK,0)
-    e1:SetValue(SUMMON_TYPE_CALL)
     e1:SetCondition(VgD.CallCondition)
     e1:SetOperation(VgD.CallOperation)
     c:RegisterEffect(e1)
@@ -140,13 +140,14 @@ end
 function VgD.CallCondition(e,c)
     if c==nil then return true end
     local tp=e:GetHandlerPlayer()
-    return VgF.LvCondition(e) and c:IsCanBeSpecialSummoned(e,SUMMON_TYPE_CALL,tp,false,false,POS_FACEUP_ATTACK)
+    return VgF.LvCondition(e) and c:IsCanBeSpecialSummoned(e,0,tp,false,false,POS_FACEUP_ATTACK)
 end
 function VgD.CallFilter(c,tp,zone)
     return VgF.RMonsterFilter(c) and zone==VgF.SequenceToGlobal(tp,c:GetLocation(),c:GetSequence())
 end
 function VgD.CallOperation(e,tp,eg,ep,ev,re,r,rp)
     local c=e:GetHandler()
+    Duel.Hint(HINT_SELECTMSG,tp,HINTMSG_CallZONE)
     local zone=Duel.SelectField(tp,1,LOCATION_MZONE,0,nil,0x0000e0)
     if Duel.IsExistingMatchingCard(VgD.CallFilter,tp,LOCATION_MZONE,0,1,nil,tp,zone) then
         local tc=Duel.GetMatchingGroup(tp,VgD.CallFilter,tp,LOCATION_MZONE,0,1,1,nil,tp,zone):GetFirst()
@@ -210,6 +211,7 @@ function VgD.MonsterBattle(c)
     e7:SetCode(EVENT_ATTACK_ANNOUNCE)
     e7:SetRange(LOCATION_HAND+LOCATION_MZONE)
     e7:SetCountLimit(1)
+    e7:SetCost(VgD.SendToGCost)
     e7:SetCondition(VgD.SendToGCondition)
     e7:SetOperation(VgD.SendToGOperation)
     c:RegisterEffect(e7)
@@ -285,7 +287,7 @@ end
 function VgD.MonsterPosAttackOperation(e,tp,eg,ep,ev,re,r,rp)
     local c=e:GetHandler()
     Duel.ChangePosition(c,POS_FACEUP_ATTACK)
-    Duel.Hint(HINT_LINES,tp,VgF.Stringid(VgID,0))
+    Duel.Hint(HINT_LINES,tp,VgF.Stringid(VgID,8))
 end
 function VgD.MonsterBattleDamageCondition(e,tp,eg,ep,ev,re,r,rp)
     local c=e:GetHandler()
@@ -310,7 +312,7 @@ function VgD.SupportCondition(e,tp,eg,ep,ev,re,r,rp)
     return VgF.GetColumnGroup(Duel.GetAttacker()):IsContains(e:GetHandler()) and Duel.GetTurnPlayer()==tp and e:GetHandler():IsAttribute(SKILL_SUPPORT)
 end
 function VgD.SupportOperation(e,tp,eg,ep,ev,re,r,rp)
-    if not Duel.SelectYesNo(tp,VgF.Stringid(VgID,8)) then return end
+    if not Duel.SelectYesNo(tp,VgF.Stringid(VgID,7)) then return end
     local c=e:GetHandler()
     Duel.ChangePosition(c,POS_FACEUP_DEFENSE)
     local e1=Effect.CreateEffect(c)
@@ -324,9 +326,11 @@ function VgD.SendToGCost(e,tp,eg,ep,ev,re,r,rp,chk)
     local c=e:GetHandler()
     if chk==0 then return c:IsPublic() and (not Duel.IsPlayerAffectedByEffect(tp,AFFECT_CODE_SendtoG) or Duel.IsExistingMatchingCard(VgF.Not(Card.IsPublic),tp,LOCATION_HAND,0,1,c)) end
     local g=Group.FromCards(c)
-    if Duel.IsPlayerAffectedByEffect(tp,AFFECT_CODE_SendtoG) then
-        local sg=Duel.SelectMatchingCard(tp,VgF.Not(Card.IsPublic),tp,LOCATION_HAND,0,1,1,c)
-        g:Merge(sg)
+    if Duel.IsPlayerAffectedByEffect(tp,AFFECT_CODE_SendtoG) and not Duel.IsExistingMatchingCard(Card.IsPublic,tp,LOCATION_HAND,0,2,nil) then
+        local tc=Duel.SelectMatchingCard(tp,VgF.Not(Card.IsPublic),tp,LOCATION_HAND,0,1,1,c)
+        tc=VgF.ReturnCard(tc)
+        e:SetLabelObject(tc)
+        g:AddCard(tc)
     end
     for tc in VgF.Next(g) do
         local e1=Effect.CreateEffect(c)
@@ -345,11 +349,18 @@ function VgD.SendToGOperation(e,tp,eg,ep,ev,re,r,rp)
     local c=e:GetHandler()
     local bc=Duel.GetAttackTarget()
     if not bc or not VgF.IsAbleToGZone(c) or not c:IsRelateToEffect(e) then return false end
-    Duel.Sendto(c,tp,LOCATION_GZONE,POS_FACEUP,REASON_EFFECT)
     local def=c:GetDefense()
-    if def==0 then
-        Duel.RegisterFlagEffect(tp,DefenseEntirelyFlag,RESET_EVENT+EVENT_DAMAGE_STEP_END,0,1)
-    else
+    local tc=e:GetLabelObject()
+    local g=Group.FromCards(c)
+    if tc then
+        tc=vgf.ReturnCard(tc)
+        g:AddCard(tc)
+        if tc:GetDefense()>0 then
+            def=def+tc:GetDefense()>0
+        end
+    end
+    Duel.Sendto(g,tp,LOCATION_GZONE,POS_FACEUP,REASON_EFFECT)
+    if def>0 then
         VgF.AtkUp(c,bc,def,nil)
     end
 end
@@ -433,12 +444,12 @@ function VgD.CardTriggerOperation(chkop,f)
         end
         if chkop==0 then
             if c:IsRace(TRRIGGER_SUPER) then
-                Duel.Exile(c,REASON_TRIGGER)
                 Duel.Draw(tp,1,REASON_TRIGGER)
                 Duel.Hint(HINT_SELECTMSG,tp,HINTMSG_ATKUP)
                 local g=Duel.SelectMatchingCard(tp,nil,tp,LOCATION_MZONE,0,1,1,nil)
                 Duel.HintSelection(g)
                 VgF.AtkUp(c,g,100000000,nil)
+                Duel.Exile(c,REASON_TRIGGER)
             else
                 Duel.Sendto(c,tp,LOCATION_DAMAGE,POS_FACEUP,REASON_EFFECT)
                 Duel.Damage(tp,1,REASON_TRIGGER)
@@ -706,10 +717,12 @@ function VgD.SpellOperation(op)
         if op2 then op2(e,tp,eg,ep,ev,re,r,rp,true) end
     end
 end
-function VgD.BeRidedByCard(c,m,code,property,con,cost,op,tg)
+function VgD.BeRidedByCard(c,m,code,op,cost,con,tg,property)
+    local type2=EFFECT_TYPE_TRIGGER_F
+    if VgF.GetValueType(cost)=="function" then type2=EFFECT_TYPE_TRIGGER_O end
     local e1=Effect.CreateEffect(c)
     e1:SetDescription(VgF.Stringid(m,0))
-    e1:SetType(EFFECT_TYPE_XMATERIAL+EFFECT_TYPE_TRIGGER_F)
+    e1:SetType(EFFECT_TYPE_XMATERIAL+type2)
     e1:SetCode(EVENT_SPSUMMON_SUCCESS)
     e1:SetCondition(VgD.BeRidedByCardCondition(code,con))
     if property then e1:SetProperty(property) end
@@ -721,6 +734,39 @@ end
 function VgD.BeRidedByCardCondition(code,f)
     return function (e,tp,eg,ep,ev,re,r,rp)
         local c=e:GetHandler()
-        return c:IsCode(code) and (VgF.GetValueType(f)=="nil" or f(e,tp,eg,ep,ev,re,r,rp))
+        if code and code>0 and not c:IsCode(code) then return false end
+        return VgF.GetValueType(f)=="nil" or f(e,tp,eg,ep,ev,re,r,rp)
     end
+end
+function VgD.EffectTypeTrigger(c,m,loc,type,code,op,cost,con,tg,count,property)
+    local type2=EFFECT_TYPE_TRIGGER_F
+    if VgF.GetValueType(cost)=="function" then type2=EFFECT_TYPE_TRIGGER_O end
+    if not type then type=EFFECT_TYPE_SINGLE end
+    if not loc then loc=LOCATION_MZONE end
+    local e1=Effect.CreateEffect(c)
+    e1:SetDescription(VgF.Stringid(m,0))
+    e1:SetType(type+type2)
+    e1:SetRange(loc)
+    e1:SetCode(code)
+    if property and property>0 then e1:SetProperty(property) end
+    if count and count>0 then e1:SetCountLimit(count) end
+    if VgF.GetValueType(con)=="function" then e1:SetCost(con) end
+    if VgF.GetValueType(cost)=="function" then e1:SetCost(cost) end
+    if VgF.GetValueType(tg)=="function" then e1:SetTarget(tg) end
+    if VgF.GetValueType(op)=="function" then e1:SetOperation(op) end
+    c:RegisterEffect(e1)
+end
+function VgD.EffectTypeIgnition(c,m,loc,op,cost,con,tg,count,property)
+    if not loc then loc=LOCATION_MZONE end
+    local e1=Effect.CreateEffect(c)
+    e1:SetDescription(VgF.Stringid(m,1))
+    e1:SetType(EFFECT_TYPE_IGNITION)
+    e1:SetRange(loc)
+    if property and property>0 then e1:SetProperty(property) end
+    if count and count>0 then e1:SetCountLimit(count) end
+    if VgF.GetValueType(con)=="function" then e1:SetCost(con) end
+    if VgF.GetValueType(cost)=="function" then e1:SetCost(cost) end
+    if VgF.GetValueType(tg)=="function" then e1:SetTarget(tg) end
+    if VgF.GetValueType(op)=="function" then e1:SetOperation(op) end
+    c:RegisterEffect(e1)
 end

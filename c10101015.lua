@@ -1,16 +1,9 @@
 --
 local cm,m,o=GetID()
 function cm.initial_effect(c)
-	vgd.Rule(c)
-	vgd.RideUp(c)
-	vgd.CardTrigger(c,nil)
-	vgd.SpellActivate(c,m,cm.op)
-end
-function cm.op(e,tp,eg,ep,ev,re,r,rp)
-    Duel.Hint(HINT_SELECTMSG,tp,HINTMSG_RTOHAND)
-	local g=Duel.SelectMatchingCard(tp,cm.filter,tp,LOCATION_DROP,0,1,1,nil)
-	if g then Duel.SendtoHand(g,nil,REASON_EFFECT) end
+	vgf.VgCard(c)
+	vgd.SpellActivate(c,m,vgf.SearchCard(LOCATION_DROP,cm.filter))
 end
 function cm.filter(c)
-	return c:IsCode(10101006) and c:IsAbleToHand()
+	return c:IsCode(10101006)
 end

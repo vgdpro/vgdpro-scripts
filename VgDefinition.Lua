@@ -1,5 +1,6 @@
 VgDefinition={}
 VgID=10101001
+vgid=VgID
 --min/max value
 MIN_ID		=1000		--4 digits, by DataManager::GetDesc()
 MAX_ID		=268435455	--28 bits, by DataManager::GetDesc()
@@ -76,6 +77,7 @@ TYPE_LINK			=0x4000000	--连接
 TYPES_TOKEN_MONSTER	=0x4011
 TYPES_NORMAL_TRAP_MONSTER	=0x111
 TYPES_EFFECT_TRAP_MONSTER	=0x121
+TYPE_EMBLEM         =TYPE_TRAP+TYPE_COUNTER+TYPE_FUSION
 --技能              --属性
 SKILL_ALL		    =0x7f		--All
 SKILL_NONE		    =0x01		--无
@@ -139,7 +141,7 @@ SUMMON_TYPE_FUSION		=0x43000000	--融合召唤
 SUMMON_TYPE_RITUAL		=0x45000000	--仪式召唤
 SUMMON_TYPE_SYNCHRO		=0x46000000	--同调召唤
 SUMMON_TYPE_RIDE		=0x49000000	--骑升
-SUMMON_TYPE_CALL	    =0x4a000000 --Call到R位
+--SUMMON_TYPE_CALL	    =0x4a000000 --Call到R位
 SUMMON_TYPE_LINK		=0x4c000000 --连接召唤
 --Summon Value --特定的召唤方式
 SUMMON_VALUE_SELF					=0x1	--自身效果或条件
@@ -771,7 +773,7 @@ HINTMSG_SELF			=529	--请选择自己的卡
 HINTMSG_OPPO			=530	--请选择对方的卡
 HINTMSG_TRIBUTE			=531	--请选择上级召唤用需要解放的怪兽
 HINTMSG_DEATTACHFROM	=532	--请选择要取除超量素材的怪兽
-HINTMSG_LMATERIAL   	=533	--请选择要作为连接素材的卡
+HINTMSG_OVERLAY   	    =533	--请选择要重叠的卡
 HINTMSG_ATTACKTARGET	=549	--请选择攻击的对象
 HINTMSG_EFFECT			=550	--请选择要发动的效果
 HINTMSG_TARGET			=551	--请选择效果的对象
@@ -789,7 +791,7 @@ HINGMSG_NUMBER			=565	--请选择一个数字
 HINGMSG_LVRANK			=567	--请宣言一个等级
 HINTMSG_RESOLVECARD		=568	--请选择要处理效果的卡
 HINTMSG_ZONE			=569	--请选择[%ls]的位置
-HINTMSG_DISABLEZONE		=570	--请选择要变成不能使用的卡片区域
+HINTMSG_CallZONE		=570	--请选择圆阵
 HINTMSG_TOZONE			=571	--请选择要移动到的位置
 HINTMSG_COUNTER			=572	--请选择要放置指示物的卡
 HINTMSG_DISABLE			=573	--请选择要无效的卡
@@ -878,7 +880,8 @@ FLAG_ID_NO_NORMAL_DRAW	=3
 CountTriggerFlag        =VgID   --计数标识
 AttackTriggerFlag       =VgID+1 --多次攻击判定标识
 DamageTriggerFlag       =VgID+2 --多次伤害判定标识
-DefenseEntirelyFlag       =VgID+3 --多次伤害判定标识
+DefenseEntirelyFlag     =VgID+3 --完全防御标识
+ConditionFlag           =VgID+4 --处于XX状态标识
 --AffectedByEffect
 AFFECT_CODE_MIX         =VgID   --魔合成
 AFFECT_CODE_SendtoG     =VgID+1 --
