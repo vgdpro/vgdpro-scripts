@@ -104,7 +104,7 @@
       
       --在这个地方注册一个起动效果
 
-      vgd.EffectTypeIgnition(c,m,LOCATION_MZONE--[[怪兽区域的效果]],cm.operation--[[对下文同名函数调用]],vgf.OverlayCost(2)--[[调用VgFunction库中[灵魂爆发]的封装函数]],vgf.RMonsterCondition--[[检测这张卡在R位]],tg,count,property--[[往后的参数都没了，可以直接不填，也可以填写“nil（无）”、“false（错误）”或原本参数名“tg”、“count”、“property”]])
+      vgd.EffectTypeIgnition(c,m,LOCATION_MZONE --[[怪兽区域的效果]] ,cm.operation --[[对下文同名函数调用]] ,vgf.OverlayCost(2)--[[调用VgFunction库中[灵魂爆发]的封装函数]],vgf.RMonsterCondition--[[检测这张卡在R位]],tg,count,property--[[往后的参数都没了，可以直接不填，也可以填写“nil（无）”、“false（错误）”或原本参数名“tg”、“count”、“property”]])
        
      end
 
