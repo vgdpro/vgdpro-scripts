@@ -1,16 +1,17 @@
 # vgdpro-scripts写卡说明
 
-  调用库：
+  * 调用库：
   
-    VgD.Lua（完整效果的装封，适用于正常进行vg游戏对局的基础效果库）
+    * VgD.Lua（完整效果的装封，适用于正常进行vg游戏对局的基础效果库）
     
-    VgFuncLib.lua（散装效果的装封，因vg的效果、费用具有高重复度，适用于vg卡片效果的快捷调用）
+    * VgFuncLib.lua（散装效果的装封，因vg的效果、费用具有高重复度，适用于vg卡片效果的快捷调用）
     
-    VgDefinition.Lua（适用于与内核对接）
+    * VgDefinition.Lua（适用于与内核对接）
     
-  函数写在哪？
+  * 函数写在哪？
   
-  [[
+  * [[
+    
     local cm,m,o=GetID()
     
     function cm.initial_effect(c)
