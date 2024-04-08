@@ -561,9 +561,7 @@ function VgD.CardTriggerOperation(chkop,f)
             VgF.AtkUp(c,g,10000,nil)
         elseif c:IsRace(TRRIGGER_ADVANCE) then
             local g=Duel.GetMatchingGroup(VgF.IsSequence,tp,LOCATION_MZONE,0,nil,0,4,5)
-            for tc in VgF.Next(g) do
-                VgF.AtkUp(c,tc,10000,nil)
-            end
+            VgF.AtkUp(c,tc,10000,nil)
         end
         if chkop==0 then
             if c:IsRace(TRRIGGER_SUPER) then
@@ -707,7 +705,7 @@ function VgD.SpellActivate(c,m,op,con,specialchk,num1,num2,num3,num4,num5)
     e1:SetCode(EVENT_FREE_CHAIN)
     e1:SetCountLimit(1,VgID+EFFECT_COUNT_CODE_OATH)
     e1:SetCost(VgD.SpellCost(num1,num2,num3,num4,num5))
-    if VgF.GetValueType(con)=="function" then e1:SetCondition(con) end
+    e1:SetCondition(VgD.SpellCondtion(con))
     e1:SetOperation(VgD.SpellOperation(op))
     c:RegisterEffect(e1)
 end
@@ -830,6 +828,12 @@ function VgD.SpellCostOp(e,tp,eg,ep,ev,re,r,rp,chk,c,mc,num1,num2,num3,num4,num5
         Duel.ChangePosition(g,POS_FACEDOWN)
     end
 end
+function VgD.SpellCondtion(con)
+    return function (e,tp,eg,ep,ev,re,r,rp)
+        if VgF.GetValueType(con)=="function" and not con(e,tp,eg,ep,ev,re,r,rp) then return false end
+        return VgF.LvCondition(e)
+    end
+end
 function VgD.SpellOperation(op)
     return function (e,tp,eg,ep,ev,re,r,rp,bool)
         if op then op(e,tp,eg,ep,ev,re,r,rp) end
@@ -880,14 +884,14 @@ function VgD.BeRidedByCardOpCondtion(e,tp,eg,ep,ev,re,r,rp)
     return eg:GetFirst()==e:GetHandler()
 end
 
-function VgD.EffectTypeTrigger(c,m,loc,type,code,op,cost,con,tg,count,property)
+function VgD.EffectTypeTrigger(c,m,loc,typ,code,op,cost,con,tg,count,property)
     local type2=EFFECT_TYPE_TRIGGER_F
     if VgF.GetValueType(cost)=="function" then type2=EFFECT_TYPE_TRIGGER_O end
-    if not type then type=EFFECT_TYPE_SINGLE end
+    if not typ then typ=EFFECT_TYPE_SINGLE end
     if not loc then loc=LOCATION_MZONE end
     local e1=Effect.CreateEffect(c)
     e1:SetDescription(VgF.Stringid(m,0))
-    e1:SetType(type+type2)
+    e1:SetType(typ+type2)
     e1:SetRange(loc)
     e1:SetCode(code)
     if property and property>0 then e1:SetProperty(property) end

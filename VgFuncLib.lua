@@ -3,6 +3,7 @@ vgf=VgF
 
 function VgF.VgCard(c)
     VgD.Rule(c)
+    VgF.DefineArguments()
     if c:IsType(TYPE_MONSTER) then
         VgD.RideUp(c)
         VgD.CallToR(c)
@@ -18,6 +19,18 @@ function GetID()
 end
 function VgF.Stringid(code,id)
 	return code*16+id
+end
+function VgF.DefineArguments()
+    if not loc then loc=nil end
+    if not typ then typ=nil end
+    if not count then count=nil end
+    if not property then property=nil end
+    if not reset then reset=nil end
+    if not op then op=nil end
+    if not cost then cost=nil end
+    if not con then con=nil end
+    if not tg then tg=nil end
+    if not f then f=nil end
 end
 function VgF.SequenceToGlobal(p,loc,seq)
 	if p~=0 and p~=1 then
@@ -109,10 +122,10 @@ end
 function VgF.RMonsterFilter(c)
     return c:GetSequence()<5
 end
-function VgF.RMonsterCondition(e,c)
+function VgF.RMonsterCondition(e)
     return VgF.RMonsterFilter(e:GetHandler())
 end
-function VgF.VMonsterCondition(e,c)
+function VgF.VMonsterCondition(e)
     return VgF.VMonsterFilter(e:GetHandler())
 end
 function VgF.IsLevel(c,...)
@@ -191,7 +204,7 @@ function VgF.tgoval(e,re,rp)
 	return rp==1-e:GetHandlerPlayer()
 end
 function VgF.Call(g,sumtype,sp,zone)
-    if not zone then zone=0x3f end
+    if not zone then zone=0x1f end
 	return Duel.SpecialSummon(g,sumtype,sp,sp,true,true,POS_FACEUP_ATTACK,zone)
 end
 function VgF.LvCondition(e)
@@ -207,6 +220,17 @@ function VgF.AtkUp(c,g,val,reset)
     if not c or not g then return end
     if not reset then reset=RESET_PHASE+PHASE_END end
     if not val or val==0 then return end
+    if VgF.GetValueType(g)=="Group" and g:GetCount()>0 then
+        for tc in VgF.Next(g) do
+            local e1=Effect.CreateEffect(c)
+            e1:SetType(EFFECT_TYPE_SINGLE)
+            e1:SetCode(EFFECT_UPDATE_ATTACK)
+            e1:SetValue(val)
+            e1:SetReset(RESET_EVENT+RESETS_STANDARD+reset)
+            tc:RegisterEffect(e1)
+        end
+        return
+    end
     local tc=VgF.ReturnCard(g)
     local e1=Effect.CreateEffect(c)
     e1:SetType(EFFECT_TYPE_SINGLE)
@@ -219,6 +243,22 @@ function VgF.StarUp(c,g,val,reset)
     if not c or not g then return end
     if not reset then reset=RESET_PHASE+PHASE_END end
     if not val or val==0 then return end
+    if VgF.GetValueType(g)=="Group" and g:GetCount()>0 then
+        for tc in VgF.Next(g) do
+            local e1=Effect.CreateEffect(c)
+            e1:SetType(EFFECT_TYPE_SINGLE)
+            e1:SetCode(EFFECT_UPDATE_LSCALE)
+            e1:SetProperty(EFFECT_FLAG_SINGLE_RANGE)
+            e1:SetRange(LOCATION_MZONE)
+            e1:SetValue(val)
+            e1:SetReset(RESET_EVENT+RESETS_STANDARD+reset)
+            tc:RegisterEffect(e1)
+            local e2=e1:Clone()
+            e2:SetCode(EFFECT_UPDATE_RSCALE)
+            tc:RegisterEffect(e2)
+        end
+        return
+    end
     local tc=VgF.ReturnCard(g)
     local e1=Effect.CreateEffect(c)
     e1:SetType(EFFECT_TYPE_SINGLE)
