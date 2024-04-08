@@ -8,5 +8,5 @@ function cm.operation(e,tp,eg,ep,ev,re,r,rp)
 	Duel.Draw(tp,1,REASON_EFFECT)
 end
 function cm.condition(e,tp,eg,ep,ev,re,r,rp)
-	return e:GetHandlerPlayer()==1
+	return tp==1 and Duel.GetTurnPlayer()==tp
 end

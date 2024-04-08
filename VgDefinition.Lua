@@ -1,6 +1,5 @@
 VgDefinition={}
-VgID=10101001
-vgid=VgID
+VgID=10000001
 --min/max value
 MIN_ID		=1000		--4 digits, by DataManager::GetDesc()
 MAX_ID		=268435455	--28 bits, by DataManager::GetDesc()
@@ -126,6 +125,7 @@ REASON_LINK			=0x10000000	--用于连接召唤
 REASON_LOST_OVERLAY =0x20000000	--超量素材随着超量怪兽离场
 REASON_MAINTENANCE	=0x40000000	--维持代价
 REASON_ACTION		=0x80000000	--攻击宣言之际等
+REASON_RIDEUP		=REASON_XYZ	--用於骑升
 REASON_PHASEDRAW    =REASON_RULE    --抽卡
 REASON_TRIGGER      =REASON_EFFECT  --判定
 --Location Reason

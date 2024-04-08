@@ -11,9 +11,15 @@ end
 function cm.operation(e,tp,eg,ep,ev,re,r,rp)
 	local c=e:GetHandler()
 	local g=Group.FromCards(c)
-	local sg=Duel.GetMatchingGroup(Card.IsSetCard,tp,LOCATION_MZONE,0,nil,0x3210)
+	local sg=Duel.GetMatchingGroup(Card.IsSetCard,tp,LOCATION_MZONE,0,nil,0x201)
 	if sg then g:Merge(sg) end
 	for tc in VgF.Next(g) do
 		VgF.AtkUp(c,tc,10000,nil)
+	end
+end
+function cm.op(e,tp,eg,ep,ev,re,r,rp)
+	local g=Duel.GetMatchingGroup(nil,tp,LOCATION_DAMAGE,0,nil)
+	for tc in VgF.Next(g) do
+		Duel.ChangePosition(tc,POS_FACEDOWN)
 	end
 end

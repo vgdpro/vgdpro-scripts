@@ -1,4 +1,4 @@
-local cm,m,o=GetID()
-function cm.initial_effect(c)
-	vgf.VgCard(c)
+--能量
+function c10800730.initial_effect(c)
+	
 end

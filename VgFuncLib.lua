@@ -39,6 +39,23 @@ function VgF.SequenceToGlobal(p,loc,seq)
 		return 0
 	end
 end
+function VgF.AddCodeList(c,...)
+	if c:IsStatus(STATUS_COPYING_EFFECT) then return end
+	if c.card_code_list==nil then
+		local mt=getmetatable(c)
+		mt.card_code_list={}
+		for _,code in ipairs{...} do
+			mt.card_code_list[code]=true
+		end
+	else
+		for _,code in ipairs{...} do
+			c.card_code_list[code]=true
+		end
+	end
+end
+function VgF.IsCodeListed(c,code)
+	return c.card_code_list and c.card_code_list[code]
+end
 function VgF.True()
     return true
 end
@@ -174,7 +191,7 @@ function VgF.tgoval(e,re,rp)
 	return rp==1-e:GetHandlerPlayer()
 end
 function VgF.Call(g,sumtype,sp,zone)
-    if not zone then zone=0x7f end
+    if not zone then zone=0x3f end
 	return Duel.SpecialSummon(g,sumtype,sp,sp,true,true,POS_FACEUP_ATTACK,zone)
 end
 function VgF.LvCondition(e)
@@ -237,7 +254,7 @@ function VgF.EnegyCost(num)
             return Duel.IsExistingMatchingCard(Card.IsCode,tp,LOCATION_EMBLEM,0,num,nil,10800730)
         end
         local g=Duel.SelectMatchingCard(tp,Card.IsCode,tp,LOCATION_EMBLEM,0,1,1,nil,10800730)
-        Duel.SendtoGrave(g,REASON_COST)
+        Duel.Sendto(g,tp,0,POS_FACEUP,REASON_COST)
     end
 end
 function VgF.OverlayCost(num)
