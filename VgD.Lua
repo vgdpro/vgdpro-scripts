@@ -102,9 +102,13 @@ function VgD.RideUpOperation(e,tp,eg,ep,ev,re,r,rp)
         e1:SetCode(EFFECT_UPDATE_ATTACK)
         e1:SetTargetRange(LOCATION_MZONE,0)
         e1:SetValue(10000)
+        e1:SetTarget(VgD.SelfRideAtk)
         e1:SetReset(RESET_PHASE+PHASE_END)
         Duel.RegisterEffect(e1,tp)
     end
+end
+function VgD.SelfRideAtk(e,c)
+    return vgf.IsSequence(c,0,4,5)
 end
 function VgD.RideZeroCondition(e,tp,eg,ep,ev,re,r,rp)
     local rc=Duel.GetMatchingGroup(VgF.VMonsterFilter,tp,LOCATION_MZONE,0,nil):GetFirst()
@@ -274,16 +278,23 @@ function VgD.MonsterBattle(c)
     c:RegisterEffect(e5)
     --支援
     local e6=Effect.CreateEffect(c)
-    e6:SetType(EFFECT_TYPE_FIELD+EFFECT_TYPE_CONTINUOUS)
+    e6:SetType(EFFECT_TYPE_FIELD+EFFECT_TYPE_TRIGGER_O)
     e6:SetRange(LOCATION_MZONE)
-    e6:SetCode(EVENT_PRE_DAMAGE_CALCULATE)
+    e6:SetCode(EVENT_ATTACK_ANNOUNCE)
     e6:SetCondition(VgD.SupportCondition)
     e6:SetOperation(VgD.SupportOperation)
     c:RegisterEffect(e6)
+    local e9=Effect.CreateEffect(c)
+    e9:SetType(EFFECT_TYPE_SINGLE)
+    e9:SetProperty(EFFECT_FLAG_SINGLE_RANGE)
+    e9:SetCode(EFFECT_UPDATE_ATTACK)
+    e9:SetRange(LOCATION_MZONE)
+    e9:SetValue(VgD.SupportValue)
+    c:RegisterEffect(e9)
     --防御
     local e7=Effect.CreateEffect(c)
     e7:SetType(EFFECT_TYPE_FIELD+EFFECT_TYPE_TRIGGER_O)
-    e7:SetCode(EVENT_ATTACK_ANNOUNCE)
+    e7:SetCode(EVENT_BATTLE_START)
     e7:SetRange(LOCATION_HAND+LOCATION_MZONE)
     e7:SetCountLimit(1)
     e7:SetCost(VgD.SendToGCost)
@@ -335,6 +346,7 @@ function VgD.MonsterBattle(c)
     e16:SetType(EFFECT_TYPE_SINGLE)
     e16:SetCode(EFFECT_CANNOT_BE_BATTLE_TARGET)
     e16:SetProperty(EFFECT_FLAG_SINGLE_RANGE)
+    e16:SetRange(LOCATION_MZONE)
     e16:SetCondition(VgD.MonsterCannotBeAttackedCondition)
     e16:SetValue(VgF.True)
     c:RegisterEffect(e16)
@@ -387,32 +399,42 @@ function VgD.SupportCondition(e,tp,eg,ep,ev,re,r,rp)
     return VgF.GetColumnGroup(Duel.GetAttacker()):IsContains(e:GetHandler()) and Duel.GetTurnPlayer()==tp and e:GetHandler():IsAttribute(SKILL_SUPPORT)
 end
 function VgD.SupportOperation(e,tp,eg,ep,ev,re,r,rp)
-    if not Duel.SelectYesNo(tp,VgF.Stringid(VgID,7)) then return end
     local c=e:GetHandler()
     Duel.ChangePosition(c,POS_FACEUP_DEFENSE)
-    local e1=Effect.CreateEffect(c)
-    e1:SetType(EFFECT_TYPE_SINGLE)
-    e1:SetCode(EFFECT_UPDATE_ATTACK)
-    e1:SetReset(RESET_EVENT+RESETS_STANDARD+EVENT_DAMAGE_STEP_END)
-    e1:SetValue(c:GetAttack())
-    Duel.GetAttacker():RegisterEffect(e1)
+    Duel.GetAttacker():RegisterFlagEffect(SupportFlag,RESET_EVENT+RESETS_STANDARD+EVENT_DAMAGE_STEP_END,0,1)
+end
+function VgD.SupportValue(e)
+    if Duel.GetAttacker()~=e:GetHandler() then return 0 end
+    local tp=e:GetHandlerPlayer()
+    local g=Duel.GetMatchingGroup(function (c)
+        return c:GetFlagEffect(SupportFlag)>0
+    end,tp,LOCATION_MZONE,0,nil)
+    local atk=0
+    for tc in vgf.Next(g) do
+        atk=atk+tc:GetAttack()
+    end
+    return atk
 end
 function VgD.SendToGCost(e,tp,eg,ep,ev,re,r,rp,chk)
     local c=e:GetHandler()
-    if chk==0 then return not c:IsPublic() and (not Duel.IsPlayerAffectedByEffect(tp,AFFECT_CODE_SendtoG) or Duel.IsExistingMatchingCard(VgF.Not(Card.IsPublic),tp,LOCATION_HAND,0,1,c)) end
-    local g=Group.FromCards(c)
-    if Duel.IsPlayerAffectedByEffect(tp,AFFECT_CODE_SendtoG) and not Duel.IsExistingMatchingCard(Card.IsPublic,tp,LOCATION_HAND,0,2,nil) then
-        local tc=Duel.SelectMatchingCard(tp,VgF.Not(Card.IsPublic),tp,LOCATION_HAND,0,1,1,c)
-        tc=VgF.ReturnCard(tc)
-        e:SetLabelObject(tc)
-        g:AddCard(tc)
-    end
-    for tc in VgF.Next(g) do
-        local e1=Effect.CreateEffect(c)
-        e1:SetType(EFFECT_TYPE_SINGLE)
-        e1:SetCode(EFFECT_PUBLIC)
-        e1:SetReset(RESET_EVENT+RESETS_STANDARD+EVENT_CHAIN_SOLVED)
-        tc:RegisterEffect(e1)
+    if c:IsLocation(LOCATION_MZONE) then
+        if chk==0 then return true end
+    else
+        if chk==0 then return not c:IsPublic() and (not Duel.IsPlayerAffectedByEffect(tp,AFFECT_CODE_SendtoG) or Duel.IsExistingMatchingCard(VgF.Not(Card.IsPublic),tp,LOCATION_HAND,0,1,c)) end
+        local g=Group.FromCards(c)
+        if Duel.IsPlayerAffectedByEffect(tp,AFFECT_CODE_SendtoG) and not Duel.IsExistingMatchingCard(Card.IsPublic,tp,LOCATION_HAND,0,2,nil) then
+            local tc=Duel.SelectMatchingCard(tp,VgF.Not(Card.IsPublic),tp,LOCATION_HAND,0,1,1,c)
+            tc=VgF.ReturnCard(tc)
+            e:SetLabelObject(tc)
+            g:AddCard(tc)
+        end
+        for tc in VgF.Next(g) do
+            local e1=Effect.CreateEffect(c)
+            e1:SetType(EFFECT_TYPE_SINGLE)
+            e1:SetCode(EFFECT_PUBLIC)
+            e1:SetReset(RESET_EVENT+RESETS_STANDARD+EVENT_CHAIN_SOLVED)
+            tc:RegisterEffect(e1)
+        end
     end
 end
 function VgD.SendToGCondition(e,tp,eg,ep,ev,re,r,rp)

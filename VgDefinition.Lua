@@ -882,6 +882,7 @@ AttackTriggerFlag       =VgID+1 --多次攻击判定标识
 DamageTriggerFlag       =VgID+2 --多次伤害判定标识
 DefenseEntirelyFlag     =VgID+3 --完全防御标识
 ConditionFlag           =VgID+4 --处于XX状态标识
+SupportFlag             =VgID+5 --支援状态标识
 --AffectedByEffect
 AFFECT_CODE_MIX         =VgID   --魔合成
 AFFECT_CODE_SendtoG     =VgID+1 --

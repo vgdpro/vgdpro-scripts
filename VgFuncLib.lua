@@ -253,7 +253,7 @@ function VgF.EnegyCost(num)
         if chk==0 then
             return Duel.IsExistingMatchingCard(Card.IsCode,tp,LOCATION_EMBLEM,0,num,nil,10800730)
         end
-        local g=Duel.SelectMatchingCard(tp,Card.IsCode,tp,LOCATION_EMBLEM,0,1,1,nil,10800730)
+        local g=Duel.SelectMatchingCard(tp,Card.IsCode,tp,LOCATION_EMBLEM,0,num,num,nil,10800730)
         Duel.Sendto(g,tp,0,POS_FACEUP,REASON_COST)
     end
 end
