@@ -12,59 +12,59 @@
   
   * [[
     
-    local cm,m,o=GetID()
+    * local cm,m,o=GetID()
     
-    function cm.initial_effect(c)
+    * function cm.initial_effect(c)
     
-    	vgf.VgCard(c)
+    * vgf.VgCard(c)
      
-      xxx.function(x)
+    * xxx.function(x)
       
-    end
+    * end
     
-    ]]
+  * ]]
     
-    cm.initial_effect函数下用于写入效果注册
+    * cm.initial_effect函数下用于写入效果注册
     
-    可以在所需位置填写匿名函数
+    * 可以在所需位置填写匿名函数
     
-    或在此函数后写所需函数
+    * 或在此函数后写所需函数
     
-  调用函数库
+  * 调用函数库
   
-    写在前面
+    * 写在前面
     
-      vg的效果类型
+      * vg的效果类型
       
-        【起】启动效果
+        * 【起】启动效果
         
-        【自】诱发效果（有费用的自能力为诱发选发效果而无费用的为诱发必发效果）
+        * 【自】诱发效果（有费用的自能力为诱发选发效果而无费用的为诱发必发效果）
         
-        【永】永续效果
+        * 【永】永续效果
         
-        以及指令能力（等价于游戏王中的魔法卡的发动）
+        * 以及指令能力（等价于游戏王中的魔法卡的发动）
         
-      vg的效果是允许空发的，所以vgdpro的脚本大多不需要为效果注册Target函数（效果的预处理对象函数）
+      * vg的效果是允许空发的，所以vgdpro的脚本大多不需要为效果注册Target函数（效果的预处理对象函数）
       
-    VgD库
+    * VgD库
     
-      VgD.SpellActivate(c,m,执行函数,条件函数,特殊的费用标识（填写卡号否则为0，适用于存在对于一下参数均适用的费用）,将手牌中的x张卡舍弃,能量爆发x,灵魂爆发x,灵魂填充x,计数爆发x) *下见①
+      * VgD.SpellActivate(c,m,执行函数,条件函数,特殊的费用标识（填写卡号否则为0，适用于存在对于一下参数均适用的费用）,将手牌中的x张卡舍弃,能量爆发x,灵魂爆发x,灵魂填充x,计数爆发x) *下见①
       
-      VgD.BeRidedByCard(c,m,卡号（被指定卡RIDE的情况下填写对应卡号否则填0）,执行函数,费用函数,条件函数,效果的预处理对象函数) *下见③
+      * VgD.BeRidedByCard(c,m,卡号（被指定卡RIDE的情况下填写对应卡号否则填0）,执行函数,费用函数,条件函数,效果的预处理对象函数) *下见③
       
-      VgD.EffectTypeTrigger(c,m,发动的区域（vg的描述中会在效果类型后描述这个效果在哪些区域适用）,自身状态变化触发/场上所以卡状态变化触发 *下见②,对应的时点,执行函数,费用函数,条件函数,效果的预处理对象函数,效果的次数限制,效果的性质 *下见④)
+      * VgD.EffectTypeTrigger(c,m,发动的区域（vg的描述中会在效果类型后描述这个效果在哪些区域适用）,自身状态变化触发/场上所以卡状态变化触发 *下见②,对应的时点,执行函数,费用函数,条件函数,效果的预处理对象函数,效果的次数限制,效果的性质 *下见④)
       
-      VgD.EffectTypeIgnition(c,m,发动的区域,执行函数,费用函数,条件函数,效果的预处理对象函数,效果的次数限制,效果的性质 *下见④)
+      * VgD.EffectTypeIgnition(c,m,发动的区域,执行函数,费用函数,条件函数,效果的预处理对象函数,效果的次数限制,效果的性质 *下见④)
       
-    VgFunction库
+    * VgFunction库
     
-      VgF.VgCard(c) *下见⑤
+      * VgF.VgCard(c) *下见⑤
       
-      VgF.Stringid(卡号,行数) *下见⑥
+      * VgF.Stringid(卡号,行数) *下见⑥
       
-      VgF.VMonsterFilter(Card c)/VgF.VMonsterCondition(e)  VgF.RMonsterFilter(Card c)/VgF.RMonsterCondition(e) *下见⑦
+      * VgF.VMonsterFilter(Card c)/VgF.VMonsterCondition(e)  VgF.RMonsterFilter(Card c)/VgF.RMonsterCondition(e) *下见⑦
       
-      VgF.IsLevel(Card c,... *下见⑧) *下见⑨
+      * VgF.IsLevel(Card c,... *下见⑧) *下见⑨
       
 # 注释
 
