@@ -141,17 +141,17 @@ VgD.SpellActivate(c, m, op, con[, chk, dis, eb, sb, sc, cb])
 
 参数注释
 
-> **chk : 特殊的费用标识（填写卡号否则为0, 适用于存在以下参数不适用的费用） 不填默认为 nil**
+> **chk : 特殊的费用标识（填写卡号否则为0, 适用于存在以下参数不适用的费用） `不填默认为 nil`**
 > 
-> **dis : 将手牌中的x张卡舍弃 不填默认为 0**
+> **dis : 将手牌中的x张卡舍弃 `不填默认为 0`**
 > 
-> **eb : 能量爆发x (Energy Blast) 不填默认为 0**
+> **eb : 能量爆发x (Energy Blast) `不填默认为 0`**
 > 
-> **sb : 灵魂爆发x (Soul Blast) 不填默认为 0**
+> **sb : 灵魂爆发x (Soul Blast) `不填默认为 0`**
 >
-> **sc : 灵魂填充x (Soul Charge) 不填默认为 0**
+> **sc : 灵魂填充x (Soul Charge) `不填默认为 0`**
 > 
-> **cb : 计数爆发x (Counter Blast) 不填默认为 0**
+> **cb : 计数爆发x (Counter Blast) `不填默认为 0`**
 
 范例 : [骤阳之进化](c10101015.lua)
 
@@ -207,9 +207,9 @@ VgD.EffectTypeTrigger(c, m, loc, typ, code[, op, cost, con, tg, count, property]
 
 参数注释
 
-> **loc : 发动的区域（vg的描述中会在效果类型后描述这个效果在哪些区域适用） 填 nil 则默认为 LOCATION_MZONE **
+> **loc : 发动的区域（vg的描述中会在效果类型后描述这个效果在哪些区域适用） `填 nil 则默认为 LOCATION_MZONE`**
 > 
-> **typ : 自身状态变化触发/场上的卡状态变化触发 填 nil 则填默认为 EFFECT_TYPE_SINGLE **
+> **typ : 自身状态变化触发/场上的卡状态变化触发 `填 nil 则填默认为 EFFECT_TYPE_SINGLE`**
 > 
 > **code : 对应的时点**
 >
@@ -262,7 +262,7 @@ VgD.EffectTypeIgnition(c, m[, loc, op, cost, con, tg, count, property])
 
 参数注释
 
-> **loc : 发动的区域（vg的描述中会在效果类型后描述这个效果在哪些区域适用） 填 nil 则默认为 LOCATION_MZONE **
+> **loc : 发动的区域（vg的描述中会在效果类型后描述这个效果在哪些区域适用） `填 nil 则默认为 LOCATION_MZONE`**
 > 
 > **count : 效果的次数限制**
 >
