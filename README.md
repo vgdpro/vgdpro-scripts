@@ -136,7 +136,7 @@ end
 因为魔合成的不向下兼容而生的函数, 用于通常指令的注册
 
 ```lua
-VgD.SpellActivate(c, m, op, con[, chk, dis, eb, sb, sc, cb])
+vgd.SpellActivate(c, m, op, con[, chk, dis, eb, sb, sc, cb])
 ```
 
 参数注释
@@ -175,7 +175,7 @@ end
 用于被RIDE时效果的注册
 
 ```lua
-VgD.BeRidedByCard(c, m[, code, op, cost, con, tg])
+vgd.BeRidedByCard(c, m[, code, op, cost, con, tg])
 ```
 
 参数注释
@@ -202,7 +202,7 @@ end
 用于触发类型效果的注册
 
 ```lua
-VgD.EffectTypeTrigger(c, m, loc, typ, code[, op, cost, con, tg, count, property])
+vgd.EffectTypeTrigger(c, m, loc, typ, code[, op, cost, con, tg, count, property])
 ```
 
 参数注释
@@ -280,5 +280,96 @@ function cm.initial_effect(c)
 end
 function cm.filter(c)
 	return vgf.IsLevel(c,0)
+end
+```
+
+# [VgFuncLib](VgFuncLib.lua)函数库详解
+
+## 1.每个卡的必备
+
+VgD库内的函数装封，每张可入卡组的卡必须注册
+
+```lua
+vgf.VgCard(c)
+```
+
+## 2.提示文字
+
+挂钩于 cdb 中对应`卡号为 m 的卡`右下角脚本提示文字`第 id + 1 行`
+
+```lua
+vgf.Stringid(m, id)
+```
+
+## 3.指定卡名
+
+用于某些指定卡名的效果（比如【超限舞装】的指定卡名）
+
+```lua
+vgf.AddCodeList(c, ...)
+```
+
+参数注释
+
+> **... : 可填入多个参数**
+
+范例 : [瓦尔里纳](c10101006.lua)
+
+> **【超限舞装】-「托里科斯塔」（作为通常CALL到R上的代替，也可以将这张卡重叠在指定的单位上登场。）**
+
+```lua
+local cm,m,o=GetID()
+function cm.initial_effect(c)
+	vgf.VgCard(c)
+	-- 托里科斯塔 的卡号为 10101009
+	vgf.AddCodeList(c,10101009)
+end
+```
+
+## 4.先导者/后防者的判断
+
+用于判断`某张卡/某个效果的持有者`是否为`先导者/后防者`, 返回 `boolean` 值
+
+```lua
+-- 是否为先导者的判断
+vgf.VMonsterFilter(c)
+vgf.VMonsterCondition(e)
+
+-- 是否为后防者的判断
+vgf.RMonsterFilter(c)
+vgf.RMonsterCondition(e)
+```
+
+参数注释
+
+> **c : 要判断的卡**
+> 
+> **e : 要判断的效果**
+
+> 实际上 : **vgf.VMonsterCondition(e) == vgf.VMonsterFilter(e:GetHandler())**
+>
+> 后防者的判断同理
+
+范例 : [瓦尔里纳](c10101006.lua)
+
+> **【自】【R】：处于【超限舞装】状态的这个单位攻击先导者时，这次战斗中，这个单位的力量+10000。接着通过【费用】[灵魂爆发2]，选择对手的1张后防者，退场。**
+
+```lua
+local cm,m,o=GetID()
+function cm.initial_effect(c)
+	vgf.VgCard(c)
+	-- 处于【超限舞装】状态的这个单位攻击先导者时，这次战斗中，这个单位的力量+10000
+	vgd.EffectTypeTrigger(c, m, LOCATION_MZONE, EFFECT_TYPE_SINGLE, EVENT_ATTACK_ANNOUNCE, cm.operation2, nil, cm.condition2)
+end
+function cm.condition2(e,tp,eg,ep,ev,re,r,rp)
+	local c=e:GetHandler()
+	-- vgf.RMonsterCondition(e) 判断 e的持有者(即这张卡) 是否为后防者
+	-- vgf.VMonsterFilter(Duel.GetAttackTarget()) 判断 被攻击的卡 是否为先导者
+	return vgf.RMonsterCondition(e) and c:GetFlagEffectLabel(ConditionFlag)==201 and vgf.VMonsterFilter(Duel.GetAttackTarget())
+end
+function cm.operation2(e,tp,eg,ep,ev,re,r,rp)
+	local c=e:GetHandler()
+	VgF.AtkUp(c,c,10000,nil)
+	Duel.RaiseEvent(c,EVENT_CUSTOM+m,e,0,tp,tp,0)
 end
 ```
