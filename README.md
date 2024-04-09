@@ -170,9 +170,7 @@ end
 
 ## 2.被RIDE时
 
-用于如以下效果的注册
-
-> **这个单位被RIDE时, xxxx**
+用于被RIDE时效果的注册
 
 ```lua
 VgD.BeRidedByCard(c, m[, code, op, cost, con, tg])
