@@ -15,7 +15,7 @@
 4. [基础常量介绍](#typecodeproperty都具体有啥)
 5. [VgD函数库详解](#vgd函数库详解)
    1. [指令卡cost](#1指令卡cost).
-   2. [被RIDE时](#2被RIDE时).
+   2. [被RIDE时](#2被ride时).
       
 </details>
 
