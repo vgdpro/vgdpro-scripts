@@ -97,6 +97,16 @@ function VgF.ReturnCard(g)
     end
     return tc
 end
+function VgF.GetCardsFromGroup(g,num)
+    if VgF.GetValueType(g)=="Group" then
+        local sg=Group.CreateGroup()
+        for tc in VgF.Next(g) do
+            if sg:GetCount()>=num then break end
+            sg:AddCard(tc)
+        end
+        return sg
+    end
+end
 bit={}
 function bit.band(a,b)
 	return a&b
@@ -293,7 +303,8 @@ function VgF.EnegyCost(num)
         if chk==0 then
             return Duel.IsExistingMatchingCard(Card.IsCode,tp,LOCATION_EMBLEM,0,num,nil,10800730)
         end
-        local g=Duel.SelectMatchingCard(tp,Card.IsCode,tp,LOCATION_EMBLEM,0,num,num,nil,10800730)
+        local sg=Duel.GetMatchingGroup(tp,Card.IsCode,tp,LOCATION_EMBLEM,0,nil,10800730)
+        local g=VgF.GetCardsFromGroup(sg,num)
         Duel.Sendto(g,tp,0,POS_FACEUP,REASON_COST)
     end
 end
