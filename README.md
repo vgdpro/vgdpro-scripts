@@ -164,3 +164,22 @@ VgD.BeRidedByCard(c, m[, code, op, cost, con, tg])
 > **cost : 效果的费用**
 > 
 > **tg : 效果的预处理对象函数**
+
+VgD.EffectTypeTrigger(c,m,啟動的區域（vg的描述中會在效果類型後描述效果在哪些區域適用）,自身狀態變化觸發/場上所以卡狀態變化觸發 *下見①,對應的時點,執行函數,費用函數,條件函數,效果的建構物件函數,效果的限制次數,效果的性質*下見②)
+
+## 3.被RIDE时
+
+用于如以下效果的注册
+
+> **这个单位被RIDE时, xxxx**
+
+```lua
+VgD.EffectTypeTrigger(c, m, loc, typ, code[, op, cost, con, tg, count, property])
+```
+
+参数注释
+> **code : 被指定卡 RIDE 的情况下填写对应卡号, 否则填0**
+> 
+> **cost : 效果的费用**
+> 
+> **tg : 效果的预处理对象函数**
