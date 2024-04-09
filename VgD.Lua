@@ -404,16 +404,25 @@ function VgD.SupportOperation(e,tp,eg,ep,ev,re,r,rp)
     Duel.GetAttacker():RegisterFlagEffect(SupportFlag,RESET_EVENT+RESETS_STANDARD+EVENT_DAMAGE_STEP_END,0,1)
 end
 function VgD.SupportValue(e)
-    if Duel.GetAttacker()~=e:GetHandler() then return 0 end
-    local tp=e:GetHandlerPlayer()
-    local g=Duel.GetMatchingGroup(function (c)
-        return c:GetFlagEffect(SupportFlag)>0
-    end,tp,LOCATION_MZONE,0,nil)
-    local atk=0
-    for tc in vgf.Next(g) do
-        atk=atk+tc:GetAttack()
+        local tp=e:GetHandlerPlayer()
+        local atk=0
+        if Duel.GetAttacker()==e:GetHandler() then
+        local g=Duel.GetMatchingGroup(function (c)
+            return c:GetFlagEffect(SupportFlag)>0
+        end,tp,LOCATION_MZONE,0,nil)
+        for tc in vgf.Next(g) do
+            atk=atk+tc:GetAttack()
+        end
+        return atk
+    elseif Duel.GetAttackTarget()==e:GetHandler() then
+        local g=Duel.GetMatchingGroup(nil,tp,LOCATION_GZONE,0,nil)
+        for tc in vgf.Next(g) do
+            atk=atk+tc:GetAttack()
+        end
+        return atk
+    else
+        return 0
     end
-    return atk
 end
 function VgD.SendToGCost(e,tp,eg,ep,ev,re,r,rp,chk)
     local c=e:GetHandler()
@@ -446,20 +455,13 @@ function VgD.SendToGOperation(e,tp,eg,ep,ev,re,r,rp)
     local c=e:GetHandler()
     local bc=Duel.GetAttackTarget()
     if not bc or not VgF.IsAbleToGZone(c) or not c:IsRelateToEffect(e) then return false end
-    local def=c:GetDefense()
     local tc=e:GetLabelObject()
     local g=Group.FromCards(c)
     if tc then
         tc=VgF.ReturnCard(tc)
         g:AddCard(tc)
-        if tc:GetDefense()>0 then
-            def=def+tc:GetDefense()>0
-        end
     end
     Duel.Sendto(g,tp,LOCATION_GZONE,POS_FACEUP,REASON_EFFECT)
-    if def>0 then
-        VgF.AtkUp(c,bc,def,nil)
-    end
 end
 function VgD.GToGraveOperation(e,tp,eg,ep,ev,re,r,rp)
     local c=e:GetHandler()
