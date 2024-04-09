@@ -1,8 +1,20 @@
 # vgdpro的卡片脚本编写文档
 
-本游戏的脚本基于lua。使用自定义库：[VgD.lua](VgD.Lua),`VgDefinition.Lua`,`VgFuncLib.lua`来涵括大部分需要的内容。
+> 本游戏的脚本基于lua。使用自定义库: [VgD.lua](VgD.Lua), [VgDefinition.Lua](VgDefinition.Lua), [VgFuncLib.lua](VgFuncLib.Lua) 来涵括大部分需要的内容。
 大家写脚本基本只需要一些基础的逻辑整理和调用对应的库就能完成编写。以下是一些最基础的教程
 如果还有不懂可以加群：721095458
+
+<details>
+  <summary>目录（单击展开）</summary>
+  
+1. [默认脚本](#默认白板卡片脚本即默认脚本)
+3. [关于vgd的效果分类](#关于vgd的效果分类)
+4. [删除 PonderTag 内的的关联物品](#其三-去芜存菁)
+5. [删除已有的 PonderTag](#其四-一扫而空)
+6. [机械动力自带的 PonderTag](#其五-承上启下)
+</details>
+
+
 ## 默认白板卡片脚本（即默认脚本）
 
 ```lua
