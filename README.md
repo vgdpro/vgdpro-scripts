@@ -1,6 +1,6 @@
 # vgdpro的卡片脚本编写文档
 
-本游戏的脚本基于lua。使用自定义库：`VgD.lua`,`VgDefinition.Lua`,`VgFuncLib.lua`来涵括大部分需要的内容。
+本游戏的脚本基于lua。使用自定义库：`VgD.lua`(VgD.Lua),`VgDefinition.Lua`,`VgFuncLib.lua`来涵括大部分需要的内容。
 大家写脚本基本只需要一些基础的逻辑整理和调用对应的库就能完成编写。以下是一些最基础的教程
 如果还有不懂可以加群：721095458
 ## 默认白板卡片脚本（即默认脚本）
