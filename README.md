@@ -1,7 +1,9 @@
 # vgdpro的卡片脚本编写文档
 
 > 本游戏的脚本基于lua。使用自定义库: [VgD.lua](VgD.Lua), [VgDefinition.Lua](VgDefinition.Lua), [VgFuncLib.lua](VgFuncLib.Lua) 来涵括大部分需要的内容。
+
 大家写脚本基本只需要一些基础的逻辑整理和调用对应的库就能完成编写。以下是一些最基础的教程
+
 如果还有不懂可以加群：721095458
 
 <details>
@@ -12,6 +14,8 @@
 3. [效果注册范例](#效果注册范例)
 4. [基础常量介绍](#typecodeproperty都具体有啥)
 5. [VgD函数库详解](#VgD函数库详解)
+   1. [指令卡cost](#1指令卡cost)
+      
 </details>
 
 
@@ -104,20 +108,33 @@ end
  
 # VgD函数库详解
 
+## 1.指令卡cost
+
+因为魔合成的不向下兼容而生的函数, 用于通常指令的注册, 如效果:
+
+==通过【费用】[计数爆发1]施放！选择你的1个单位, 这个回合中, 力量+5000。选择你的弃牌区中的1张「瓦尔里纳」, 加入手牌==
+
 ```lua
-	VgD.SpellActivate(c, m, op, con, cost, dis, eb, sb, sc, cb)
-	--[[
-	op	-> 效果的内容
-	con	-> 效果的条件
-	cost	-> 特殊的费用标识（填写卡号否则为0，适用于存在对于一下参数均适用的费用）
-	dis	-> 将手牌中的x张卡舍弃
-	eb	-> 能量爆发x 
-	sb	-> 灵魂爆发x (soul blast)
-	sc	-> 灵魂填充x (soul charge)
-	cb	-> 计数爆发x (counter blast)
-	--]]
+	VgD.SpellActivate(c, m, op, con[, cost, dis, eb, sb, sc, cb])
 ```
 
-因为魔合成的不向下兼容而生的函数, 用于通常指令的注册, 如效果:==通过【费用】[计数爆发1]施放！选择你的1个单位, 这个回合中, 力量+5000。选择你的弃牌区中的1张「瓦尔里纳」, 加入手牌==
-`c`:
-`m`:
+参数注释
+> `c` : 注册这个效果的卡
+> 
+> `m` : 这张卡的卡号
+> 
+> `op` : 效果的内容
+> 
+> `con` : 效果的条件
+> 
+> `cost` : 特殊的费用标识（填写卡号否则为0，适用于存在对于一下参数均适用的费用）
+> 
+> `dis` : 将手牌中的x张卡舍弃
+> 
+> `eb` : 能量爆发x (Energy Blast)
+> 
+> `sb` : 灵魂爆发x (Soul Blast)
+>
+> `sc` : 灵魂填充x (Soul Charge)
+> 
+> `cb` : 计数爆发x (Counter Blast)
