@@ -206,9 +206,9 @@ VgD.EffectTypeTrigger(c, m, loc, typ, code[, op, cost, con, tg, count, property]
 
 参数注释
 
-> **loc : 发动的区域（vg的描述中会在效果类型后描述这个效果在哪些区域适用）**
+> **loc : 发动的区域（vg的描述中会在效果类型后描述这个效果在哪些区域适用） 填 nil 则默认为 LOCATION_MZONE **
 > 
-> **typ : 自身状态变化触发/场上的卡状态变化触发**
+> **typ : 自身状态变化触发/场上的卡状态变化触发 填 nil 则填默认为 EFFECT_TYPE_SINGLE **
 > 
 > **code : 对应的时点**
 >
@@ -248,5 +248,36 @@ function cm.operation3(e,tp,eg,ep,ev,re,r,rp)
 		Duel.HintSelection(g)
 		Duel.SendtoGrave(g,REASON_EFFECT)
 	end
+end
+```
+
+## 4.启动类效果
+
+用于启动类型效果的注册
+
+```lua
+VgD.EffectTypeIgnition(c, m[, loc, op, cost, con, tg, count, property])
+```
+
+参数注释
+
+> **loc : 发动的区域（vg的描述中会在效果类型后描述这个效果在哪些区域适用） 填 nil 则默认为 LOCATION_MZONE **
+> 
+> **count : 效果的次数限制**
+>
+> **property : 效果的性质**
+
+范例 : [天轮圣龙 涅槃](c10101001.lua)
+
+> **【起】【V】【1回合1次】：通过【费用】[将手牌中的1张卡舍弃]，选择你的弃牌区中的1张等级0的卡，CALL到R上。**
+
+```lua
+local cm,m,o=GetID()
+function cm.initial_effect(c)
+	vgf.VgCard(c)
+	vgd.EffectTypeIgnition(c, m, LOCATION_MZONE, vgf.SearchCardSpecialSummon(LOCATION_DROP,cm.filter), vgf.DisCardCost(1), nil, nil, 1)
+end
+function cm.filter(c)
+	return vgf.IsLevel(c,0)
 end
 ```
