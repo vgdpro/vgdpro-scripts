@@ -167,6 +167,21 @@ VgD.BeRidedByCard(c, m[, code, op, cost, con, tg])
 
 > **code : 被指定卡 RIDE 的情况下填写对应卡号, 否则填0**
 
+范例 : [焰之巫女 莉诺](c10101003.lua)
+
+> **这个单位被「焰之巫女 蕾尤」RIDE时，从你的牌堆里探寻至多1张「托里科斯塔」，CALL到R上，然后牌堆洗切。**
+
+```lua
+local cm,m,o=GetID()
+function cm.initial_effect(c)
+	vgf.VgCard(c)
+	vgd.BeRidedByCard(c, m, 10101002, vgf.SearchCardSpecialSummon(LOCATION_DECK,cm.filter))
+end
+function cm.filter(c)
+    return c:IsCode(10101009)
+end
+```
+
 ## 3.触发类效果
 
 用于触发类型效果的注册
@@ -189,13 +204,16 @@ VgD.EffectTypeTrigger(c, m, loc, typ, code[, op, cost, con, tg, count, property]
 
 范例 : [瓦尔里纳](c10101006.lua)
 
-> **【自】【R】：处于【超限舞装】状态的这个单位攻击先导者时，这次战斗中，这个单位的力量+10000。**
+> **【自】【R】：处于【超限舞装】状态的这个单位攻击先导者时，这次战斗中，这个单位的力量+10000。接着通过【费用】[灵魂爆发2]，选择对手的1张后防者，退场。**
 
 ```lua
 local cm,m,o=GetID()
 function cm.initial_effect(c)
 	vgf.VgCard(c)
+	-- 处于【超限舞装】状态的这个单位攻击先导者时，这次战斗中，这个单位的力量+10000
 	vgd.EffectTypeTrigger(c, m, LOCATION_MZONE, EFFECT_TYPE_SINGLE, EVENT_ATTACK_ANNOUNCE, cm.operation2, nil, cm.condition2)
+	-- 接着通过【费用】[灵魂爆发2]，选择对手的1张后防者，退场。
+	vgd.EffectTypeTrigger(c, m, LOCATION_MZONE, EFFECT_TYPE_FIELD, EVENT_CUSTOM+m, cm.operation3, vgf.OverlayCost(2), cm.condition3)
 end
 function cm.operation2(e,tp,eg,ep,ev,re,r,rp)
 	local c=e:GetHandler()
@@ -205,5 +223,16 @@ end
 function cm.condition2(e,tp,eg,ep,ev,re,r,rp)
 	local c=e:GetHandler()
 	return vgf.RMonsterCondition(e) and c:GetFlagEffectLabel(ConditionFlag)==201 and vgf.VMonsterFilter(Duel.GetAttackTarget())
+end
+function cm.condition3(e,tp,eg,ep,ev,re,r,rp)
+	return eg:GetFirst()==e:GetHandler()
+end
+function cm.operation3(e,tp,eg,ep,ev,re,r,rp)
+	Duel.Hint(HINT_SELECTMSG,tp,HINTMSG_LEAVEONFIELD)
+	local g=Duel.SelectTarget(tp,vgf.RMonsterFilter,tp,0,LOCATION_MZONE,1,1,nil)
+	if g then
+		Duel.HintSelection(g)
+		Duel.SendtoGrave(g,REASON_EFFECT)
+	end
 end
 ```
