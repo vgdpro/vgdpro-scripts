@@ -131,9 +131,7 @@ end
 
 ## 1.指令卡cost
 
-因为魔合成的不向下兼容而生的函数, 用于通常指令的注册, 如效果:
-
-> **通过【费用】[计数爆发1]施放！选择你的1个单位, 这个回合中, 力量+5000。选择你的弃牌区中的1张「瓦尔里纳」, 加入手牌**
+因为魔合成的不向下兼容而生的函数, 用于通常指令的注册
 
 ```lua
 VgD.SpellActivate(c, m, op, con[, chk, dis, eb, sb, sc, cb])
@@ -152,6 +150,22 @@ VgD.SpellActivate(c, m, op, con[, chk, dis, eb, sb, sc, cb])
 > **sc : 灵魂填充x (Soul Charge) 不填默认为 0**
 > 
 > **cb : 计数爆发x (Counter Blast) 不填默认为 0**
+
+范例 : [骤阳之进化](c10101015.lua)
+
+> **通过【费用】[计数爆发1]施放！**
+> **选择你的1个单位，这个回合中，力量+5000。选择你的弃牌区中的1张「瓦尔里纳」，加入手牌。**
+
+```lua
+local cm,m,o=GetID()
+function cm.initial_effect(c)
+    vgf.VgCard(c)
+    vgd.SpellActivate(c,m,vgf.SearchCard(LOCATION_DROP,cm.filter))
+end
+function cm.filter(c)
+    return c:IsCode(10101006)
+end
+```
 
 ## 2.被RIDE时
 
