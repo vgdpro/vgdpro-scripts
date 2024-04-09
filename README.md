@@ -122,6 +122,10 @@ end
 > **m : 这张卡的卡号**
 >
 > **con : 效果的条件**
+> 
+> **cost : 效果的费用**
+>
+> **tg : 效果的预处理对象函数**
 >
 > **op : 效果的内容**
 
@@ -132,11 +136,12 @@ end
 > **通过【费用】[计数爆发1]施放！选择你的1个单位, 这个回合中, 力量+5000。选择你的弃牌区中的1张「瓦尔里纳」, 加入手牌**
 
 ```lua
-VgD.SpellActivate(c, m, op, con[, cost, dis, eb, sb, sc, cb])
+VgD.SpellActivate(c, m, op, con[, chk, dis, eb, sb, sc, cb])
 ```
 
 参数注释
-> **cost : 特殊的费用标识（填写卡号否则为0, 适用于存在以下参数不适用的费用） 不填默认为 nil**
+
+> **chk : 特殊的费用标识（填写卡号否则为0, 适用于存在以下参数不适用的费用） 不填默认为 nil**
 > 
 > **dis : 将手牌中的x张卡舍弃 不填默认为 0**
 > 
@@ -159,27 +164,46 @@ VgD.BeRidedByCard(c, m[, code, op, cost, con, tg])
 ```
 
 参数注释
+
 > **code : 被指定卡 RIDE 的情况下填写对应卡号, 否则填0**
-> 
-> **cost : 效果的费用**
-> 
-> **tg : 效果的预处理对象函数**
 
-VgD.EffectTypeTrigger(c,m,啟動的區域（vg的描述中會在效果類型後描述效果在哪些區域適用）,自身狀態變化觸發/場上所以卡狀態變化觸發 *下見①,對應的時點,執行函數,費用函數,條件函數,效果的建構物件函數,效果的限制次數,效果的性質*下見②)
+## 3.触发类效果
 
-## 3.被RIDE时
-
-用于如以下效果的注册
-
-> **这个单位被RIDE时, xxxx**
+用于触发类型效果的注册
 
 ```lua
 VgD.EffectTypeTrigger(c, m, loc, typ, code[, op, cost, con, tg, count, property])
 ```
 
 参数注释
-> **code : 被指定卡 RIDE 的情况下填写对应卡号, 否则填0**
+
+> **loc : 发动的区域（vg的描述中会在效果类型后描述这个效果在哪些区域适用）**
 > 
-> **cost : 效果的费用**
+> **typ : 自身状态变化触发/场上的卡状态变化触发**
 > 
-> **tg : 效果的预处理对象函数**
+> **code : 对应的时点**
+>
+> **count : 效果的次数限制**
+>
+> **property : 效果的性质**
+
+范例 : [瓦尔里纳](c10101006.lua)
+
+> **【自】【R】：处于【超限舞装】状态的这个单位攻击先导者时，这次战斗中，这个单位的力量+10000。**
+
+```lua
+local cm,m,o=GetID()
+function cm.initial_effect(c)
+	vgf.VgCard(c)
+	vgd.EffectTypeTrigger(c, m, LOCATION_MZONE, EFFECT_TYPE_SINGLE, EVENT_ATTACK_ANNOUNCE, cm.operation2, nil, cm.condition2)
+end
+function cm.operation2(e,tp,eg,ep,ev,re,r,rp)
+	local c=e:GetHandler()
+	VgF.AtkUp(c,c,10000,nil)
+	Duel.RaiseEvent(c,EVENT_CUSTOM+m,e,0,tp,tp,0)
+end
+function cm.condition2(e,tp,eg,ep,ev,re,r,rp)
+	local c=e:GetHandler()
+	return vgf.RMonsterCondition(e) and c:GetFlagEffectLabel(ConditionFlag)==201 and vgf.VMonsterFilter(Duel.GetAttackTarget())
+end
+```
