@@ -11,8 +11,7 @@
 2. [关于vgd的效果分类](#关于vgd的效果分类)
 3. [效果注册范例](#效果注册范例)
 4. [基础常量介绍](#typecodeproperty都具体有啥)
-5. [函数库详解](#函数库详解)
-   1. [VgD函数](#VgD函数)
+5. [VgD函数库详解](#VgD函数库详解)
 </details>
 
 
@@ -55,24 +54,28 @@ vg常见的效果类型
 --默认内容
 local cm,m,o=GetID()
 function cm.initial_effect(c)
-	  vgf.VgCard(c)
-	  --在这之后加入需要注册的效果
-	  local e1=Effect.CreateEffect(c)--创建一个效果
-    e1:SetType(EFFECT_TYPE_SINGLE+EFFECT_TYPE_CONTINUOUS)--效果的类型
-    e1:SetCode(EVENT_BE_MATERIAL)--什么情况下会发动这个效果
-    e1:SetProperty(EFFECT_FLAG_EVENT_PLAYER)--我也不懂这是干啥的
-    e1:SetCondition(cm.condition)--效果的条件
-    e1:SetOperation(cm.operation)--效果的具体内容
-    c:RegisterEffect(e1)--把这个效果绑定到这张卡
+	vgf.VgCard(c)
+	--在这之后加入需要注册的效果
+	local e1=Effect.CreateEffect(c)--创建一个效果
+	e1:SetType(EFFECT_TYPE_SINGLE+EFFECT_TYPE_CONTINUOUS)--效果的类型
+	e1:SetCode(EVENT_BE_MATERIAL)--什么情况下会发动这个效果
+	e1:SetProperty(EFFECT_FLAG_EVENT_PLAYER)--我也不懂这是干啥的
+	e1:SetCondition(cm.condition)--效果的条件
+	e1:SetOperation(cm.operation)--效果的内容
+	c:RegisterEffect(e1)--把这个效果绑定到这张卡
 end
-function cm.condition(e,tp,eg,ep,ev,re,r,rp)--效果的条件
-	  return tp==1 and Duel.GetTurnPlayer()==tp
+--效果的条件
+function cm.condition(e,tp,eg,ep,ev,re,r,rp)
+	return tp==1 and Duel.GetTurnPlayer()==tp
 end
-function cm.operation(e,tp,eg,ep,ev,re,r,rp)--效果的具体内容
-	  Duel.Draw(tp,1,REASON_EFFECT)
+--效果的内容
+function cm.operation(e,tp,eg,ep,ev,re,r,rp)
+	Duel.Draw(tp,1,REASON_EFFECT)
 end
 ```
-但是就如我们之前所说。我们使用自定义库涵括了大部分需要的内容，所以这个效果也可以直接简写成这样：
+
+但是就如我们之前所说。我们使用自定义库涵括了大部分需要的内容, 所以这个效果也可以直接简写成这样:
+
 ```lua
 --默认内容
 local cm,m,o=GetID()
@@ -80,25 +83,41 @@ function cm.initial_effect(c)
 	vgf.VgCard(c)
 	vgd.BeRidedByCard(c,m,nil,cm.operation,nil,cm.condition) --只要这一句就完成了上面7行的内容
 end
-function cm.condition(e,tp,eg,ep,ev,re,r,rp)--效果的条件
+--效果的条件
+function cm.condition(e,tp,eg,ep,ev,re,r,rp)
 	  return tp==1 and Duel.GetTurnPlayer()==tp
 end
-function cm.operation(e,tp,eg,ep,ev,re,r,rp)--效果的具体内容
+--效果的内容
+function cm.operation(e,tp,eg,ep,ev,re,r,rp)
 	  Duel.Draw(tp,1,REASON_EFFECT)
 end
 ```
+
 而函数里传入的e,tp,eg,ep,ev,re,r,rp分别是
 - `e`:
 - `tp`:当前回合玩家的编号()
+
 # type、code、property都具体有啥
 
  那我怎么知道这些常量的具体意义呢？可以直接在编辑器里鼠标悬停在这些常量上查看所有常量
  ![image](https://i.postimg.cc/GmFVmkpB/Clip-2024-04-09-11-11-23.png)
  
-# 函数库详解
+# VgD函数库详解
 
-## VgD函数
-- VgD.SpellActivate(c,m,operation,condition,code,num1,num2,num3,num4,num5)
-    - 因为魔合成的不向下兼容而生的函数，用于通常指令的注册，如效果：==通过【费用】[计数爆发1]施放！选择你的1个单位，这个回合中，力量+5000。选择你的弃牌区中的1张「瓦尔里纳」，加入手牌==
-    - `c`:
-    - `m`:
+```lua
+	VgD.SpellActivate(c, m, op, con, cost, dis, eb, sb, sc, cb)
+	--[[
+	op	-> 效果的内容
+	con	-> 效果的条件
+	cost	-> 特殊的费用标识（填写卡号否则为0，适用于存在对于一下参数均适用的费用）
+	dis	-> 将手牌中的x张卡舍弃
+	eb	-> 能量爆发x 
+	sb	-> 灵魂爆发x (soul blast)
+	sc	-> 灵魂填充x (soul charge)
+	cb	-> 计数爆发x (counter blast)
+	--]]
+```
+
+因为魔合成的不向下兼容而生的函数, 用于通常指令的注册, 如效果:==通过【费用】[计数爆发1]施放！选择你的1个单位, 这个回合中, 力量+5000。选择你的弃牌区中的1张「瓦尔里纳」, 加入手牌==
+`c`:
+`m`:
