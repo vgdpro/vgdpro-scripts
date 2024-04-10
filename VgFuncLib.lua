@@ -284,9 +284,13 @@ function VgF.StarUp(c,g,val,reset)
 end
 function VgF.IsAbleToGZone(c)
     if c:IsLocation(LOCATION_MZONE) then
-        return c:IsAttribute(SKILL_BLOCK)
+        return c:IsAttribute(SKILL_BLOCK) and VgF.RMonsterFilter(c)
     end
     return c:IsLocation(LOCATION_HAND)
+end
+function VgF.OnceChainCount(e,tp,eg,ep,ev,re,r,rp,chk)
+    if chk==0 then return Duel.GetFlagEffect(tp,CountTriggerFlag)==0 end
+    Duel.RegisterFlagEffect(tp,CountTriggerFlag,RESET_EVENT+EVENT_CHAIN_SOLVING,0,1)
 end
 function VgF.DisCardCost(num)
     return function (e,tp,eg,ep,ev,re,r,rp,chk)
