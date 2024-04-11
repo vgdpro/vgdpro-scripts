@@ -6,7 +6,7 @@ function cm.initial_effect(c)
     vgd.BeRidedByCard(c,m,10103002,cost,cm.operation)
     --cost公开2张三级未写
     --【起】【R】【1回合1次】：通过【费用】[计数爆发1]，选择你的1张等级3的先导者，这个回合中，力量+5000。
-    vgd.EeffectTypeIgnition(c,m,LOCATION_MZONE,EFFECT_TYPE_SINGLE,cm.operation2,DamageCost(1),RMonsterCondition,nil,1)
+    vgd.EeffectTypeIgnition(c,m,LOCATION_MZONE,EFFECT_TYPE_SINGLE,cm.operation2,vgf.DamageCost(1),vgf.RMonsterCondition,nil,1)
 end
 function cm.operation(c)
     
