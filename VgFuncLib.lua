@@ -245,10 +245,9 @@ function VgF.Call(g,sumtype,sp,zone)
     end
     return Duel.SpecialSummonComplete()
 end
-function VgF.LvCondition(e)
-    local c=e:GetHandler()
-    local tp=c:GetControler()
-    local lv=c:GetLevel()
+function VgF.LvCondition(e_or_c)
+    local c = VgF.GetValueType(e_or_c) == "Effect" and e_or_c:GetHandler() or e_or_c
+    local tp, lv = c:GetControler(), c:GetLevel()
     return Duel.IsExistingMatchingCard(VgF.LvConditionFilter,tp,LOCATION_MZONE,0,1,nil,lv)
 end
 function VgF.LvConditionFilter(c,lv)
