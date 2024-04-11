@@ -24,7 +24,7 @@ function cm.operation(e,tp,eg,ep,ev,re,r,rp)
     Duel.Draw(tp,1,REASON_EFFECT)
 end
 function cm.cost(e,tp,eg,ep,ev,re,r,rp,chk)
-    if chk==0 then Duel.IsExistingMatchingCard(vgf.IsLevel,tp,LOCATION_HAND,0,3,nil,3) end
+    if chk==0 then return Duel.IsExistingMatchingCard(vgf.IsLevel,tp,LOCATION_HAND,0,3,nil,3) end
     Duel.Hint(HINT_SELECTMSG,tp,HINTMSG_CONFIRM)
     local g=Duel.SelectMatchingCard(tp,vgf.IsLevel,tp,LOCATION_HAND,0,3,3,nil,3)
     Duel.ConfirmCards(1-tp,g)
