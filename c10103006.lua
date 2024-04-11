@@ -9,12 +9,12 @@ function cm.operation(e,tp,eg,ep,ev,re,r,rp)
     Duel.Hint(HINT_SELECTMSG,tp,HINTMSG_ATKUP)
     local g=Duel.SelectMatchingCard(tp,cm.filter,tp,LOCATION_MZONE,0,1,1,nil)
     if g then
-        Duel.Hintselectgion(g)
+        Duel.HintSelection(g)
         VgF.AtkUp(c,g,10000,nil)
     end
 end
 function cm.filter(c)
-    return vgf.IsLevel(c,3) and vgf.RmonsterFilter(c)
+    return vgf.IsLevel(c,3) and vgf.RMonsterFilter(c)
 end
 function cm.cost(e,tp,eg,ep,ev,re,r,rp,chk)
     local c=e:GetHandler()
