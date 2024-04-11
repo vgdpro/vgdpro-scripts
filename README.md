@@ -378,3 +378,15 @@ function cm.operation2(e,tp,eg,ep,ev,re,r,rp)
 	Duel.RaiseEvent(c,EVENT_CUSTOM+m,e,0,tp,tp,0)
 end
 ```
+
+## 5.等级的判断
+
+用于判断`自己场上的先导者等级`是否`大于等于这个效果的持有者等级`, 返回 `boolean` 值
+
+```lua
+vgf.VgF.LvCondition(e)
+```
+
+参数注释
+
+> **e : 要判断的效果**
