@@ -25,7 +25,7 @@ function cm.initial_effect(c)
     c:RegisterEffect(e1)
 end
 function cm.checkcon(e,tp,eg,ep,ev,re,r,rp)
-    return eg:IsExists(Card.IsLocation,1,nil,LOCATION_TRIGGER)
+    return eg:IsExists(Card.IsLocation,1,nil,LOCATION_TRIGGER) and Duel.GetTurnPlayer()==tp
 end
 function cm.checkop(e,tp,eg,ep,ev,re,r,rp)
     Duel.RegisterFlagEffect(rp,m,RESET_PHASE+PHASE_BATTLE+RESET_EVENT+EVENT_ATTACK_ANNOUNCE,0,1)
