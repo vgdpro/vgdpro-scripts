@@ -3,10 +3,10 @@ local cm,m,o=GetID()
 function cm.initial_effect(c)
     vgf.VgCard(c)
     vgd.BeRidedByCard(c,m,10103002,cm.operation,cm.cost)
-    vgd.EffectTypeIgnition(c,m,LOCATION_MZONE,EFFECT_TYPE_SINGLE,cm.operation2,vgf.DamageCost(1),vgf.RMonsterCondition,nil,1)
+    vgd.EffectTypeIgnition(c,m,LOCATION_MZONE,cm.operation2,vgf.DamageCost(1),vgf.RMonsterCondition,nil,1)
 end
 function cm.cost(e,tp,eg,ep,ev,re,r,rp,chk)
-    if chk==0 then Duel.IsExistingMatchingCard(vgf.IsLevel,tp,LOCATION_HAND,0,2,nil,3) end
+    if chk==0 then return Duel.IsExistingMatchingCard(vgf.IsLevel,tp,LOCATION_HAND,0,2,nil,3) end
     Duel.Hint(HINT_SELECTMSG,tp,HINTMSG_CONFIRM)
     local g=Duel.SelectMatchingCard(tp,vgf.IsLevel,tp,LOCATION_HAND,0,2,2,nil,3)
     Duel.ConfirmCards(1-tp,g)
