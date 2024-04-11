@@ -2,7 +2,7 @@
 local cm,m,o=GetID()
 function cm.initial_effect(c)
     vgf.VgCard(c)
-    vgd.BeRidedByCard(c,m,nil,cm.condition)
+	vgd.BeRidedByCard(c,m,nil,cm.operation,nil,cm.condition)
 end
 function cm.condition(e,tp,eg,ep,ev,re,r,rp)
     return tp==1 and Duel.GetTurnPlayer()==tp
