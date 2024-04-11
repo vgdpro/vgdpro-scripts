@@ -1,9 +1,9 @@
 --天剑的骑士 福特
 local cm,m,o=GetID()
 function cm.initial_effect(c)
-    VgF.VgCard(c)
+    vgf.VgCard(c)
     vgd.BeRidedByCard(c,m,10103002,cm.cost,cm.operation)
-    vgd.EeffectTypeIgnition(c,m,LOCATION_MZONE,EFFECT_TYPE_SINGLE,cm.operation2,vgf.DamageCost(1),vgf.RMonsterCondition,nil,1)
+    vgd.EffectTypeIgnition(c,m,LOCATION_MZONE,EFFECT_TYPE_SINGLE,cm.operation2,vgf.DamageCost(1),vgf.RMonsterCondition,nil,1)
 end
 function cm.cost(e,tp,eg,ep,ev,re,r,rp,chk)
     if chk==0 then Duel.IsExistingMatchingCard(vgf.IsLevel,tp,LOCATION_HAND,0,2,nil,3) end

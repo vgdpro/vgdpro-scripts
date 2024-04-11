@@ -1,7 +1,7 @@
 --天弓的骑士 贝斯
 local cm,m,o=GetID()
 function cm.initial_effect(c)
-    VgF.VgCard(c)
+    vgf.VgCard(c)
     vgd.BeRidedByCard(c,m,nil,cm.condition)
 end
 function cm.condition(e,tp,eg,ep,ev,re,r,rp)
