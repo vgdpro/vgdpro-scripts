@@ -2,14 +2,23 @@
 local cm,m,o=GetID()
 function cm.initial_effect(c)
     VgF.VgCard(c)
-    --【起】【R】：通过【费用】[将这个单位放置到灵魂里]，选择你的1张等级3的后防者，这个回合中，力量+10000。
-    vgd.EffectTypeIgnition(c,m,LOCATION_MZONE,cm.operation,cost,vgf.RMonsterCondition)
+    vgd.EffectTypeIgnition(c,m,LOCATION_MZONE,cm.operation,cm.cost,vgf.RMonsterCondition)
 end
 function cm.operation(e,tp,eg,ep,ev,re,r,rp)
-Duel.Hint(HINT_SELECTMSG,tp,HINTMSG_ATKUP)
-local g=Duel.SelectMatchingCard(tp,vgf.RMonsterCondition,tp,LOCATION_MZONE,0,1,1,nil)
---这里不会写选择等级三的后防者，只写了选择后防者
-if g then
-    Duel.Hintselectgion(g)
-    VgF.AtkUp(c,g,10000,nil)
+    local c=e:GetHandler()
+    Duel.Hint(HINT_SELECTMSG,tp,HINTMSG_ATKUP)
+    local g=Duel.SelectMatchingCard(tp,cm.filter,tp,LOCATION_MZONE,0,1,1,nil)
+    if g then
+        Duel.Hintselectgion(g)
+        VgF.AtkUp(c,g,10000,nil)
+    end
+end
+function cm.filter(c)
+    return vgf.IsLevel(c,3) and vgf.RmonsterFilter(c)
+end
+function cm.cost(e,tp,eg,ep,ev,re,r,rp,chk)
+    local c=e:GetHandler()
+    if chk==0 then return c:IsCanOverlay() end
+    local rc=Duel.GetMatchingGroup(VgF.VMonsterFilter,tp,LOCATION_MZONE,0,nil):GetFirst()
+    Duel.Overlay(rc,c)
 end

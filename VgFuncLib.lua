@@ -166,8 +166,10 @@ function VgF.RuleTurnCondtion(e)
     local b=Duel.GetTurnCount(1-tp)
     return a+b==1
 end
-function VgF.Not(c,f)
-    return not f(c)
+function VgF.Not(f)
+	return	function(...)
+				return not f(...)
+			end
 end
 function VgF.GetColumnGroup(c)
     local tp=c:GetControler()
@@ -214,8 +216,34 @@ function VgF.tgoval(e,re,rp)
 	return rp==1-e:GetHandlerPlayer()
 end
 function VgF.Call(g,sumtype,sp,zone)
-    if not zone then zone=0x1f end
-	return Duel.SpecialSummon(g,sumtype,sp,sp,true,true,POS_FACEUP_ATTACK,zone)
+    if zone then
+	    return Duel.SpecialSummon(g,sumtype,sp,sp,false,false,POS_FACEUP_ATTACK,zone)
+    end
+    local sg
+    local z=0xe0
+    if vgf.GetValueType(g)=="Card" then sg=Group.FromCards(g) else sg=Group.Clone(g) end
+    for sc in VgF.Next(sg) do
+        if sc:IsLocation(LOCATION_EXTRA) then
+            local rc=Duel.GetMatchingGroup(VgF.VMonsterFilter,tp,LOCATION_MZONE,0,nil):GetFirst()
+            local mg=rc:GetOverlayGroup()
+            if mg:GetCount()~=0 then
+                Duel.Overlay(sc,mg)
+            end
+            sc:SetMaterial(Group.FromCards(rc))
+            Duel.Overlay(sc,Group.FromCards(rc))
+            Duel.SpecialSummonStep(sc,sumtype,sp,sp,false,false,POS_FACEUP_ATTACK,0x20)
+        else
+            Duel.Hint(HINT_SELECTMSG,sp,HINTMSG_CallZONE)
+            local szone=Duel.SelectField(sp,1,LOCATION_MZONE,0,z)
+            if Duel.IsExistingMatchingCard(VgD.CallFilter,sp,LOCATION_MZONE,0,1,nil,sp,szone) then
+                local tc=Duel.GetMatchingGroup(VgD.CallFilter,sp,LOCATION_MZONE,0,nil,sp,szone):GetFirst()
+                Duel.SendtoGrave(tc,REASON_COST)
+            end
+            Duel.SpecialSummonStep(sc,sumtype,sp,sp,false,false,POS_FACEUP_ATTACK,szone)
+            z=bit.bor(z,szone)
+        end
+    end
+    return Duel.SpecialSummonComplete()
 end
 function VgF.LvCondition(e)
     local c=e:GetHandler()
