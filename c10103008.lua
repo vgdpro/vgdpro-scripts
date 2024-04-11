@@ -6,7 +6,7 @@ function cm.initial_effect(c)
     vgd.EffectTypeIgnition(c,m,LOCATION_MZONE,cm.operation,vgf.OverlayCost(2),vgf.RMonsterCondition)
     
 end
-function cm.operation()
+function cm.operation(e,tp,eg,ep,ev,re,r,rp)
     local c=e:GetHandler()
     vgf.AtkUp(c,c,5000,nil)
 end

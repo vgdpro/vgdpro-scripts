@@ -2,5 +2,5 @@
 local cm,m,o=GetID()
 function cm.initial_effect(c)
     vgf.VgCard(c)
-    vgd.CardToG(c,vgf.DisCardCostg(1))
+    vgd.CardToG(c,vgf.DisCardCos(1))
 end
