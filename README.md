@@ -23,6 +23,7 @@
    2. [提示文字](#2提示文字)
    3. [卡名记述](#3卡名记述)
    4. [先导者/后防者的判断](#4先导者后防者的判断)
+   5. [等级的判断](#5等级的判断)
       
 </details>
 
@@ -290,6 +291,12 @@ end
 
 # [VgFuncLib函数库](VgFuncLib.lua)详解
 
+常用参数解析
+
+> **c : 要判断的卡**
+> 
+> **e : 要判断的效果**
+
 ## 1.每个卡的必备
 
 VgD库内的函数装封，每张可入卡组的卡必须注册
@@ -316,7 +323,7 @@ vgf.AddCodeList(c, ...)
 
 参数注释
 
-> **... : 可填入多个参数**
+> **... : 记述的卡名, 可填入多个参数, 如: vgf.AddCodeList(c, code1, code2)**
 
 范例 : [瓦尔里纳](c10101006.lua)
 
@@ -345,12 +352,6 @@ vgf.RMonsterFilter(c)
 vgf.RMonsterCondition(e)
 ```
 
-参数注释
-
-> **c : 要判断的卡**
-> 
-> **e : 要判断的效果**
-
 > 实际上 : **vgf.VMonsterCondition(e) == vgf.VMonsterFilter(e:GetHandler())**
 >
 > 后防者的判断同理
@@ -376,5 +377,51 @@ function cm.operation2(e,tp,eg,ep,ev,re,r,rp)
 	local c=e:GetHandler()
 	VgF.AtkUp(c,c,10000,nil)
 	Duel.RaiseEvent(c,EVENT_CUSTOM+m,e,0,tp,tp,0)
+end
+```
+
+## 5.等级的判断
+
+用于判断`自己场上的先导者等级`是否大于等于`这张卡/这个效果的持有者等级`, 返回 `boolean` 值
+
+```lua
+vgf.LvCondition(e_or_c)
+```
+
+参数注释
+
+> **e_or_c : 要判断的效果或者卡**
+
+## 6.等级的判断
+
+用于判断`这张卡的等级`是否在`...`之中, 返回 `boolean` 值
+
+```lua
+vgf.IsLevel(c, ...)
+```
+
+参数注释
+
+> **... : 要判断的等级, 可填入多个参数, 如: vgf.IsLevel(c, 1, 2)**
+
+范例 : [天枪的骑士 勒克斯](c10103002.lua)
+
+> **【永】【R】：你的回合中，你的等级3的单位有3个以上的话，这个单位获得『支援』的技能，力量+5000。**
+
+```lua
+local cm,m,o=GetID()
+function cm.initial_effect(c)
+    VgF.VgCard(c)
+    local e2=Effect.CreateEffect(c)
+    e2:SetType(EFFECT_TYPE_SINGLE)
+    e2:SetProperty(EFFECT_FLAG_SINGLE_RANGE)
+    e2:SetCode(EFFECT_ADD_ATTRIBUTE)
+    e2:SetRange(LOCATION_MZONE)
+    e2:SetValue(SKILL_SUPPORT)
+    e2:SetCondition(cm.condition)
+    c:RegisterEffect(e2)
+end
+function cm.condition(e,tp,eg,ep,ev,re,r,rp)
+    return vgf.VMonsterCondition(e) and Duel.IsExistingMatchingCard(vgf.IsLevel,tp,LOCATION_MZONE,0,3,nil,3)
 end
 ```
