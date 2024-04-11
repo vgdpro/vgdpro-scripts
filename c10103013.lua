@@ -1,4 +1,5 @@
+--天裂的骑士 利弗
 local cm,m,o=GetID()
 function cm.initial_effect(c)
-	vgf.VgCard(c)
+    VgF.VgCard(c)
 end
