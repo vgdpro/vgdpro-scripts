@@ -3,7 +3,7 @@ local cm,m,o=GetID()
 function cm.initial_effect(c)
     VgF.VgCard(c)
     --【起】【R】：通过【费用】[将这个单位放置到灵魂里]，选择你的1张等级3的后防者，这个回合中，力量+10000。
-    vgd.EffectTypeIgnition(c,m,LOCATION_MZONE,cm.operation,cost,RMonsterCondition)
+    vgd.EffectTypeIgnition(c,m,LOCATION_MZONE,cm.operation,cost,vgf.RMonsterCondition)
 end
 function cm.operation(e,tp,eg,ep,ev,re,r,rp)
 Duel.Hint(HINT_SELECTMSG,tp,HINTMSG_ATKUP)
