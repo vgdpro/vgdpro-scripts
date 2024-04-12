@@ -437,8 +437,8 @@ function VgD.SendToGCost(e,tp,eg,ep,ev,re,r,rp,chk)
     if c:IsLocation(LOCATION_MZONE) then
         if chk==0 then return true end
     else
-        if chk==0 then return (not Duel.IsPlayerAffectedByEffect(tp,AFFECT_CODE_SendtoG) or Duel.IsExistingMatchingCard(nil,tp,LOCATION_GZONE,0,1,nil) or Duel.IsExistingMatchingCard(VgF.IsAbleToGZone,tp,LOCATION_HAND,0,1,c)) end
-        if Duel.IsPlayerAffectedByEffect(tp,AFFECT_CODE_SendtoG) and not Duel.IsExistingMatchingCard(nil,tp,LOCATION_GZONE,0,1,nil) then
+        if chk==0 then return (not Duel.IsPlayerAffectedByEffect(tp,OAFFECT_CODE_SENDTOG) or Duel.IsExistingMatchingCard(nil,tp,LOCATION_GZONE,0,1,nil) or Duel.IsExistingMatchingCard(VgF.IsAbleToGZone,tp,LOCATION_HAND,0,1,c)) end
+        if Duel.IsPlayerAffectedByEffect(tp,OAFFECT_CODE_SENDTOG) and not Duel.IsExistingMatchingCard(nil,tp,LOCATION_GZONE,0,1,nil) then
             local tc=Duel.SelectMatchingCard(tp,VgF.IsAbleToGZone,tp,LOCATION_HAND,0,1,1,c)
             tc=VgF.ReturnCard(tc)
             Duel.ConfirmCards(1-tp,tc)
@@ -587,6 +587,7 @@ function VgD.CardTriggerOperation(chkop,f)
                 bc:RegisterFlagEffect(DamageTriggerFlag,RESET_EVENT+RESETS_STANDARD+EVENT_DAMAGE_STEP_END,0,1,label)
             elseif label==0 then
                 bc:ResetFlagEffect(DamageTriggerFlag)
+                Duel.RaiseEvent(rc,EVENT_CUSTOM+EVENT_DAMAGE_TRIGGER,e,0,tp,tp,0)
             end
         else
             if c:IsRace(TRRIGGER_SUPER) then
@@ -915,9 +916,13 @@ function VgD.EffectTypeIgnition(c,m,loc,op,cost,con,tg,count,property,stringid)
     e1:SetRange(loc)
     if property and property>0 then e1:SetProperty(property) end
     if count and count>0 then e1:SetCountLimit(count) end
-    if VgF.GetValueType(con)=="function" then e1:SetCost(con) end
+    if VgF.GetValueType(con)=="function" then e1:SetCondition(con) end
     if VgF.GetValueType(cost)=="function" then e1:SetCost(cost) end
     if VgF.GetValueType(tg)=="function" then e1:SetTarget(tg) end
     if VgF.GetValueType(op)=="function" then e1:SetOperation(op) end
     c:RegisterEffect(e1)
+end
+function VgD.EffectTypeTriggerWhenHitting(c,m,loc,typ,op,cost,con,tg,count,property,stringid)
+    VgD.EffectTypeTrigger(c,m,loc,typ,EVENT_CUSTOM+EVENT_DAMAGE_TRIGGER,op,cost,con,tg,count,property,stringid)
+    VgD.EffectTypeTrigger(c,m,loc,typ,EVENT_BATTLE_DESTROYING,op,cost,con,tg,count,property,stringid)
 end
