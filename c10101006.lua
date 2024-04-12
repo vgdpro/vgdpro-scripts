@@ -15,6 +15,7 @@ function cm.operation2(e,tp,eg,ep,ev,re,r,rp)
 			local g=Duel.SelectTarget(tp,vgf.RMonsterFilter,tp,0,LOCATION_MZONE,1,1,nil)
 			if g then
 				Duel.HintSelection(g)
+				
 				Duel.SendtoGrave(g,REASON_EFFECT)
 			end
 		end
