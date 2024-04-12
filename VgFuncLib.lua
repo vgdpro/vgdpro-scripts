@@ -52,23 +52,6 @@ function VgF.SequenceToGlobal(p,loc,seq)
 		return 0
 	end
 end
-function VgF.AddCodeList(c,...)
-	if c:IsStatus(STATUS_COPYING_EFFECT) then return end
-	if c.card_code_list==nil then
-		local mt=getmetatable(c)
-		mt.card_code_list={}
-		for _,code in ipairs{...} do
-			mt.card_code_list[code]=true
-		end
-	else
-		for _,code in ipairs{...} do
-			c.card_code_list[code]=true
-		end
-	end
-end
-function VgF.IsCodeListed(c,code)
-	return c.card_code_list and c.card_code_list[code]
-end
 function VgF.True()
     return true
 end

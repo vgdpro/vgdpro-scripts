@@ -25,7 +25,7 @@ function VgD.RideUpFilter1(c,e,lv,code,rc)
     if rc:IsAttribute(SKILL_SELF_RIDE) and c:IsCode(code) then
         return false
     end
-    return ((c:IsLevel(lv,lv+1) and c:IsLocation(LOCATION_HAND)) or (c:IsLevel(lv+1) and c:IsLocation(LOCATION_RIDE))) and c:IsType(TYPE_MONSTER) and Duel.IsExistingMatchingCard(Card.IsDiscardable,tp,LOCATION_HAND,0,1,c) and c:IsCanBeSpecialSummoned(e,SUMMON_TYPE_RIDE,tp,false,false,POS_FACEUP_ATTACK)
+    return ((c:IsLevel(lv,lv+1) and c:IsLocation(LOCATION_HAND)) or (c:IsLevel(lv+1) and c:IsLocation(LOCATION_RIDE) and Duel.IsExistingMatchingCard(Card.IsDiscardable,tp,LOCATION_HAND,0,1,nil))) and c:IsType(TYPE_MONSTER) and c:IsCanBeSpecialSummoned(e,SUMMON_TYPE_RIDE,tp,false,false,POS_FACEUP_ATTACK)
 end
 function VgD.DisCardRideUpFilter(c,e,lv,code,rc)
     local tp=c:GetControler()
@@ -68,12 +68,14 @@ function VgD.RideUpOperation(e,tp,eg,ep,ev,re,r,rp)
     ops[off]=VgF.Stringid(VgID,5)
     local sel=Duel.SelectOption(tp,table.unpack(ops))
     if sel==0 and a then
-        Duel.Hint(HINT_SELECTMSG,tp,HINTMSG_DISCARD)
-        local g=Duel.SelectMatchingCard(tp,VgD.DisCardRideUpFilter,tp,LOCATION_HAND,0,1,1,nil,e,lv,code,rc)
-        Duel.SendtoGrave(g,REASON_COST+REASON_DISCARD)
         Duel.Hint(HINT_SELECTMSG,tp,HINTMSG_CALL)
         local sg=rg1:FilterSelect(tp,Card.IsLocation,1,1,nil,LOCATION_HAND+LOCATION_RIDE)
         local sc=sg:GetFirst()
+        if sc:IsLocation(LOCATION_EXTRA) then
+            Duel.Hint(HINT_SELECTMSG,tp,HINTMSG_DISCARD)
+            local g=Duel.SelectMatchingCard(tp,VgD.DisCardRideUpFilter,tp,LOCATION_HAND,0,1,1,nil,e,lv,code,rc)
+            Duel.SendtoGrave(g,REASON_COST+REASON_DISCARD)
+        end
         local mg=rc:GetOverlayGroup()
         if mg:GetCount()~=0 then
             Duel.Overlay(sc,mg)
@@ -140,81 +142,6 @@ function VgD.CallToR(c)
     e1:SetCondition(VgD.CallCondition)
     e1:SetOperation(VgD.CallOperation)
     c:RegisterEffect(e1)
-    if c:IsSetCard(0x201) then
-        local e2=Effect.CreateEffect(c)
-        e2:SetDescription(VgF.Stringid(VgID,9))
-        e2:SetType(EFFECT_TYPE_FIELD)
-        e2:SetCode(EFFECT_SPSUMMON_PROC)
-        e2:SetRange(LOCATION_HAND)
-        e2:SetProperty(EFFECT_FLAG_SPSUM_PARAM)
-        e2:SetTargetRange(POS_FACEUP_ATTACK,0)
-        e2:SetCondition(VgD.OverArmCondition)
-        e2:SetOperation(VgD.OverArmOperation)
-        c:RegisterEffect(e2)
-        local e3=Effect.CreateEffect(c)
-        e3:SetType(EFFECT_TYPE_SINGLE+EFFECT_TYPE_CONTINUOUS)
-        e3:SetCode(EVENT_SPSUMMON_SUCCESS)
-        e3:SetProperty(EFFECT_FLAG_CANNOT_DISABLE)
-        e3:SetOperation(VgD.OverArmSum)
-        c:RegisterEffect(e3)
-    end
-end
-function VgD.OverArmCondition(e,c)
-    if c==nil then return true end
-    local tp=e:GetHandlerPlayer()
-    return VgF.LvCondition(e) and c:IsCanBeSpecialSummoned(e,0,tp,false,false,POS_FACEUP_ATTACK) and Duel.IsExistingMatchingCard(VgD.OverArmFilter,tp,LOCATION_MZONE,0,1,nil,e:GetHandler())
-end
-function VgD.OverArmFilter(c,mc,zone)
-    local seq
-    if zone and zone>0 then
-        if zone==0x1 then seq=0 end
-        if zone==0x2 then seq=1 end
-        if zone==0x4 then seq=2 end
-        if zone==0x8 then seq=3 end
-        if zone==0x10 then seq=4 end
-        if not VgF.IsSequence(c,seq) then return false end
-    end
-    return VgF.IsCodeListed(mc,c:GetOriginalCode())
-end
-function VgD.OverArmOperation(e,tp,eg,ep,ev,re,r,rp)
-    local c=e:GetHandler()
-    local g=Duel.GetMatchingGroup(VgD.OverArmFilter,tp,LOCATION_MZONE,0,nil,c,code)
-    local szone
-    if Duel.GetTurnPlayer()==tp and tp==1 then
-        local zone=0xff
-        for tc in VgF.Next(g) do
-            if VgF.IsSequence(tc,0) then zone=zone-0x1 end
-            if VgF.IsSequence(tc,1) then zone=zone-0x2 end
-            if VgF.IsSequence(tc,2) then zone=zone-0x4 end
-            if VgF.IsSequence(tc,3) then zone=zone-0x8 end
-            if VgF.IsSequence(tc,4) then zone=zone-0x10 end
-        end
-        if zone==0xff then return end
-        Duel.Hint(HINT_SELECTMSG,tp,HINTMSG_CallZONE)
-        szone=Duel.SelectField(tp,1,LOCATION_MZONE,0,zone)
-    elseif Duel.GetTurnPlayer()==tp and tp==0 then
-        local zone=0x00
-        for tc in VgF.Next(g) do
-            zone=bit.bor(zone,VgF.SequenceToGlobal(tp,tc:GetLocation(),tc:GetSequence()))
-        end
-        if zone==0x00 then return end
-        zone=bit.bnot(zone)
-        Duel.Hint(HINT_SELECTMSG,tp,HINTMSG_CallZONE)
-        szone=Duel.SelectField(tp,1,LOCATION_MZONE,0,zone)
-    end
-    e:SetValue(function () return 0,szone end)
-    local tc=Duel.GetMatchingGroup(VgD.OverArmFilter,tp,LOCATION_MZONE,0,nil,c,szone):GetFirst()
-    if not tc then return end
-    local mg=tc:GetOverlayGroup()
-    if mg:GetCount()~=0 then
-        Duel.Overlay(c,mg)
-    end
-    c:SetMaterial(Group.FromCards(tc))
-    Duel.Overlay(c,Group.FromCards(tc))
-end
-function VgD.OverArmSum(e,tp,eg,ep,ev,re,r,rp)
-    local c=e:GetHandler()
-    c:RegisterFlagEffect(ConditionFlag,RESET_EVENT+RESETS_STANDARD,0,1,201)
 end
 function VgD.CallCondition(e,c)
     if c==nil then return true end
@@ -233,6 +160,87 @@ function VgD.CallOperation(e,tp,eg,ep,ev,re,r,rp)
         Duel.SendtoGrave(tc,REASON_COST)
     end
     e:SetValue(function () return 0,zone end)
+end
+
+--超限舞装
+function VgD.OverArm(c,f)
+    local e2=Effect.CreateEffect(c)
+    e2:SetDescription(VgF.Stringid(VgID,9))
+    e2:SetType(EFFECT_TYPE_FIELD)
+    e2:SetCode(EFFECT_SPSUMMON_PROC)
+    e2:SetRange(LOCATION_HAND)
+    e2:SetProperty(EFFECT_FLAG_SPSUM_PARAM)
+    e2:SetTargetRange(POS_FACEUP_ATTACK,0)
+    e2:SetCondition(VgD.OverArmCondition(f))
+    e2:SetOperation(VgD.OverArmOperation(f))
+    c:RegisterEffect(e2)
+    local e3=Effect.CreateEffect(c)
+    e3:SetType(EFFECT_TYPE_SINGLE+EFFECT_TYPE_CONTINUOUS)
+    e3:SetCode(EVENT_SPSUMMON_SUCCESS)
+    e3:SetProperty(EFFECT_FLAG_CANNOT_DISABLE)
+    e3:SetOperation(VgD.OverArmSum)
+    c:RegisterEffect(e3)
+end
+function VgD.OverArmCondition(f)
+    return function (e,c)
+    if c==nil then return true end
+        local tp=e:GetHandlerPlayer()
+        return VgF.LvCondition(e) and c:IsCanBeSpecialSummoned(e,0,tp,false,false,POS_FACEUP_ATTACK) and Duel.IsExistingMatchingCard(VgD.OverArmFilter,tp,LOCATION_MZONE,0,1,nil,f)
+    end
+end
+function VgD.OverArmFilter(c,f,zone)
+    local seq
+    if zone and zone>0 then
+        if zone==0x1 then seq=0 end
+        if zone==0x2 then seq=1 end
+        if zone==0x4 then seq=2 end
+        if zone==0x8 then seq=3 end
+        if zone==0x10 then seq=4 end
+        if not VgF.IsSequence(c,seq) then return false end
+    end
+    return (VgF.GetValueType(f)=="function" and f(c)) or (VgF.GetValueType(f)=="number" and c:IsCode(f))
+end
+function VgD.OverArmOperation(f)
+    return function(e,tp,eg,ep,ev,re,r,rp)
+        local c=e:GetHandler()
+        local g=Duel.GetMatchingGroup(VgD.OverArmFilter,tp,LOCATION_MZONE,0,nil,f,code)
+        local szone
+        if Duel.GetTurnPlayer()==tp and tp==1 then
+            local zone=0xff
+            for tc in VgF.Next(g) do
+                if VgF.IsSequence(tc,0) then zone=zone-0x1 end
+                if VgF.IsSequence(tc,1) then zone=zone-0x2 end
+                if VgF.IsSequence(tc,2) then zone=zone-0x4 end
+                if VgF.IsSequence(tc,3) then zone=zone-0x8 end
+                if VgF.IsSequence(tc,4) then zone=zone-0x10 end
+            end
+            if zone==0xff then return end
+            Duel.Hint(HINT_SELECTMSG,tp,HINTMSG_CallZONE)
+            szone=Duel.SelectField(tp,1,LOCATION_MZONE,0,zone)
+        elseif Duel.GetTurnPlayer()==tp and tp==0 then
+            local zone=0x00
+            for tc in VgF.Next(g) do
+                zone=bit.bor(zone,VgF.SequenceToGlobal(tp,tc:GetLocation(),tc:GetSequence()))
+            end
+            if zone==0x00 then return end
+            zone=bit.bnot(zone)
+            Duel.Hint(HINT_SELECTMSG,tp,HINTMSG_CallZONE)
+            szone=Duel.SelectField(tp,1,LOCATION_MZONE,0,zone)
+        end
+        e:SetValue(function () return 0,szone end)
+        local tc=Duel.GetMatchingGroup(VgD.OverArmFilter,tp,LOCATION_MZONE,0,nil,f,szone):GetFirst()
+        if not tc then return end
+        local mg=tc:GetOverlayGroup()
+        if mg:GetCount()~=0 then
+            Duel.Overlay(c,mg)
+        end
+        c:SetMaterial(Group.FromCards(tc))
+        Duel.Overlay(c,Group.FromCards(tc))
+    end
+end
+function VgD.OverArmSum(e,tp,eg,ep,ev,re,r,rp)
+    local c=e:GetHandler()
+    c:RegisterFlagEffect(ConditionFlag,RESET_EVENT+RESETS_STANDARD,0,1,201)
 end
 
 --战斗阶段
