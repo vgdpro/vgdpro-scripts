@@ -163,7 +163,7 @@ function VgD.CallOperation(e,tp,eg,ep,ev,re,r,rp)
 end
 
 --超限舞装
-function VgD.OverArm(c,f)
+function VgD.OverDress(c,f)
     local e2=Effect.CreateEffect(c)
     e2:SetDescription(VgF.Stringid(VgID,9))
     e2:SetType(EFFECT_TYPE_FIELD)
@@ -171,24 +171,24 @@ function VgD.OverArm(c,f)
     e2:SetRange(LOCATION_HAND)
     e2:SetProperty(EFFECT_FLAG_SPSUM_PARAM)
     e2:SetTargetRange(POS_FACEUP_ATTACK,0)
-    e2:SetCondition(VgD.OverArmCondition(f))
-    e2:SetOperation(VgD.OverArmOperation(f))
+    e2:SetCondition(VgD.OverDressCondition(f))
+    e2:SetOperation(VgD.OverDressOperation(f))
     c:RegisterEffect(e2)
     local e3=Effect.CreateEffect(c)
     e3:SetType(EFFECT_TYPE_SINGLE+EFFECT_TYPE_CONTINUOUS)
     e3:SetCode(EVENT_SPSUMMON_SUCCESS)
     e3:SetProperty(EFFECT_FLAG_CANNOT_DISABLE)
-    e3:SetOperation(VgD.OverArmSum)
+    e3:SetOperation(VgD.OverDressSum)
     c:RegisterEffect(e3)
 end
-function VgD.OverArmCondition(f)
+function VgD.OverDressCondition(f)
     return function (e,c)
     if c==nil then return true end
         local tp=e:GetHandlerPlayer()
-        return VgF.LvCondition(e) and c:IsCanBeSpecialSummoned(e,0,tp,false,false,POS_FACEUP_ATTACK) and Duel.IsExistingMatchingCard(VgD.OverArmFilter,tp,LOCATION_MZONE,0,1,nil,f)
+        return VgF.LvCondition(e) and c:IsCanBeSpecialSummoned(e,0,tp,false,false,POS_FACEUP_ATTACK) and Duel.IsExistingMatchingCard(VgD.OverDressFilter,tp,LOCATION_MZONE,0,1,nil,f)
     end
 end
-function VgD.OverArmFilter(c,f,zone)
+function VgD.OverDressFilter(c,f,zone)
     local seq
     if zone and zone>0 then
         if zone==0x1 then seq=0 end
@@ -200,10 +200,10 @@ function VgD.OverArmFilter(c,f,zone)
     end
     return (VgF.GetValueType(f)=="function" and f(c)) or (VgF.GetValueType(f)=="number" and c:IsCode(f))
 end
-function VgD.OverArmOperation(f)
+function VgD.OverDressOperation(f)
     return function(e,tp,eg,ep,ev,re,r,rp)
         local c=e:GetHandler()
-        local g=Duel.GetMatchingGroup(VgD.OverArmFilter,tp,LOCATION_MZONE,0,nil,f,code)
+        local g=Duel.GetMatchingGroup(VgD.OverDressFilter,tp,LOCATION_MZONE,0,nil,f,code)
         local szone
         if Duel.GetTurnPlayer()==tp and tp==1 then
             local zone=0xff
@@ -228,7 +228,7 @@ function VgD.OverArmOperation(f)
             szone=Duel.SelectField(tp,1,LOCATION_MZONE,0,zone)
         end
         e:SetValue(function () return 0,szone end)
-        local tc=Duel.GetMatchingGroup(VgD.OverArmFilter,tp,LOCATION_MZONE,0,nil,f,szone):GetFirst()
+        local tc=Duel.GetMatchingGroup(VgD.OverDressFilter,tp,LOCATION_MZONE,0,nil,f,szone):GetFirst()
         if not tc then return end
         local mg=tc:GetOverlayGroup()
         if mg:GetCount()~=0 then
@@ -238,7 +238,7 @@ function VgD.OverArmOperation(f)
         Duel.Overlay(c,Group.FromCards(tc))
     end
 end
-function VgD.OverArmSum(e,tp,eg,ep,ev,re,r,rp)
+function VgD.OverDressSum(e,tp,eg,ep,ev,re,r,rp)
     local c=e:GetHandler()
     c:RegisterFlagEffect(ConditionFlag,RESET_EVENT+RESETS_STANDARD,0,1,201)
 end
