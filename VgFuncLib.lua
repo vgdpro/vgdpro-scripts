@@ -200,6 +200,10 @@ function VgF.tgoval(e,re,rp)
 end
 function VgF.Call(g,sumtype,sp,zone)
     if zone then
+        if Duel.IsExistingMatchingCard(VgD.CallFilter,sp,LOCATION_MZONE,0,1,nil,sp,zone) then
+            local tc=Duel.GetMatchingGroup(VgD.CallFilter,sp,LOCATION_MZONE,0,nil,sp,zone):GetFirst()
+            Duel.SendtoGrave(tc,REASON_COST)
+        end
 	    return Duel.SpecialSummon(g,sumtype,sp,sp,false,false,POS_FACEUP_ATTACK,zone)
     end
     local sg

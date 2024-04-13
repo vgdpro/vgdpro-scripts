@@ -32,6 +32,7 @@ function VgD.DisCardRideUpFilter(c,e,lv,code,rc)
     return c:IsDiscardable() and Duel.IsExistingMatchingCard(VgD.RideUpFilter1,tp,LOCATION_HAND+LOCATION_RIDE,0,1,c,e,lv,code,rc)
 end
 function VgD.RideUpFilter2(c,e,lv,code,rc)
+    if rc:GetMaterial():GetCode()==rc:GetCode() and rc:IsAttribute(SKILL_SELF_RIDE) then return end
     return c:IsLevel(lv) and c:IsType(TYPE_MONSTER) and c:IsCode(code) and rc:IsAttribute(SKILL_SELF_RIDE) and c:IsCanBeSpecialSummoned(e,SUMMON_TYPE_RIDE,tp,false,false,POS_FACEUP_ATTACK)
 end
 function VgD.RideUpCondition(e,tp,eg,ep,ev,re,r,rp)
@@ -240,7 +241,7 @@ function VgD.OverDressOperation(f)
 end
 function VgD.OverDressSum(e,tp,eg,ep,ev,re,r,rp)
     local c=e:GetHandler()
-    c:RegisterFlagEffect(ConditionFlag,RESET_EVENT+RESETS_STANDARD,0,1,201)
+    c:RegisterFlagEffect(ConditionFlag,RESET_EVENT+RESETS_STANDARD,EFFECT_FLAG_CLIENT_HINT,1,201,vgf.Stringid(10101006,0))
 end
 
 --战斗阶段
@@ -425,7 +426,7 @@ function VgD.SupportValue(e)
     elseif Duel.GetAttackTarget()==e:GetHandler() then
         local g=Duel.GetMatchingGroup(nil,tp,LOCATION_GZONE,0,nil)
         for tc in vgf.Next(g) do
-            atk=atk+tc:GetAttack()
+            atk=atk+tc:GetDefense()
         end
         return atk
     else
@@ -545,32 +546,34 @@ function VgD.CardTriggerOperation(chkop,f)
             Duel.HintSelection(g2)
             VgF.AtkUp(c,g2,10000,nil)
         elseif c:IsRace(TRRIGGER_DRAW) then
+            Duel.Hint(HINT_SELECTMSG,tp,HINTMSG_ATKUP)
+            local g=Duel.SelectMatchingCard(tp,nil,tp,LOCATION_MZONE,0,1,1,nil)
+            Duel.HintSelection(g)
+            VgF.AtkUp(c,g,10000,nil)
             Duel.Draw(tp,1,REASON_TRIGGER)
-            Duel.Hint(HINT_SELECTMSG,tp,HINTMSG_ATKUP)
-            local g=Duel.SelectMatchingCard(tp,nil,tp,LOCATION_MZONE,0,1,1,nil)
-            Duel.HintSelection(g)
-            VgF.AtkUp(c,g,10000,nil)
         elseif c:IsRace(TRRIGGER_HEAL) then
-            Duel.Hint(HINT_SELECTMSG,tp,HINTMSG_TODROP)
-            local tc=Duel.SelectMatchingCard(tp,nil,tp,LOCATION_DAMAGE,0,1,1,nil):GetFirst()
-            if tc then
-                Duel.SendtoGrave(tc,REASON_TRIGGER)
-            end
             Duel.Hint(HINT_SELECTMSG,tp,HINTMSG_ATKUP)
             local g=Duel.SelectMatchingCard(tp,nil,tp,LOCATION_MZONE,0,1,1,nil)
             Duel.HintSelection(g)
             VgF.AtkUp(c,g,10000,nil)
+            if Duel.GetMatchingGroupCount(nil,tp,LOCATION_DAMAGE,0,nil)>Duel.GetMatchingGroupCount(nil,tp,0,LOCATION_DAMAGE,nil) then
+                Duel.Hint(HINT_SELECTMSG,tp,HINTMSG_TODROP)
+                local tc=Duel.SelectMatchingCard(tp,nil,tp,LOCATION_DAMAGE,0,1,1,nil):GetFirst()
+                if tc then
+                    Duel.SendtoGrave(tc,REASON_TRIGGER)
+                end
+            end
         elseif c:IsRace(TRRIGGER_ADVANCE) then
             local g=Duel.GetMatchingGroup(VgF.IsSequence,tp,LOCATION_MZONE,0,nil,0,4,5)
             VgF.AtkUp(c,tc,10000,nil)
         end
         if chkop==0 then
             if c:IsRace(TRRIGGER_SUPER) then
-                Duel.Draw(tp,1,REASON_TRIGGER)
                 Duel.Hint(HINT_SELECTMSG,tp,HINTMSG_ATKUP)
                 local g=Duel.SelectMatchingCard(tp,nil,tp,LOCATION_MZONE,0,1,1,nil)
                 Duel.HintSelection(g)
                 VgF.AtkUp(c,g,100000000,nil)
+                Duel.Draw(tp,1,REASON_TRIGGER)
                 Duel.Exile(c,REASON_TRIGGER)
             else
                 Duel.Sendto(c,tp,LOCATION_DAMAGE,POS_FACEUP,REASON_EFFECT)
@@ -591,12 +594,12 @@ function VgD.CardTriggerOperation(chkop,f)
             end
         else
             if c:IsRace(TRRIGGER_SUPER) then
-                Duel.Draw(tp,1,REASON_TRIGGER)
                 Duel.Hint(HINT_SELECTMSG,tp,HINTMSG_ATKUP)
                 local g=Duel.SelectMatchingCard(tp,nil,tp,LOCATION_MZONE,0,1,1,nil)
                 Duel.HintSelection(g)
                 VgF.AtkUp(c,g,100000000,nil)
                 if f then f(e,tp,eg,ep,ev,re,r,rp) end
+                Duel.Draw(tp,1,REASON_TRIGGER)
                 Duel.Exile(c,REASON_TRIGGER)
             else
                 Duel.SendtoHand(c,nil,REASON_TRIGGER)
@@ -627,6 +630,14 @@ function VgD.Rule(c)
     e1:SetCondition(VgD.RuelDrawCondition)
     e1:SetOperation(VgD.RuelDrawOperation)
 	c:RegisterEffect(e1)
+    local e3=Effect.CreateEffect(c)
+    e3:SetType(EFFECT_TYPE_FIELD+EFFECT_TYPE_CONTINUOUS)
+    e3:SetCode(EVENT_PHASE_START+PHASE_STANDBY)
+    e3:SetRange(LOCATION_ALL)
+    e3:SetCountLimit(1,VgID+3)
+    e3:SetCondition(VgF.RuleCardCondtion)
+    e3:SetOperation(VgD.EventRideStart)
+	c:RegisterEffect(e3)
     local e10=Effect.CreateEffect(c)
     e10:SetType(EFFECT_TYPE_FIELD)
     e10:SetCode(EFFECT_HAND_LIMIT)
@@ -659,6 +670,12 @@ function VgD.Rule(c)
     local e15=e12:Clone()
     e15:SetCode(EFFECT_CANNOT_SSET)
     c:RegisterEffect(e15)
+end
+function VgD.EventRideStart(e,tp,eg,ep,ev,re,r,rp)
+    local c=e:GetHandler()
+    if Duel.GetTurnPlayer()==tp then
+        Duel.RaiseEvent(c,EVENT_CUSTOM+EVENT_RIDE_START,e,0,tp,tp,0)
+    end
 end
 function VgD.RuleWin(e,tp,eg,ep,ev,re,r,rp)
     if Duel.GetCurrentChain()>0 then return end

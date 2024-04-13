@@ -753,7 +753,7 @@ HINTMSG_SPSUMMON		=509	--请选择要特殊召唤的卡
 HINTMSG_SET				=510	--请选择要盖放的卡
 HINTMSG_FMATERIAL		=511	--请选择要作为融合素材的卡
 HINTMSG_SMATERIAL		=512	--请选择要作为同调素材的卡
-HINTMSG_XMATERIAL		=513	--请选择要作为超量素材的卡
+HINTMSG_XMATERIAL		=513	--请选择要充入魂中的卡
 HINTMSG_FACEUP			=514	--请选择表侧表示的卡
 HINTMSG_FACEDOWN		=515	--请选择里侧表示的卡
 HINTMSG_ATTACK			=516	--请选择攻击表示的怪兽
@@ -885,11 +885,12 @@ ConditionFlag           =VgID+4 --处于XX状态标识
 SupportFlag             =VgID+5 --支援状态标识
 --AffectedByEffect
 AFFECT_CODE_MIX         =VgID   --魔合成
-AFFECT_CODE_SendtoG     =VgID+1 --
+AFFECT_CODE_SENDTOG     =VgID+1 --
 --自定时点
 EVENT_TRIGGER           =VgID   --判定时点
 EVENT_CRITICAL_STRIKE   =VgID+1 --暴击值结算时点
-
+EVENT_DAMAGE_TRIGGER    =VgID+2 --受伤判定完毕时点
+EVENT_RIDE_START        =VgID+3 --骑升时点
 
 POS_FACEUP_DEFENCE=POS_FACEUP_DEFENSE
 POS_FACEDOWN_DEFENCE=POS_FACEDOWN_DEFENSE
