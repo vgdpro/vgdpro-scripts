@@ -427,7 +427,9 @@ function VgD.SupportValue(e)
     elseif Duel.GetAttackTarget()==e:GetHandler() then
         local g=Duel.GetMatchingGroup(nil,tp,LOCATION_GZONE,0,nil)
         for tc in vgf.Next(g) do
-            atk=atk+tc:GetDefense()
+            local def=tc:GetDefense()
+            if def<0 then def=0 end
+            atk=atk+def
         end
         return atk
     else
@@ -719,135 +721,56 @@ function VgD.RuelDrawOperation(e,tp,eg,ep,ev,re,r,rp)
 end
 
 --指令卡
-function VgD.SpellActivate(c,m,op,con,specialchk,num1,num2,num3,num4,num5)
-    if not specialchk then specialchk=0 end
-    if not num1 then num1=0 end
-    if not num2 then num2=0 end
-    if not num3 then num3=0 end
-    if not num4 then num4=0 end
-    if not num5 then num5=0 end
-    VgD.SpellCostCategory(m,specialchk,num1,num2,num3,num4,num5)
+function VgD.SpellActivate(c,m,op,con,cost)
     local e1=Effect.CreateEffect(c)
     e1:SetType(EFFECT_TYPE_ACTIVATE)
     e1:SetCode(EVENT_FREE_CHAIN)
     e1:SetCountLimit(1,VgID+EFFECT_COUNT_CODE_OATH)
-    e1:SetCost(VgD.SpellCost(num1,num2,num3,num4,num5))
+    e1:SetCost(VgD.MixCost(cost))
     e1:SetCondition(VgD.SpellCondtion(con))
     e1:SetOperation(VgD.SpellOperation(op))
     c:RegisterEffect(e1)
 end
-function VgD.SpellCost(num1,num2,num3,num4,num5)
-    return function (e,tp,eg,ep,ev,re,r,rp,chk)
-            local c=e:GetHandler()
-            local mg=Group.FromCards(c)
-            local g
-            if chk==0 then
-            local b1,b2,b3,b4,b5=true,true,true,true,true
-            local b6=false
-            if c.Vg_SpecialCost>0 then g=VgD.SpellSpecialChk(c,mg) else g=mg end
-            if g:GetCount()>0 or c.Vg_SpecialCost==0 then
-                if g then mg:Merge(g) end
-                b6=true
+function VgF.MixFilter(mg, cf, cval, bf, bmin, bmax, bval)
+	return function(g)
+		if cf and not cf(g, table.unpack(cval)) then return false end
+		return not bf or (mg - g):CheckSubGroup(bf, bmin, bmax, table.unpack(bval))
+	end
+end
+function VgD.MixCostFilter(c,e,tp,eg,ep,ev,re,r,rp,mc)
+    if Duel.IsPlayerAffectedByEffect(tp,AFFECT_CODE_MIX_DIFFERENT_NAME) and c:IsCode(mc:GetCode()) then return false end
+    local ce = c:GetActivateEffect()
+    if not ce or (ce:GetCost() and not ce:GetCost()(e,tp,eg,ep,ev,re,r,rp,0)) then return false end
+    local cg, cval = mc.cos_g, mc.cos_val
+    local bg, bval = c.cos_g, c.cos_val
+    if not (cg and bg and cval and bval) then return 1 end
+    local mg = cg + bg
+    local cf = table.remove(cval, 1)
+    local min = table.remove(cval, 1)
+    local max = table.remove(cval, 1)
+    local bf = table.remove(bval, 1)
+    local bmin = table.remove(bval, 1)
+    local bmax = table.remove(bval, 1)
+    local mix_f = VgF.MixFilter(mg, cf, cval, bf, bmin, bmax, bval)
+    return mg:CheckSubGroup(mix_f, min, max) and c:IsAbleToRemoveAsCost() and VgF.LvCondition(c)
+end
+function VgD.MixCost(cost)
+	return function(e,tp,eg,ep,ev,re,r,rp,chk,bool)
+		local c=e:GetHandler()
+		if chk==0 then return VgF.GetValueType(cost)~="function" or cost(e,tp,eg,ep,ev,re,r,rp,0) end
+		if not bool and (Duel.IsPlayerAffectedByEffect(tp,AFFECT_CODE_MIX) and Duel.IsExistingMatchingCard(VgD.MixCostFilter,tp,LOCATION_GRAVE,0,1,nil,e,tp,eg,ep,ev,re,r,rp,c) and Duel.SelectYesNo(tp,VgF.Stringid(VgID,6))) then
+			local bc=Duel.SelectMatchingCard(tp,VgD.MixCostFilter,tp,LOCATION_GRAVE,0,1,1,nil,e,tp,eg,ep,ev,re,r,rp,c):GetFirst()
+            if cost then cost(e,tp,eg,ep,ev,re,r,rp) end
+            if bc then
+                Duel.Remove(bc,POS_FACEUP,REASON_COST)
+                e:SetLabelObject(bc)
+                local bce = bc:GetActivateEffect()
+                if bce and bce:GetCost() then bce:GetCost()(e,tp,eg,ep,ev,re,r,rp,1,true) end
             end
-            if num1>0 then b1=Duel.IsExistingMatchingCard(Card.IsDiscardable,tp,LOCATION_HAND,0,num1,mg) end
-            if num2>0 then b2=Duel.IsExistingMatchingCard(Card.IsCode,tp,LOCATION_EMBLEM,0,num2,nil,20401001) end
-            if num3>0 then b3=Duel.GetMatchingGroup(VgF.VMonsterFilter,tp,LOCATION_MZONE,0,nil,mg):GetFirst():GetOverlayGroup():FilterCount(VgF.True,mg)>=num3 end
-            if num4>0 then b4=Duel.GetFieldGroupCount(tp,LOCATION_DECK,0)>=num4 end
-            if num5>0 then b5=Duel.IsExistingMatchingCard(Card.IsFaceup,tp,LOCATION_DAMAGE,0,num5,mg) end
-            return b1 and b2 and b3 and b4 and b5 and b6
-        end
-        local rc=nil
-        if Duel.IsPlayerAffectedByEffect(tp,AFFECT_CODE_MIX) and Duel.IsExistingMatchingCard(VgD.SpellMixFilter,tp,LOCATION_DROP,0,1,nil,c,num1,num2,num3,num4,num5)
-            and Duel.SelectYesNo(tp,VgF.Stringid(VgID,6)) then
-            rc=Duel.SelectMatchingCard(tp,VgD.SpellMixFilter,tp,LOCATION_DROP,0,1,1,nil,c,num1,num2,num3,num4,num5):GetFirst()
-        end
-        VgD.SpellCostOp(e,tp,eg,ep,ev,re,r,rp,chk,c,rc,num1,num2,num3,num4,num5)
-    end
-end
-function VgD.SpellCostCategory(m,specialchk,num1,num2,num3,num4,num5)
-    local cm=_G["c"..m]
-    cm.Vg_SpecialCost=specialchk
-    cm.Vg_DisCard=num1
-    cm.Vg_Energe=num2
-    cm.Vg_OverLay=num3
-    cm.Vg_OverLayFill=num4
-    cm.Vg_Damage=num5
-end
-function VgD.SpellMixFilter(c,mc,num1,num2,num3,num4,num5)
-    local mg=Group.FromCards(c,mc)
-    local tp=c:GetControler()
-    local b1,b2,b3,b4,b5=true,true,true,true,true
-    local b6,b7=false,false
-    local g1=Group.CreateGroup()
-    local g2=Group.CreateGroup()
-    if c.Vg_DisCard>0 then num1=num1+c.Vg_DisCard end
-    if c.Vg_Energe>0 then num2=num2+c.Vg_Energe end
-    if c.Vg_OverLay>0 then num3=num3+c.Vg_OverLay end
-    if c.Vg_OverLayFill>0 then num4=num4+c.Vg_OverLayFill end
-    if c.Vg_Damage>0 then num5=num5+c.Vg_Damage end
-    if c.Vg_SpecialCost>0 then g1=VgD.SpellSpecialChk(c,mg) end
-    if g1:GetCount()>0 or c.Vg_SpecialCost==0 then
-        if g1 then mg:Merge(g1) end
-        b6=true
-    end
-    if mc.Vg_SpecialCost>0 then g2=VgD.SpellSpecialChk(c,mg) end
-    if g2:GetCount()>0 or mc.Vg_SpecialCost==0 then
-        if g2 then mg:Merge(g2) end
-        b7=true
-    end
-    if num1>0 then b1=Duel.IsExistingMatchingCard(Card.IsDiscardable,tp,LOCATION_HAND,0,num1,mg) end
-    if num2>0 then b2=Duel.IsExistingMatchingCard(Card.IsCode,tp,LOCATION_EMBLEM,0,num2,nil,20401001) end
-    if num3>0 then b3=Duel.GetMatchingGroup(VgF.VMonsterFilter,tp,LOCATION_MZONE,0,nil,mg):GetFirst():GetOverlayGroup():FilterCount(Card.IsAbleToGraveAsCost,mg)>=num3 end
-    if num4>0 then b4=Duel.GetFieldGroupCount(tp,LOCATION_DECK,0)>=num4 end
-    if num5>0 then b5=Duel.IsExistingMatchingCard(Card.IsFaceup,tp,LOCATION_DAMAGE,0,num5,mg) end
-    return b1 and b2 and b3 and b4 and b5 and b6 and b7
-end
-function VgD.SpellSpecialChk(c,mg)
-    local t={}
-    local g
-    for i, v in ipairs(t) do
-        if c.Vg_SpecialCost==v then
-            local a
-        end
-    end
-    return mg
-end
-function VgD.SpellCostOp(e,tp,eg,ep,ev,re,r,rp,chk,c,mc,num1,num2,num3,num4,num5)
-    local mg=Group.FromCards(c)
-    if mc then
-        Duel.Remove(mc,POS_FACEUP,REASON_COST)
-        e:SetLabelObject(mc)
-        mg:AddCard(mc)
-        if mc.Vg_DisCard>0 then num1=num1+mc.Vg_DisCard end
-        if mc.Vg_Energe>0 then num2=num2+mc.Vg_Energe end
-        if mc.Vg_OverLay>0 then num3=num3+mc.Vg_OverLay end
-        if mc.Vg_OverLayFill>0 then num4=num4+mc.Vg_OverLayFill end
-        if mc.Vg_Damage>0 then num5=num5+mc.Vg_Damage end
-    end
-    if num1>0 then
-        Duel.Hint(HINT_SELECTMSG,tp,HINTMSG_DISCARD)
-        local g=Duel.SelectMatchingCard(tp,Card.IsDiscardable,tp,LOCATION_HAND,0,num1,num1,mg)
-        Duel.SendtoGrave(g,REASON_COST+REASON_DISCARD)
-    end
-    if num2>0 then
-        local g=Duel.SelectMatchingCard(tp,Card.IsCode,tp,LOCATION_EMBLEM,0,num2,num2,nil,10800730)
-        Duel.Sendto(g,tp,LOCATION_EMBLEM,POS_FACEUP,REASON_COST)
-    end
-    if num3>0 then
-        local g=Duel.GetMatchingGroup(VgF.VMonsterFilter,tp,LOCATION_MZONE,0,nil):GetFirst():GetOverlayGroup():FilterSelect(tp,Card.IsAbleToGraveAsCost,num3,num3,mg)
-        Duel.SendtoGrave(g,REASON_COST)
-    end
-    if num4>0 then
-        local rc=Duel.GetMatchingGroup(VgF.VMonsterFilter,tp,LOCATION_MZONE,0,nil):GetFirst()
-        local g=Duel.GetDecktopGroup(tp,num4)
-        Duel.DisableShuffleCheck()
-        Duel.Overlay(rc,g)
-    end
-    if num5>0 then
-        Duel.Hint(HINT_SELECTMSG,tp,HINTMSG_DAMAGE)
-        local g=Duel.SelectMatchingCard(tp,Card.IsFaceup,tp,LOCATION_DAMAGE,0,num5,num5,mg)
-        Duel.ChangePosition(g,POS_FACEDOWN)
-    end
+        else
+            if cost then cost(e,tp,eg,ep,ev,re,r,rp) end
+		end
+	end
 end
 function VgD.SpellCondtion(con)
     return function (e,tp,eg,ep,ev,re,r,rp)

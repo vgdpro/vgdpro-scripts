@@ -208,7 +208,7 @@ function VgF.Call(g,sumtype,sp,zone)
     end
     local sg
     local z=0xe0
-    if vgf.GetValueType(g)=="Card" then sg=Group.FromCards(g) else sg=Group.Clone(g) end
+    if VgF.GetValueType(g)=="Card" then sg=Group.FromCards(g) else sg=Group.Clone(g) end
     for sc in VgF.Next(sg) do
         if sc:IsLocation(LOCATION_EXTRA) then
             local rc=Duel.GetMatchingGroup(VgF.VMonsterFilter,tp,LOCATION_MZONE,0,nil):GetFirst()
@@ -382,4 +382,32 @@ function VgF.SearchCardSpecialSummon(loc,f)
             VgF.Call(g,0,tp)
         end
     end
+end
+function Group.CheckSubGroup(g,f,min,max,...)
+	min = min or 1
+	max = max or #g
+	if min > max then return false end
+	local ext_params = {...}
+	-- selected group
+	local sg = Group.CreateGroup()
+	-- be select group
+	local bg = g:Clone()
+	for c in VgF.Next(g) do
+		if VgF.CheckGroupRecursiveCapture(c,sg,bg,f,min,max,ext_params) then return true end
+		bg:RemoveCard(c)
+	end
+	return false
+end
+function VgF.CheckGroupRecursiveCapture(c,sg,bg,f,min,max,ext_params)
+	sg = sg + c
+	if VgF.G_Add_Check and not VgF.G_Add_Check(sg,c,bg) then
+		sg = sg - c
+		return false
+	end
+	local res = #sg >= min and #sg <= max and (not f or f(sg,table.unpack(ext_params)))
+	if not res and #sg < max then
+		res = bg:IsExists(VgF.CheckGroupRecursiveCapture,1,sg,sg,bg,f,min,max,ext_params)
+	end
+	sg = sg - c
+	return res
 end

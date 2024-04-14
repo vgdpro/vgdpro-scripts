@@ -886,7 +886,8 @@ SupportFlag             =VgID+5 --支援状态标识
 AttackAtRearFlag        =VgID+6 --后列攻击
 --AffectedByEffect
 AFFECT_CODE_MIX         =VgID   --魔合成
-AFFECT_CODE_SENDTOG     =VgID+1 --
+AFFECT_CODE_MIX_DIFFERENT_NAME  =VgID+1     --魔合成(卡名不同)
+AFFECT_CODE_SENDTOG     =VgID+2 --需要两张卡才能防御
 --自定时点
 EVENT_TRIGGER           =VgID   --判定时点
 EVENT_CRITICAL_STRIKE   =VgID+1 --暴击值结算时点
