@@ -13,10 +13,15 @@ function cm.operation(e,tp,eg,ep,ev,re,r,rp)
     e2:SetCode(EFFECT_ADD_ATTRIBUTE)
     e2:SetRange(LOCATION_MZONE)
     e2:SetValue(SKILL_SUPPORT)
-    e2:SetCondition(cm.condition)
+    e2:SetReset(RESET_EVENT+RESETS_STANDARD+RESET_PHASE+PHASE_END)
     c:RegisterEffect(e2)
 end
-function cm.cost(e,tp,eg,ep,ev,re,r,rp)
-	
+function cm.cost(e,tp,eg,ep,ev,re,r,rp,chk)
+	if chk==0 then return Duel.IsExistingMatchingCard(Card.IsFaceup,tp,LOCATION_DAMAGE,0,1,nil) and Duel.GetMatchingGroup(VgF.VMonsterFilter,tp,LOCATION_MZONE,0,nil,nil):GetFirst():GetOverlayGroup():FilterCount(Card.IsAbleToGraveAsCost,nil)>=1 end
+    Duel.Hint(HINT_SELECTMSG,tp,HINTMSG_DAMAGE)
+    local g1=Duel.SelectMatchingCard(tp,Card.IsFaceup,tp,LOCATION_DAMAGE,0,1,1,nil)
+    Duel.ChangePosition(g1,POS_FACEDOWN)
+    Duel.Hint(HINT_SELECTMSG,tp,HINTMSG_REMOVEXYZ)
+    local g2=Duel.GetMatchingGroup(VgF.VMonsterFilter,tp,LOCATION_MZONE,0,nil):GetFirst():GetOverlayGroup():FilterSelect(tp,Card.IsAbleToGraveAsCost,1,1,nil)
+    Duel.SendtoGrave(g2,REASON_COST)
 end
---未写效果的【费用】[计数爆发1，灵魂爆发1]

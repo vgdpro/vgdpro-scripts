@@ -139,7 +139,7 @@ SUMMON_TYPE_FLIP		=0x20000000	--翻转召唤
 SUMMON_TYPE_SPECIAL		=0x40000000	--特殊召唤(EFFECT_SPSUMMON_PROC,EFFECT_SPSUMMON_PROC_G 可用Value修改數值)
 SUMMON_TYPE_FUSION		=0x43000000	--融合召唤
 SUMMON_TYPE_RITUAL		=0x45000000	--仪式召唤
-SUMMON_TYPE_SYNCHRO		=0x46000000	--同调召唤
+SUMMON_TYPE_SELFRIDE	=0x46000000	--人格骑升
 SUMMON_TYPE_RIDE		=0x49000000	--骑升
 --SUMMON_TYPE_CALL	    =0x4a000000 --Call到R位
 SUMMON_TYPE_LINK		=0x4c000000 --连接召唤
@@ -883,6 +883,7 @@ DamageTriggerFlag       =VgID+2 --多次伤害判定标识
 DefenseEntirelyFlag     =VgID+3 --完全防御标识
 ConditionFlag           =VgID+4 --处于XX状态标识
 SupportFlag             =VgID+5 --支援状态标识
+AttackAtRearFlag        =VgID+6 --后列攻击
 --AffectedByEffect
 AFFECT_CODE_MIX         =VgID   --魔合成
 AFFECT_CODE_SENDTOG     =VgID+1 --

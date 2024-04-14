@@ -32,8 +32,9 @@ function VgD.DisCardRideUpFilter(c,e,lv,code,rc)
     return c:IsDiscardable() and Duel.IsExistingMatchingCard(VgD.RideUpFilter1,tp,LOCATION_HAND+LOCATION_RIDE,0,1,c,e,lv,code,rc)
 end
 function VgD.RideUpFilter2(c,e,lv,code,rc)
-    if rc:GetMaterial():GetCode()==rc:GetCode() and rc:IsAttribute(SKILL_SELF_RIDE) then return end
-    return c:IsLevel(lv) and c:IsType(TYPE_MONSTER) and c:IsCode(code) and rc:IsAttribute(SKILL_SELF_RIDE) and c:IsCanBeSpecialSummoned(e,SUMMON_TYPE_RIDE,tp,false,false,POS_FACEUP_ATTACK)
+    if rc:IsSummonType(SUMMON_TYPE_SELFRIDE) then return end
+    local tp=e:GetHandlerPlayer()
+    return c:IsLevel(lv) and c:IsType(TYPE_MONSTER) and c:IsCode(code) and rc:IsAttribute(SKILL_SELF_RIDE) and c:IsCanBeSpecialSummoned(e,SUMMON_TYPE_SELFRIDE,tp,false,false,POS_FACEUP_ATTACK)
 end
 function VgD.RideUpCondition(e,tp,eg,ep,ev,re,r,rp)
     local rc=Duel.GetMatchingGroup(VgF.VMonsterFilter,tp,LOCATION_MZONE,0,nil):GetFirst()
@@ -98,7 +99,7 @@ function VgD.RideUpOperation(e,tp,eg,ep,ev,re,r,rp)
         end
         sc:SetMaterial(Group.FromCards(rc))
         Duel.Overlay(sc,Group.FromCards(rc))
-        VgF.Call(sc,SUMMON_TYPE_RIDE,tp,0x20)
+        VgF.Call(sc,SUMMON_TYPE_SELFRIDE,tp,0x20)
         Duel.Draw(tp,1,REASON_EFFECT)
         local e1=Effect.CreateEffect(c)
         e1:SetType(EFFECT_TYPE_FIELD)
@@ -468,7 +469,7 @@ function VgD.GToGraveOperation(e,tp,eg,ep,ev,re,r,rp)
     Duel.SendtoGrave(c,REASON_RULE)
 end
 function VgD.MonsterAttackAnnounceCondition(e,c)
-    return e:GetHandler():IsPosition(POS_DEFENSE) or VgF.IsSequence(e:GetHandler(),1,2,3)
+    return e:GetHandler():IsPosition(POS_DEFENSE) or (VgF.IsSequence(e:GetHandler(),1,2,3) and e:GetHandler():GetFlagEffect(AttackAtRearFlag)==0)
 end
 function VgD.MonsterAttackCondition(e,tp,eg,ep,ev,re,r,rp)
     local c=e:GetHandler()
@@ -670,6 +671,13 @@ function VgD.Rule(c)
     local e15=e12:Clone()
     e15:SetCode(EFFECT_CANNOT_SSET)
     c:RegisterEffect(e15)
+    local e16=Effect.CreateEffect(c)
+    e16:SetType(EFFECT_TYPE_FIELD)
+    e16:SetCode(EFFECT_QP_ACT_IN_NTPHAND)
+    e16:SetRange(LOCATION_ALL)
+    e16:SetCondition(VgF.RuleCardCondtion)
+    e16:SetTargetRange(LOCATION_HAND,0)
+    c:RegisterEffect(e16)
 end
 function VgD.EventRideStart(e,tp,eg,ep,ev,re,r,rp)
     local c=e:GetHandler()
@@ -710,7 +718,7 @@ function VgD.RuelDrawOperation(e,tp,eg,ep,ev,re,r,rp)
     end
 end
 
---指令卡cost
+--指令卡
 function VgD.SpellActivate(c,m,op,con,specialchk,num1,num2,num3,num4,num5)
     if not specialchk then specialchk=0 end
     if not num1 then num1=0 end
@@ -815,12 +823,6 @@ function VgD.SpellCostOp(e,tp,eg,ep,ev,re,r,rp,chk,c,mc,num1,num2,num3,num4,num5
         if mc.Vg_OverLay>0 then num3=num3+mc.Vg_OverLay end
         if mc.Vg_OverLayFill>0 then num4=num4+mc.Vg_OverLayFill end
         if mc.Vg_Damage>0 then num5=num5+mc.Vg_Damage end
-        local t={}
-        for i, v in ipairs(t) do
-            if mc.Vg_SpecialCost==v then
-                local a
-            end
-        end
     end
     if num1>0 then
         Duel.Hint(HINT_SELECTMSG,tp,HINTMSG_DISCARD)
@@ -942,4 +944,15 @@ end
 function VgD.EffectTypeTriggerWhenHitting(c,m,loc,typ,op,cost,con,tg,count,property,stringid)
     VgD.EffectTypeTrigger(c,m,loc,typ,EVENT_CUSTOM+EVENT_DAMAGE_TRIGGER,op,cost,con,tg,count,property,stringid)
     VgD.EffectTypeTrigger(c,m,loc,typ,EVENT_BATTLE_DESTROYING,op,cost,con,tg,count,property,stringid)
+end
+function VgD.QuickSpell(c,code,op,cost,con,tg)
+    local e1=Effect.CreateEffect(c)
+    e1:SetType(EFFECT_TYPE_ACTIVATE)
+    e1:SetCode(code)
+    e1:SetProperty(EFFECT_FLAG_DELAY)
+    if VgF.GetValueType(con)=="function" then e1:SetCondition(con) end
+    if VgF.GetValueType(cost)=="function" then e1:SetCost(cost) end
+    if VgF.GetValueType(tg)=="function" then e1:SetTarget(tg) end
+    if VgF.GetValueType(op)=="function" then e1:SetOperation(op) end
+    c:RegisterEffect(e1)
 end

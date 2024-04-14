@@ -327,6 +327,7 @@ function VgF.OverlayCost(num)
         if chk==0 then
             return Duel.GetMatchingGroup(VgF.VMonsterFilter,tp,LOCATION_MZONE,0,nil,nil):GetFirst():GetOverlayGroup():FilterCount(Card.IsAbleToGraveAsCost,nil)>=num
         end
+        Duel.Hint(HINT_SELECTMSG,tp,HINTMSG_REMOVEXYZ)
         local g=Duel.GetMatchingGroup(VgF.VMonsterFilter,tp,LOCATION_MZONE,0,nil):GetFirst():GetOverlayGroup():FilterSelect(tp,Card.IsAbleToGraveAsCost,num,num,nil)
         Duel.SendtoGrave(g,REASON_COST)
     end

@@ -7,14 +7,15 @@ function cm.initial_effect(c)
 end
 function cm.operation(e,tp,eg,ep,ev,re,r,rp)
 	local c=e:GetHandler()
+	local ct=1
+	if c:IsSummonType(SUMMON_TYPE_SELFRIDE) then ct=3 end
 	Duel.Hint(HINT_SELECTMSG,tp,HINTMSG_ATKUP)
-    local g=Duel.SelectMatchingCard(tp,vgf.RMonsterFilter,tp,LOCATION_MZONE,0,1,1,nil)
+    local g=Duel.SelectMatchingCard(tp,vgf.RMonsterFilter,tp,LOCATION_MZONE,0,1,ct,nil)
     if g then
 		Duel.Hintselectgion(g)
-		--可以从后列攻击
+		for tc in vgf.Next(g) do
+			tc:RegisterFlagEffect(AttackAtRearFlag,RESET_EVENT+RESETS_STANDARD,EFFECT_FLAG_CLIENT_HINT,1,0,vgf.Stringid(VgID,10))
+		end
 		vgF.AtkUp(c,g,5000,nil)
 	end
 end
---未写效果
---1.可以从后列攻击
---2.进行了人格ride的话，不是选择1张，而是选择3张
