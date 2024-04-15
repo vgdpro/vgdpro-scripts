@@ -28,16 +28,20 @@ function cm.checkcon(e,tp,eg,ep,ev,re,r,rp)
     return eg:IsExists(Card.IsLocation,1,nil,LOCATION_TRIGGER) and Duel.GetTurnPlayer()==tp
 end
 function cm.checkop(e,tp,eg,ep,ev,re,r,rp)
-    Duel.RegisterFlagEffect(rp,m,RESET_PHASE+PHASE_BATTLE+RESET_EVENT+EVENT_ATTACK_ANNOUNCE,0,1)
+    Duel.RegisterFlagEffect(rp,m,RESET_EVENT+EVENT_DAMAGE_STEP_END,0,1)
+end
+function cm.filter(c)
+    return vgf.RMonsterFilter(c) and c:IsDefensePos()
 end
 function cm.operation(e,tp,eg,ep,ev,re,r,rp)
     local c=e:GetHandler()
     Duel.Hint(HINT_SELECTMSG,tp,HINTMSG_ATKUP)
-    local g=Duel.SelectMatchingCard(tp,vgf.RMonsterFilter,tp,LOCATION_MZONE,0,1,1,nil)
-    if g then
-        Duel.Hintselectgion(g)
-        Duel.ChangePosition(g,POS_ATTACK)
-        vgF.AtkUp(c,g,10000,nil)
+    local g=Duel.SelectMatchingCard(tp,cm.filter,tp,LOCATION_MZONE,0,1,1,nil)
+    if g:GetCount()>0 then
+        Duel.HintSelection(g)
+        if Duel.ChangePosition(g,POS_ATTACK)>0 then
+            vgF.AtkUp(c,g,10000,nil)
+        end
     end
 end
 function cm.condition(e,tp,eg,ep,ev,re,r,rp)
