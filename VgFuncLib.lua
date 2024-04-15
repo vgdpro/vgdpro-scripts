@@ -395,12 +395,13 @@ function VgF.SearchCard(loc,f)
         local g=Duel.SelectMatchingCard(tp,function (c)
             if VgF.GetValueType(f)=="function" and not f(c) then return false end
             return c:IsAbleToHand()
-        end
-        ,tp,loc,0,1,1,nil)
+        end,tp,loc,0,1,1,nil)
         if g:GetCount()>0 then
             Duel.SendtoHand(g,nil,REASON_EFFECT)
             Duel.ConfirmCards(1-tp,g)
         end
+        local sg=Duel.GetOperatedGroup()
+        return sg:GetCount()
     end
 end
 function VgF.SearchCardSpecialSummon(loc,f)
@@ -410,12 +411,13 @@ function VgF.SearchCardSpecialSummon(loc,f)
         local g=Duel.SelectMatchingCard(tp,function (c)
             if VgF.GetValueType(f)=="function" and not f(c) then return false end
             return c:IsCanBeSpecialSummoned(e,0,tp,false,false,POS_FACEUP_ATTACK)
-        end
-        ,tp,loc,0,1,1,nil)
+        end,tp,loc,0,1,1,nil)
         if g:GetCount()>0 then
             if loc&LOCATION_DECK+LOCATION_HAND+LOCATION_EXTRA==0 then Duel.HintSelection(g) end
             VgF.Call(g,0,tp)
         end
+        local sg=Duel.GetOperatedGroup()
+        return sg:GetCount()
     end
 end
 function Group.CheckSubGroup(g,f,min,max,...)
