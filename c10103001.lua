@@ -25,7 +25,7 @@ function cm.initial_effect(c)
     c:RegisterEffect(e1)
 end
 function cm.checkcon(e,tp,eg,ep,ev,re,r,rp)
-    return eg:IsExists(Card.IsLocation,1,nil,LOCATION_TRIGGER) and Duel.GetTurnPlayer()==tp
+    return eg:IsExists(Card.IsLocation,1,nil,LOCATION_TRIGGER) and Duel.GetTurnPlayer()==tp and Duel.GetAttackTarget()
 end
 function cm.checkop(e,tp,eg,ep,ev,re,r,rp)
     Duel.RegisterFlagEffect(rp,m,RESET_EVENT+EVENT_DAMAGE_STEP_END,0,1)
@@ -39,9 +39,8 @@ function cm.operation(e,tp,eg,ep,ev,re,r,rp)
     local g=Duel.SelectMatchingCard(tp,cm.filter,tp,LOCATION_MZONE,0,1,1,nil)
     if g:GetCount()>0 then
         Duel.HintSelection(g)
-        if Duel.ChangePosition(g,POS_ATTACK)>0 then
-            vgF.AtkUp(c,g,10000,nil)
-        end
+        Duel.ChangePosition(g,POS_FACEUP_ATTACK)
+        vgf.AtkUp(c,g,10000,nil)
     end
 end
 function cm.condition(e,tp,eg,ep,ev,re,r,rp)

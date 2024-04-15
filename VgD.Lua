@@ -483,7 +483,7 @@ function VgD.MonsterAttackCost(e,tp,eg,ep,ev,re,r,rp,chk)
     c:RegisterFlagEffect(CountTriggerFlag,RESET_EVENT+RESETS_STANDARD+RESET_PHASE+PHASE_DAMAGE_CAL,0,1)
 end
 function VgD.MonsterCannotBeDestoryCondition(e,c)
-    return VgF.VMonsterFilter(e:GetHandler()) or Duel.GetTurnPlayer()==e:GetHandlerPlayer()
+    return VgF.VMonsterFilter(e:GetHandler()) or Duel.GetAttacker()==e:GetHandler()
 end
 function VgD.MonsterCannotBeAttackedCondition(e,c)
     return VgF.IsSequence(e:GetHandler(),1,2,3)
