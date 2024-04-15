@@ -304,6 +304,13 @@ function VgF.IsAbleToGZone(c)
 end
 function VgF.DisCardCost(num)
     return function (e,tp,eg,ep,ev,re,r,rp,chk)
+        local c=e:GetHandler()
+        local m=c:GetOriginalCode()
+        local cm=_G["c"..m]
+        if e:IsHasType(EFFECT_TYPE_ACTIVATE) then
+            cm.cos_g=Duel.GetMatchingGroup(Card.IsDiscardable,tp,LOCATION_HAND,0,nil)
+            cm.cos_val={nil,num,num}
+        end
         if chk==0 then
             return Duel.IsExistingMatchingCard(Card.IsDiscardable,tp,LOCATION_HAND,0,num,nil)
         end
@@ -314,6 +321,13 @@ function VgF.DisCardCost(num)
 end
 function VgF.EnegyCost(num)
     return function (e,tp,eg,ep,ev,re,r,rp,chk)
+        local c=e:GetHandler()
+        local m=c:GetOriginalCode()
+        local cm=_G["c"..m]
+        if e:IsHasType(EFFECT_TYPE_ACTIVATE) then
+            cm.cos_g=Duel.GetMatchingGroup(Card.IsCode,tp,LOCATION_EMBLEM,0,nil,10800730)
+            cm.cos_val={nil,num,num}
+        end
         if chk==0 then
             return Duel.IsExistingMatchingCard(Card.IsCode,tp,LOCATION_EMBLEM,0,num,nil,10800730)
         end
@@ -324,6 +338,13 @@ function VgF.EnegyCost(num)
 end
 function VgF.OverlayCost(num)
     return function (e,tp,eg,ep,ev,re,r,rp,chk)
+        local c=e:GetHandler()
+        local m=c:GetOriginalCode()
+        local cm=_G["c"..m]
+        if e:IsHasType(EFFECT_TYPE_ACTIVATE) then
+            cm.cos_g=Duel.GetMatchingGroup(VgF.VMonsterFilter,tp,LOCATION_MZONE,0,nil,nil):GetFirst():GetOverlayGroup():FilterCount(Card.IsAbleToGraveAsCost,nil)
+            cm.cos_val={nil,num,num}
+        end
         if chk==0 then
             return Duel.GetMatchingGroup(VgF.VMonsterFilter,tp,LOCATION_MZONE,0,nil,nil):GetFirst():GetOverlayGroup():FilterCount(Card.IsAbleToGraveAsCost,nil)>=num
         end
@@ -334,6 +355,13 @@ function VgF.OverlayCost(num)
 end
 function VgF.OverlayFillCostOrOperation(num)
     return function (e,tp,eg,ep,ev,re,r,rp,chk)
+        local c=e:GetHandler()
+        local m=c:GetOriginalCode()
+        local cm=_G["c"..m]
+        if e:IsHasType(EFFECT_TYPE_ACTIVATE) then
+            cm.cos_g=Duel.GetFieldGroupCount(tp,LOCATION_DECK)
+            cm.cos_val={nil,num,num}
+        end
         if chk==0 then
             return Duel.GetFieldGroupCount(tp,LOCATION_DECK,0)>=num
         end
@@ -345,6 +373,13 @@ function VgF.OverlayFillCostOrOperation(num)
 end
 function VgF.DamageCost(num)
     return function (e,tp,eg,ep,ev,re,r,rp,chk)
+        local c=e:GetHandler()
+        local m=c:GetOriginalCode()
+        local cm=_G["c"..m]
+        if e:IsHasType(EFFECT_TYPE_ACTIVATE) then
+            cm.cos_g=Duel.GetMatchingGroup(Card.IsFaceup,tp,LOCATION_DAMAGE,0,nil)
+            cm.cos_val={nil,num,num}
+        end
         if chk==0 then
             return Duel.IsExistingMatchingCard(Card.IsFaceup,tp,LOCATION_DAMAGE,0,num,nil)
         end

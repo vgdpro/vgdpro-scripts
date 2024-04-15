@@ -579,7 +579,7 @@ function VgD.CardTriggerOperation(chkop,f)
                 Duel.Draw(tp,1,REASON_TRIGGER)
                 Duel.Exile(c,REASON_TRIGGER)
             else
-                Duel.Sendto(c,tp,LOCATION_DAMAGE,POS_FACEUP,REASON_EFFECT)
+                Duel.Sendto(c,tp,LOCATION_DAMAGE,POS_FACEUP_ATTACK,REASON_EFFECT)
                 Duel.Damage(tp,1,REASON_TRIGGER)
             end
             local rc=Duel.GetMatchingGroup(VgF.VMonsterFilter,tp,LOCATION_MZONE,0,nil):GetFirst()
@@ -877,5 +877,16 @@ function VgD.QuickSpell(c,code,op,cost,con,tg)
     if VgF.GetValueType(cost)=="function" then e1:SetCost(cost) end
     if VgF.GetValueType(tg)=="function" then e1:SetTarget(tg) end
     if VgF.GetValueType(op)=="function" then e1:SetOperation(op) end
+    c:RegisterEffect(e1)
+end
+function VgD.EffectTypeContinuousChangeAttack(c,typ,val,con)
+    if not typ then typ=EFFECT_TYPE_SINGLE end
+    local e1=Effect.CreateEffect(c)
+    e1:SetType(EFFECT_TYPE_SINGLE)
+    e1:SetProperty(type)
+    e1:SetCode(EFFECT_UPDATE_ATTACK)
+    e1:SetRange(LOCATION_MZONE)
+	e1:SetCondition(con)
+    e1:SetValue(val)
     c:RegisterEffect(e1)
 end
