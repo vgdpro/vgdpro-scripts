@@ -9,9 +9,8 @@ function cm.initial_effect(c)
 end
 function cm.operation(e,tp,eg,ep,ev,re,r,rp)
 	local c=e:GetHandler()
-	if vgf.SearchCard(LOCATION_DECK,cm.fliter)>0 then
-		vgf.AtkUp(c,c,10000,nil)
-	end
+	vgf.SearchCard(LOCATION_DECK,cm.fliter)
+	vgf.AtkUp(c,c,10000,nil)
 end
 function cm.fliter(c)
 	return c:IsCode(20104001)
