@@ -131,7 +131,6 @@ end
 function VgD.RideZeroFilter(c,e,tp)
     return VgF.IsLevel(c,0) and c:IsCanBeSpecialSummoned(e,SUMMON_TYPE_RIDE,tp,false,false,POS_FACEUP_ATTACK)
 end
-
 --Call到R位
 function VgD.CallToR(c)
     local e1=Effect.CreateEffect(c)
@@ -839,7 +838,7 @@ function VgD.EffectTypeTrigger(c,m,loc,typ,code,op,cost,con,tg,count,property,st
     local e1=Effect.CreateEffect(c)
     e1:SetDescription(VgF.Stringid(m,stringid))
     e1:SetType(typ+type2)
-    e1:SetRange(loc)
+    if code~=EVENT_SPSUMMON_SUCCESS then e1:SetRange(loc) end
     e1:SetCode(code)
     e1:SetProperty(property+EFFECT_FLAG_DELAY)
     if count and count>0 then e1:SetCountLimit(count) end
