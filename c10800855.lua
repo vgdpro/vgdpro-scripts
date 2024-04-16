@@ -44,8 +44,13 @@ end
 function cm.op2(e,tp,eg,ep,ev,re,r,rp)
     local c=e:GetHandler()
     if Duel.GetMatchingGroupCount(Card.IsCode,tp,LOCATION_EMBLEM,0,nil,10800730)>=10 then return end
-    local token=Duel.CreateToken(tp,10800730)
-    Duel.Sendto(token,tp,LOCATION_EMBLEM,POS_FACEUP_ATTACK,REASON_EFFECT)
+    local ct=10-Duel.GetMatchingGroupCount(Card.IsCode,tp,LOCATION_EMBLEM,0,nil,10800730)
+    local token1=Duel.CreateToken(tp,10800730)
+    local token2=Duel.CreateToken(tp,10800730)
+    local token3=Duel.CreateToken(tp,10800730)
+    local sg=Group.FromCards(token1,token2,token3)
+    local g=VgF.GetCardsFromGroup(sg,ct)
+    Duel.Sendto(g,tp,LOCATION_EMBLEM,POS_FACEUP_ATTACK,REASON_EFFECT)
 end
 function cm.op3(e,tp,eg,ep,ev,re,r,rp)
     Duel.Draw(tp,1,REASON_EFFECT)

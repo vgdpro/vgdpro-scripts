@@ -20,7 +20,7 @@ function cm.operation(e,tp,eg,ep,ev,re,r,rp)
 	local g=Duel.GetDecktopGroup(tp,1)
 	local tc=vgf.ReturnCard(g)
 	Duel.DisableShuffleCheck()
-	if tc:IsType(TYPE_MONSTER and vgf.IsLevel(tc,0,1,2)) then
+	if tc:IsType(TYPE_MONSTER) and vgf.IsLevel(tc,0,1,2) then
         vgf.Call(g,0,tp)
 	elseif tc:IsCanOverlay() then
 		Duel.Overlay(c,g)
