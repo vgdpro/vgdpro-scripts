@@ -17,5 +17,8 @@ function cm.op(e,tp,eg,ep,ev,re,r,rp)
 	end
 end
 function cm.con(e,tp,eg,ep,ev,re,r,rp)
-	return not eg:IsExists(vgf.Not(Card.IsLocation),1,nil,LOCATION_GRAVE)
+	return eg:IsExists(cm.filter,1,nil,tp)
+end
+function cm.filter(c,tp)
+	return c:IsLocation(LOCATION_GZONE) and c:IsControler(tp)
 end

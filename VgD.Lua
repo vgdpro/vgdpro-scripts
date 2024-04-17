@@ -882,7 +882,7 @@ function VgD.QuickSpell(c,code,op,cost,con,tg)
     local e1=Effect.CreateEffect(c)
     e1:SetType(EFFECT_TYPE_ACTIVATE)
     e1:SetCode(code)
-    e1:SetProperty(EFFECT_FLAG_DELAY)
+    e1:SetProperty(EFFECT_FLAG_DELAY+EFFECT_FLAG_DAMAGE_STEP)
     if VgF.GetValueType(con)=="function" then e1:SetCondition(con) end
     if VgF.GetValueType(cost)=="function" then e1:SetCost(cost) end
     if VgF.GetValueType(tg)=="function" then e1:SetTarget(tg) end
