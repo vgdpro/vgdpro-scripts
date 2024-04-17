@@ -21,9 +21,9 @@
 6. [VgFuncLib函数库详解](#vgfunclib函数库详解)
    1. [每个卡的必备](#1每个卡的必备)
    2. [提示文字](#2提示文字)
-   3. [卡名记述](#3卡名记述)
-   4. [先导者/后防者的判断](#4先导者后防者的判断)
-   5. [等级的判断](#5等级的判断)
+   3. [先导者/后防者的判断](#3先导者后防者的判断)
+   4. [等级的判断](#4等级的判断)
+   5. [等级的判断 其二](#4等级的判断其二)
       
 </details>
 
@@ -142,22 +142,8 @@ end
 因为魔合成的不向下兼容而生的函数, 用于通常指令的注册
 
 ```lua
-vgd.SpellActivate(c, m, op, con[, chk, dis, eb, sb, sc, cb])
+vgd.SpellActivate(c, m, op, con, cost)
 ```
-
-参数注释
-
-> **chk : 特殊的费用标识（填写卡号否则为0, 适用于存在以下参数不适用的费用） `不填默认为 nil`**
-> 
-> **dis : 将手牌中的x张卡舍弃 `不填默认为 0`**
-> 
-> **eb : 能量爆发x (Energy Blast) `不填默认为 0`**
-> 
-> **sb : 灵魂爆发x (Soul Blast) `不填默认为 0`**
->
-> **sc : 灵魂填充x (Soul Charge) `不填默认为 0`**
-> 
-> **cb : 计数爆发x (Counter Blast) `不填默认为 0`**
 
 范例 : [骤阳之进化](c10101015.lua)
 
@@ -168,11 +154,19 @@ vgd.SpellActivate(c, m, op, con[, chk, dis, eb, sb, sc, cb])
 ```lua
 local cm,m,o=GetID()
 function cm.initial_effect(c)
-    vgf.VgCard(c)
-    vgd.SpellActivate(c,m,vgf.SearchCard(LOCATION_DROP,cm.filter))
+	vgf.VgCard(c)
+	vgd.SpellActivate(c,m,cm.operation,vgf.DamageCost(1))
+end
+function cm.operation(e,tp,eg,ep,ev,re,r,rp)
+	local c=e:GetHandler()
+	Duel.Hint(HINT_SELECTMSG,tp,HINTMSG_ATKUP)
+	local g=Duel.SelectMatchingCard(tp,nil,tp,LOCATION_MZONE,0,1,1,nil)
+	Duel.HintSelection(g)
+	VgF.AtkUp(c,g,5000,nil)
+	vgf.SearchCard(LOCATION_DROP,cm.filter)
 end
 function cm.filter(c)
-    return c:IsCode(10101006)
+	return c:IsCode(10101006)
 end
 ```
 
@@ -231,30 +225,27 @@ vgd.EffectTypeTrigger(c, m, loc, typ, code[, op, cost, con, tg, count, property]
 local cm,m,o=GetID()
 function cm.initial_effect(c)
 	vgf.VgCard(c)
-	-- 处于【超限舞装】状态的这个单位攻击先导者时，这次战斗中，这个单位的力量+10000
-	vgd.EffectTypeTrigger(c, m, LOCATION_MZONE, EFFECT_TYPE_SINGLE, EVENT_ATTACK_ANNOUNCE, cm.operation2, nil, cm.condition2)
-	-- 接着通过【费用】[灵魂爆发2]，选择对手的1张后防者，退场。
-	vgd.EffectTypeTrigger(c, m, LOCATION_MZONE, EFFECT_TYPE_FIELD, EVENT_CUSTOM+m, cm.operation3, vgf.OverlayCost(2), cm.condition3)
+	vgd.EffectTypeTrigger(c,m,LOCATION_MZONE,EFFECT_TYPE_SINGLE,EVENT_ATTACK_ANNOUNCE,cm.operation2,nil,cm.condition2)
 end
 function cm.operation2(e,tp,eg,ep,ev,re,r,rp)
 	local c=e:GetHandler()
 	VgF.AtkUp(c,c,10000,nil)
-	Duel.RaiseEvent(c,EVENT_CUSTOM+m,e,0,tp,tp,0)
+	if Duel.GetMatchingGroup(VgF.VMonsterFilter,tp,LOCATION_MZONE,0,nil,nil):GetFirst():GetOverlayGroup():FilterCount(Card.IsAbleToGraveAsCost,nil)>=2
+		and Duel.SelectYesNo(tp,vgf.Stringid(m,3)) then
+		local cg=Duel.GetMatchingGroup(VgF.VMonsterFilter,tp,LOCATION_MZONE,0,nil):GetFirst():GetOverlayGroup():FilterSelect(tp,Card.IsAbleToGraveAsCost,2,2,nil)
+		if Duel.SendtoGrave(cg,REASON_COST)==2 then
+			Duel.Hint(HINT_SELECTMSG,tp,HINTMSG_LEAVEONFIELD)
+			local g=Duel.SelectTarget(tp,vgf.RMonsterFilter,tp,0,LOCATION_MZONE,1,1,nil)
+			if g then
+				Duel.HintSelection(g)
+				Duel.SendtoGrave(g,REASON_EFFECT)
+			end
+		end
+	end
 end
 function cm.condition2(e,tp,eg,ep,ev,re,r,rp)
 	local c=e:GetHandler()
 	return vgf.RMonsterCondition(e) and c:GetFlagEffectLabel(ConditionFlag)==201 and vgf.VMonsterFilter(Duel.GetAttackTarget())
-end
-function cm.condition3(e,tp,eg,ep,ev,re,r,rp)
-	return eg:GetFirst()==e:GetHandler()
-end
-function cm.operation3(e,tp,eg,ep,ev,re,r,rp)
-	Duel.Hint(HINT_SELECTMSG,tp,HINTMSG_LEAVEONFIELD)
-	local g=Duel.SelectTarget(tp,vgf.RMonsterFilter,tp,0,LOCATION_MZONE,1,1,nil)
-	if g then
-		Duel.HintSelection(g)
-		Duel.SendtoGrave(g,REASON_EFFECT)
-	end
 end
 ```
 
@@ -313,32 +304,7 @@ vgf.VgCard(c)
 vgf.Stringid(m, id)
 ```
 
-## 3.卡名记述
-
-用于某些指定卡名的效果（比如【超限舞装】的指定卡名）
-
-```lua
-vgf.AddCodeList(c, ...)
-```
-
-参数注释
-
-> **... : 记述的卡名, 可填入多个参数, 如: vgf.AddCodeList(c, code1, code2)**
-
-范例 : [瓦尔里纳](c10101006.lua)
-
-> **【超限舞装】-「托里科斯塔」（作为通常CALL到R上的代替，也可以将这张卡重叠在指定的单位上登场。）**
-
-```lua
-local cm,m,o=GetID()
-function cm.initial_effect(c)
-	vgf.VgCard(c)
-	-- 托里科斯塔 的卡号为 10101009
-	vgf.AddCodeList(c,10101009)
-end
-```
-
-## 4.先导者/后防者的判断
+## 3.先导者/后防者的判断
 
 用于判断`某张卡/某个效果的持有者`是否为`先导者/后防者`, 返回 `boolean` 值
 
@@ -364,8 +330,22 @@ vgf.RMonsterCondition(e)
 local cm,m,o=GetID()
 function cm.initial_effect(c)
 	vgf.VgCard(c)
-	-- 处于【超限舞装】状态的这个单位攻击先导者时，这次战斗中，这个单位的力量+10000
-	vgd.EffectTypeTrigger(c, m, LOCATION_MZONE, EFFECT_TYPE_SINGLE, EVENT_ATTACK_ANNOUNCE, cm.operation2, nil, cm.condition2)
+	vgd.EffectTypeTrigger(c,m,LOCATION_MZONE,EFFECT_TYPE_SINGLE,EVENT_ATTACK_ANNOUNCE,cm.operation2,nil,cm.condition2)
+end
+function cm.operation2(e,tp,eg,ep,ev,re,r,rp)
+	local c=e:GetHandler()
+	VgF.AtkUp(c,c,10000,nil)
+	if Duel.GetMatchingGroup(VgF.VMonsterFilter,tp,LOCATION_MZONE,0,nil,nil):GetFirst():GetOverlayGroup():FilterCount(Card.IsAbleToGraveAsCost,nil)>=2 and Duel.SelectYesNo(tp,vgf.Stringid(m,3)) then
+		local cg=Duel.GetMatchingGroup(VgF.VMonsterFilter,tp,LOCATION_MZONE,0,nil):GetFirst():GetOverlayGroup():FilterSelect(tp,Card.IsAbleToGraveAsCost,2,2,nil)
+        if Duel.SendtoGrave(cg,REASON_COST)==2 then
+			Duel.Hint(HINT_SELECTMSG,tp,HINTMSG_LEAVEONFIELD)
+			local g=Duel.SelectTarget(tp,vgf.RMonsterFilter,tp,0,LOCATION_MZONE,1,1,nil)
+			if g then
+				Duel.HintSelection(g)
+				Duel.SendtoGrave(g,REASON_EFFECT)
+			end
+		end
+	end
 end
 function cm.condition2(e,tp,eg,ep,ev,re,r,rp)
 	local c=e:GetHandler()
@@ -373,14 +353,9 @@ function cm.condition2(e,tp,eg,ep,ev,re,r,rp)
 	-- vgf.VMonsterFilter(Duel.GetAttackTarget()) 判断 被攻击的卡 是否为先导者
 	return vgf.RMonsterCondition(e) and c:GetFlagEffectLabel(ConditionFlag)==201 and vgf.VMonsterFilter(Duel.GetAttackTarget())
 end
-function cm.operation2(e,tp,eg,ep,ev,re,r,rp)
-	local c=e:GetHandler()
-	VgF.AtkUp(c,c,10000,nil)
-	Duel.RaiseEvent(c,EVENT_CUSTOM+m,e,0,tp,tp,0)
-end
 ```
 
-## 5.等级的判断
+## 4.等级的判断
 
 用于判断`自己场上的先导者等级`是否大于等于`这张卡/这个效果的持有者等级`, 返回 `boolean` 值
 
@@ -392,7 +367,7 @@ vgf.LvCondition(e_or_c)
 
 > **e_or_c : 要判断的效果或者卡**
 
-## 6.等级的判断
+## 5.等级的判断 其二
 
 用于判断`这张卡的等级`是否在`...`之中, 返回 `boolean` 值
 
