@@ -32,7 +32,6 @@ function VgD.DisCardRideUpFilter(c,e,lv,code,rc)
     return c:IsDiscardable() and Duel.IsExistingMatchingCard(VgD.RideUpFilter1,tp,LOCATION_HAND+LOCATION_RIDE,0,1,c,e,lv,code,rc)
 end
 function VgD.RideUpFilter2(c,e,lv,code,rc)
-    if rc:IsSummonType(SUMMON_TYPE_SELFRIDE) then return end
     local tp=e:GetHandlerPlayer()
     return c:IsLevel(lv) and c:IsType(TYPE_MONSTER) and c:IsCode(code) and rc:IsAttribute(SKILL_SELF_RIDE) and c:IsCanBeSpecialSummoned(e,SUMMON_TYPE_SELFRIDE,tp,false,false,POS_FACEUP_ATTACK)
 end
@@ -410,7 +409,7 @@ end
 function VgD.SupportOperation(e,tp,eg,ep,ev,re,r,rp)
     local c=e:GetHandler()
     Duel.ChangePosition(c,POS_FACEUP_DEFENSE)
-    Duel.GetAttacker():RegisterFlagEffect(SupportFlag,RESET_EVENT+RESETS_STANDARD+EVENT_DAMAGE_STEP_END,0,1)
+    c:RegisterFlagEffect(SupportFlag,RESET_EVENT+EVENT_BATTLED,0,1)
 end
 function VgD.SupportValue(e)
         local tp=e:GetHandlerPlayer()
@@ -482,8 +481,9 @@ function VgD.MonsterAttackCost(e,tp,eg,ep,ev,re,r,rp,chk)
     if chk==0 then return c:GetFlagEffect(CountTriggerFlag)==0 end
     c:RegisterFlagEffect(CountTriggerFlag,RESET_EVENT+RESETS_STANDARD+RESET_PHASE+PHASE_DAMAGE_CAL,0,1)
 end
-function VgD.MonsterCannotBeDestoryCondition(e,c)
-    return VgF.VMonsterFilter(e:GetHandler()) or Duel.GetAttacker()==e:GetHandler()
+function VgD.MonsterCannotBeDestoryCondition(e)
+    local c=e:GetHandler()
+    return VgF.VMonsterFilter(c)
 end
 function VgD.MonsterCannotBeAttackedCondition(e,c)
     return VgF.IsSequence(e:GetHandler(),1,2,3)
@@ -567,7 +567,7 @@ function VgD.CardTriggerOperation(chkop,f)
             end
         elseif c:IsRace(TRRIGGER_ADVANCE) then
             local g=Duel.GetMatchingGroup(VgF.IsSequence,tp,LOCATION_MZONE,0,nil,0,4,5)
-            VgF.AtkUp(c,tc,10000,nil)
+            VgF.AtkUp(c,g,10000,nil)
         end
         if chkop==0 then
             if c:IsRace(TRRIGGER_SUPER) then
@@ -632,6 +632,12 @@ function VgD.Rule(c)
     e1:SetCondition(VgD.RuelDrawCondition)
     e1:SetOperation(VgD.RuelDrawOperation)
 	c:RegisterEffect(e1)
+    local e2=Effect.CreateEffect(c)
+    e2:SetType(EFFECT_TYPE_FIELD+EFFECT_TYPE_CONTINUOUS)
+    e2:SetCode(EVENT_BATTLED)
+    e2:SetRange(LOCATION_MZONE)
+    e2:SetOperation(VgD.ResetOperation)
+    c:RegisterEffect(e2)
     local e3=Effect.CreateEffect(c)
     e3:SetType(EFFECT_TYPE_FIELD+EFFECT_TYPE_CONTINUOUS)
     e3:SetCode(EVENT_PHASE_START+PHASE_STANDBY)
@@ -717,6 +723,10 @@ function VgD.RuelDrawOperation(e,tp,eg,ep,ev,re,r,rp)
     if Duel.GetTurnPlayer()==tp then
         Duel.Draw(tp,1,REASON_PHASEDRAW)
     end
+end
+function VgD.ResetOperation(e,tp,eg,ep,ev,re,r,rp)
+    local c=e:GetHandler()
+    if c:GetFlagEffect(SupportFlag)>0 then c:ResetFlagEffect(SupportFlag) end
 end
 
 --指令卡

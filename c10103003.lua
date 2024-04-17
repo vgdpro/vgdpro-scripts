@@ -26,7 +26,7 @@ function cm.operation2(e,tp,eg,ep,ev,re,r,rp)
     local c=e:GetHandler()
     Duel.Hint(HINT_SELECTMSG,tp,HINTMSG_ATKUP)
     local g=Duel.SelectMatchingCard(tp,cm.filter,tp,LOCATION_MZONE,0,1,1,nil)
-    if g then
+    if g:GetCount()>0 then
         vgf.AtkUp(c,g,5000)
     end
 end

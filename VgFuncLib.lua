@@ -241,7 +241,7 @@ function VgF.LvConditionFilter(c,lv)
     return VgF.VMonsterFilter(c) and c:IsLevelAbove(lv)
 end
 function VgF.AtkUp(c,g,val,reset)
-    if not c or not g then return end
+    if not c then return end
     if not reset then reset=RESET_PHASE+PHASE_END end
     if not val or val==0 then return end
     if VgF.GetValueType(g)=="Group" and g:GetCount()>0 then
@@ -254,14 +254,15 @@ function VgF.AtkUp(c,g,val,reset)
             tc:RegisterEffect(e1)
         end
         return
+    elseif VgF.GetValueType(g)=="Card" then
+        local tc=VgF.ReturnCard(g)
+        local e1=Effect.CreateEffect(c)
+        e1:SetType(EFFECT_TYPE_SINGLE)
+        e1:SetCode(EFFECT_UPDATE_ATTACK)
+        e1:SetValue(val)
+        e1:SetReset(RESET_EVENT+RESETS_STANDARD+reset)
+        tc:RegisterEffect(e1)
     end
-    local tc=VgF.ReturnCard(g)
-    local e1=Effect.CreateEffect(c)
-    e1:SetType(EFFECT_TYPE_SINGLE)
-    e1:SetCode(EFFECT_UPDATE_ATTACK)
-    e1:SetValue(val)
-    e1:SetReset(RESET_EVENT+RESETS_STANDARD+reset)
-    tc:RegisterEffect(e1)
 end
 function VgF.StarUp(c,g,val,reset)
     if not c or not g then return end
@@ -298,7 +299,7 @@ function VgF.StarUp(c,g,val,reset)
 end
 function VgF.IsAbleToGZone(c)
     if c:IsLocation(LOCATION_MZONE) then
-        return c:IsAttribute(SKILL_BLOCK)
+        return c:IsAttribute(SKILL_BLOCK) and VgF.IsSequence(c,0,4)
     end
     return c:IsLocation(LOCATION_HAND)
 end
@@ -331,7 +332,7 @@ function VgF.EnegyCost(num)
         if chk==0 then
             return Duel.IsExistingMatchingCard(Card.IsCode,tp,LOCATION_EMBLEM,0,num,nil,10800730)
         end
-        local sg=Duel.GetMatchingGroup(tp,Card.IsCode,tp,LOCATION_EMBLEM,0,nil,10800730)
+        local sg=Duel.GetMatchingGroup(Card.IsCode,tp,LOCATION_EMBLEM,0,nil,10800730)
         local g=VgF.GetCardsFromGroup(sg,num)
         Duel.Sendto(g,tp,0,POS_FACEUP,REASON_COST)
     end
@@ -385,7 +386,7 @@ function VgF.DamageCost(num)
         end
         Duel.Hint(HINT_SELECTMSG,tp,HINTMSG_DAMAGE)
         local g=Duel.SelectMatchingCard(tp,Card.IsFaceup,tp,LOCATION_DAMAGE,0,num,num,nil)
-        Duel.ChangePosition(g,POS_FACEDOWN)
+        Duel.ChangePosition(g,POS_FACEDOWN_ATTACK)
     end
 end
 function VgF.SearchCard(loc,f)
