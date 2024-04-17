@@ -732,7 +732,7 @@ end
 --指令卡
 function VgD.SpellActivate(c,m,op,con,cost)
     local e1=Effect.CreateEffect(c)
-    if m then e1:SetDescription(aux.Stringid(m, 0)) end
+    if m then e1:SetDescription(VgF.Stringid(m, 0)) end
     e1:SetType(EFFECT_TYPE_ACTIVATE)
     e1:SetCode(EVENT_FREE_CHAIN)
     e1:SetCountLimit(1,VgID+EFFECT_COUNT_CODE_OATH)
@@ -896,7 +896,7 @@ function VgD.EffectTypeContinuousChangeAttack(c,typ,val,con)
     e1:SetProperty(type)
     e1:SetCode(EFFECT_UPDATE_ATTACK)
     e1:SetRange(LOCATION_MZONE)
-	e1:SetCondition(con)
+    if VgF.GetValueType(con)=="function" then e1:SetCondition(con) end
     e1:SetValue(val)
     c:RegisterEffect(e1)
 end
