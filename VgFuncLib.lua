@@ -298,8 +298,9 @@ function VgF.StarUp(c,g,val,reset)
     tc:RegisterEffect(e2)
 end
 function VgF.IsAbleToGZone(c)
+    local tp=c:GetControler()
     if c:IsLocation(LOCATION_MZONE) then
-        return c:IsAttribute(SKILL_BLOCK) and VgF.IsSequence(c,0,4)
+        return c:IsAttribute(SKILL_BLOCK) and VgF.IsSequence(c,0,4) and not Duel.IsPlayerAffectedByEffect(tp,AFFECT_CODE_SENDTOG_MZONE)
     end
     return c:IsLocation(LOCATION_HAND)
 end
