@@ -732,6 +732,7 @@ end
 --指令卡
 function VgD.SpellActivate(c,m,op,con,cost)
     local e1=Effect.CreateEffect(c)
+    if m then e1:SetDescription(aux.Stringid(m, 0)) end
     e1:SetType(EFFECT_TYPE_ACTIVATE)
     e1:SetCode(EVENT_FREE_CHAIN)
     e1:SetCountLimit(1,VgID+EFFECT_COUNT_CODE_OATH)
