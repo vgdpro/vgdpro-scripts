@@ -853,7 +853,7 @@ function VgD.EffectTypeTrigger(c,m,loc,typ,code,op,cost,con,tg,count,property,st
     e1:SetCode(code)
     e1:SetProperty(property+EFFECT_FLAG_DELAY)
     if count and count>0 then e1:SetCountLimit(count) end
-    if VgF.GetValueType(con)=="function" then e1:SetCost(con) end
+    if VgF.GetValueType(con)=="function" then e1:SetCndition(con) end
     if VgF.GetValueType(cost)=="function" then e1:SetCost(cost) end
     if VgF.GetValueType(tg)=="function" then e1:SetTarget(tg) end
     if VgF.GetValueType(op)=="function" then e1:SetOperation(op) end
