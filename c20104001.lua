@@ -17,7 +17,7 @@ function cm.fliter(c)
 end
 function cm.condition(e,tp,eg,ep,ev,re,r,rp)
 	local c=e:GetHandler()
-	return vgf.VMonsterCondition(e) and vgf.VMonsterFilter(Duel.GetAttackTarget())
+	return vgf.VMonsterCondition(c) and vgf.VMonsterFilter(Duel.GetAttackTarget())
 	
 end
 function cm.operation2(e,tp,eg,ep,ev,re,r,rp)
