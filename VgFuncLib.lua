@@ -581,3 +581,17 @@ function VgF.GetVMonster(p)
     if p~=0 or p~=1 then return end
     return Duel.GetMatchingGroup(VgF.VMonsterFilter,p,LOCATION_MZONE,0,nil):GetFirst()
 end
+---判断c是否在前列。
+---@param c Card 要判断的卡
+---@return boolean 指示c是否是前列的单位
+function VgF.FrontFilter(c)
+    local seq=c:GetSequence()
+    return (seq==0 or seq==4 or seq==5) and c:IsType(TYPE_MONSTER)
+end
+---判断c是否在后列。
+---@param c Card 要判断的卡
+---@return boolean 指示c是否是后列的单位
+function VgF.BackFilter(c)
+    local seq=c:GetSequence()
+    return (seq==1 or seq==2 or seq==3) and c:IsType(TYPE_MONSTER)
+end
