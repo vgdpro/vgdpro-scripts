@@ -578,7 +578,7 @@ end
 ---@param p integer 要获取先导者的玩家。不合法则返回nil。
 ---@return Card|nil p场上的先导者
 function VgF.GetVMonster(p)
-    if p~=0 or p~=1 then return end
+    if p~=0 and p~=1 then return end
     return Duel.GetMatchingGroup(VgF.VMonsterFilter,p,LOCATION_MZONE,0,nil):GetFirst()
 end
 ---判断c是否在前列。
