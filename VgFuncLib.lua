@@ -595,3 +595,30 @@ function VgF.BackFilter(c)
     local seq=c:GetSequence()
     return (seq==1 or seq==2 or seq==3) and c:IsType(TYPE_MONSTER)
 end
+function VgF.PrisonFilter(c,ct)
+    return c:GetSequence() == ct-1
+end
+---收容g（中的每一张卡）到p的监狱。没有监狱时，不操作。
+---@param g Card|Group
+---@param p integer
+function VgF.SendtoPrison(g,p)
+    if not VgF.CheckPrison(p) then return end
+	local og=Duel.GetFieldGroup(p,LOCATION_ORDER,0)
+	local oc=og:Filter(VgF.PrisonFilter,nil,og:GetCount()):GetFirst()
+    if VgF.GetValueType(g) == "Card" then
+	    Duel.Sendto(g,p,LOCATION_ORDER,POS_FACEUP_ATTACK,REASON_EFFECT)
+    elseif VgF.GetValueType(g) == "Group" then
+        for tc in VgF.Next(g) do
+            Duel.Sendto(tc,p,LOCATION_ORDER,POS_FACEUP_ATTACK,REASON_EFFECT)
+        end
+    end
+	Duel.MoveSequence(oc,og:GetCount()-1)
+end
+---检测p场上有没有监狱。
+---@param p integer
+---@return boolean 指示p场上有没有监狱。
+function VgF.CheckPrison(p)
+	local og=Duel.GetFieldGroup(p,LOCATION_ORDER,0)
+	local oc=og:Filter(VgF.PrisonFilter,nil,og:GetCount()):GetFirst()
+	return oc:IsSetCard(0x3040)
+end
