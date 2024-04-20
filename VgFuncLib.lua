@@ -1,6 +1,12 @@
 VgF={}
 vgf=VgF
 
+---@class Card
+---@class Group
+---@class Effect
+
+---初始化c，使c具有vg卡的功能。
+---@param c Card 要初始化的卡
 function VgF.VgCard(c)
     VgD.Rule(c)
     VgF.DefineArguments()
@@ -13,10 +19,15 @@ function VgF.VgCard(c)
 	    VgD.CardTrigger(c,nil)
     end
 end
+---获取脚本基本信息
 function GetID()
 	local offset=self_code<100000000 and 1 or 100
 	return self_table,self_code,offset
 end
+---根据卡号和索引获取描述编号
+---@param code integer 卡片密码
+---@param id integer 索引
+---@return integer 描述的编号
 function VgF.Stringid(code,id)
 	return code*16+id
 end
@@ -32,6 +43,11 @@ function VgF.DefineArguments()
     if not tg then tg=nil end
     if not f then f=nil end
 end
+---根据控制者，区域和编号获取zone；不合法的数据会返回0
+---@param p integer 控制者
+---@param loc integer 所在区域，若不是LOCATION_MZONE或LOCATION_SZONE则返回0
+---@param seq integer 编号
+---@return integer 卡片所在的zone
 function VgF.SequenceToGlobal(p,loc,seq)
 	if p~=0 and p~=1 then
 		return 0
@@ -52,9 +68,14 @@ function VgF.SequenceToGlobal(p,loc,seq)
 		return 0
 	end
 end
+---一个总是返回true的函数。
+---@return true
 function VgF.True()
     return true
 end
+---返回g中的“下一张卡”。第一次调用会返回第一张卡。没有下一张卡会返回nil。
+---@param g Group 要遍历的卡片组
+---@return function 指示返回的卡的函数
 function VgF.Next(g)
 	local first=true
 	return	function()
@@ -62,6 +83,9 @@ function VgF.Next(g)
 				else return g:GetNext() end
 			end
 end
+---返回v在lua中的变量类型，以string方式呈现。
+---@param v any 要获取类型的变量（或常量）
+---@return string 以字符串形式呈现的类型
 function VgF.GetValueType(v)
 	local t=type(v)
 	if t=="userdata" then
@@ -71,6 +95,9 @@ function VgF.GetValueType(v)
 		else return "Card" end
 	else return t end
 end
+---如果g是Group的话，返回其第一张卡；如果g是Card的话，返回其本身；否则返回nil。
+---@param g any 要操作的变量
+---@return Card|nil
 function VgF.ReturnCard(g)
     local tc
     if VgF.GetValueType(g)=="Group" then
@@ -80,6 +107,9 @@ function VgF.ReturnCard(g)
     end
     return tc
 end
+---返回g的前num张卡。
+---@param g Group 要操作的卡片组
+---@param num integer 要获取的卡片数量
 function VgF.GetCardsFromGroup(g,num)
     if VgF.GetValueType(g)=="Group" then
         local sg=Group.CreateGroup()
@@ -91,36 +121,75 @@ function VgF.GetCardsFromGroup(g,num)
     end
 end
 bit={}
+---返回对a和b进行按位与运算的结果。
+---@param a integer 操作数1
+---@param b integer 操作数2
+---@return integer 运算结果
 function bit.band(a,b)
 	return a&b
 end
+---返回对a和b进行按位或运算的结果。
+---@param a integer 操作数1
+---@param b integer 操作数2
+---@return integer 运算结果
 function bit.bor(a,b)
 	return a|b
 end
+---返回对a和b进行按位异或运算的结果。
+---@param a integer 操作数1
+---@param b integer 操作数2
+---@return integer 运算结果
 function bit.bxor(a,b)
 	return a~b
 end
+---返回a按位左移b位后的结果。
+---@param a integer 操作数1
+---@param b integer 操作数2
+---@return integer 运算结果
 function bit.lshift(a,b)
 	return a<<b
 end
+---返回a按位右移b位后的结果。
+---@param a integer 操作数1
+---@param b integer 操作数2
+---@return integer 运算结果
 function bit.rshift(a,b)
 	return a>>b
 end
+---返回a按位非后的结果。
+---@param a integer 操作数
+---@return integer 运算结果
 function bit.bnot(a)
 	return ~a
 end
+---返回c是不是先导者。
+---@param c Card 要判断的卡
+---@return boolean 指示是否是先导者
 function VgF.VMonsterFilter(c)
     return VgF.IsSequence(c,5)
 end
+---返回c是不是后防者。
+---@param c Card 要判断的卡
+---@return boolean 指示是否是后防者
 function VgF.RMonsterFilter(c)
     return c:GetSequence()<5
 end
+---用于效果的Condition，判断e是否以后防者发动。
+---@param e Effect
+---@return boolean
 function VgF.RMonsterCondition(e)
     return VgF.RMonsterFilter(e:GetHandler())
 end
+---用于效果的Condition，判断e是否以先导者发动。
+---@param e Effect
+---@return boolean
 function VgF.VMonsterCondition(e)
     return VgF.VMonsterFilter(e:GetHandler())
 end
+---判断c是否是某（几）个等级（之一）。
+---@param c Card 要判断的卡
+---@param ... integer 等级
+---@return boolean 指示是否是给定等级中的一个
 function VgF.IsLevel(c,...)
     for i,v in ipairs{...} do
         local lv=v+1
@@ -130,6 +199,10 @@ function VgF.IsLevel(c,...)
     end
     return false
 end
+---判断c是否在当前区域的某（几）个编号上
+---@param c Card 要判断的卡
+---@param ... integer 编号
+---@return boolean 指示是否在给定编号上
 function VgF.IsSequence(c,...)
     for i,v in ipairs{...} do
         if c:GetSequence()==v then
@@ -149,11 +222,17 @@ function VgF.RuleTurnCondtion(e)
     local b=Duel.GetTurnCount(1-tp)
     return a+b==1
 end
+---返回函数，该函数与f的结果总是相反的。
+---@param f 要操作的函数
+---@return function 经过操作的函数
 function VgF.Not(f)
 	return	function(...)
 				return not f(...)
 			end
 end
+---返回c所在列的所有单位。
+---@param c Card 指示某一列的卡
+---@return Group 这一列的所有单位
 function VgF.GetColumnGroup(c)
     local tp=c:GetControler()
     local g=Group.CreateGroup()
@@ -195,9 +274,21 @@ function VgF.GetColumnGroup(c)
     end
     return g
 end
+---用于【永】效果的Value属性。判断是否是对方发动的效果。<br>
+---仅有特定的Code对此函数有效，其他Code的结果未知。
+---@param e Effect 要注册的效果
+---@param re Effect 引发该效果的效果
+---@param rp integer 发动引发该效果的效果的玩家
+---@return boolean 指示是否是对方发动的效果
 function VgF.tgoval(e,re,rp)
 	return rp==1-e:GetHandlerPlayer()
 end
+---将g（中的每一张卡）Call到单位区。返回Call成功的数量。
+---@param g Card|Group 要Call的卡（片组）
+---@param sumtype integer Call的方式，默认填0
+---@param sp integer 表示形式
+---@param zone integer 指示要Call到的格子。<br>前列的R：17； 后列的R：14； 全部的R：31； V：32
+---@return integer Call成功的数量
 function VgF.Call(g,sumtype,sp,zone)
     if zone then
         if Duel.IsExistingMatchingCard(VgD.CallFilter,sp,LOCATION_MZONE,0,1,nil,sp,zone) then
@@ -240,6 +331,11 @@ end
 function VgF.LvConditionFilter(c,lv)
     return VgF.VMonsterFilter(c) and c:IsLevelAbove(lv)
 end
+---以c的名义，使g（中的每一张卡）的攻击力上升val，并在reset时重置。
+---@param c Card 要使卡上升攻击力的卡
+---@param g Card|Group 要被上升攻击力的卡
+---@param val integer 要上升的攻击力（可以为负）
+---@param reset integer 指示重置的时点，默认为“回合结束时”。无论如何，都会在离场时重置。
 function VgF.AtkUp(c,g,val,reset)
     if not c then return end
     if not reset then reset=RESET_PHASE+PHASE_END end
@@ -264,6 +360,11 @@ function VgF.AtkUp(c,g,val,reset)
         tc:RegisterEffect(e1)
     end
 end
+---以c的名义，使g（中的每一张卡）的☆上升val，并在reset时重置。
+---@param c Card 要使卡上升☆的卡
+---@param g Card|Group 要被上升☆的卡
+---@param val integer 要上升的☆（可以为负）
+---@param reset integer 指示重置的时点，默认为“回合结束时”。无论如何，都会在离场时重置。
 function VgF.StarUp(c,g,val,reset)
     if not c or not g then return end
     if not reset then reset=RESET_PHASE+PHASE_END end
@@ -297,6 +398,9 @@ function VgF.StarUp(c,g,val,reset)
     e2:SetCode(EFFECT_UPDATE_RSCALE)
     tc:RegisterEffect(e2)
 end
+---判断c是否可以以规则的手段到G区域。
+---@param c Card 要判断的卡
+---@return boolean 指示c能否去到G区域。
 function VgF.IsAbleToGZone(c)
     local tp=c:GetControler()
     if c:IsLocation(LOCATION_MZONE) then
@@ -304,6 +408,9 @@ function VgF.IsAbleToGZone(c)
     end
     return c:IsLocation(LOCATION_HAND)
 end
+---用于效果的Cost。它返回一个执行“【费用】[将手牌中的num张卡舍弃]”的函数。
+---@param num integer 要舍弃的卡的数量
+---@return function 效果的Cost函数
 function VgF.DisCardCost(num)
     return function (e,tp,eg,ep,ev,re,r,rp,chk)
         local c=e:GetHandler()
@@ -321,6 +428,9 @@ function VgF.DisCardCost(num)
         Duel.SendtoGrave(g,REASON_COST+REASON_DISCARD)
     end
 end
+---用于效果的Cost。它返回一个执行“【费用】[能量爆发num]”的函数。
+---@param num integer 能量爆发的数量
+---@return function 效果的Cost函数
 function VgF.EnegyCost(num)
     return function (e,tp,eg,ep,ev,re,r,rp,chk)
         local c=e:GetHandler()
@@ -338,6 +448,9 @@ function VgF.EnegyCost(num)
         Duel.Sendto(g,tp,0,POS_FACEUP,REASON_COST)
     end
 end
+---用于效果的Cost。它返回一个执行“【费用】[灵魂爆发num]”的函数。
+---@param num integer 灵魂爆发的数量
+---@return function 效果的Cost函数
 function VgF.OverlayCost(num)
     return function (e,tp,eg,ep,ev,re,r,rp,chk)
         local c=e:GetHandler()
@@ -373,6 +486,9 @@ function VgF.OverlayFillCostOrOperation(num)
         Duel.Overlay(rc,g)
     end
 end
+---用于效果的Cost。它返回一个执行“【费用】[计数爆发num]”的函数。
+---@param num integer 计数爆发的数量
+---@return function 效果的Cost函数
 function VgF.DamageCost(num)
     return function (e,tp,eg,ep,ev,re,r,rp,chk)
         local c=e:GetHandler()
@@ -390,6 +506,10 @@ function VgF.DamageCost(num)
         Duel.ChangePosition(g,POS_FACEDOWN_ATTACK)
     end
 end
+---用于效果的Operation。执行“从loc中选取1张满足f的卡，返回手牌。”。
+---@param loc integer 要选取的区域。不填则返回nil，而不是效果的Operation函数。
+---@param f function 卡片过滤的条件
+---@return function|nil 效果的Operation函数
 function VgF.SearchCard(loc,f)
     if not loc then return end
     return function (e,tp,eg,ep,ev,re,r,rp)
@@ -406,6 +526,10 @@ function VgF.SearchCard(loc,f)
         return sg:GetCount()
     end
 end
+---用于效果的Operation。执行“从loc中选取1张满足f的卡，Call到R上。”。
+---@param loc integer 要选取的区域。不填则返回nil，而不是效果的Operation函数。
+---@param f function 卡片过滤的条件
+---@return function|nil 效果的Operation函数
 function VgF.SearchCardSpecialSummon(loc,f)
     if not loc then return end
     return function (e,tp,eg,ep,ev,re,r,rp)
@@ -449,4 +573,11 @@ function VgF.CheckGroupRecursiveCapture(c,sg,bg,f,min,max,ext_params)
 	end
 	sg = sg - c
 	return res
+end
+---返回p场上的先导者。
+---@param p integer 要获取先导者的玩家。不合法则返回nil。
+---@return Card|nil p场上的先导者
+function VgF.GetVMonster(p)
+    if p~=0 or p~=1 then return end
+    return Duel.GetMatchingGroup(VgF.VMonsterFilter,p,LOCATION_MZONE,0,nil):GetFirst()
 end
