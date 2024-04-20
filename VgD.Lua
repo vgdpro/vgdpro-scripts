@@ -730,6 +730,17 @@ function VgD.ResetOperation(e,tp,eg,ep,ev,re,r,rp)
 end
 
 --指令卡
+---使c可以作为指令卡发动。
+---@param c Card 要操作的卡
+---@param m integer 指示脚本的整数。cxxx的脚本应填入xxx。cm的脚本应填入m。
+---@param op function 作为指令卡的效果
+---@param con function 作为指令卡的发动条件
+---@param specialchk any 未知。请资讯群主。
+---@param num1 any 未知。请资讯群主。
+---@param num2 any 未知。请资讯群主。
+---@param num3 any 未知。请资讯群主。
+---@param num4 any 未知。请资讯群主。
+---@param num5 any 未知。请资讯群主。
 function VgD.SpellActivate(c,m,op,con,cost)
     local e1=Effect.CreateEffect(c)
     if m then e1:SetDescription(VgF.Stringid(m, 0)) end
@@ -798,6 +809,14 @@ function VgD.SpellOperation(op)
         if op2 then op2(e,tp,eg,ep,ev,re,r,rp,true) end
     end
 end
+---当c被卡号为code的卡Ride时触发的效果。
+---@param c Card 被Ride的卡
+---@param m integer 指示脚本的整数。cxxx的脚本应填入xxx。cm的脚本应填入m。
+---@param code integer Ride的卡
+---@param op function 触发的效果
+---@param cost function 效果的费用
+---@param con function 效果的条件
+---@param tg function 未知。请资讯群主。
 function VgD.BeRidedByCard(c,m,code,op,cost,con,tg)
     local e1=Effect.CreateEffect(c)
     e1:SetType(EFFECT_TYPE_SINGLE+EFFECT_TYPE_CONTINUOUS)
@@ -839,6 +858,18 @@ function VgD.BeRidedByCardOpCondtion(e,tp,eg,ep,ev,re,r,rp)
     return eg:GetFirst()==e:GetHandler()
 end
 
+---当c在loc时，code时点被触发时执行的效果。
+---@param c Card 要触发效果的卡 
+---@param m integer 指示脚本的整数。cxxx的脚本应填入xxx。cm的脚本应填入m。
+---@param loc integer 发动时所处的位置
+---@param typ integer 若是自己状态变化引发，则填EFFECT_TYPE_SINGLE；<br>若是场上任意一卡状态变化引发，则填EFFECT_TYPE_FIELD。
+---@param code integer 触发的时点
+---@param op function 触发的效果
+---@param cost function 效果的费用
+---@param con function 效果触发的条件
+---@param tg function 未知。请资讯群主。
+---@param count integer 指示效果在同一回合内最多发动的次数
+---@param property integer 指示效果的特殊属性。如确有必要填，请咨询群主。
 function VgD.EffectTypeTrigger(c,m,loc,typ,code,op,cost,con,tg,count,property,stringid)
     local type2=EFFECT_TYPE_TRIGGER_F
     if VgF.GetValueType(cost)=="function" then type2=EFFECT_TYPE_TRIGGER_O end
@@ -859,6 +890,16 @@ function VgD.EffectTypeTrigger(c,m,loc,typ,code,op,cost,con,tg,count,property,st
     if VgF.GetValueType(op)=="function" then e1:SetOperation(op) end
     c:RegisterEffect(e1)
 end
+---当c在loc时，可以发动的【起】效果。
+---@param c Card 要触发效果的卡 
+---@param m integer 指示脚本的整数。cxxx的脚本应填入xxx。cm的脚本应填入m。
+---@param loc integer 发动时所处的位置
+---@param op function 触发的效果
+---@param cost function 效果的费用
+---@param con function 效果触发的条件
+---@param tg function 未知。请资讯群主。
+---@param count integer 指示效果在同一回合内最多发动的次数
+---@param property integer 指示效果的特殊属性。如确有必要填，请咨询群主。
 function VgD.EffectTypeIgnition(c,m,loc,op,cost,con,tg,count,property,stringid)
     if not loc then loc=LOCATION_MZONE end
     if not stringid then stringid=1 end
