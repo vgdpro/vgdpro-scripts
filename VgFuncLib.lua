@@ -335,7 +335,7 @@ end
 ---@param c Card 要使卡上升攻击力的卡
 ---@param g Card|Group 要被上升攻击力的卡
 ---@param val integer 要上升的攻击力（可以为负）
----@param reset integer 指示重置的时点，默认为“回合结束时”。无论如何，都会在离场时重置。
+---@param reset integer|nil 指示重置的时点，默认为“回合结束时”。无论如何，都会在离场时重置。
 function VgF.AtkUp(c,g,val,reset)
     if not c then return end
     if not reset then reset=RESET_PHASE+PHASE_END end
@@ -364,7 +364,7 @@ end
 ---@param c Card 要使卡上升☆的卡
 ---@param g Card|Group 要被上升☆的卡
 ---@param val integer 要上升的☆（可以为负）
----@param reset integer 指示重置的时点，默认为“回合结束时”。无论如何，都会在离场时重置。
+---@param reset integer|nil 指示重置的时点，默认为“回合结束时”。无论如何，都会在离场时重置。
 function VgF.StarUp(c,g,val,reset)
     if not c or not g then return end
     if not reset then reset=RESET_PHASE+PHASE_END end
