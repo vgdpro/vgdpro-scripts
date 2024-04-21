@@ -880,7 +880,8 @@ function VgD.EffectTypeTrigger(c,m,loc,typ,code,op,cost,con,tg,count,property,st
     local e1=Effect.CreateEffect(c)
     e1:SetDescription(VgF.Stringid(m,stringid))
     e1:SetType(typ+type2)
-    if code~=EVENT_SPSUMMON_SUCCESS and bit.band(typ,EFFECT_TYPE_SINGLE)~=0 then e1:SetRange(loc) end
+    if code~=EVENT_SPSUMMON_SUCCESS then e1:SetRange(loc) end
+    if code==EVENT_SPSUMMON_SUCCESS and bit.band(typ,EFFECT_TYPE_FIELD)~=0 then e1:SetRange(loc) end
     e1:SetCode(code)
     e1:SetProperty(property+EFFECT_FLAG_DELAY)
     if count and count>0 then e1:SetCountLimit(count) end
