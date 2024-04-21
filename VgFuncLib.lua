@@ -431,7 +431,7 @@ end
 ---用于效果的Cost。它返回一个执行“【费用】[能量爆发num]”的函数。
 ---@param num integer 能量爆发的数量
 ---@return function 效果的Cost函数
-function VgF.EnegyCost(num)
+function VgF.EnergyCost(num)
     return function (e,tp,eg,ep,ev,re,r,rp,chk)
         local c=e:GetHandler()
         local m=c:GetOriginalCode()

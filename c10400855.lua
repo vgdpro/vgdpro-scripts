@@ -23,7 +23,7 @@ function cm.initial_effect(c)
     e3:SetType(EFFECT_TYPE_IGNITION)
     e3:SetRange(LOCATION_EMBLEM)
     e3:SetCountLimit(1)
-    e3:SetCost(VgF.EnegyCost(7))
+    e3:SetCost(VgF.EnergyCost(7))
     e3:SetOperation(cm.op3)
     c:RegisterEffect(e3)
 end
