@@ -10,7 +10,7 @@ function cm.operation(e,tp,eg,ep,ev,re,r,rp)
 	local g=Duel.SelectMatchingCard(tp,nil,tp,LOCATION_MZONE,0,1,1,nil)
 	Duel.HintSelection(g)
 	VgF.AtkUp(c,g,5000,nil)
-	vgf.SearchCard(LOCATION_DROP,cm.filter)
+	vgf.SearchCardOP(LOCATION_DROP,cm.filter,e,tp,eg,ep,ev,re,r,rp)
 end
 function cm.filter(c)
 	return c:IsCode(10101006)

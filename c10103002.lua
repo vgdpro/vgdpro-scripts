@@ -30,5 +30,5 @@ function cm.cost(e,tp,eg,ep,ev,re,r,rp,chk)
     Duel.ConfirmCards(1-tp,g)
 end
 function cm.condition(e,tp,eg,ep,ev,re,r,rp)
-    return vgf.VMonsterCondition(e) and Duel.IsExistingMatchingCard(vgf.IsLevel,tp,LOCATION_MZONE,0,3,nil,3)
+    return vgf.RMonsterCondition(e) and Duel.IsExistingMatchingCard(vgf.IsLevel,tp,LOCATION_MZONE,0,3,nil,3)
 end

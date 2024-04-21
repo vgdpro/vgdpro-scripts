@@ -431,7 +431,7 @@ end
 ---用于效果的Cost。它返回一个执行“【费用】[能量爆发num]”的函数。
 ---@param num integer 能量爆发的数量
 ---@return function 效果的Cost函数
-function VgF.EnegyCost(num)
+function VgF.EnergyCost(num)
     return function (e,tp,eg,ep,ev,re,r,rp,chk)
         local c=e:GetHandler()
         local m=c:GetOriginalCode()
@@ -468,7 +468,10 @@ function VgF.OverlayCost(num)
         Duel.SendtoGrave(g,REASON_COST)
     end
 end
-function VgF.OverlayFillCostOrOperation(num)
+---用于效果的Cost或Operation。它返回一个执行“【费用】[灵魂填充num]”的函数。
+---@param num integer 灵魂填充的数量
+---@return function 效果的Cost或Operation函数
+function VgF.OverlayFill(num)
     return function (e,tp,eg,ep,ev,re,r,rp,chk)
         local c=e:GetHandler()
         local m=c:GetOriginalCode()
@@ -480,11 +483,14 @@ function VgF.OverlayFillCostOrOperation(num)
         if chk==0 then
             return Duel.GetFieldGroupCount(tp,LOCATION_DECK,0)>=num
         end
-        local rc=Duel.GetMatchingGroup(VgF.VMonsterFilter,tp,LOCATION_MZONE,0,nil):GetFirst()
-        local g=Duel.GetDecktopGroup(tp,num)
-        Duel.DisableShuffleCheck()
-        Duel.Overlay(rc,g)
+        VgF.OverlayFillOP(num,e,tp,eg,ep,ev,re,r,rp)
     end
+end
+function VgF.OverlayFillOP(num,e,tp,eg,ep,ev,re,r,rp)
+    local rc=Duel.GetMatchingGroup(VgF.VMonsterFilter,tp,LOCATION_MZONE,0,nil):GetFirst()
+    local g=Duel.GetDecktopGroup(tp,num)
+    Duel.DisableShuffleCheck()
+    Duel.Overlay(rc,g)
 end
 ---用于效果的Cost。它返回一个执行“【费用】[计数爆发num]”的函数。
 ---@param num integer 计数爆发的数量
@@ -513,37 +519,45 @@ end
 function VgF.SearchCard(loc,f)
     if not loc then return end
     return function (e,tp,eg,ep,ev,re,r,rp)
-        Duel.Hint(HINT_SELECTMSG,tp,HINTMSG_ATOHAND)
-        local g=Duel.SelectMatchingCard(tp,function (c)
-            if VgF.GetValueType(f)=="function" and not f(c) then return false end
-            return c:IsAbleToHand()
-        end,tp,loc,0,1,1,nil)
-        if g:GetCount()>0 then
-            Duel.SendtoHand(g,nil,REASON_EFFECT)
-            Duel.ConfirmCards(1-tp,g)
-        end
+        VgF.SearchCardOP(loc,f,e,tp,eg,ep,ev,re,r,rp)
         local sg=Duel.GetOperatedGroup()
         return sg:GetCount()
     end
 end
----用于效果的Operation。执行“从loc中选取1张满足f的卡，Call到R上。”。
+function VgF.SearchCardOP(loc,f,e,tp,eg,ep,ev,re,r,rp)
+    if not loc then return end
+    Duel.Hint(HINT_SELECTMSG,tp,HINTMSG_ATOHAND)
+    local g=Duel.SelectMatchingCard(tp,function (c)
+        if VgF.GetValueType(f)=="function" and not f(c) then return false end
+        return c:IsAbleToHand()
+    end,tp,loc,0,1,1,nil)
+    if g:GetCount()>0 then
+        Duel.SendtoHand(g,nil,REASON_EFFECT)
+        Duel.ConfirmCards(1-tp,g)
+    end
+end
+    ---用于效果的Operation。执行“从loc中选取1张满足f的卡，Call到R上。”。
 ---@param loc integer 要选取的区域。不填则返回nil，而不是效果的Operation函数。
 ---@param f function 卡片过滤的条件
 ---@return function|nil 效果的Operation函数
 function VgF.SearchCardSpecialSummon(loc,f)
     if not loc then return end
     return function (e,tp,eg,ep,ev,re,r,rp)
-        Duel.Hint(HINT_SELECTMSG,tp,HINTMSG_ATOHAND)
-        local g=Duel.SelectMatchingCard(tp,function (c)
-            if VgF.GetValueType(f)=="function" and not f(c) then return false end
-            return c:IsCanBeSpecialSummoned(e,0,tp,false,false,POS_FACEUP_ATTACK)
-        end,tp,loc,0,1,1,nil)
-        if g:GetCount()>0 then
-            if loc&LOCATION_DECK+LOCATION_HAND+LOCATION_EXTRA==0 then Duel.HintSelection(g) end
-            VgF.Call(g,0,tp)
-        end
+        VgF.SearchCardSpecialSummonOP(loc,f,e,tp,eg,ep,ev,re,r,rp)
         local sg=Duel.GetOperatedGroup()
         return sg:GetCount()
+    end
+end
+function VgF.SearchCardSpecialSummonOP(loc,f,e,tp,eg,ep,ev,re,r,rp)
+    if not loc then return end
+    Duel.Hint(HINT_SELECTMSG,tp,HINTMSG_ATOHAND)
+    local g=Duel.SelectMatchingCard(tp,function (c)
+        if VgF.GetValueType(f)=="function" and not f(c) then return false end
+        return c:IsCanBeSpecialSummoned(e,0,tp,false,false,POS_FACEUP_ATTACK)
+    end,tp,loc,0,1,1,nil)
+    if g:GetCount()>0 then
+        if loc&LOCATION_DECK+LOCATION_HAND+LOCATION_EXTRA==0 then Duel.HintSelection(g) end
+        VgF.Call(g,0,tp)
     end
 end
 function Group.CheckSubGroup(g,f,min,max,...)
