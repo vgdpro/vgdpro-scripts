@@ -13,12 +13,11 @@ function cm.operation(e,tp,eg,ep,ev,re,r,rp)
 	vgf.AtkUp(c,c,10000,nil)
 end
 function cm.fliter(c)
-	return c:IsCode(20104001)
+	return c:IsCode(m)
 end
 function cm.condition(e,tp,eg,ep,ev,re,r,rp)
 	local c=e:GetHandler()
 	return vgf.VMonsterCondition(c) and vgf.VMonsterFilter(Duel.GetAttackTarget())
-	
 end
 function cm.operation2(e,tp,eg,ep,ev,re,r,rp)
 	local c=e:GetHandler()
