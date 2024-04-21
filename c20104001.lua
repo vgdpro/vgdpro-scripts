@@ -9,7 +9,7 @@ function cm.initial_effect(c)
 end
 function cm.operation(e,tp,eg,ep,ev,re,r,rp)
 	local c=e:GetHandler()
-	vgf.SearchCard(LOCATION_DECK,cm.fliter)
+	vgf.SearchCardOP(LOCATION_DECK,cm.fliter,e,tp,eg,ep,ev,re,r,rp)
 	vgf.AtkUp(c,c,10000,nil)
 end
 function cm.fliter(c)
@@ -22,10 +22,9 @@ function cm.condition(e,tp,eg,ep,ev,re,r,rp)
 end
 function cm.operation2(e,tp,eg,ep,ev,re,r,rp)
 	local c=e:GetHandler()
-	vgf.SearchCardSpecialSummon(LOCATION_DROP,cm.fliter2)
+	vgf.SearchCardSpecialSummonOP(LOCATION_DROP,cm.fliter2,e,tp,eg,ep,ev,re,r,rp)
 	local g=Duel.GetOperatedGroup()
 	vgf.AtkUp(c,g,10000)
-
 end
 function cm.fliter2(c)
 	return vgf.IsLevel(c,1,2,3)

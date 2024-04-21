@@ -513,37 +513,45 @@ end
 function VgF.SearchCard(loc,f)
     if not loc then return end
     return function (e,tp,eg,ep,ev,re,r,rp)
-        Duel.Hint(HINT_SELECTMSG,tp,HINTMSG_ATOHAND)
-        local g=Duel.SelectMatchingCard(tp,function (c)
-            if VgF.GetValueType(f)=="function" and not f(c) then return false end
-            return c:IsAbleToHand()
-        end,tp,loc,0,1,1,nil)
-        if g:GetCount()>0 then
-            Duel.SendtoHand(g,nil,REASON_EFFECT)
-            Duel.ConfirmCards(1-tp,g)
-        end
+        VgF.SearchCardOP(loc,f,e,tp,eg,ep,ev,re,r,rp)
         local sg=Duel.GetOperatedGroup()
         return sg:GetCount()
     end
 end
----用于效果的Operation。执行“从loc中选取1张满足f的卡，Call到R上。”。
+function VgF.SearchCardOP(loc,f,e,tp,eg,ep,ev,re,r,rp)
+    if not loc then return end
+    Duel.Hint(HINT_SELECTMSG,tp,HINTMSG_ATOHAND)
+    local g=Duel.SelectMatchingCard(tp,function (c)
+        if VgF.GetValueType(f)=="function" and not f(c) then return false end
+        return c:IsAbleToHand()
+    end,tp,loc,0,1,1,nil)
+    if g:GetCount()>0 then
+        Duel.SendtoHand(g,nil,REASON_EFFECT)
+        Duel.ConfirmCards(1-tp,g)
+    end
+end
+    ---用于效果的Operation。执行“从loc中选取1张满足f的卡，Call到R上。”。
 ---@param loc integer 要选取的区域。不填则返回nil，而不是效果的Operation函数。
 ---@param f function 卡片过滤的条件
 ---@return function|nil 效果的Operation函数
 function VgF.SearchCardSpecialSummon(loc,f)
     if not loc then return end
     return function (e,tp,eg,ep,ev,re,r,rp)
-        Duel.Hint(HINT_SELECTMSG,tp,HINTMSG_ATOHAND)
-        local g=Duel.SelectMatchingCard(tp,function (c)
-            if VgF.GetValueType(f)=="function" and not f(c) then return false end
-            return c:IsCanBeSpecialSummoned(e,0,tp,false,false,POS_FACEUP_ATTACK)
-        end,tp,loc,0,1,1,nil)
-        if g:GetCount()>0 then
-            if loc&LOCATION_DECK+LOCATION_HAND+LOCATION_EXTRA==0 then Duel.HintSelection(g) end
-            VgF.Call(g,0,tp)
-        end
+        VgF.SearchCardSpecialSummonOP(loc,f,e,tp,eg,ep,ev,re,r,rp)
         local sg=Duel.GetOperatedGroup()
         return sg:GetCount()
+    end
+end
+function VgF.SearchCardSpecialSummonOP(loc,f,e,tp,eg,ep,ev,re,r,rp)
+    if not loc then return end
+    Duel.Hint(HINT_SELECTMSG,tp,HINTMSG_ATOHAND)
+    local g=Duel.SelectMatchingCard(tp,function (c)
+        if VgF.GetValueType(f)=="function" and not f(c) then return false end
+        return c:IsCanBeSpecialSummoned(e,0,tp,false,false,POS_FACEUP_ATTACK)
+    end,tp,loc,0,1,1,nil)
+    if g:GetCount()>0 then
+        if loc&LOCATION_DECK+LOCATION_HAND+LOCATION_EXTRA==0 then Duel.HintSelection(g) end
+        VgF.Call(g,0,tp)
     end
 end
 function Group.CheckSubGroup(g,f,min,max,...)
