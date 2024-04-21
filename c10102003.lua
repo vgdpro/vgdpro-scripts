@@ -22,6 +22,6 @@ function cm.op(e,tp,eg,ep,ev,re,r,rp)
 	Duel.Hint(HINT_SELECTMSG,tp,HINTMSG_CALL)
 	local g=Duel.GetMatchingGroup(VgF.VMonsterFilter,tp,LOCATION_MZONE,0,nil):GetFirst():GetOverlayGroup():FilterSelect(tp,Card.IsCanBeSpecialSummoned,1,1,nil,e,0,tp,false,false,POS_FACEUP_ATTACK,0x4)
 	if vgf.Call(g,0,tp,0x4)>0 then
-		vgf.OverlayFillCostOrOperation(1)
+		vgf.OverlayFillOP(num,e,tp,eg,ep,ev,re,r,rp)
 	end
 end

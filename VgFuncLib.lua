@@ -468,7 +468,10 @@ function VgF.OverlayCost(num)
         Duel.SendtoGrave(g,REASON_COST)
     end
 end
-function VgF.OverlayFillCostOrOperation(num)
+---用于效果的Cost或Operation。它返回一个执行“【费用】[灵魂填充num]”的函数。
+---@param num integer 灵魂填充的数量
+---@return function 效果的Cost或Operation函数
+function VgF.OverlayFill(num)
     return function (e,tp,eg,ep,ev,re,r,rp,chk)
         local c=e:GetHandler()
         local m=c:GetOriginalCode()
@@ -480,11 +483,14 @@ function VgF.OverlayFillCostOrOperation(num)
         if chk==0 then
             return Duel.GetFieldGroupCount(tp,LOCATION_DECK,0)>=num
         end
-        local rc=Duel.GetMatchingGroup(VgF.VMonsterFilter,tp,LOCATION_MZONE,0,nil):GetFirst()
-        local g=Duel.GetDecktopGroup(tp,num)
-        Duel.DisableShuffleCheck()
-        Duel.Overlay(rc,g)
+        VgF.OverlayFillOP(num,e,tp,eg,ep,ev,re,r,rp)
     end
+end
+function VgF.OverlayFillOP(num,e,tp,eg,ep,ev,re,r,rp)
+    local rc=Duel.GetMatchingGroup(VgF.VMonsterFilter,tp,LOCATION_MZONE,0,nil):GetFirst()
+    local g=Duel.GetDecktopGroup(tp,num)
+    Duel.DisableShuffleCheck()
+    Duel.Overlay(rc,g)
 end
 ---用于效果的Cost。它返回一个执行“【费用】[计数爆发num]”的函数。
 ---@param num integer 计数爆发的数量
