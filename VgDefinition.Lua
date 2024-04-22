@@ -668,40 +668,19 @@ EVENT_PHASE_START				=0x2000	--阶段开始时
 EVENT_ADD_COUNTER				=0x10000	--增加指示物时
 EVENT_REMOVE_COUNTER			=0x20000	--去除指示物时(A指示物)，Card.RemoveCounter()必須手動觸發此事件
 EVENT_CUSTOM					=0x10000000	--自訂事件
+--自定时点
+EVENT_TRIGGER           =VgID   --判定时点
+EVENT_CRITICAL_STRIKE   =VgID+1 --暴击值结算时点
+EVENT_DAMAGE_TRIGGER    =VgID+2 --受伤判定完毕时点
+EVENT_RIDE_START        =VgID+3 --骑升时点
+EVENT_SUPPORT           =VgID+4 --支援时点
 
---Category	效果分类（表示这个效果将要发生什么事，OperationInfo设置了效果分类才能触发针对这一类型发动的卡，如破坏->星尘龙
-CATEGORY_DESTROY			=0x1		--破坏效果
-CATEGORY_RELEASE			=0x2		--解放效果
-CATEGORY_REMOVE				=0x4		--除外效果
-CATEGORY_TOHAND				=0x8		--回手牌效果
-CATEGORY_TODECK				=0x10		--回卡组效果
-CATEGORY_TOGRAVE			=0x20		--送去墓地效果
-CATEGORY_DECKDES			=0x40   	--包含從卡组送去墓地或特殊召唤效果
-CATEGORY_HANDES				=0x80   	--捨棄手牌效果
-CATEGORY_SUMMON				=0x100  	--含召唤的效果
-CATEGORY_SPECIAL_SUMMON		=0x200  	--含特殊召唤的效果
-CATEGORY_TOKEN				=0x400		--含衍生物效果
-CATEGORY_GRAVE_ACTION		=0x800  	--包含特殊召喚以外移動墓地的卡的效果（屋敷わらし）
-CATEGORY_POSITION			=0x1000 	--改变表示形式效果
-CATEGORY_CONTROL			=0x2000 	--改变控制权效果
-CATEGORY_DISABLE			=0x4000 	--使效果无效效果
-CATEGORY_DISABLE_SUMMON		=0x8000		--无效召唤效果
-CATEGORY_DRAW				=0x10000	--抽卡效果
-CATEGORY_SEARCH				=0x20000	--检索卡组效果
-CATEGORY_EQUIP				=0x40000	--装备效果
-CATEGORY_DAMAGE				=0x80000	--伤害效果
-CATEGORY_RECOVER			=0x100000	--回复效果
-CATEGORY_ATKCHANGE			=0x200000	--改变攻击效果
-CATEGORY_DEFCHANGE			=0x400000	--改变防御效果
-CATEGORY_COUNTER			=0x800000	--指示物效果
-CATEGORY_COIN				=0x1000000	--硬币效果
-CATEGORY_DICE				=0x2000000	--骰子效果
-CATEGORY_LEAVE_GRAVE		=0x4000000	--涉及墓地的效果(王家長眠之谷)
-CATEGORY_GRAVE_SPSUMMON		=0x8000000	--包含從墓地特殊召喚的效果（屋敷わらし、冥神）
-CATEGORY_NEGATE				=0x10000000	--使发动无效效果
-CATEGORY_ANNOUNCE			=0x20000000	--發動時宣言卡名的效果
-CATEGORY_FUSION_SUMMON		=0x40000000	--融合召唤效果（暴走魔法阵）
-CATEGORY_TOEXTRA			=0x80000000	--回额外卡组效果
+--攻击时(EVENT_ATTACK_ANNOUNCE)
+--支援时(EVENT_CUSTOM+EVENT_SUPPORT)
+--截击|放置到G(EVENT_MOVE)
+--攻击击中时(EVENT_CUSTOM+EVENT_DAMAGE|EVENT_BATTLE_DESTROYING)
+--战斗结束时(EVENT_BATTLED)
+
 --Hint
 HINT_EVENT				=1
 HINT_MESSAGE			=2
@@ -889,11 +868,7 @@ AFFECT_CODE_MIX         =VgID   --魔合成
 AFFECT_CODE_MIX_DIFFERENT_NAME  =VgID+1     --魔合成(卡名不同)
 AFFECT_CODE_SENDTOG     =VgID+2 --需要两张卡才能防御
 AFFECT_CODE_SENDTOG_MZONE       =VgID+3     --不能截击
---自定时点
-EVENT_TRIGGER           =VgID   --判定时点
-EVENT_CRITICAL_STRIKE   =VgID+1 --暴击值结算时点
-EVENT_DAMAGE_TRIGGER    =VgID+2 --受伤判定完毕时点
-EVENT_RIDE_START        =VgID+3 --骑升时点
+
 
 POS_FACEUP_DEFENCE=POS_FACEUP_DEFENSE
 POS_FACEDOWN_DEFENCE=POS_FACEDOWN_DEFENSE

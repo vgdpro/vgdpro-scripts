@@ -299,10 +299,15 @@ function VgF.Call(g,sumtype,sp,zone)
     end
     local sg
     local z=0xe0
+    local rg=Duel.GetMatchingGroup(Card.IsPosition,sp,LOCATION_MZONE,0,nil,POS_FACEDOWN_ATTACK)
+    for tc in VgF.Next(rg) do
+        local szone=VgF.SequenceToGlobal(sp,tc:GetLocation(),tc:GetSequence())
+        z=bit.bor(z,szone)
+    end
     if VgF.GetValueType(g)=="Card" then sg=Group.FromCards(g) else sg=Group.Clone(g) end
     for sc in VgF.Next(sg) do
         if sc:IsLocation(LOCATION_EXTRA) then
-            local rc=Duel.GetMatchingGroup(VgF.VMonsterFilter,tp,LOCATION_MZONE,0,nil):GetFirst()
+            local rc=Duel.GetMatchingGroup(VgF.VMonsterFilter,sp,LOCATION_MZONE,0,nil):GetFirst()
             local mg=rc:GetOverlayGroup()
             if mg:GetCount()~=0 then
                 Duel.Overlay(sc,mg)

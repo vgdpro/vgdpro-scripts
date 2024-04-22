@@ -29,6 +29,7 @@ function cm.cost(e,tp,eg,ep,ev,re,r,rp,chk)
     local g=Duel.SelectMatchingCard(tp,vgf.IsLevel,tp,LOCATION_HAND,0,3,3,nil,3)
     Duel.ConfirmCards(1-tp,g)
 end
-function cm.condition(e,tp,eg,ep,ev,re,r,rp)
+function cm.condition(e,c)
+    local tp=e:GetHandlerPlayer()
     return vgf.RMonsterCondition(e) and Duel.IsExistingMatchingCard(vgf.IsLevel,tp,LOCATION_MZONE,0,3,nil,3)
 end
