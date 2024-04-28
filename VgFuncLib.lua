@@ -32,6 +32,7 @@ function VgF.Stringid(code,id)
 	return code*16+id
 end
 function VgF.DefineArguments()
+    if not code then code=nil end
     if not loc then loc=nil end
     if not typ then typ=nil end
     if not count then count=nil end
@@ -121,6 +122,13 @@ function VgF.GetCardsFromGroup(g,num)
     end
 end
 bit={}
+function bit.ReturnCount(n)
+    if n==0 then
+        return 0
+    end
+    return 1+bit.ReturnCount(n&(n-1))
+end
+
 ---返回对a和b进行按位与运算的结果。
 ---@param a integer 操作数1
 ---@param b integer 操作数2
@@ -283,54 +291,59 @@ end
 function VgF.tgoval(e,re,rp)
 	return rp==1-e:GetHandlerPlayer()
 end
+function VgF.GetAvailableLocation(tp)
+    local z=0xe0
+    local rg=Duel.GetMatchingGroup(Card.IsPosition,tp,LOCATION_MZONE,0,nil,POS_FACEDOWN_ATTACK)
+    for tc in VgF.Next(rg) do
+        local szone=VgF.SequenceToGlobal(tp,tc:GetLocation(),tc:GetSequence())
+        z=bit.bor(z,szone)
+    end
+    return z
+end
 ---将g（中的每一张卡）Call到单位区。返回Call成功的数量。
 ---@param g Card|Group 要Call的卡（片组）
 ---@param sumtype integer Call的方式，默认填0
 ---@param sp integer 表示形式
 ---@param zone integer 指示要Call到的格子。<br>前列的R：17； 后列的R：14； 全部的R：31； V：32
 ---@return integer Call成功的数量
-function VgF.Call(g,sumtype,sp,zone)
+function VgF.Call(g,sumtype,tp,zone,pos)
+    if VgF.GetValueType(pos)~="number" then pos=POS_FACEUP_ATTACK end
     if zone then
-        if Duel.IsExistingMatchingCard(VgD.CallFilter,sp,LOCATION_MZONE,0,1,nil,sp,zone) then
-            local tc=Duel.GetMatchingGroup(VgD.CallFilter,sp,LOCATION_MZONE,0,nil,sp,zone):GetFirst()
+        if Duel.IsExistingMatchingCard(VgD.CallFilter,tp,LOCATION_MZONE,0,1,nil,tp,zone) then
+            local tc=Duel.GetMatchingGroup(VgD.CallFilter,tp,LOCATION_MZONE,0,nil,tp,zone):GetFirst()
             Duel.SendtoGrave(tc,REASON_COST)
         end
-	    return Duel.SpecialSummon(g,sumtype,sp,sp,false,false,POS_FACEUP_ATTACK,zone)
+	    return Duel.SpecialSummon(g,sumtype,tp,tp,false,false,pos,zone)
     end
     local sg
-    local z=0xe0
-    local rg=Duel.GetMatchingGroup(Card.IsPosition,sp,LOCATION_MZONE,0,nil,POS_FACEDOWN_ATTACK)
-    for tc in VgF.Next(rg) do
-        local szone=VgF.SequenceToGlobal(sp,tc:GetLocation(),tc:GetSequence())
-        z=bit.bor(z,szone)
-    end
+    local z=VgF.GetAvailableLocation(tp)
     if VgF.GetValueType(g)=="Card" then sg=Group.FromCards(g) else sg=Group.Clone(g) end
     for sc in VgF.Next(sg) do
         if sc:IsLocation(LOCATION_EXTRA) then
-            local rc=Duel.GetMatchingGroup(VgF.VMonsterFilter,sp,LOCATION_MZONE,0,nil):GetFirst()
+            local rc=Duel.GetMatchingGroup(VgF.VMonsterFilter,tp,LOCATION_MZONE,0,nil):GetFirst()
             local mg=rc:GetOverlayGroup()
             if mg:GetCount()~=0 then
                 Duel.Overlay(sc,mg)
             end
             sc:SetMaterial(Group.FromCards(rc))
             Duel.Overlay(sc,Group.FromCards(rc))
-            Duel.SpecialSummonStep(sc,sumtype,sp,sp,false,false,POS_FACEUP_ATTACK,0x20)
+            Duel.SpecialSummonStep(sc,sumtype,tp,tp,false,false,pos,0x20)
         else
-            Duel.Hint(HINT_SELECTMSG,sp,HINTMSG_CallZONE)
-            local szone=Duel.SelectField(sp,1,LOCATION_MZONE,0,z)
-            if Duel.IsExistingMatchingCard(VgD.CallFilter,sp,LOCATION_MZONE,0,1,nil,sp,szone) then
-                local tc=Duel.GetMatchingGroup(VgD.CallFilter,sp,LOCATION_MZONE,0,nil,sp,szone):GetFirst()
+            Duel.Hint(HINT_SELECTMSG,tp,HINTMSG_CallZONE)
+            local szone=Duel.SelectField(tp,1,LOCATION_MZONE,0,z)
+            if Duel.IsExistingMatchingCard(VgD.CallFilter,tp,LOCATION_MZONE,0,1,nil,tp,szone) then
+                local tc=Duel.GetMatchingGroup(VgD.CallFilter,tp,LOCATION_MZONE,0,nil,tp,szone):GetFirst()
                 Duel.SendtoGrave(tc,REASON_COST)
             end
-            Duel.SpecialSummonStep(sc,sumtype,sp,sp,false,false,POS_FACEUP_ATTACK,szone)
+            Duel.SpecialSummonStep(sc,sumtype,tp,tp,false,false,pos,szone)
             z=bit.bor(z,szone)
         end
     end
     return Duel.SpecialSummonComplete()
 end
 function VgF.LvCondition(e_or_c)
-    local c = VgF.GetValueType(e_or_c) == "Effect" and e_or_c:GetHandler() or e_or_c
-    local tp, lv = c:GetControler(), c:GetLevel()
+    local c=VgF.GetValueType(e_or_c)=="Effect" and e_or_c:GetHandler() or e_or_c
+    local tp,lv=c:GetControler(),c:GetLevel()
     return Duel.IsExistingMatchingCard(VgF.LvConditionFilter,tp,LOCATION_MZONE,0,1,nil,lv)
 end
 function VgF.LvConditionFilter(c,lv)
@@ -408,7 +421,7 @@ end
 ---@return boolean 指示c能否去到G区域。
 function VgF.IsAbleToGZone(c)
     local tp=c:GetControler()
-    if c:IsLocation(LOCATION_MZONE) then
+    if c:IsLocation(LOCATION_MZONE) and c:IsFaceup() then
         return c:IsAttribute(SKILL_BLOCK) and VgF.IsSequence(c,0,4) and not Duel.IsPlayerAffectedByEffect(tp,AFFECT_CODE_SENDTOG_MZONE)
     end
     return c:IsLocation(LOCATION_HAND)

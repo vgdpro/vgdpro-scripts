@@ -309,10 +309,9 @@ function VgD.MonsterBattle(c)
     c:RegisterEffect(e6)
     local e9=Effect.CreateEffect(c)
     e9:SetType(EFFECT_TYPE_SINGLE)
-    e9:SetProperty(EFFECT_FLAG_SINGLE_RANGE)
+    e9:SetProperty(EFFECT_FLAG_SINGLE_RANGE+EFFECT_FLAG_CANNOT_DISABLE)
     e9:SetCode(EFFECT_UPDATE_ATTACK)
     e9:SetRange(LOCATION_MZONE)
-    e9:SetProperty(EFFECT_FLAG_CANNOT_DISABLE)
     e9:SetValue(VgD.SupportValue)
     c:RegisterEffect(e9)
     --防御
@@ -328,9 +327,8 @@ function VgD.MonsterBattle(c)
     c:RegisterEffect(e7)
     local e8=Effect.CreateEffect(c)
     e8:SetType(EFFECT_TYPE_FIELD+EFFECT_TYPE_CONTINUOUS)
-    e8:SetProperty(EFFECT_FLAG_DELAY)
     e8:SetCode(EVENT_DAMAGE_STEP_END)
-    e8:SetProperty(EFFECT_FLAG_DAMAGE_STEP+EFFECT_FLAG_CANNOT_DISABLE)
+    e8:SetProperty(EFFECT_FLAG_DAMAGE_STEP+EFFECT_FLAG_CANNOT_DISABLE+EFFECT_FLAG_DELAY)
     e8:SetRange(LOCATION_GZONE)
     e8:SetOperation(VgD.GToGraveOperation)
     c:RegisterEffect(e8)
@@ -375,9 +373,8 @@ function VgD.MonsterBattle(c)
     local e16=e15:Clone()
     e16:SetType(EFFECT_TYPE_SINGLE)
     e16:SetCode(EFFECT_CANNOT_BE_BATTLE_TARGET)
-    e16:SetProperty(EFFECT_FLAG_SINGLE_RANGE)
+    e16:SetProperty(EFFECT_FLAG_SINGLE_RANGE+EFFECT_FLAG_CANNOT_DISABLE)
     e16:SetRange(LOCATION_MZONE)
-    e16:SetProperty(EFFECT_FLAG_CANNOT_DISABLE)
     e16:SetCondition(VgD.MonsterCannotBeAttackedCondition)
     e16:SetValue(VgF.True)
     c:RegisterEffect(e16)
@@ -399,9 +396,11 @@ function VgD.MonsterPosDefenseOperation(e,tp,eg,ep,ev,re,r,rp)
     c:RegisterFlagEffect(AttackTriggerFlag,RESET_EVENT+RESETS_STANDARD+EVENT_PRE_BATTLE_DAMAGE,0,1,label)
 end
 function VgD.MonsterPosAttackOperation(e,tp,eg,ep,ev,re,r,rp)
-    local g=duel.GetMatchingGroup(Card.IsPosition,tp,LOCATION_MZONE,0,nil,POS_FACEUP_DEFENSE)
-    Duel.ChangePosition(g,POS_FACEUP_ATTACK)
-    Duel.Hint(HINT_LINES,tp,VgF.Stringid(VgID,8))
+    local g=Duel.GetMatchingGroup(Card.IsPosition,tp,LOCATION_MZONE,0,nil,POS_FACEUP_DEFENSE)
+    if g:GetCount()>0 and Duel.GetTurnPlayer()==tp then
+        Duel.ChangePosition(g,POS_FACEUP_ATTACK)
+        Duel.Hint(HINT_LINES,tp,VgF.Stringid(VgID,8))
+    end
 end
 function VgD.MonsterBattleDamageCondition(e,tp,eg,ep,ev,re,r,rp)
     local c=e:GetHandler()
@@ -516,9 +515,8 @@ function VgD.CardToG(c,cost)
     local e1=Effect.CreateEffect(c)
     e1:SetDescription(VgF.Stringid(VgID,2))
     e1:SetType(EFFECT_TYPE_SINGLE+type)
-    e1:SetProperty(EFFECT_FLAG_DELAY)
+    e1:SetProperty(EFFECT_FLAG_DELAY+EFFECT_FLAG_DAMAGE_STEP)
     e1:SetCode(EVENT_MOVE)
-    e1:SetProperty(EFFECT_FLAG_DAMAGE_STEP)
     if VgF.GetValueType(cost)=="function" then e1:SetCost(cost) end
     e1:SetCondition(VgD.CardToGCondition)
     e1:SetOperation(VgD.CardToGOperation)
@@ -536,9 +534,8 @@ end
 function VgD.CardTrigger(c,f)
     local e1=Effect.CreateEffect(c)
     e1:SetType(EFFECT_TYPE_SINGLE+EFFECT_TYPE_TRIGGER_F)
-    e1:SetProperty(EFFECT_FLAG_DELAY+EFFECT_CANNOT_DISABLE)
+    e1:SetProperty(EFFECT_FLAG_DELAY+EFFECT_CANNOT_DISABLE+EFFECT_FLAG_DAMAGE_STEP)
     e1:SetCode(EVENT_MOVE)
-    e1:SetProperty(EFFECT_FLAG_DAMAGE_STEP)
     e1:SetCondition(VgD.CardTriggerCondtion(0))
     e1:SetOperation(VgD.CardTriggerOperation(0,f))
     c:RegisterEffect(e1)
@@ -672,8 +669,7 @@ function VgD.Rule(c)
     local e10=Effect.CreateEffect(c)
     e10:SetType(EFFECT_TYPE_FIELD)
     e10:SetCode(EFFECT_HAND_LIMIT)
-    e10:SetProperty(EFFECT_FLAG_PLAYER_TARGET)
-    e10:SetProperty(EFFECT_FLAG_CANNOT_DISABLE)
+    e10:SetProperty(EFFECT_FLAG_PLAYER_TARGET+EFFECT_FLAG_CANNOT_DISABLE)
     e10:SetRange(LOCATION_ALL)
     e10:SetTargetRange(1,0)
     e10:SetValue(100)
@@ -689,10 +685,9 @@ function VgD.Rule(c)
     c:RegisterEffect(e11)
     local e12=Effect.CreateEffect(c)
     e12:SetType(EFFECT_TYPE_FIELD)
-    e12:SetProperty(EFFECT_FLAG_PLAYER_TARGET)
     e12:SetCode(EFFECT_SKIP_M2)
     e12:SetRange(LOCATION_ALL)
-    e12:SetProperty(EFFECT_FLAG_CANNOT_DISABLE)
+    e12:SetProperty(EFFECT_FLAG_PLAYER_TARGET+EFFECT_FLAG_CANNOT_DISABLE)
     e12:SetTargetRange(1,0)
     c:RegisterEffect(e12)
     local e13=e12:Clone()
@@ -708,8 +703,8 @@ function VgD.Rule(c)
     e16:SetType(EFFECT_TYPE_FIELD)
     e16:SetCode(EFFECT_QP_ACT_IN_NTPHAND)
     e16:SetRange(LOCATION_ALL)
-    e16:SetProperty(EFFECT_FLAG_CANNOT_DISABLE)
     e16:SetCondition(VgF.RuleCardCondtion)
+    e16:SetProperty(EFFECT_FLAG_PLAYER_TARGET+EFFECT_FLAG_CANNOT_DISABLE)
     e16:SetTargetRange(LOCATION_HAND,0)
     c:RegisterEffect(e16)
 end
@@ -902,7 +897,7 @@ function VgD.EffectTypeTrigger(c,m,loc,typ,code,op,cost,con,tg,count,property,st
     local e1=Effect.CreateEffect(c)
     e1:SetDescription(VgF.Stringid(m,stringid))
     e1:SetType(typ+type2)
-    if code~=EVENT_SPSUMMON_SUCCESS then e1:SetRange(loc) end
+    if VgF.GetValueType(loc)=="number" then e1:SetRange(loc) end
     e1:SetCode(code)
     e1:SetProperty(property+EFFECT_FLAG_DELAY)
     if count and count>0 then e1:SetCountLimit(count) end
@@ -958,20 +953,43 @@ function VgD.QuickSpell(c,code,op,cost,con,tg)
     e1:SetType(EFFECT_TYPE_ACTIVATE)
     e1:SetCode(code)
     e1:SetProperty(EFFECT_FLAG_DELAY+EFFECT_FLAG_DAMAGE_STEP)
-    if VgF.GetValueType(con)=="function" then e1:SetCondition(con) end
+    e1:SetCondition(VgD.LvCondition(con))
     if VgF.GetValueType(cost)=="function" then e1:SetCost(cost) end
     if VgF.GetValueType(tg)=="function" then e1:SetTarget(tg) end
     if VgF.GetValueType(op)=="function" then e1:SetOperation(op) end
     c:RegisterEffect(e1)
 end
-function VgD.EffectTypeContinuousChangeAttack(c,typ,val,con)
-    if not typ then typ=EFFECT_TYPE_SINGLE end
+function VgD.LvCondition(con)
+    return function (e,tp,eg,ep,ev,re,r,rp)
+        if VgF.GetValueType(con)=="function" and not con(e,tp,eg,ep,ev,re,r,rp) then return false end
+        return VgF.LvCondition(e)
+    end
+end
+function VgD.ContinuousSpell(c,cost,con,tg)
     local e1=Effect.CreateEffect(c)
-    e1:SetType(EFFECT_TYPE_SINGLE)
-    e1:SetProperty(type)
-    e1:SetCode(EFFECT_UPDATE_ATTACK)
-    e1:SetRange(LOCATION_MZONE)
-    if VgF.GetValueType(con)=="function" then e1:SetCondition(con) end
-    e1:SetValue(val)
+    e1:SetType(EFFECT_TYPE_ACTIVATE)
+    e1:SetCode(EVENT_FREE_CHAIN)
+    e1:SetCondition(VgD.LvCondition(con))
+    if VgF.GetValueType(cost)=="function" then e1:SetCost(cost) end
+    if VgF.GetValueType(tg)=="function" then e1:SetTarget(tg) end
+    e1:SetOperation(VgD.ContinuousSpellOperation)
     c:RegisterEffect(e1)
+end
+function VgD.ContinuousSpellOperation(e,tp,eg,ep,ev,re,r,rp)
+    local c=e:GetHandler()
+    Duel.Sendto(c,tp,LOCATION_ORDER,POS_FACEUP_ATTACK,REASON_RULE)
+end
+function VgD.EffectTypeContinuousChangeAttack(c,typ,val,con,tg,mc,code,reset)
+    if VgF.GetValueType(mc)~="Card" then mc=c end
+    if not typ then typ=EFFECT_TYPE_SINGLE end
+    if not code then code=EFFECT_UPDATE_ATTACK end
+    local e1=Effect.CreateEffect(c)
+    e1:SetType(typ)
+    e1:SetCode(code)
+    e1:SetRange(LOCATION_MZONE)
+    if reset>0 then e1:SetReset(reset) end
+    if VgF.GetValueType(con)=="function" then e1:SetCondition(con) end
+    if VgF.GetValueType(tg)=="function" then e1:SetTarget(tg) end
+    e1:SetValue(val)
+    mc:RegisterEffect(e1)
 end
