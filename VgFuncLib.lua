@@ -293,7 +293,7 @@ function VgF.tgoval(e,re,rp)
 end
 function VgF.GetAvailableLocation(tp,zone)
     local z
-    if zone then z=zone else z==0xe0 end
+    if zone then z=zone else z=0xe0 end
     local rg=Duel.GetMatchingGroup(Card.IsPosition,tp,LOCATION_MZONE,0,nil,POS_FACEDOWN_ATTACK)
     for tc in VgF.Next(rg) do
         local szone=VgF.SequenceToGlobal(tp,tc:GetLocation(),tc:GetSequence())
@@ -324,32 +324,33 @@ function VgF.Call(g,sumtype,tp,zone,pos)
             Duel.SendtoGrave(tc,REASON_COST)
         end
 	    return Duel.SpecialSummon(g,sumtype,tp,tp,false,false,pos,szone)
-    end
-    local sg
-    local z=VgF.GetAvailableLocation(tp)
-    if VgF.GetValueType(g)=="Card" then sg=Group.FromCards(g) else sg=Group.Clone(g) end
-    for sc in VgF.Next(sg) do
-        if sc:IsLocation(LOCATION_EXTRA) then
-            local rc=Duel.GetMatchingGroup(VgF.VMonsterFilter,tp,LOCATION_MZONE,0,nil):GetFirst()
-            local mg=rc:GetOverlayGroup()
-            if mg:GetCount()~=0 then
-                Duel.Overlay(sc,mg)
+    else
+        local sg
+        local z=VgF.GetAvailableLocation(tp)
+        if VgF.GetValueType(g)=="Card" then sg=Group.FromCards(g) else sg=Group.Clone(g) end
+        for sc in VgF.Next(sg) do
+            if sc:IsLocation(LOCATION_EXTRA) then
+                local rc=Duel.GetMatchingGroup(VgF.VMonsterFilter,tp,LOCATION_MZONE,0,nil):GetFirst()
+                local mg=rc:GetOverlayGroup()
+                if mg:GetCount()~=0 then
+                    Duel.Overlay(sc,mg)
+                end
+                sc:SetMaterial(Group.FromCards(rc))
+                Duel.Overlay(sc,Group.FromCards(rc))
+                Duel.SpecialSummonStep(sc,sumtype,tp,tp,false,false,pos,0x20)
+            else
+                Duel.Hint(HINT_SELECTMSG,tp,HINTMSG_CallZONE)
+                local szone=Duel.SelectField(tp,1,LOCATION_MZONE,0,z)
+                if Duel.IsExistingMatchingCard(VgD.CallFilter,tp,LOCATION_MZONE,0,1,nil,tp,szone) then
+                    local tc=Duel.GetMatchingGroup(VgD.CallFilter,tp,LOCATION_MZONE,0,nil,tp,szone):GetFirst()
+                    Duel.SendtoGrave(tc,REASON_COST)
+                end
+                Duel.SpecialSummonStep(sc,sumtype,tp,tp,false,false,pos,szone)
+                z=bit.bor(z,szone)
             end
-            sc:SetMaterial(Group.FromCards(rc))
-            Duel.Overlay(sc,Group.FromCards(rc))
-            Duel.SpecialSummonStep(sc,sumtype,tp,tp,false,false,pos,0x20)
-        else
-            Duel.Hint(HINT_SELECTMSG,tp,HINTMSG_CallZONE)
-            local szone=Duel.SelectField(tp,1,LOCATION_MZONE,0,z)
-            if Duel.IsExistingMatchingCard(VgD.CallFilter,tp,LOCATION_MZONE,0,1,nil,tp,szone) then
-                local tc=Duel.GetMatchingGroup(VgD.CallFilter,tp,LOCATION_MZONE,0,nil,tp,szone):GetFirst()
-                Duel.SendtoGrave(tc,REASON_COST)
-            end
-            Duel.SpecialSummonStep(sc,sumtype,tp,tp,false,false,pos,szone)
-            z=bit.bor(z,szone)
         end
+        return Duel.SpecialSummonComplete()
     end
-    return Duel.SpecialSummonComplete()
 end
 function VgF.LvCondition(e_or_c)
     local c=VgF.GetValueType(e_or_c)=="Effect" and e_or_c:GetHandler() or e_or_c
@@ -589,14 +590,14 @@ function VgF.SearchCardSpecialSummonOP(loc,f,e,tp,eg,ep,ev,re,r,rp)
     end
 end
 function Group.CheckSubGroup(g,f,min,max,...)
-	min = min or 1
-	max = max or #g
+	min=min or 1
+	max=max or #g
 	if min > max then return false end
-	local ext_params = {...}
+	local ext_params={...}
 	-- selected group
-	local sg = Group.CreateGroup()
+	local sg=Group.CreateGroup()
 	-- be select group
-	local bg = g:Clone()
+	local bg=g:Clone()
 	for c in VgF.Next(g) do
 		if VgF.CheckGroupRecursiveCapture(c,sg,bg,f,min,max,ext_params) then return true end
 		bg:RemoveCard(c)
@@ -604,16 +605,16 @@ function Group.CheckSubGroup(g,f,min,max,...)
 	return false
 end
 function VgF.CheckGroupRecursiveCapture(c,sg,bg,f,min,max,ext_params)
-	sg = sg + c
+	sg=sg+c
 	if VgF.G_Add_Check and not VgF.G_Add_Check(sg,c,bg) then
-		sg = sg - c
+		sg=sg-c
 		return false
 	end
-	local res = #sg >= min and #sg <= max and (not f or f(sg,table.unpack(ext_params)))
-	if not res and #sg < max then
-		res = bg:IsExists(VgF.CheckGroupRecursiveCapture,1,sg,sg,bg,f,min,max,ext_params)
+	local res=#sg >= min and #sg<=max and (not f or f(sg,table.unpack(ext_params)))
+	if not res and #sg<max then
+		res=bg:IsExists(VgF.CheckGroupRecursiveCapture,1,sg,sg,bg,f,min,max,ext_params)
 	end
-	sg = sg - c
+	sg=sg-c
 	return res
 end
 ---返回p场上的先导者。
@@ -644,14 +645,16 @@ end
 ---@param g Card|Group
 ---@param p integer
 function VgF.SendtoPrison(g,p)
-    if not VgF.CheckPrison(p) then return end
+    if not VgF.CheckPrison(p) or not g then return end
 	local og=Duel.GetFieldGroup(p,LOCATION_ORDER,0)
 	local oc=og:Filter(VgF.PrisonFilter,nil,og:GetCount()):GetFirst()
-    if VgF.GetValueType(g) == "Card" then
+    if VgF.GetValueType(g)=="Card" then
 	    Duel.Sendto(g,p,LOCATION_ORDER,POS_FACEUP_ATTACK,REASON_EFFECT)
-    elseif VgF.GetValueType(g) == "Group" then
+        g:RegisterFlagEffect(ImprisonFlag,RESET_EVENT+RESETS_STANDARD,EFFECT_FLAG_CLIENT_HINT,1,0,vgf.Stringid(10105015,0))
+    elseif VgF.GetValueType(g)=="Group" then
         for tc in VgF.Next(g) do
             Duel.Sendto(tc,p,LOCATION_ORDER,POS_FACEUP_ATTACK,REASON_EFFECT)
+            tc:RegisterFlagEffect(ImprisonFlag,RESET_EVENT+RESETS_STANDARD,EFFECT_FLAG_CLIENT_HINT,1,0,vgf.Stringid(10105015,0))
         end
     end
 	Duel.MoveSequence(oc,og:GetCount()-1)

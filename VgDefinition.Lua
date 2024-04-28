@@ -674,6 +674,7 @@ EVENT_CRITICAL_STRIKE   =VgID+1 --暴击值结算时点
 EVENT_DAMAGE_TRIGGER    =VgID+2 --受伤判定完毕时点
 EVENT_RIDE_START        =VgID+3 --骑升时点
 EVENT_SUPPORT           =VgID+4 --支援时点
+EVENT_TRIGGERCOUNTUP    =VgID+5 --驱动追加
 
 --攻击时(EVENT_ATTACK_ANNOUNCE)
 --支援时(EVENT_CUSTOM+EVENT_SUPPORT)
@@ -719,20 +720,19 @@ OPCODE_ISATTRIBUTE		=0x40000104
 DOUBLE_DAMAGE			=-2147483648
 HALF_DAMAGE				=-2147483647
 --Hint Message	--提示消息，显示在窗口的上面
-HINTMSG_RELEASE	        =500	--请选择要解放的卡
+HINTMSG_RELEASE	        =500	
 HINTMSG_DISCARD			=501	--请选择要丢弃的手牌
-HINTMSG_DESTROY			=502	--请选择要破坏的卡
+HINTMSG_DESTROY			=502	--
 HINTMSG_REMOVE			=503	--请选择要除外的卡
-HINTMSG_TOGRAVE			=504	--请选择要送去墓地的卡
+HINTMSG_TOGRAVE			=504	--
 HINTMSG_RTOHAND			=505	--请选择要返回手牌的卡
 HINTMSG_ATOHAND			=506	--请选择要加入手牌的卡
 HINTMSG_TODECK			=507	--请选择要返回卡组的卡
-HINTMSG_SUMMON			=508	--请选择要召唤的卡
+HINTMSG_SUMMON			=508	--
 HINTMSG_SPSUMMON		=509	--请选择要特殊召唤的卡
-HINTMSG_SET				=510	--请选择要盖放的卡
-HINTMSG_FMATERIAL		=511	--请选择要作为融合素材的卡
-HINTMSG_SMATERIAL		=512	--请选择要作为同调素材的卡
-HINTMSG_XMATERIAL		=513	--请选择要充入魂中的卡
+HINTMSG_SET				=510	--
+HINTMSG_FMATERIAL		=511	--
+HINTMSG_SMATERIAL		=512	--
 HINTMSG_FACEUP			=514	--请选择表侧表示的卡
 HINTMSG_FACEDOWN		=515	--请选择里侧表示的卡
 HINTMSG_ATTACK			=516	--请选择攻击表示的怪兽
@@ -741,7 +741,7 @@ HINTMSG_EQUIP			=518	--请选择要装备的卡
 HINTMSG_REMOVEXYZ		=519	--请选择要取除的超量素材
 HINTMSG_CONTROL			=520	--请选择要改变控制权的怪兽
 HINTMSG_DESREPLACE		=521	--请选择要代替破坏的卡
-HINTMSG_FACEUPATTACK	=522	--请选择表侧攻击表示的怪兽
+HINTMSG_FACEUPATTACK	=522	--
 HINTMSG_FACEUPDEFENSE	=523	--请选择表侧守备表示的怪兽
 HINTMSG_FACEDOWNATTACK	=524	--请选择里侧攻击表示的怪兽
 HINTMSG_FACEDOWNDEFENSE	=525	--请选择里侧守备表示的怪兽
@@ -775,12 +775,14 @@ HINTMSG_TOZONE			=571	--请选择要移动到的位置
 HINTMSG_COUNTER			=572	--请选择要放置指示物的卡
 HINTMSG_DISABLE			=573	--请选择要无效的卡
 HINTMSG_OPERATECARD		=574	--请选择要操作的卡
+HINTMSG_XMATERIAL		=513	--请选择要充入魂中的卡
 HINTMSG_LEAVEONFIELD	=HINTMSG_RELEASE	--请选择要退场的卡
 HINTMSG_TODROP			=HINTMSG_TOGRAVE	--请选择要置入弃牌区的卡
 HINTMSG_CALL			=HINTMSG_SUMMON	    --请选择要Call到圆阵的卡
 HINTMSG_DAMAGE			=HINTMSG_SET	    --请选择要消耗的费用
 HINTMSG_ATKUP		    =HINTMSG_FMATERIAL	--请选择力量上升的卡
 HINTMSG_CRITICAL_STRIKE	=HINTMSG_SMATERIAL	--请选择☆值上升的卡
+HINTMSG_IMPRISON        =HINTMSG_DESTROY    --请选择要收容的卡
 HINTMSG_VMONSTER        =HINTMSG_FACEUPATTACK       --请选择先导者
 --Select	--请选择
 SELECT_HEADS				=60	--正面
@@ -864,6 +866,7 @@ DefenseEntirelyFlag     =VgID+3 --完全防御标识
 ConditionFlag           =VgID+4 --处于XX状态标识
 SupportFlag             =VgID+5 --支援状态标识
 AttackAtRearFlag        =VgID+6 --后列攻击
+ImprisonFlag            =VgID+6 --被收容
 --AffectedByEffect
 AFFECT_CODE_MIX         =VgID   --魔合成
 AFFECT_CODE_MIX_DIFFERENT_NAME  =VgID+1     --魔合成(卡名不同)

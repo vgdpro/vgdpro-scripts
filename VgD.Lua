@@ -395,6 +395,7 @@ function VgD.MonsterPosDefenseOperation(e,tp,eg,ep,ev,re,r,rp)
         label=label+2
     end
     c:RegisterFlagEffect(AttackTriggerFlag,RESET_EVENT+RESETS_STANDARD+EVENT_PRE_BATTLE_DAMAGE,0,1,label)
+    Duel.RaiseEvent(c,EVENT_CUSTOM+EVENT_TRIGGERCOUNTUP,e,0,tp,tp,0)
 end
 function VgD.MonsterPosAttackOperation(e,tp,eg,ep,ev,re,r,rp)
     local g=Duel.GetMatchingGroup(Card.IsPosition,tp,LOCATION_MZONE,0,nil,POS_FACEUP_DEFENSE)
@@ -933,13 +934,15 @@ function VgD.EffectTypeIgnition(c,m,loc,op,cost,con,tg,count,property,stringid)
     if VgF.GetValueType(op)=="function" then e1:SetOperation(op) end
     c:RegisterEffect(e1)
 end
-function VgD.EffectTypeTriggerWhenHitting(c,m,loc,typ,op,cost,con,tg,count,property,stringid)
+function VgD.EffectTypeTriggerWhenHitting(c,m,loc,typ,op,cost,con,tg,count,p,property,stringid)
     if not typ or typ==0 then typ=EFFECT_TYPE_SINGLE end
-    VgD.EffectTypeTrigger(c,m,loc,EFFECT_TYPE_FIELD,EVENT_CUSTOM+EVENT_DAMAGE_TRIGGER,op,cost,VgD.EffectTypeTriggerWhenHittingCon(typ,con),tg,count,property,stringid)
+    if not p then p=c:GetControler() end
+    VgD.EffectTypeTrigger(c,m,loc,EFFECT_TYPE_FIELD,EVENT_CUSTOM+EVENT_DAMAGE_TRIGGER,op,cost,VgD.EffectTypeTriggerWhenHittingCon(typ,con,p),tg,count,property,stringid)
     VgD.EffectTypeTrigger(c,m,loc,typ,EVENT_BATTLE_DESTROYING,op,cost,con,tg,count,property,stringid)
 end
-function VgD.EffectTypeTriggerWhenHittingCon(typ,con)
+function VgD.EffectTypeTriggerWhenHittingCon(typ,con,p)
     return function (e,tp,eg,ep,ev,re,r,rp)
+        if Duel.GetAttacker():GetControler()~=p then return false end
         if typ==EFFECT_TYPE_SINGLE then
             if VgF.GetValueType(con)~="function" or con(e,tp,eg,ep,ev,re,r,rp) then
                 return Duel.GetAttacker()==e:GetHandler()
@@ -980,17 +983,41 @@ function VgD.ContinuousSpellOperation(e,tp,eg,ep,ev,re,r,rp)
     local c=e:GetHandler()
     Duel.Sendto(c,tp,LOCATION_ORDER,POS_FACEUP_ATTACK,REASON_RULE)
 end
-function VgD.EffectTypeContinuousChangeAttack(c,typ,val,con,tg,mc,code,reset)
+function VgD.EffectTypeContinuousChangeAttack(c,typ,val,con,tg,mc,code,reset,loc)
     if VgF.GetValueType(mc)~="Card" then mc=c end
     if not typ then typ=EFFECT_TYPE_SINGLE end
     if not code then code=EFFECT_UPDATE_ATTACK end
+    if not loc then loc=LOCATION_MZONE end
     local e1=Effect.CreateEffect(c)
     e1:SetType(typ)
     e1:SetCode(code)
-    e1:SetRange(LOCATION_MZONE)
+    e1:SetRange(loc)
     if reset>0 then e1:SetReset(reset) end
     if VgF.GetValueType(con)=="function" then e1:SetCondition(con) end
     if VgF.GetValueType(tg)=="function" then e1:SetTarget(tg) end
     e1:SetValue(val)
     mc:RegisterEffect(e1)
+end
+function VgD.TriggerCountUp(c,num,reset)
+    local e1=Effect.CreateEffect(c)
+    e1:SetType(EFFECT_TYPE_FIELD+EFFECT_TYPE_CONTINUOUS)
+    e1:SetRange(LOCATION_MZONE)
+    e1:SetCode(EVENT_CUSTOM+EVENT_TRIGGERCOUNTUP)
+    e1:SetProperty(EFFECT_FLAG_DELAY)
+    if reset>0 then e1:SetReset(reset) end
+    e1:SetOperation(VgD.TriggerCountUpOperation(num))
+    c:RegisterEffect(e1)
+end
+function VgD.TriggerCountUpOperation(num)
+    return function (e,tp,eg,ep,ev,re,r,rp)
+        local c=e:GetHandler()
+        local label=c:GetFlagEffectLabel(AttackTriggerFlag)
+        if not label then
+            label=label+num
+            c:ResetFlagEffect(AttackTriggerFlag)
+            c:RegisterFlagEffect(AttackTriggerFlag,RESET_EVENT+RESETS_STANDARD+EVENT_PRE_BATTLE_DAMAGE,0,1,label)
+        else
+            c:RegisterFlagEffect(AttackTriggerFlag,RESET_EVENT+RESETS_STANDARD+EVENT_PRE_BATTLE_DAMAGE,0,1,num)
+        end
+    end
 end
