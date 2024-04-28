@@ -19,7 +19,7 @@ function cm.con(e,tp,eg,ep,ev,re,r,rp)
 	return vgf.IsSequence(c,5) and r==REASON_RIDEUP
 end
 function cm.op(e,tp,eg,ep,ev,re,r,rp)
-	if vgf.GetAvailableLocation(tp)<=0 then return end
+	if vgf.GetAvailableLocation(tp)&0x4<=0 then return end
 	Duel.Hint(HINT_SELECTMSG,tp,HINTMSG_CALL)
 	local g=Duel.GetMatchingGroup(VgF.VMonsterFilter,tp,LOCATION_MZONE,0,nil):GetFirst():GetOverlayGroup():FilterSelect(tp,Card.IsCanBeSpecialSummoned,1,1,nil,e,0,tp,false,false,POS_FACEUP_ATTACK,0x4)
 	if vgf.Call(g,0,tp,0x4)>0 then

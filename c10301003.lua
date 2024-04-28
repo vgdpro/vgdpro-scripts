@@ -20,7 +20,7 @@ function cm.operation(e,tp,eg,ep,ev,re,r,rp)
 	Duel.HintSelection(g)
 	vgf.Call(g,0,tp,nil,POS_FACEUP_DEFENSE)
 end
-function cm.filter(c)
+function cm.filter(c,e,tp)
 	return c:IsLevel(c,0,1) and c:IsCanBeSpecialSummoned(e,0,tp,false,false,POS_FACEUP_ATTACK)
 end
 function cm.operation1(e,tp,eg,ep,ev,re,r,rp)

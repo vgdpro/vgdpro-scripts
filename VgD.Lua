@@ -865,6 +865,7 @@ function VgD.BeRidedByCardOperation(m,op,cost,tg,stringid)
         e1:SetType(type+EFFECT_TYPE_FIELD)
         e1:SetProperty(EFFECT_FLAG_DELAY)
         e1:SetCode(EVENT_SPSUMMON_SUCCESS)
+        e1:SetLabelObject(c)
         e1:SetRange(LOCATION_MZONE)
         e1:SetCondition(VgD.BeRidedByCardOpCondtion)
         if VgF.GetValueType(cost)=="function" then e1:SetCost(cost) end
@@ -931,9 +932,19 @@ function VgD.EffectTypeIgnition(c,m,loc,op,cost,con,tg,count,property,stringid)
     if count and count>0 then e1:SetCountLimit(count) end
     if VgF.GetValueType(con)=="function" then e1:SetCondition(con) end
     if VgF.GetValueType(cost)=="function" then e1:SetCost(cost) end
-    if VgF.GetValueType(tg)=="function" then e1:SetTarget(tg) end
+    if VgF.GetValueType(tg)=="function" then e1:SetTarget(VgD.EffectTypeIgnitionTarget(tg)) end
     if VgF.GetValueType(op)=="function" then e1:SetOperation(op) end
     c:RegisterEffect(e1)
+end
+function VgD.EffectTypeIgnitionTarget(tg)
+    return function (e,tp,eg,ep,ev,re,r,rp,chk)
+        if chk==0 then
+            return VgF.GetValueType(tg)~="function" or tg(e,tp,eg,ep,ev,re,r,rp,chk)
+        end
+        local c=e:GetLabelObject()
+        Duel.SetTargetCard(c)
+        tg(e,tp,eg,ep,ev,re,r,rp,chk)
+    end
 end
 function VgD.EffectTypeTriggerWhenHitting(c,m,loc,typ,op,cost,con,tg,count,p,property,stringid)
     if not typ or typ==0 then typ=EFFECT_TYPE_SINGLE end

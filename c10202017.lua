@@ -10,10 +10,21 @@ function cm.condition(e,tp,eg,ep,ev,re,r,rp)
 end
 function cm.operation(e,tp,eg,ep,ev,re,r,rp)
 	local g=Duel.GetDecktopGroup(tp,2)
-	Duel.Hint(HINT_SELECTMSG,tp,HINTMSG_XMATERIAL)
+	Duel.ConfirmCards(tp,g)
 	Duel.DisableShuffleCheck()
-	local sc=g:Select(tp,1,1,nil):GetFirst()
-	Duel.Overlay(VgF.GetVMonster(tp),sc)
-	local sg=Duel.GetDecktopGroup(tp,1)
-	Duel.MoveSequence(sg:GetFirst(),SEQ_DECKBOTTOM)
+	Duel.Hint(HINT_SELECTMSG,tp,HINTMSG_XMATERIAL)
+	local sc=g:FilterSelect(tp,Card.IsCanOverlay,1,1,nil):GetFirst()
+	if sc then
+		Duel.Overlay(VgF.GetVMonster(tp),sc)
+		g:RemoveCard(sc)
+	end
+	if #g>1 then
+		Duel.SortDecktop(tp,tp,#g-1)
+		for i=1,#g-1 do
+			local dg=Duel.GetDecktopGroup(tp,1)
+			Duel.MoveSequence(dg:GetFirst(),SEQ_DECKBOTTOM)
+		end
+	elseif #g>0 then
+		Duel.MoveSequence(g:GetFirst(),SEQ_DECKBOTTOM)
+	end
 end

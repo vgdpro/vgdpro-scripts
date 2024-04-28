@@ -7,18 +7,35 @@ function cm.initial_effect(c)
 	--【自】【V】：这个单位攻击先导者时，通过【费用】[使用等级均不同的卡进行灵魂爆发4]，选择对手的1张先导者，这个回合中，力量增减至1，对手有等级3以上的先导者的话，这个单位的☆+1。（仅将那个时点的力量增减至1，这之后那个单位的力量仍然能通过其他方式增减。）
 	vgd.EffectTypeTrigger(c,m,LOCATION_MZONE,EFFECT_TYPE_SINGLE,EVENT_ATTACK_ANNOUNCE,cm.operation,cm.cost,cm.condition)
 	--【永】【R】：这个回合中由于你的卡片的能力的费用同时使用4张以上的卡进行了灵魂爆发的话，这个单位的力量+5000。
-
+	vgd.EffectTypeContinuousChangeAttack(c,EFFECT_TYPE_SINGLE,5000,cm.con)
+    if not cm.global_check then
+        cm.global_check=true
+        local ge1=Effect.CreateEffect(c)
+        ge1:SetType(EFFECT_TYPE_FIELD+EFFECT_TYPE_CONTINUOUS)
+        ge1:SetCode(EVENT_MOVE)
+        ge1:SetCondition(cm.checkcon)
+        ge1:SetOperation(cm.checkop)
+        Duel.RegisterEffect(ge1,0)
+    end
 end
-
+function cm.checkfilter(c,re)
+	return c:IsReason(REASON_COST) and re:IsActivated() and c:IsPreviousLocation(LOCATION_OVERLAY)
+end
+function cm.checkcon(e,tp,eg,ep,ev,re,r,rp)
+	return eg:IsExists(cm.checkfilter,1,nil,re) and eg:GetClassCount(Card.GetLevel)>=4
+end
+function cm.checkop(e,tp,eg,ep,ev,re,r,rp)
+    Duel.RegisterFlagEffect(tp,m,RESET_PHASE+PHASE_END,0,1)
+end
+function cm.con(e,c)
+	local tp=e:GetHandlerPlayer()
+	return Duel.GetFlagEffect(tp,m)>0
+end
 function cm.condition(e,tp,eg,ep,ev,re,r,rp)
 	return VgF.VMonsterFilter(e:GetHandler()) and vgf.VMonsterFilter(Duel.GetAttackTarget())
 end
-function cm.check(sg)
-	return sg:FilterCount(Card.IsLevel,nil,1)<=1
-		and sg:FilterCount(Card.IsLevel,nil,2)<=1
-		and sg:FilterCount(Card.IsLevel,nil,3)<=1
-		and sg:FilterCount(Card.IsLevel,nil,4)<=1
-		and sg:FilterCount(Card.IsLevel,nil,5)<=1
+function cm.check(g)
+	return g:GetClassCount(Card.GetLevel)==#g
 end
 function cm.cost(e,tp,eg,ep,ev,re,r,rp,chk)
 	local c=e:GetHandler()
@@ -28,19 +45,20 @@ function cm.cost(e,tp,eg,ep,ev,re,r,rp,chk)
 		return g:GetClassCount(Card.GetLevel)>=4
 	end
 	Duel.Hint(HINT_SELECTMSG,tp,HINTMSG_REMOVEXYZ)
-	local sg=g:SelectSubGroup(tp,vgf.True,true,4,4)
+	local sg=g:SelectSubGroup(tp,cm.check,true,4,4)
 	Duel.SendtoGrave(sg,REASON_EFFECT)
 end
 function cm.operation(e,tp,eg,ep,ev,re,r,rp)
 	local c=e:GetHandler()
-	local e1=Effect.CreateEffect(c)
-	e1:SetType(EFFECT_TYPE_SINGLE)
-	e1:SetCode(EFFECT_SET_ATTACK_FINAL)
-	e1:SetReset(nil)
-	e1:SetValue(1)
-	Duel.GetAttackTarget():RegisterEffect(e1)
-	if Duel.GetAttackTarget():IsLevelAbove(4)
-	then
-		VgF.StarUp(c,c,1,nil)
+	local tc=Duel.SelectTarget(tp,vgf.VMonsterFilter,tp,0,LOCATION_MZONE,1,1,nil):GetFirst()
+	if tc:GetAttack()>1 then
+		local atk=tc:GetAttack()-1
+		vgf.AtkUp(c,tc,-atk)
 	end
+	if Duel.IsExistingMatchingCard(tp,cm.filter,tp,0,LOCATION_MZONE,1,1,nil) then
+		VgF.StarUp(c,c,1)
+	end
+end
+function cm.filter(c)
+	return vgf.VMonsterFilter(c) and c:IsLevelAbove(4)
 end

@@ -6,15 +6,20 @@ function cm.initial_effect(c)
 	vgd.EffectTypeTrigger(c,m,LOCATION_MZONE,EFFECT_TYPE_SINGLE,EVENT_SPSUMMON_SUCCESS,cm.operation,VgF.DamageCost(1),cm.condition)
 end
 function cm.condition(e,tp,eg,ep,ev,re,r,rp)
-	return VgF.RMonsterFilter(e:GetHandler()) and Duel.GetFieldGroupCount(tp,LOCATION_DECK,0)>=3
+	local c=e:GetHandler()
+	return not(c:IsSummonType(SUMMON_TYPE_RIDE) or c:IsSummonType(SUMMON_TYPE_SELFRIDE)) and c:IsPreviousLocation(LOCATION_HAND)
 end
 function cm.operation(e,tp,eg,ep,ev,re,r,rp)
 	local g=Duel.GetDecktopGroup(tp,3)
+	Duel.ConfirmCards(tp,g)
+	Duel.DisableShuffleCheck()
 	Duel.Hint(HINT_SELECTMSG,tp,HINTMSG_XMATERIAL)
-	local sc=g:Select(tp,1,1,nil):GetFirst()
-	Duel.Overlay(VgF.GetVMonster(tp),sc)
-	if VgF.GetVMonster(tp):GetOverlayGroup():GetClassCount(Card.GetLevel)>=4
-	then
+	local sc=g:FilterSelect(tp,Card.IsCanOverlay,1,1,nil):GetFirst()
+	if sc then
+		Duel.Overlay(VgF.GetVMonster(tp),sc)
+	end
+	Duel.ShuffleDeck(tp)
+	if VgF.GetVMonster(tp):GetOverlayGroup():GetClassCount(Card.GetLevel)>=4 then
 		Duel.Draw(tp,1,REASON_EFFECT)
 	end
 end

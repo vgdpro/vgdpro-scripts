@@ -8,11 +8,20 @@ end
 function cm.operation(e,tp,eg,ep,ev,re,r,rp)
 	--无法设置重置时点于战斗结束时
 	local c=e:GetHandler()
-	VgF.AtkUp(c,c,10000,EVENT_BATTLED)
-	vgd.EffectTypeTrigger(c,m,LOCATION_MZONE,EFFECT_TYPE_SINGLE,EVENT_BATTLED,cm.operation2)
+	if c:IsRelateToEffect() then
+		VgF.AtkUp(c,c,10000,EVENT_BATTLED)
+		local e1=Effect.CreateEffect(c)
+		e1:SetType(EFFECT_TYPE_FIELD+EFFECT_TYPE_CONTINUOUS)
+		e1:SetCode(EVENT_BATTLED)
+		e1:SetRange(LOCATION_MZONE)
+		e1:SetReset(RESET_EVENT+RESETS_STANDARD)
+		e1:SetProperty(EFFECT_FLAG_DELAY+EFFECT_FLAG_IGNORE_IMMUNE)
+		e1:SetOperation(cm.operation2)
+		c:RegisterEffect(e1)
+	end
 end
 function cm.condition(e,tp,eg,ep,ev,re,r,rp)
-	return VgF.RMonsterFilter(e:GetHandler()) and Duel.GetAttacker()==e:GetHandler() and VgF.GetVMonster(tp):IsSetCard(0xe8)
+	return VgF.RMonsterFilter(e:GetHandler()) and VgF.GetVMonster(tp):IsSetCard(0xe8)
 end
 function cm.operation2(e,tp,eg,ep,ev,re,r,rp)
 	Duel.Overlay(VgF.GetVMonster(tp),e:GetHandler())

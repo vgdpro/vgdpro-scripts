@@ -6,7 +6,7 @@ function cm.initial_effect(c)
 end
 function cm.condition(e,tp,eg,ep,ev,re,r,rp)
 	local c=e:GetHandler()
-	return c:IsSummonType(SUMMON_TYPE_RIDE) and c:IsSummonType(SUMMON_TYPE_SELFRIDE)
+	return c:IsSummonType(SUMMON_TYPE_RIDE) or c:IsSummonType(SUMMON_TYPE_SELFRIDE)
 end
 function cm.filter(c)
 	return c:IsSetCard(0x3040)
