@@ -848,7 +848,8 @@ end
 function VgD.BeRidedByCardCondition(code,f)
     return function (e,tp,eg,ep,ev,re,r,rp)
         local c=e:GetHandler()
-        if code and code>0 and not c:GetReasonCard():IsCode(code) then return false end
+        if VgF.GetValueType(code)=="function" and not code(c:GetReasonCard()) then return false
+        elseif VgF.GetValueType(code)=="number" and not c:GetReasonCard():IsCode(code) then return false end
         return r==REASON_RIDEUP and (VgF.GetValueType(f)=="nil" or f(e,tp,eg,ep,ev,re,r,rp))
     end
 end
@@ -992,7 +993,7 @@ function VgD.EffectTypeContinuousChangeAttack(c,typ,val,con,tg,mc,code,reset,loc
     e1:SetType(typ)
     e1:SetCode(code)
     e1:SetRange(loc)
-    if reset>0 then e1:SetReset(reset) end
+    if reset and reset>0 then e1:SetReset(reset) end
     if VgF.GetValueType(con)=="function" then e1:SetCondition(con) end
     if VgF.GetValueType(tg)=="function" then e1:SetTarget(tg) end
     e1:SetValue(val)
@@ -1004,7 +1005,7 @@ function VgD.TriggerCountUp(c,num,reset)
     e1:SetRange(LOCATION_MZONE)
     e1:SetCode(EVENT_CUSTOM+EVENT_TRIGGERCOUNTUP)
     e1:SetProperty(EFFECT_FLAG_DELAY)
-    if reset>0 then e1:SetReset(reset) end
+    if reset and reset>0 then e1:SetReset(reset) end
     e1:SetOperation(VgD.TriggerCountUpOperation(num))
     c:RegisterEffect(e1)
 end
