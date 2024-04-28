@@ -16,9 +16,9 @@ function cm.operation(e,tp,eg,ep,ev,re,r,rp)
     local g=Duel.GetDecktopGroup(tp,1)
     local tc=vgf.ReturnCard(g)
     Duel.DisableShuffleCheck()
-    if tc:IsType(TYPE_MONSTER) then
+    if tc:IsCanBeSpecialSummoned(e,0,tp,false,false,POS_FACEUP_ATTACK) then
         vgf.Call(g,0,tp)
-    else
+    elseif tc:IsAbleToGrave() then
         Duel.SendtoGrave(g,REASON_EFFECT)
     end
 end
@@ -31,5 +31,5 @@ function cm.operation2(e,tp,eg,ep,ev,re,r,rp)
     end
 end
 function cm.filter(c)
-    return vgf.IsLevel(c,3) and vgf.RmonsterFilter(c)
+    return vgf.IsLevel(c,3) and vgf.VmonsterFilter(c)
 end

@@ -148,14 +148,15 @@ end
 function VgD.CallCondition(e,c)
     if c==nil then return true end
     local tp=e:GetHandlerPlayer()
-    return VgF.LvCondition(e) and c:IsCanBeSpecialSummoned(e,0,tp,false,false,POS_FACEUP_ATTACK) and Duel.GetMatchingGroupCount(Card.IsPosition,tp,LOCATION_MZONE,0,nil,POS_FACEDOWN_ATTACK)<5
+    if VgF.GetAvailableLocation(tp)<=0 then return end
+    return VgF.LvCondition(e) and c:IsCanBeSpecialSummoned(e,0,tp,false,false,POS_FACEUP_ATTACK)
 end
 function VgD.CallFilter(c,tp,zone)
     return VgF.RMonsterFilter(c) and zone==VgF.SequenceToGlobal(tp,c:GetLocation(),c:GetSequence())
 end
 function VgD.CallOperation(e,tp,eg,ep,ev,re,r,rp)
     local c=e:GetHandler()
-    local z=0xe0
+    local z=VgF.GetAvailableLocation(tp)
     local rg=Duel.GetMatchingGroup(Card.IsPosition,sp,LOCATION_MZONE,0,nil,POS_FACEDOWN_ATTACK)
     for tc in VgF.Next(rg) do
         local szone=VgF.SequenceToGlobal(sp,tc:GetLocation(),tc:GetSequence())

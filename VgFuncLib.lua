@@ -291,8 +291,9 @@ end
 function VgF.tgoval(e,re,rp)
 	return rp==1-e:GetHandlerPlayer()
 end
-function VgF.GetAvailableLocation(tp)
-    local z=0xe0
+function VgF.GetAvailableLocation(tp,zone)
+    local z
+    if zone then z=zone else z==0xe0 end
     local rg=Duel.GetMatchingGroup(Card.IsPosition,tp,LOCATION_MZONE,0,nil,POS_FACEDOWN_ATTACK)
     for tc in VgF.Next(rg) do
         local szone=VgF.SequenceToGlobal(tp,tc:GetLocation(),tc:GetSequence())
@@ -308,12 +309,21 @@ end
 ---@return integer Call成功的数量
 function VgF.Call(g,sumtype,tp,zone,pos)
     if VgF.GetValueType(pos)~="number" then pos=POS_FACEUP_ATTACK end
-    if zone then
-        if Duel.IsExistingMatchingCard(VgD.CallFilter,tp,LOCATION_MZONE,0,1,nil,tp,zone) then
-            local tc=Duel.GetMatchingGroup(VgD.CallFilter,tp,LOCATION_MZONE,0,nil,tp,zone):GetFirst()
+    if zone and zone>0 then
+        local z=VgF.GetAvailableLocation(tp,zone)
+        local ct=bit.ReturnCount(z)
+        local szone
+        if ct>1 then
+            Duel.Hint(HINT_SELECTMSG,tp,HINTMSG_CallZONE)
+            szone=Duel.SelectField(tp,1,LOCATION_MZONE,0,z)
+        else
+            szone=z
+        end
+        if Duel.IsExistingMatchingCard(VgD.CallFilter,tp,LOCATION_MZONE,0,1,nil,tp,szone) then
+            local tc=Duel.GetMatchingGroup(VgD.CallFilter,tp,LOCATION_MZONE,0,nil,tp,szone):GetFirst()
             Duel.SendtoGrave(tc,REASON_COST)
         end
-	    return Duel.SpecialSummon(g,sumtype,tp,tp,false,false,pos,zone)
+	    return Duel.SpecialSummon(g,sumtype,tp,tp,false,false,pos,szone)
     end
     local sg
     local z=VgF.GetAvailableLocation(tp)

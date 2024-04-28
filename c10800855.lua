@@ -32,22 +32,28 @@ function cm.con1(e,tp,eg,ep,ev,re,r,rp)
 end
 function cm.op1(e,tp,eg,ep,ev,re,r,rp)
     local c=e:GetHandler()
-    local token1=Duel.CreateToken(tp,10800730)
-    local token2=Duel.CreateToken(tp,10800730)
-    local token3=Duel.CreateToken(tp,10800730)
+    local code=10800730
+    local selfcode1,selfcode2=c:GetOriginalCode()
+    if selfcode2==10800855 then code=code+1 end
+    local token1=Duel.CreateToken(tp,code)
+    local token2=Duel.CreateToken(tp,code)
+    local token3=Duel.CreateToken(tp,code)
     local g=Group.FromCards(token1,token2,token3)
     Duel.Sendto(g,tp,LOCATION_EMBLEM,POS_FACEUP_ATTACK,REASON_EFFECT)
 end
 function cm.con2(e,tp,eg,ep,ev,re,r,rp)
-    return Duel.GetTurnPlayer()==tp and Duel.GetMatchingGroupCount(Card.IsCode,tp,LOCATION_EMBLEM,0,nil,10800730)<10
+    return Duel.GetTurnPlayer()==tp and Duel.GetMatchingGroupCount(Card.IsCode,tp,LOCATION_EMBLEM,0,nil,code)<10
 end
 function cm.op2(e,tp,eg,ep,ev,re,r,rp)
     local c=e:GetHandler()
-    if Duel.GetMatchingGroupCount(Card.IsCode,tp,LOCATION_EMBLEM,0,nil,10800730)>=10 then return end
-    local ct=10-Duel.GetMatchingGroupCount(Card.IsCode,tp,LOCATION_EMBLEM,0,nil,10800730)
-    local token1=Duel.CreateToken(tp,10800730)
-    local token2=Duel.CreateToken(tp,10800730)
-    local token3=Duel.CreateToken(tp,10800730)
+    local code=10800730
+    local selfcode1,selfcode2=c:GetOriginalCode()
+    if selfcode2==10800855 then code=code+1 end
+    if Duel.GetMatchingGroupCount(Card.IsCode,tp,LOCATION_EMBLEM,0,nil,code)>=10 then return end
+    local ct=10-Duel.GetMatchingGroupCount(Card.IsCode,tp,LOCATION_EMBLEM,0,nil,code)
+    local token1=Duel.CreateToken(tp,code)
+    local token2=Duel.CreateToken(tp,code)
+    local token3=Duel.CreateToken(tp,code)
     local sg=Group.FromCards(token1,token2,token3)
     local g=VgF.GetCardsFromGroup(sg,ct)
     Duel.Sendto(g,tp,LOCATION_EMBLEM,POS_FACEUP_ATTACK,REASON_EFFECT)
