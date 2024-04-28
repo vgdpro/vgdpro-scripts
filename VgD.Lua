@@ -399,11 +399,9 @@ function VgD.MonsterPosDefenseOperation(e,tp,eg,ep,ev,re,r,rp)
     c:RegisterFlagEffect(AttackTriggerFlag,RESET_EVENT+RESETS_STANDARD+EVENT_PRE_BATTLE_DAMAGE,0,1,label)
 end
 function VgD.MonsterPosAttackOperation(e,tp,eg,ep,ev,re,r,rp)
-    local g=Duel.GetMatchingGroup(Card.IsPosition,tp,LOCATION_MZONE,0,nil,POS_FACEUP_DEFENSE)
-    if g:GetCount()>0 and Duel.GetTurnPlayer()==tp then
-        Duel.ChangePosition(g,POS_FACEUP_ATTACK)
-        Duel.Hint(HINT_LINES,tp,VgF.Stringid(VgID,8))
-    end
+    local g=duel.GetMatchingGroup(Card.IsPosition,tp,LOCATION_MZONE,0,nil,POS_FACEUP_DEFENSE)
+    Duel.ChangePosition(g,POS_FACEUP_ATTACK)
+    Duel.Hint(HINT_LINES,tp,VgF.Stringid(VgID,8))
 end
 function VgD.MonsterBattleDamageCondition(e,tp,eg,ep,ev,re,r,rp)
     local c=e:GetHandler()
