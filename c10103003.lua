@@ -31,5 +31,5 @@ function cm.operation2(e,tp,eg,ep,ev,re,r,rp)
     end
 end
 function cm.filter(c)
-    return vgf.IsLevel(c,3) and vgf.VmonsterFilter(c)
+    return vgf.IsLevel(c,3) and vgf.VMonsterFilter(c)
 end
