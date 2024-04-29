@@ -633,7 +633,7 @@ function VgF.SearchCardSpecialSummon(loc,f)
 end
 function VgF.SearchCardSpecialSummonOP(loc,f,e,tp,eg,ep,ev,re,r,rp)
     if not loc then return end
-    Duel.Hint(HINT_SELECTMSG,tp,HINTMSG_ATOHAND)
+    Duel.Hint(HINT_SELECTMSG,tp,HINTMSG_CALL)
     local g=Duel.SelectMatchingCard(tp,function (c)
         if VgF.GetValueType(f)=="function" and not f(c) then return false end
         return c:IsCanBeSpecialSummoned(e,0,tp,false,false,POS_FACEUP_ATTACK)
