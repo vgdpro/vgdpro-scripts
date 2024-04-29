@@ -149,7 +149,7 @@ function VgD.CallCondition(e,c)
     if c==nil then return true end
     local tp=e:GetHandlerPlayer()
     if VgF.GetAvailableLocation(tp)<=0 then return end
-    return VgF.LvCondition(e) and c:IsCanBeSpecialSummoned(e,0,tp,false,false,POS_FACEUP_ATTACK)
+    return VgF.LvCondition(e) and c:IsCanBeSpecialSummoned(e,SUMMON_VALUE_CALL,tp,false,false,POS_FACEUP_ATTACK)
 end
 function VgD.CallFilter(c,tp,zone)
     return VgF.RMonsterFilter(c) and zone==VgF.SequenceToGlobal(tp,c:GetLocation(),c:GetSequence())
@@ -168,7 +168,7 @@ function VgD.CallOperation(e,tp,eg,ep,ev,re,r,rp)
         local tc=Duel.GetMatchingGroup(VgD.CallFilter,tp,LOCATION_MZONE,0,nil,tp,zone):GetFirst()
         Duel.SendtoGrave(tc,REASON_COST)
     end
-    e:SetValue(function () return 0,zone end)
+    e:SetValue(function () return SUMMON_VALUE_CALL,zone end)
 end
 
 --超限舞装
@@ -194,7 +194,7 @@ function VgD.OverDressCondition(f)
     return function (e,c)
     if c==nil then return true end
         local tp=e:GetHandlerPlayer()
-        return VgF.LvCondition(e) and c:IsCanBeSpecialSummoned(e,0,tp,false,false,POS_FACEUP_ATTACK) and Duel.IsExistingMatchingCard(VgD.OverDressFilter,tp,LOCATION_MZONE,0,1,nil,f)
+        return VgF.LvCondition(e) and c:IsCanBeSpecialSummoned(e,SUMMON_VALUE_CALL,tp,false,false,POS_FACEUP_ATTACK) and Duel.IsExistingMatchingCard(VgD.OverDressFilter,tp,LOCATION_MZONE,0,1,nil,f)
     end
 end
 function VgD.OverDressFilter(c,f,zone)
@@ -236,7 +236,7 @@ function VgD.OverDressOperation(f)
             Duel.Hint(HINT_SELECTMSG,tp,HINTMSG_CallZONE)
             szone=Duel.SelectField(tp,1,LOCATION_MZONE,0,zone)
         end
-        e:SetValue(function () return 0,szone end)
+        e:SetValue(function () return SUMMON_VALUE_CALL,szone end)
         local tc=Duel.GetMatchingGroup(VgD.OverDressFilter,tp,LOCATION_MZONE,0,nil,f,szone):GetFirst()
         if not tc then return end
         local mg=tc:GetOverlayGroup()

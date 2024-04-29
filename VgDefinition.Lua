@@ -144,7 +144,7 @@ SUMMON_TYPE_RIDE		=0x49000000	--骑升
 --SUMMON_TYPE_CALL	    =0x4a000000 --Call到R位
 SUMMON_TYPE_LINK		=0x4c000000 --连接召唤
 --Summon Value --特定的召唤方式
-SUMMON_VALUE_SELF					=0x1	--自身效果或条件
+SUMMON_VALUE_CALL					=0x1	--通常CALL出场
 SUMMON_VALUE_SYNCHRO_MATERIAL		=0x11	--特殊召唤并作为同调素材（黑羽-东云之东风检查）
 SUMMON_VALUE_DARK_SANCTUARY			=0x12	--暗黑圣域
 SUMMON_VALUE_MONSTER_REBORN			=0x13	--死者苏生（千年的启示）

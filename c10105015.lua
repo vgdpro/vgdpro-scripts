@@ -1,4 +1,57 @@
 local cm,m,o=GetID()
 function cm.initial_effect(c)
 	vgf.VgCard(c)
+	vgd.ContinuousSpell(c)
+	vgd.EffectTypeTrigger(c,m,loc,EFFECT_TYPE_SINGLE,EVENT_MOVE,vgf.OverlayFill(3),cost,cm.con)
+	vgd.EffectTypeTrigger(c,m,LOCATION_ORDER,EFFECT_TYPE_FIELD,EVENT_SPSUMMON_SUCCESS,cm.op1,cm.cost1,cm.con1,tg,count,EFFECT_FLAG_BOTH_SIDE)
+end
+function cm.con(e,tp,eg,ep,ev,re,r,rp)
+	return e:GetHandler():IsLocation(LOCATION_ORDER)
+end
+function cm.cost1(e,tp,eg,ep,ev,re,r,rp,chk)
+	local a=Duel.GetMatchingGroup(VgF.VMonsterFilter,tp,LOCATION_MZONE,0,nil,nil):GetFirst():GetOverlayGroup():FilterCount(Card.IsAbleToGraveAsCost,nil)>=1
+	local b=Duel.IsExistingMatchingCard(Card.IsFaceup,tp,LOCATION_DAMAGE,0,1,nil)
+	if chk==0 then return a or b end
+	local off=1
+    local ops={}
+    if a then
+        ops[off]=VgF.Stringid(VgID,11)
+        off=off+1
+    end
+    if b then
+        ops[off]=VgF.Stringid(VgID,12)
+        off=off+1
+    end
+	local sel=Duel.SelectOption(tp,table.unpack(ops))
+	if sel==0 and a then
+		Duel.Hint(HINT_SELECTMSG,tp,HINTMSG_REMOVEXYZ)
+        local g=Duel.GetMatchingGroup(VgF.VMonsterFilter,tp,LOCATION_MZONE,0,nil):GetFirst():GetOverlayGroup():FilterSelect(tp,Card.IsAbleToGraveAsCost,num,num,nil)
+        Duel.SendtoGrave(g,REASON_COST)
+		e:SetLabel(1)
+	else
+        Duel.Hint(HINT_SELECTMSG,tp,HINTMSG_DAMAGE)
+        local g=Duel.SelectMatchingCard(tp,Card.IsFaceup,tp,LOCATION_DAMAGE,0,num,num,nil)
+        Duel.ChangePosition(g,POS_FACEDOWN_ATTACK)
+		e:SetLabel(2)
+	end
+end
+function cm.con1(e,tp,eg,ep,ev,re,r,rp)
+	return eg:IsExists(cm.filter,1,nil) and eg:Count()==1
+end
+function cm.filter(c)
+	return c:IsSummonType(SUMMON_VALUE_CALL)
+end
+function cm.op1(e,tp,eg,ep,ev,re,r,rp)
+	local zone=vgf.GetAvailableLocation(tp)
+	local ct=bit.ReturnCount(zone)
+	if ct>e:GetLabel() then ct=e:GetLabel() end
+	Duel.Hint(HINT_MESSAGE,tp,HINTMSG_CALL)
+	local g=Duel.SelectMatchingCard(tp,cm.filter1,tp,0,LOCATION_ORDER,ct,ct,nil,e,tp)
+	if #g>0 then
+		Duel.HintSelection(g)
+		vgf.Call(g,0,tp)
+	end
+end
+function cm.filter1(c,e,tp)
+	return c:IsCanBeSpecialSummoned(e,0,tp,false,false,POS_FACEUP_ATTACK,tp) or c:IsType(TYPE_SPELL)
 end
