@@ -577,7 +577,7 @@ function VgD.CardTriggerOperation(chkop,f)
             local g=Duel.SelectMatchingCard(tp,nil,tp,LOCATION_MZONE,0,1,1,nil)
             Duel.HintSelection(g)
             VgF.AtkUp(c,g,10000,nil)
-            if Duel.GetMatchingGroupCount(nil,tp,LOCATION_DAMAGE,0,nil)>Duel.GetMatchingGroupCount(nil,tp,0,LOCATION_DAMAGE,nil) then
+            if Duel.GetMatchingGroupCount(nil,tp,LOCATION_DAMAGE,0,nil)>=Duel.GetMatchingGroupCount(nil,tp,0,LOCATION_DAMAGE,nil) then
                 Duel.Hint(HINT_SELECTMSG,tp,HINTMSG_TODROP)
                 local tc=Duel.SelectMatchingCard(tp,nil,tp,LOCATION_DAMAGE,0,1,1,nil):GetFirst()
                 if tc then
