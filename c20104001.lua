@@ -7,24 +7,29 @@ function cm.initial_effect(c)
 	--【自】【V】：这个单位攻击先导者时，通过【费用】[能量爆发4]，选择你的弃牌区中的1张等级3以下的普通单位卡，CALL到R上，这个回合中，那个单位的力量+10000。
 	vgd.EffectTypeTrigger(c,m,LOCATION_MZONE,EFFECT_TYPE_SINGLE,EVENT_ATTACK_ANNOUNCE,cm.operation2,vgf.EnergyCost(4),cm.condition)
 end
+--效果一处理
 function cm.operation(e,tp,eg,ep,ev,re,r,rp)
 	local c=e:GetHandler()
 	vgf.SearchCardOP(LOCATION_DECK,cm.fliter,e,tp,eg,ep,ev,re,r,rp)
 	vgf.AtkUp(c,c,10000,nil)
 end
+--返回效果一寻找目标
 function cm.fliter(c)
 	return c:IsCode(m)
 end
+--效果二检测被打的是v
 function cm.condition(e,tp,eg,ep,ev,re,r,rp)
 	local c=e:GetHandler()
-	return vgf.VMonsterCondition(c) and vgf.VMonsterFilter(Duel.GetAttackTarget())
+	return vgf.VMonsterFilter(c) and vgf.VMonsterFilter(Duel.GetAttackTarget())
 end
+--效果二处理
 function cm.operation2(e,tp,eg,ep,ev,re,r,rp)
 	local c=e:GetHandler()
 	vgf.SearchCardSpecialSummonOP(LOCATION_DROP,cm.fliter2,e,tp,eg,ep,ev,re,r,rp)
 	local g=Duel.GetOperatedGroup()
 	vgf.AtkUp(c,g,10000)
 end
+--效果二召唤等级筛选
 function cm.fliter2(c)
-	return vgf.IsLevel(c,1,2,3)
+	return vgf.IsLevel(c,0,1,2,3)
 end
