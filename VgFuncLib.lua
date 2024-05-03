@@ -370,77 +370,26 @@ function VgF.AtkUp(c,g,val,reset)
     if not reset then reset=RESET_PHASE+PHASE_END end
     if not val or val==0 then return end
     if VgF.GetValueType(g)=="Group" and g:GetCount()>0 then
+        local e={}
         for tc in VgF.Next(g) do
             local e1=Effect.CreateEffect(c)
             e1:SetType(EFFECT_TYPE_SINGLE)
             e1:SetCode(EFFECT_UPDATE_ATTACK)
             e1:SetValue(val)
-            e1:SetReset(RESET_EVENT+RESETS_STANDARD)
+            e1:SetReset(RESET_EVENT+RESETS_STANDARD+reset)
             tc:RegisterEffect(e1)
-            local e2=Effect.CreateEffect(c)
-            e2:SetType(EFFECT_TYPE_FIELD+EFFECT_TYPE_CONTINUOUS)
-            e2:SetCode(reset)
-            e2:SetRange(c:GetLocation())
-            e2:SetLabelObject(e1)
-            e2:SetProperty(EFFECT_FLAG_DELAY+EFFECT_FLAG_CANNOT_DISABLE)
-            e2:SetOperation(function (e,tp,eg,ep,ev,re,r,rp)
-                local effect=e:GetLabelObject()
-                effect:Reset()
-            end)
-            e2:SetReset(RESET_EVENT+RESETS_STANDARD)
-            tc:RegisterEffect(e2)
-            local e3=Effect.CreateEffect(c)
-            e3:SetType(EFFECT_TYPE_FIELD+EFFECT_TYPE_CONTINUOUS)
-            e3:SetCode(reset)
-            e3:SetRange(c:GetLocation())
-            e3:SetLabelObject(e1)
-            e3:SetProperty(EFFECT_FLAG_DELAY+EFFECT_FLAG_CANNOT_DISABLE)
-            e3:SetOperation(function (e,tp,eg,ep,ev,re,r,rp)
-                local effect=e:GetLabelObject()
-                effect:Reset()
-            end)
-            e3:SetReset(RESET_EVENT+RESETS_STANDARD)
-            tc:RegisterEffect(e3)
-            local e4=e3:Clone()
-            e4:SetLabelObject(e2)
-            tc:RegisterEffect(e4)
+            table.insert(e,e1)
         end
-        return
+        return e,#e
     elseif VgF.GetValueType(g)=="Card" then
         local tc=VgF.ReturnCard(g)
         local e1=Effect.CreateEffect(c)
         e1:SetType(EFFECT_TYPE_SINGLE)
         e1:SetCode(EFFECT_UPDATE_ATTACK)
         e1:SetValue(val)
-        e1:SetReset(RESET_EVENT+RESETS_STANDARD)
+        e1:SetReset(RESET_EVENT+RESETS_STANDARD+reset)
         tc:RegisterEffect(e1)
-        local e2=Effect.CreateEffect(c)
-        e2:SetType(EFFECT_TYPE_FIELD+EFFECT_TYPE_CONTINUOUS)
-        e2:SetCode(reset)
-        e2:SetRange(c:GetLocation())
-        e2:SetLabelObject(e1)
-        e2:SetProperty(EFFECT_FLAG_DELAY+EFFECT_FLAG_CANNOT_DISABLE)
-        e2:SetOperation(function (e,tp,eg,ep,ev,re,r,rp)
-            local effect=e:GetLabelObject()
-            effect:Reset()
-        end)
-        e2:SetReset(RESET_EVENT+RESETS_STANDARD)
-        tc:RegisterEffect(e2)
-        local e3=Effect.CreateEffect(c)
-        e3:SetType(EFFECT_TYPE_FIELD+EFFECT_TYPE_CONTINUOUS)
-        e3:SetCode(reset)
-        e3:SetRange(c:GetLocation())
-        e3:SetLabelObject(e1)
-        e3:SetProperty(EFFECT_FLAG_DELAY+EFFECT_FLAG_CANNOT_DISABLE)
-        e3:SetOperation(function (e,tp,eg,ep,ev,re,r,rp)
-            local effect=e:GetLabelObject()
-            effect:Reset()
-        end)
-        e3:SetReset(RESET_EVENT+RESETS_STANDARD)
-        tc:RegisterEffect(e3)
-        local e4=e3:Clone()
-        e4:SetLabelObject(e2)
-        tc:RegisterEffect(e4)
+        return e1,1
     end
 end
 ---以c的名义，使g（中的每一张卡）的☆上升val，并在reset时重置。
@@ -453,6 +402,8 @@ function VgF.StarUp(c,g,val,reset)
     if not reset then reset=RESET_PHASE+PHASE_END end
     if not val or val==0 then return end
     if VgF.GetValueType(g)=="Group" and g:GetCount()>0 then
+        local el={}
+        local er={}
         for tc in VgF.Next(g) do
             local e1=Effect.CreateEffect(c)
             e1:SetType(EFFECT_TYPE_SINGLE)
@@ -465,21 +416,25 @@ function VgF.StarUp(c,g,val,reset)
             local e2=e1:Clone()
             e2:SetCode(EFFECT_UPDATE_RSCALE)
             tc:RegisterEffect(e2)
+            table.insert(el,e1)
+            table.insert(er,er)
         end
-        return
+        return el,er,#el,#er
+    elseif VgF.GetValueType(g)=="Card" then
+        local tc=VgF.ReturnCard(g)
+        local e1=Effect.CreateEffect(c)
+        e1:SetType(EFFECT_TYPE_SINGLE)
+        e1:SetCode(EFFECT_UPDATE_LSCALE)
+        e1:SetProperty(EFFECT_FLAG_SINGLE_RANGE)
+        e1:SetRange(LOCATION_MZONE)
+        e1:SetValue(val)
+        e1:SetReset(RESET_EVENT+RESETS_STANDARD+reset)
+        tc:RegisterEffect(e1)
+        local e2=e1:Clone()
+        e2:SetCode(EFFECT_UPDATE_RSCALE)
+        tc:RegisterEffect(e2)
+        return e1,e2,1,1
     end
-    local tc=VgF.ReturnCard(g)
-    local e1=Effect.CreateEffect(c)
-    e1:SetType(EFFECT_TYPE_SINGLE)
-    e1:SetCode(EFFECT_UPDATE_LSCALE)
-    e1:SetProperty(EFFECT_FLAG_SINGLE_RANGE)
-    e1:SetRange(LOCATION_MZONE)
-    e1:SetValue(val)
-    e1:SetReset(RESET_EVENT+RESETS_STANDARD+reset)
-    tc:RegisterEffect(e1)
-    local e2=e1:Clone()
-    e2:SetCode(EFFECT_UPDATE_RSCALE)
-    tc:RegisterEffect(e2)
 end
 ---判断c是否可以以规则的手段到G区域。
 ---@param c Card 要判断的卡
@@ -603,8 +558,6 @@ function VgF.SearchCard(loc,f)
     if not loc then return end
     return function (e,tp,eg,ep,ev,re,r,rp)
         VgF.SearchCardOP(loc,f,e,tp,eg,ep,ev,re,r,rp)
-        local sg=Duel.GetOperatedGroup()
-        return sg:GetCount()
     end
 end
 function VgF.SearchCardOP(loc,f,e,tp,eg,ep,ev,re,r,rp)
@@ -618,6 +571,8 @@ function VgF.SearchCardOP(loc,f,e,tp,eg,ep,ev,re,r,rp)
         Duel.SendtoHand(g,nil,REASON_EFFECT)
         Duel.ConfirmCards(1-tp,g)
     end
+    local sg=Duel.GetOperatedGroup()
+    return sg:GetCount()
 end
     ---用于效果的Operation。执行“从loc中选取1张满足f的卡，Call到R上。”。
 ---@param loc integer 要选取的区域。不填则返回nil，而不是效果的Operation函数。
@@ -627,8 +582,6 @@ function VgF.SearchCardSpecialSummon(loc,f)
     if not loc then return end
     return function (e,tp,eg,ep,ev,re,r,rp)
         VgF.SearchCardSpecialSummonOP(loc,f,e,tp,eg,ep,ev,re,r,rp)
-        local sg=Duel.GetOperatedGroup()
-        return sg:GetCount()
     end
 end
 function VgF.SearchCardSpecialSummonOP(loc,f,e,tp,eg,ep,ev,re,r,rp)
@@ -642,6 +595,8 @@ function VgF.SearchCardSpecialSummonOP(loc,f,e,tp,eg,ep,ev,re,r,rp)
         if loc&LOCATION_DECK+LOCATION_HAND+LOCATION_EXTRA==0 then Duel.HintSelection(g) end
         VgF.Call(g,0,tp)
     end
+    local sg=Duel.GetOperatedGroup()
+    return sg:GetCount()
 end
 function Group.CheckSubGroup(g,f,min,max,...)
 	min=min or 1
