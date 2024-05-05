@@ -879,7 +879,8 @@ function VgD.BeRidedByCardOperation(m,op,cost,tg,stringid)
     end
 end
 function VgD.BeRidedByCardOpCondtion(e,tp,eg,ep,ev,re,r,rp)
-    return eg:GetFirst()==e:GetHandler()
+    local c=e:GetLabelObject()
+    return eg:GetFirst()==e:GetHandler() and e:GetHandler():GetOverlayGroup():IsContains(c)
 end
 
 ---当c在loc时，code时点被触发时执行的效果。
