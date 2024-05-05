@@ -388,7 +388,7 @@ end
 function VgD.MonsterPosDefenseOperation(e,tp,eg,ep,ev,re,r,rp)
     local c=e:GetHandler()
     Duel.ChangePosition(c,POS_FACEUP_DEFENSE)
-    local label=0
+    local label=1
     if c:IsAttribute(SKILL_TWICE_TRIGGER) then
         label=label+1
     elseif c:IsAttribute(SKILL_THRICE_TRIGGER) then
@@ -549,9 +549,10 @@ end
 function VgD.CardTriggerCondtion(chkcon)
     return function (e,tp,eg,ep,ev,re,r,rp)
         local c=e:GetHandler()
+        local rc=Duel.GetMatchingGroup(VgF.VMonsterFilter,tp,LOCATION_MZONE,0,nil):GetFirst()
         local cp=tp
         if chkcon==0 then cp=1-tp end
-        return Duel.GetTurnPlayer()==cp and c:IsLocation(LOCATION_TRIGGER)
+        return Duel.GetTurnPlayer()==cp and c:IsLocation(LOCATION_TRIGGER) and (rc:GetFlagEffectLabel(AttackTriggerFlag) and rc:GetFlagEffectLabel(AttackTriggerFlag)>0)
     end
 end
 function VgD.CardTriggerOperation(chkop,f)
@@ -582,6 +583,7 @@ function VgD.CardTriggerOperation(chkop,f)
                 local tc=Duel.SelectMatchingCard(tp,nil,tp,LOCATION_DAMAGE,0,1,1,nil):GetFirst()
                 if tc then
                     Duel.SendtoGrave(tc,REASON_TRIGGER)
+                    Duel.Recover(tp,1,REASON_RULE)
                 end
             end
         elseif c:IsRace(TRRIGGER_ADVANCE) then
@@ -629,12 +631,12 @@ function VgD.CardTriggerOperation(chkop,f)
             local rc=Duel.GetMatchingGroup(VgF.VMonsterFilter,tp,LOCATION_MZONE,0,nil):GetFirst()
             local label=rc:GetFlagEffectLabel(AttackTriggerFlag)
             if not label then return end
-            if label>0 then
+            if label>1 then
                 label=label-1
                 Duel.RaiseEvent(c,EVENT_CUSTOM+EVENT_TRIGGER,e,0,tp,tp,0)
                 rc:ResetFlagEffect(AttackTriggerFlag)
                 rc:RegisterFlagEffect(AttackTriggerFlag,RESET_EVENT+RESETS_STANDARD,0,1,label)
-            elseif label==0 then
+            elseif label==1 then
                 rc:ResetFlagEffect(AttackTriggerFlag)
             end
         end
@@ -1025,8 +1027,9 @@ function VgD.TriggerCountUpOperation(num)
     return function (e,tp,eg,ep,ev,re,r,rp)
         local c=e:GetHandler()
         local label=c:GetFlagEffectLabel(AttackTriggerFlag)
-        if not label then
+        if label and label>0 then
             label=label+num
+            if label<0 then label=0 end
             c:ResetFlagEffect(AttackTriggerFlag)
             c:RegisterFlagEffect(AttackTriggerFlag,RESET_EVENT+RESETS_STANDARD,0,1,label)
         else

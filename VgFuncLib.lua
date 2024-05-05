@@ -304,10 +304,12 @@ end
 ---将g（中的每一张卡）Call到单位区。返回Call成功的数量。
 ---@param g Card|Group 要Call的卡（片组）
 ---@param sumtype integer Call的方式，默认填0
----@param sp integer 表示形式
+---@param tp integer Call的玩家
 ---@param zone integer 指示要Call到的格子。<br>前列的R：17； 后列的R：14； 全部的R：31； V：32
+---@param pos integer 表示形式
 ---@return integer Call成功的数量
 function VgF.Call(g,sumtype,tp,zone,pos)
+    if not g then return 0 end
     if VgF.GetValueType(pos)~="number" then pos=POS_FACEUP_ATTACK end
     if zone and zone>0 then
         local z=VgF.GetAvailableLocation(tp,zone)
@@ -386,6 +388,38 @@ function VgF.AtkUp(c,g,val,reset)
         local e1=Effect.CreateEffect(c)
         e1:SetType(EFFECT_TYPE_SINGLE)
         e1:SetCode(EFFECT_UPDATE_ATTACK)
+        e1:SetValue(val)
+        e1:SetReset(RESET_EVENT+RESETS_STANDARD+reset)
+        tc:RegisterEffect(e1)
+        return e1,1
+    end
+end
+---以c的名义，使g（中的每一张卡）的盾值上升val，并在reset时重置。
+---@param c Card 要使卡上升盾值的卡
+---@param g Card|Group 要被上升盾值的卡
+---@param val integer 要上升的盾值（可以为负）
+---@param reset integer|nil 指示重置的时点，默认为“回合结束时”。无论如何，都会在离场时重置。
+function VgF.DefUp(c,g,val,reset)
+    if not c then return end
+    if not reset then reset=RESET_PHASE+PHASE_END end
+    if not val or val==0 then return end
+    if VgF.GetValueType(g)=="Group" and g:GetCount()>0 then
+        local e={}
+        for tc in VgF.Next(g) do
+            local e1=Effect.CreateEffect(c)
+            e1:SetType(EFFECT_TYPE_SINGLE)
+            e1:SetCode(EFFECT_UPDATE_DEFENSE)
+            e1:SetValue(val)
+            e1:SetReset(RESET_EVENT+RESETS_STANDARD+reset)
+            tc:RegisterEffect(e1)
+            table.insert(e,e1)
+        end
+        return e,#e
+    elseif VgF.GetValueType(g)=="Card" then
+        local tc=VgF.ReturnCard(g)
+        local e1=Effect.CreateEffect(c)
+        e1:SetType(EFFECT_TYPE_SINGLE)
+        e1:SetCode(EFFECT_UPDATE_DEFENSE)
         e1:SetValue(val)
         e1:SetReset(RESET_EVENT+RESETS_STANDARD+reset)
         tc:RegisterEffect(e1)
@@ -562,7 +596,7 @@ function VgF.SearchCard(loc,f)
 end
 function VgF.SearchCardOP(loc,f,e,tp,eg,ep,ev,re,r,rp)
     if not loc then return end
-    Duel.Hint(HINT_SELECTMSG,tp,HINTMSG_ATOHAND)
+    Duel.Hint(HINT_SELECTMSG,tp ,HINTMSG_ATOHAND)
     local g=Duel.SelectMatchingCard(tp,function (c)
         if VgF.GetValueType(f)=="function" and not f(c) then return false end
         return c:IsAbleToHand()
@@ -647,22 +681,16 @@ function VgF.BackFilter(c)
     local seq=c:GetSequence()
     return (seq==1 or seq==2 or seq==3) and c:IsType(TYPE_MONSTER)
 end
-function VgF.SetOrderFilter(c,ct)
+function VgF.PrisonFilter(c,ct)
     return c:GetSequence() == ct-1
-end
----返回p场上的设置指令。
----@param p integer
----@return Card
-function VgF.GetSetOrder(p)
-	local og=Duel.GetFieldGroup(p,LOCATION_ORDER,0)
-	return og:Filter(VgF.PrisonFilter,nil,og:GetCount()):GetFirst()
 end
 ---收容g（中的每一张卡）到p的监狱。没有监狱时，不操作。
 ---@param g Card|Group
 ---@param p integer
 function VgF.SendtoPrison(g,p)
     if not VgF.CheckPrison(p) or not g then return end
-    local oc=VgF.GetSetOrder(p)
+	local og=Duel.GetFieldGroup(p,LOCATION_ORDER,0)
+	local oc=og:Filter(VgF.PrisonFilter,nil,og:GetCount()):GetFirst()
     if VgF.GetValueType(g)=="Card" then
 	    Duel.Sendto(g,p,LOCATION_ORDER,POS_FACEUP_ATTACK,REASON_EFFECT)
         g:RegisterFlagEffect(ImprisonFlag,RESET_EVENT+RESETS_STANDARD,EFFECT_FLAG_CLIENT_HINT,1,0,vgf.Stringid(10105015,0))
@@ -678,6 +706,23 @@ end
 ---@param p integer
 ---@return boolean 指示p场上有没有监狱。
 function VgF.CheckPrison(p)
-    local oc=VgF.GetSetOrder(p)
+	local og=Duel.GetFieldGroup(p,LOCATION_ORDER,0)
+	local oc=og:Filter(VgF.PrisonFilter,nil,og:GetCount()):GetFirst()
 	return oc:IsSetCard(0x3040)
+end
+--重置Effect
+function VgF.EffectReset(c,e,code,con)
+    local e1=Effect.CreateEffect(c)
+    e1:SetType(EFFECT_TYPE_FIELD+EFFECT_TYPE_CONTINUOUS)
+    e1:SetCode(code)
+    e1:SetProperty(EFFECT_FLAG_CANNOT_DISABLE)
+    e1:SetRange(LOCATION_ALL)
+    e1:SetLabelObject(e)
+    if VgF.GetValueType(con)=="function" then e1:SetCondition(con) end
+    e1:SetOperation(VgF.EffectResetOperation)
+    c:RegisterEffect(e1)
+end
+function VgF.EffectResetOperation(e,tp,eg,ep,ev,re,r,rp)
+    local e1=e:GetLabelObject()
+    if e1 then e1:Reset() end
 end
