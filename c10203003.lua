@@ -24,23 +24,24 @@ function cm.operation(e,tp,eg,ep,ev,re,r,rp)
 		off=off+1
 	end
 	ops[off]=1194
-	if Duel.SelectOption(tp,table.unpack(ops))==0 and a then
+	local sel=Duel.SelectOption(tp,table.unpack(ops))
+	if sel==0 and a then
 		Duel.Hint(HINT_SELECTMSG,tp,HINTMSG_ATOHAND)
 		local sg=g:FilterSelect(tp,cm.filter,0,1,nil)
 		Duel.DisableShuffleCheck()
 		Duel.SendtoHand(sg,nil,REASON_EFFECT)
 		Duel.ConfirmCards(1-tp,sg)
 		g:RemoveCard(vgf.ReturnCard(sg))
-	elseif (Duel.SelectOption(tp,table.unpack(ops))==1 and a and b) or (Duel.SelectOption(tp,table.unpack(ops))==0 and not a and b) then
+	elseif (sel==1 and a and b) or (sel==0 and not a and b) then
 		Duel.Hint(HINT_SELECTMSG,tp,HINTMSG_CALL)
 		local sg=g:FilterSelect(tp,cm.filter1,0,1,nil)
 		vgf.Call(sg,0,tp)
 		g:RemoveCard(vgf.ReturnCard(sg))
 	end
 	if #g>1 then
-		Duel.SortDecktop(tp,tp,#g-1)
-		for i=1,#g-1 do
-			local dg=Duel.GetDecktopGroup(tp,2)
+		Duel.SortDecktop(tp,tp,#g)
+		for i=1,#g do
+			local dg=Duel.GetDecktopGroup(tp,1)
 			Duel.MoveSequence(dg:GetFirst(),SEQ_DECKBOTTOM)
 		end
 	end
