@@ -156,7 +156,7 @@ function VgD.CallFilter(c,tp,zone)
 end
 function VgD.CallOperation(e,tp,eg,ep,ev,re,r,rp)
     local c=e:GetHandler()
-    local z=VgF.GetAvailableLocation(tp)
+    local z=bit.bnot(VgF.GetAvailableLocation(tp))
     local rg=Duel.GetMatchingGroup(Card.IsPosition,sp,LOCATION_MZONE,0,nil,POS_FACEDOWN_ATTACK)
     for tc in VgF.Next(rg) do
         local szone=VgF.SequenceToGlobal(sp,tc:GetLocation(),tc:GetSequence())
@@ -494,8 +494,10 @@ function VgD.MonsterAttackAnnounceCondition(e,c)
 end
 function VgD.MonsterAttackCondition(e,tp,eg,ep,ev,re,r,rp)
     local c=e:GetHandler()
+    if not VgF.VMonsterFilter(c) then return false end
     local bc=c:GetBattleTarget()
-    return bc and Duel.GetAttackTarget()==bc and VgF.VMonsterFilter(c)
+    local a=c:GetFlagEffectLabel(AttackTriggerFlag) and c:GetFlagEffectLabel(AttackTriggerFlag)>0
+    return bc and Duel.GetAttackTarget()==bc and a
 end
 function VgD.MonsterAttackCost(e,tp,eg,ep,ev,re,r,rp,chk)
     local c=e:GetHandler()
@@ -549,10 +551,11 @@ end
 function VgD.CardTriggerCondtion(chkcon)
     return function (e,tp,eg,ep,ev,re,r,rp)
         local c=e:GetHandler()
-        local rc=Duel.GetMatchingGroup(VgF.VMonsterFilter,tp,LOCATION_MZONE,0,nil):GetFirst()
         local cp=tp
-        if chkcon==0 then cp=1-tp end
-        return Duel.GetTurnPlayer()==cp and c:IsLocation(LOCATION_TRIGGER) and (rc:GetFlagEffectLabel(AttackTriggerFlag) and rc:GetFlagEffectLabel(AttackTriggerFlag)>0)
+        if chkcon==0 then
+            cp=1-tp
+        end
+        return Duel.GetTurnPlayer()==cp and c:IsLocation(LOCATION_TRIGGER)
     end
 end
 function VgD.CardTriggerOperation(chkop,f)

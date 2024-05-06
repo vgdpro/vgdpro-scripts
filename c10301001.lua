@@ -3,6 +3,21 @@ function cm.initial_effect(c)
 	vgf.VgCard(c)
 	vgd.EffectTypeTrigger(c,m,LOCATION_MZONE,EFFECT_TYPE_SINGLE,EVENT_ATTACK_ANNOUNCE,cm.operation,vgf.OverlayCost(1),cm.condition)
 	vgd.EffectTypeTrigger(c,m,LOCATION_MZONE,EFFECT_TYPE_SINGLE,EVENT_BATTLED,cm.operation1,nil,cm.condition1)
+	if not cm.global_check then
+        cm.global_check=true
+        local ge1=Effect.CreateEffect(c)
+        ge1:SetType(EFFECT_TYPE_FIELD+EFFECT_TYPE_CONTINUOUS)
+        ge1:SetCode(EVENT_SPSUMMON_SUCCESS)
+        ge1:SetCondition(cm.checkcon)
+        ge1:SetOperation(cm.checkop)
+        Duel.RegisterEffect(ge1,0)
+    end
+end
+function cm.checkcon(e,tp,eg,ep,ev,re,r,rp)
+    return eg:IsExists(Card.IsSummonType,1,nil,SUMMON_TYPE_SELFRIDE)
+end
+function cm.checkop(e,tp,eg,ep,ev,re,r,rp)
+    Duel.RegisterFlagEffect(tp,m,RESET_PHASE+PHASE_END,0,1)
 end
 function cm.condition(e,tp,eg,ep,ev,re,r,rp)
 	local c=e:GetHandler()
@@ -20,12 +35,14 @@ function cm.filter(c)
 end
 function cm.condition1(e,tp,eg,ep,ev,re,r,rp)
 	local c=e:GetHandler()
-	return c:IsSummonType(SUMMON_TYPE_SELFRIDE)
+	return Duel.GetFlagEffect(tp,m)>0
 end
 function cm.operation1(e,tp,eg,ep,ev,re,r,rp)
 	local c=e:GetHandler()
-	local zone=vgf.GetAvailableLocation(tp)
+	local zone=bit.bnot(vgf.GetAvailableLocation(tp))
 	local ct=bit.ReturnCount(zone)
+    zone=bit.bor(zone,0xffffff00)
+	if ct>2 then ct=2 end
 	Duel.Hint(HINT_SELECTMSG,tp,HINTMSG_CALL)
 	local g=Duel.SelectMatchingCard(tp,Card.IsCanBeSpecialSummoned,tp,LOCATION_HAND,0,0,ct,nil,e,0,tp,false,false,POS_FACEUP_ATTACK)
 	if g:GetCount()==1 then
@@ -40,9 +57,9 @@ function cm.operation1(e,tp,eg,ep,ev,re,r,rp)
 		end
 		Duel.SpecialSummonStep(tc1,0,tp,tp,false,false,POS_FACEUP_ATTACK,szone)
 		if szone&0x11>0 then
-			zone=0xe
+			zone=0xf1
 		else
-			zone=0x11
+			zone=0xee
 		end
 		local tc2=g:GetNext()
 		Duel.Hint(HINT_SELECTMSG,tp,HINTMSG_CallZONE)

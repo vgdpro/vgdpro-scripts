@@ -293,11 +293,11 @@ function VgF.tgoval(e,re,rp)
 end
 function VgF.GetAvailableLocation(tp,zone)
     local z
-    if zone then z=zone else z=0xe0 end
+    if zone then z=zone else z=0x1f end
     local rg=Duel.GetMatchingGroup(Card.IsPosition,tp,LOCATION_MZONE,0,nil,POS_FACEDOWN_ATTACK)
     for tc in VgF.Next(rg) do
         local szone=VgF.SequenceToGlobal(tp,tc:GetLocation(),tc:GetSequence())
-        z=bit.bor(z,szone)
+        z=bit.bxor(z,szone)
     end
     return z
 end
@@ -316,6 +316,8 @@ function VgF.Call(g,sumtype,tp,zone,pos)
         local ct=bit.ReturnCount(z)
         local szone
         if ct>1 then
+            z=bit.bnot(z)
+            z=bit.bor(z,0xffffff00)
             Duel.Hint(HINT_SELECTMSG,tp,HINTMSG_CallZONE)
             szone=Duel.SelectField(tp,1,LOCATION_MZONE,0,z)
         else
@@ -328,7 +330,8 @@ function VgF.Call(g,sumtype,tp,zone,pos)
 	    return Duel.SpecialSummon(g,sumtype,tp,tp,false,false,pos,szone)
     else
         local sg
-        local z=VgF.GetAvailableLocation(tp)
+        local z=bit.bnot(VgF.GetAvailableLocation(tp))
+        z=bit.bor(z,0xffffff00)
         if VgF.GetValueType(g)=="Card" then sg=Group.FromCards(g) else sg=Group.Clone(g) end
         for sc in VgF.Next(sg) do
             if sc:IsLocation(LOCATION_EXTRA) then
