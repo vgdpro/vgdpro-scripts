@@ -27,14 +27,14 @@ function cm.operation(e,tp,eg,ep,ev,re,r,rp)
 	local sel=Duel.SelectOption(tp,table.unpack(ops))
 	if sel==0 and a then
 		Duel.Hint(HINT_SELECTMSG,tp,HINTMSG_ATOHAND)
-		local sg=g:FilterSelect(tp,cm.filter,0,1,nil)
+		local sg=g:FilterSelect(tp,cm.filter,1,1,nil)
 		Duel.DisableShuffleCheck()
 		Duel.SendtoHand(sg,nil,REASON_EFFECT)
 		Duel.ConfirmCards(1-tp,sg)
 		g:RemoveCard(vgf.ReturnCard(sg))
 	elseif (sel==1 and a and b) or (sel==0 and not a and b) then
 		Duel.Hint(HINT_SELECTMSG,tp,HINTMSG_CALL)
-		local sg=g:FilterSelect(tp,cm.filter1,0,1,nil)
+		local sg=g:FilterSelect(tp,cm.filter1,1,1,nil,e,tp)
 		vgf.Call(sg,0,tp)
 		g:RemoveCard(vgf.ReturnCard(sg))
 	end
