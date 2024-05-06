@@ -11,7 +11,7 @@ function cm.filter1(c)
 	return c:IsLevelAbove(3)
 end
 function cm.condition1(e,tp,eg,ep,ev,re,r,rp)
-	return eg:IsExists(cm.cfilter,1,nil) and Duel.GetAttacker()==e:GetHandler()
+	return eg:IsExists(cm.cfilter,1,nil,e:GetHandler()) and Duel.GetAttacker()==e:GetHandler()
 end
 function cm.operation1(e,tp,eg,ep,ev,re,r,rp)
 	local c=e:GetHandler()
