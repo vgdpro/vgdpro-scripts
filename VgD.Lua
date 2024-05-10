@@ -460,7 +460,7 @@ function VgD.SendToGCost(e,tp,eg,ep,ev,re,r,rp,chk)
     if c:IsLocation(LOCATION_MZONE) then
         if chk==0 then return true end
     else
-        if chk==0 then return (not Duel.IsPlayerAffectedByEffect(tp,OAFFECT_CODE_SENDTOG) or Duel.IsExistingMatchingCard(nil,tp,LOCATION_GZONE,0,1,nil) or Duel.IsExistingMatchingCard(VgF.IsAbleToGZone,tp,LOCATION_HAND,0,1,c)) end
+        if chk==0 then return not Duel.IsPlayerAffectedByEffect(tp,OAFFECT_CODE_SENDTOG) or Duel.IsExistingMatchingCard(nil,tp,LOCATION_GZONE,0,1,nil) or Duel.IsExistingMatchingCard(VgF.IsAbleToGZone,tp,LOCATION_HAND,0,1,c) end
         if Duel.IsPlayerAffectedByEffect(tp,OAFFECT_CODE_SENDTOG) and not Duel.IsExistingMatchingCard(nil,tp,LOCATION_GZONE,0,1,nil) then
             local tc=Duel.SelectMatchingCard(tp,VgF.IsAbleToGZone,tp,LOCATION_HAND,0,1,1,c)
             tc=VgF.ReturnCard(tc)
@@ -1020,27 +1020,30 @@ function VgD.EffectTypeContinuousChangeAttack(c,typ,val,con,tg,mc,code,reset,loc
     e1:SetValue(val)
     mc:RegisterEffect(e1)
 end
-function VgD.TriggerCountUp(c,num,reset)
+function VgD.TriggerCountUp(c,num,reset,tc)
+    if not reset then reset=0 end
+    if tc then tc=VgF.ReturnCard(tc) else tc=c end
     local e1=Effect.CreateEffect(c)
     e1:SetType(EFFECT_TYPE_FIELD+EFFECT_TYPE_CONTINUOUS)
     e1:SetRange(LOCATION_MZONE)
     e1:SetCode(EVENT_CUSTOM+EVENT_TRIGGERCOUNTUP)
     e1:SetProperty(EFFECT_FLAG_DELAY)
-    if reset and reset>0 then e1:SetReset(reset) end
+    e1:SetCondition(function (e,tp,eg,ep,ev,re,r,rp)
+        return VgF.ReturnCard(eg)==e:GetHandler()
+    end)
+    e1:SetReset(RESET_EVENT+RESETS_STANDARD+reset)
     e1:SetOperation(VgD.TriggerCountUpOperation(num))
-    c:RegisterEffect(e1)
+    tc:RegisterEffect(e1)
 end
 function VgD.TriggerCountUpOperation(num)
     return function (e,tp,eg,ep,ev,re,r,rp)
         local c=e:GetHandler()
         local label=c:GetFlagEffectLabel(AttackTriggerFlag)
-        if label and label>0 then
-            label=label+num
-            if label<0 then label=0 end
-            c:ResetFlagEffect(AttackTriggerFlag)
-            c:RegisterFlagEffect(AttackTriggerFlag,RESET_EVENT+RESETS_STANDARD,0,1,label)
-        else
-            c:RegisterFlagEffect(AttackTriggerFlag,RESET_EVENT+RESETS_STANDARD,0,1,num)
-        end
+        if not label then label=0 end
+        label=label+num
+        Debug.Message(label)
+        if label<0 then label=0 end
+        c:ResetFlagEffect(AttackTriggerFlag)
+        c:RegisterFlagEffect(AttackTriggerFlag,RESET_EVENT+RESETS_STANDARD,0,1,label)
     end
 end

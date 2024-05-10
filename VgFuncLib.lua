@@ -309,9 +309,10 @@ end
 ---@param pos integer 表示形式
 ---@return integer Call成功的数量
 function VgF.Call(g,sumtype,tp,zone,pos)
-    if not g then return 0 end
+    if (VgF.GetValueType(g)~="Card" and VgF.GetValueType(g)~="Group") or (VgF.GetValueType(g)=="Group" and g:GetCount()==0) then return 0 end
     if VgF.GetValueType(pos)~="number" then pos=POS_FACEUP_ATTACK end
     if zone and zone>0 then
+        local sc=VgF.ReturnCard(g)
         local z=VgF.GetAvailableLocation(tp,zone)
         local ct=bit.ReturnCount(z)
         local szone
@@ -323,11 +324,19 @@ function VgF.Call(g,sumtype,tp,zone,pos)
         else
             szone=z
         end
-        if Duel.IsExistingMatchingCard(VgD.CallFilter,tp,LOCATION_MZONE,0,1,nil,tp,szone) then
+        if szone==0x20 and Duel.GetMatchingGroupCount(VgF.VMonsterFilter,tp,LOCATION_MZONE,0,nil)>0 then
+            local tc=Duel.GetMatchingGroup(VgF.VMonsterFilter,tp,LOCATION_MZONE,0,nil):GetFirst()
+            local mg=tc:GetOverlayGroup()
+            if mg:GetCount()~=0 then
+                Duel.Overlay(sc,mg)
+            end
+            sc:SetMaterial(Group.FromCards(tc))
+            Duel.Overlay(sc,Group.FromCards(tc))
+        elseif Duel.IsExistingMatchingCard(VgD.CallFilter,tp,LOCATION_MZONE,0,1,nil,tp,szone) then
             local tc=Duel.GetMatchingGroup(VgD.CallFilter,tp,LOCATION_MZONE,0,nil,tp,szone):GetFirst()
             Duel.SendtoGrave(tc,REASON_COST)
         end
-	    return Duel.SpecialSummon(g,sumtype,tp,tp,false,false,pos,szone)
+	    return Duel.SpecialSummon(sc,sumtype,tp,tp,false,false,pos,szone)
     else
         local sg
         local z=bit.bnot(VgF.GetAvailableLocation(tp))
@@ -478,10 +487,8 @@ end
 ---@return boolean 指示c能否去到G区域。
 function VgF.IsAbleToGZone(c)
     local tp=c:GetControler()
-    if c:IsLocation(LOCATION_MZONE) and c:IsFaceup() then
-        return c:IsAttribute(SKILL_BLOCK) and VgF.IsSequence(c,0,4) and not Duel.IsPlayerAffectedByEffect(tp,AFFECT_CODE_SENDTOG_MZONE)
-    end
-    return c:IsLocation(LOCATION_HAND)
+    return (c:IsAttribute(SKILL_BLOCK) and VgF.IsSequence(c,0,4) and not Duel.IsPlayerAffectedByEffect(tp,AFFECT_CODE_SENDTOG_MZONE) and c:IsLocation(LOCATION_MZONE) and c:IsFaceup())
+        or c:IsLocation(LOCATION_HAND)
 end
 ---用于效果的Cost。它返回一个执行“【费用】[将手牌中的num张卡舍弃]”的函数。
 ---@param num integer 要舍弃的卡的数量

@@ -24,7 +24,8 @@ function cm.operation(e,tp,eg,ep,ev,re,r,rp)
 	Duel.Hint(HINT_SELECTMSG,tp,HINTMSG_CALL)
 	local g=Duel.SelectMatchingCard(tp,cm.filter,tp,LOCATION_HAND,0,1,1,nil,e,tp)
 	if vgf.Call(g,SUMMON_VALUE_REVOLT,tp,0x20)>0 then
-		vgd.TriggerCountUp(c,-2,RESET_EVENT+RESETS_STANDARD+RESET_PHASE+PHASE_END)
+		local mg=Duel.GetOperatedGroup()
+		vgd.TriggerCountUp(c,-2,RESET_PHASE+PHASE_END,mg)
 	end
 end
 function cm.condition(e,tp,eg,ep,ev,re,r,rp)
