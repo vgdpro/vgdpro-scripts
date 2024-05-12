@@ -486,9 +486,9 @@ end
 ---@param c Card 要判断的卡
 ---@return boolean 指示c能否去到G区域。
 function VgF.IsAbleToGZone(c)
+    if c:IsLocation(LOCATION_HAND) then return true end
     local tp=c:GetControler()
-    return (c:IsAttribute(SKILL_BLOCK) and VgF.IsSequence(c,0,4) and not Duel.IsPlayerAffectedByEffect(tp,AFFECT_CODE_SENDTOG_MZONE) and c:IsLocation(LOCATION_MZONE) and c:IsFaceup())
-        or c:IsLocation(LOCATION_HAND)
+    return c:IsAttribute(SKILL_BLOCK) and VgF.IsSequence(c,0,4) and not Duel.IsPlayerAffectedByEffect(tp,AFFECT_CODE_SENDTOG_MZONE) and c:IsLocation(LOCATION_MZONE) and c:IsFaceup()
 end
 ---用于效果的Cost。它返回一个执行“【费用】[将手牌中的num张卡舍弃]”的函数。
 ---@param num integer 要舍弃的卡的数量
@@ -734,5 +734,5 @@ function VgF.EffectReset(c,e,code,con)
 end
 function VgF.EffectResetOperation(e,tp,eg,ep,ev,re,r,rp)
     local e1=e:GetLabelObject()
-    if e1 then e1:Reset() end
+    if VgF.GetValueType(e1)=="Effect" then e1:Reset() end
 end
