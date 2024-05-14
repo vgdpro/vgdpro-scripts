@@ -8,7 +8,7 @@ end
 function cm.operation2(e,tp,eg,ep,ev,re,r,rp)
 	local c=e:GetHandler()
 	VgF.AtkUp(c,c,10000,nil)
-	if Duel.GetMatchingGroup(VgF.VMonsterFilter,tp,LOCATION_MZONE,0,nil,nil):GetFirst():GetOverlayGroup():FilterCount(Card.IsAbleToGraveAsCost,nil)>=2 and Duel.SelectYesNo(tp,vgf.Stringid(m,3)) then
+	if Duel.GetMatchingGroup(VgF.VMonsterFilter,tp,LOCATION_MZONE,0,nil,nil):GetFirst():GetOverlayGroup():FilterCount(Card.IsAbleToGraveAsCost,nil)>=2 and Duel.SelectEffectYesNo(tp,vgf.stringid(VgID,10)) then
 		local cg=Duel.GetMatchingGroup(VgF.VMonsterFilter,tp,LOCATION_MZONE,0,nil):GetFirst():GetOverlayGroup():FilterSelect(tp,Card.IsAbleToGraveAsCost,2,2,nil)
         if Duel.SendtoGrave(cg,REASON_COST)==2 then
 			Duel.Hint(HINT_SELECTMSG,tp,HINTMSG_LEAVEONFIELD)

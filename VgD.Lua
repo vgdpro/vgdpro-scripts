@@ -513,7 +513,7 @@ function VgD.MonsterCannotBeAttackedCondition(e,c)
 end
 
 --送去g区
-function VgD.CardToG(c,cost)
+function VgD.CardToG(c,cost,op)
     local type=EFFECT_TYPE_TRIGGER_F
     if VgF.GetValueType(cost)=="function" then type=EFFECT_TYPE_TRIGGER_O end
     local e1=Effect.CreateEffect(c)
@@ -523,7 +523,7 @@ function VgD.CardToG(c,cost)
     e1:SetCode(EVENT_MOVE)
     if VgF.GetValueType(cost)=="function" then e1:SetCost(cost) end
     e1:SetCondition(VgD.CardToGCondition)
-    e1:SetOperation(VgD.CardToGOperation)
+    if VgF.GetValueType(op)~="function" then e1:SetOperation(VgD.CardToGOperation) else  e1:SetOperation(op) end
     c:RegisterEffect(e1)
 end
 function VgD.CardToGCondition(e,tp,eg,ep,ev,re,r,rp)
@@ -1041,7 +1041,6 @@ function VgD.TriggerCountUpOperation(num)
         local label=c:GetFlagEffectLabel(AttackTriggerFlag)
         if not label then label=0 end
         label=label+num
-        Debug.Message(label)
         if label<0 then label=0 end
         c:ResetFlagEffect(AttackTriggerFlag)
         c:RegisterFlagEffect(AttackTriggerFlag,RESET_EVENT+RESETS_STANDARD,0,1,label)
