@@ -586,7 +586,6 @@ function VgD.CardTriggerOperation(chkop,f)
                 local tc=Duel.SelectMatchingCard(tp,nil,tp,LOCATION_DAMAGE,0,1,1,nil):GetFirst()
                 if tc then
                     Duel.SendtoGrave(tc,REASON_TRIGGER)
-                    Duel.Recover(tp,1,REASON_RULE)
                 end
             end
         elseif c:IsRace(TRRIGGER_ADVANCE) then
@@ -603,7 +602,6 @@ function VgD.CardTriggerOperation(chkop,f)
                 Duel.Exile(c,REASON_TRIGGER)
             else
                 Duel.Sendto(c,tp,LOCATION_DAMAGE,POS_FACEUP_ATTACK,REASON_EFFECT)
-                Duel.Damage(tp,1,REASON_TRIGGER)
             end
             local rc=Duel.GetMatchingGroup(VgF.VMonsterFilter,tp,LOCATION_MZONE,0,nil):GetFirst()
             local bc=rc:GetBattleTarget()
@@ -723,7 +721,11 @@ function VgD.EventRideStart(e,tp,eg,ep,ev,re,r,rp)
 end
 function VgD.RuleWin(e,tp,eg,ep,ev,re,r,rp)
     if Duel.GetCurrentChain()>0 then return end
-    for WinReason=0x1, 0xff, 1 do
+    for WinReason=0x1, 0x2, 1 do
+        if WinReason==0x1 then
+            local lp=Duel.GetLP(tp)-Duel.GetFieldGroupCount(tp,LOCATION_ORDER,0)
+            Duel.SetLP(tp,lp)
+        end
         if WinReason==0x2 then
             local g1=Duel.GetFieldGroupCount(tp,LOCATION_DECK,0)
             local g2=Duel.GetFieldGroupCount(tp,0,LOCATION_DECK)
@@ -1044,5 +1046,18 @@ function VgD.TriggerCountUpOperation(num)
         if label<0 then label=0 end
         c:ResetFlagEffect(AttackTriggerFlag)
         c:RegisterFlagEffect(AttackTriggerFlag,RESET_EVENT+RESETS_STANDARD,0,1,label)
+    end
+end
+function VgD.GlobalCheckEffect(c,m,typ,code,con,op)
+    if not typ then typ=EFFECT_TYPE_FIELD+EFFECT_TYPE_CONTINUOUS end
+    local cm=_G["c"..m]
+    if not cm.global_check then
+        cm.global_check=true
+        local ge1=Effect.CreateEffect(c)
+        ge1:SetType(typ)
+        ge1:SetCode(code)
+        if VgF.GetValueType(con)=="function" then ge1:SetCondition(con) end
+        ge1:SetOperation(op)
+        Duel.RegisterEffect(ge1,0)
     end
 end

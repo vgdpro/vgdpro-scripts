@@ -35,6 +35,7 @@ function VgF.DefineArguments()
     if not code then code=nil end
     if not loc then loc=nil end
     if not typ then typ=nil end
+    if not typ2 then typ2=nil end
     if not count then count=nil end
     if not property then property=nil end
     if not reset then reset=nil end
@@ -379,31 +380,53 @@ end
 ---@param g Card|Group 要被上升攻击力的卡
 ---@param val integer 要上升的攻击力（可以为负）
 ---@param reset integer|nil 指示重置的时点，默认为“回合结束时”。无论如何，都会在离场时重置。
-function VgF.AtkUp(c,g,val,reset)
+function VgF.AtkUp(c,g,val,reset,resetcount,resettype,resetcode)
     if not c then return end
     if not reset then reset=RESET_PHASE+PHASE_END end
+    if not resetcount then resetcount=1 end
+    if not resettype then resettype=EFFECT_TYPE_FIELD end
     if not val or val==0 then return end
     if VgF.GetValueType(g)=="Group" and g:GetCount()>0 then
-        local e={}
         for tc in VgF.Next(g) do
             local e1=Effect.CreateEffect(c)
-            e1:SetType(EFFECT_TYPE_SINGLE)
+            e1:SetType(EFFECT_TYPE_FIELD)
             e1:SetCode(EFFECT_UPDATE_ATTACK)
             e1:SetValue(val)
-            e1:SetReset(RESET_EVENT+RESETS_STANDARD+reset)
+            e1:SetReset(RESET_EVENT+RESETS_STANDARD+reset,resetcount)
             tc:RegisterEffect(e1)
-            table.insert(e,e1)
+            if resetcode then
+                local e2=Effect.CreateEffect(c)
+                e2:SetType(resettype+EFFECT_TYPE_CONTINUOUS)
+                e2:SetCode(resetcode)
+                e2:SetRange(LOCATION_MZONE)
+                e2:SetReset(RESET_EVENT+RESETS_STANDARD)
+                e2:SetOperation(function (te)
+                    e1:Reset()
+                    te:Reset()
+                end)
+                tc:RegisterEffect(e2)
+            end
         end
-        return e,#e
     elseif VgF.GetValueType(g)=="Card" then
         local tc=VgF.ReturnCard(g)
         local e1=Effect.CreateEffect(c)
         e1:SetType(EFFECT_TYPE_SINGLE)
         e1:SetCode(EFFECT_UPDATE_ATTACK)
         e1:SetValue(val)
-        e1:SetReset(RESET_EVENT+RESETS_STANDARD+reset)
+        e1:SetReset(RESET_EVENT+RESETS_STANDARD+reset,resetcount)
         tc:RegisterEffect(e1)
-        return e1,1
+        if resetcode>0 then
+            local e2=Effect.CreateEffect(c)
+            e2:SetType(resettype+EFFECT_TYPE_CONTINUOUS)
+            e2:SetCode(resetcode)
+            e2:SetRange(LOCATION_MZONE)
+            e2:SetReset(RESET_EVENT+RESETS_STANDARD)
+            e2:SetOperation(function (te)
+                e1:Reset()
+                te:Reset()
+            end)
+            tc:RegisterEffect(e2)
+        end
     end
 end
 ---以c的名义，使g（中的每一张卡）的盾值上升val，并在reset时重置。
@@ -411,31 +434,53 @@ end
 ---@param g Card|Group 要被上升盾值的卡
 ---@param val integer 要上升的盾值（可以为负）
 ---@param reset integer|nil 指示重置的时点，默认为“回合结束时”。无论如何，都会在离场时重置。
-function VgF.DefUp(c,g,val,reset)
+function VgF.DefUp(c,g,val,reset,resetcount,resettype,resetcode)
     if not c then return end
     if not reset then reset=RESET_PHASE+PHASE_END end
+    if not resetcount then resetcount=1 end
+    if not resettype then resettype=EFFECT_TYPE_FIELD end
     if not val or val==0 then return end
     if VgF.GetValueType(g)=="Group" and g:GetCount()>0 then
-        local e={}
         for tc in VgF.Next(g) do
             local e1=Effect.CreateEffect(c)
             e1:SetType(EFFECT_TYPE_SINGLE)
             e1:SetCode(EFFECT_UPDATE_DEFENSE)
             e1:SetValue(val)
-            e1:SetReset(RESET_EVENT+RESETS_STANDARD+reset)
+            e1:SetReset(RESET_EVENT+RESETS_STANDARD+reset,resetcount)
             tc:RegisterEffect(e1)
-            table.insert(e,e1)
+            if resetcode>0 then
+                local e2=Effect.CreateEffect(c)
+                e2:SetType(resettype+EFFECT_TYPE_CONTINUOUS)
+                e2:SetCode(resetcode)
+                e2:SetRange(LOCATION_MZONE)
+                e2:SetReset(RESET_EVENT+RESETS_STANDARD)
+                e2:SetOperation(function (te)
+                    e1:Reset()
+                    te:Reset()
+                end)
+                tc:RegisterEffect(e2)
+            end
         end
-        return e,#e
     elseif VgF.GetValueType(g)=="Card" then
         local tc=VgF.ReturnCard(g)
         local e1=Effect.CreateEffect(c)
         e1:SetType(EFFECT_TYPE_SINGLE)
         e1:SetCode(EFFECT_UPDATE_DEFENSE)
         e1:SetValue(val)
-        e1:SetReset(RESET_EVENT+RESETS_STANDARD+reset)
+        e1:SetReset(RESET_EVENT+RESETS_STANDARD+reset,resetcount)
         tc:RegisterEffect(e1)
-        return e1,1
+        if resetcode>0 then
+            local e2=Effect.CreateEffect(c)
+            e2:SetType(resettype+EFFECT_TYPE_CONTINUOUS)
+            e2:SetCode(resetcode)
+            e2:SetRange(LOCATION_MZONE)
+            e2:SetReset(RESET_EVENT+RESETS_STANDARD)
+            e2:SetOperation(function (te)
+                e1:Reset()
+                te:Reset()
+            end)
+            tc:RegisterEffect(e2)
+        end
     end
 end
 ---以c的名义，使g（中的每一张卡）的☆上升val，并在reset时重置。
@@ -443,13 +488,13 @@ end
 ---@param g Card|Group 要被上升☆的卡
 ---@param val integer 要上升的☆（可以为负）
 ---@param reset integer|nil 指示重置的时点，默认为“回合结束时”。无论如何，都会在离场时重置。
-function VgF.StarUp(c,g,val,reset)
+function VgF.StarUp(c,g,val,reset,resetcount,resettype,resetcode)
     if not c or not g then return end
     if not reset then reset=RESET_PHASE+PHASE_END end
+    if not resetcount then resetcount=1 end
+    if not resettype then resettype=EFFECT_TYPE_FIELD end
     if not val or val==0 then return end
     if VgF.GetValueType(g)=="Group" and g:GetCount()>0 then
-        local el={}
-        local er={}
         for tc in VgF.Next(g) do
             local e1=Effect.CreateEffect(c)
             e1:SetType(EFFECT_TYPE_SINGLE)
@@ -457,15 +502,30 @@ function VgF.StarUp(c,g,val,reset)
             e1:SetProperty(EFFECT_FLAG_SINGLE_RANGE)
             e1:SetRange(LOCATION_MZONE)
             e1:SetValue(val)
-            e1:SetReset(RESET_EVENT+RESETS_STANDARD+reset)
+            e1:SetReset(RESET_EVENT+RESETS_STANDARD+reset,resetcount)
             tc:RegisterEffect(e1)
             local e2=e1:Clone()
             e2:SetCode(EFFECT_UPDATE_RSCALE)
             tc:RegisterEffect(e2)
-            table.insert(el,e1)
-            table.insert(er,er)
+            if resetcode>0 then
+                local e3=Effect.CreateEffect(c)
+                e3:SetType(resettype+EFFECT_TYPE_CONTINUOUS)
+                e3:SetCode(resetcode)
+                e3:SetRange(LOCATION_MZONE)
+                e3:SetReset(RESET_EVENT+RESETS_STANDARD)
+                e3:SetOperation(function (te)
+                    e1:Reset()
+                    te:Reset()
+                end)
+                tc:RegisterEffect(e3)
+                local e4=e3:Clone()
+                e4:SetOperation(function (te)
+                    e2:Reset()
+                    te:Reset()
+                end)
+                tc:RegisterEffect(e4)
+            end
         end
-        return el,er,#el,#er
     elseif VgF.GetValueType(g)=="Card" then
         local tc=VgF.ReturnCard(g)
         local e1=Effect.CreateEffect(c)
@@ -474,12 +534,29 @@ function VgF.StarUp(c,g,val,reset)
         e1:SetProperty(EFFECT_FLAG_SINGLE_RANGE)
         e1:SetRange(LOCATION_MZONE)
         e1:SetValue(val)
-        e1:SetReset(RESET_EVENT+RESETS_STANDARD+reset)
+        e1:SetReset(RESET_EVENT+RESETS_STANDARD+reset,resetcount)
         tc:RegisterEffect(e1)
         local e2=e1:Clone()
         e2:SetCode(EFFECT_UPDATE_RSCALE)
         tc:RegisterEffect(e2)
-        return e1,e2,1,1
+        if resetcode>0 then
+            local e3=Effect.CreateEffect(c)
+            e3:SetType(resettype+EFFECT_TYPE_CONTINUOUS)
+            e3:SetCode(resetcode)
+            e3:SetRange(LOCATION_MZONE)
+            e3:SetReset(RESET_EVENT+RESETS_STANDARD)
+            e3:SetOperation(function (te)
+                e1:Reset()
+                te:Reset()
+            end)
+            tc:RegisterEffect(e3)
+            local e4=e3:Clone()
+            e4:SetOperation(function (te)
+                e2:Reset()
+                te:Reset()
+            end)
+            tc:RegisterEffect(e4)
+        end
     end
 end
 ---判断c是否可以以规则的手段到G区域。
@@ -495,104 +572,123 @@ end
 ---@return function 效果的Cost函数
 function VgF.DisCardCost(num)
     return function (e,tp,eg,ep,ev,re,r,rp,chk)
-        local c=e:GetHandler()
-        local m=c:GetOriginalCode()
-        local cm=_G["c"..m]
-        if e:IsHasType(EFFECT_TYPE_ACTIVATE) then
-            cm.cos_g=Duel.GetMatchingGroup(Card.IsDiscardable,tp,LOCATION_HAND,0,nil)
-            cm.cos_val={nil,num,num}
-        end
-        if chk==0 then
-            return Duel.IsExistingMatchingCard(Card.IsDiscardable,tp,LOCATION_HAND,0,num,nil)
-        end
-        Duel.Hint(HINT_SELECTMSG,tp,HINTMSG_DISCARD)
-        local g=Duel.SelectMatchingCard(tp,Card.IsDiscardable,tp,LOCATION_HAND,0,num,num,nil)
-        Duel.SendtoGrave(g,REASON_COST+REASON_DISCARD)
+        return VgF.DisCardCostOp(num,e,tp,eg,ep,ev,re,r,rp,chk)
     end
+end
+function VgF.DisCardCostOp(num,e,tp,eg,ep,ev,re,r,rp,chk)
+    local c=e:GetHandler()
+    local m=c:GetOriginalCode()
+    local cm=_G["c"..m]
+    if e:IsHasType(EFFECT_TYPE_ACTIVATE) then
+        cm.cos_g=Duel.GetMatchingGroup(Card.IsDiscardable,tp,LOCATION_HAND,0,nil)
+        cm.cos_val={nil,num,num}
+    end
+    if chk==0 then
+        return Duel.IsExistingMatchingCard(Card.IsDiscardable,tp,LOCATION_HAND,0,num,nil)
+    end
+    Duel.Hint(HINT_SELECTMSG,tp,HINTMSG_DISCARD)
+    local g=Duel.SelectMatchingCard(tp,Card.IsDiscardable,tp,LOCATION_HAND,0,num,num,nil)
+    Duel.SendtoGrave(g,REASON_COST+REASON_DISCARD)
+    return Duel.GetOperatedGroup():GetCount()
 end
 ---用于效果的Cost。它返回一个执行“【费用】[能量爆发num]”的函数。
 ---@param num integer 能量爆发的数量
 ---@return function 效果的Cost函数
 function VgF.EnergyCost(num)
     return function (e,tp,eg,ep,ev,re,r,rp,chk)
-        local c=e:GetHandler()
-        local m=c:GetOriginalCode()
-        local cm=_G["c"..m]
-        if e:IsHasType(EFFECT_TYPE_ACTIVATE) then
-            cm.cos_g=Duel.GetMatchingGroup(Card.IsCode,tp,LOCATION_EMBLEM,0,nil,10800730)
-            cm.cos_val={nil,num,num}
-        end
-        if chk==0 then
-            return Duel.IsExistingMatchingCard(Card.IsCode,tp,LOCATION_EMBLEM,0,num,nil,10800730)
-        end
-        local sg=Duel.GetMatchingGroup(Card.IsCode,tp,LOCATION_EMBLEM,0,nil,10800730)
-        local g=VgF.GetCardsFromGroup(sg,num)
-        Duel.Sendto(g,tp,0,POS_FACEUP,REASON_COST)
+        return VgF.EnergyCostOp(num,e,tp,eg,ep,ev,re,r,rp,chk)
     end
+end
+function VgF.EnergyCostOp(num,e,tp,eg,ep,ev,re,r,rp,chk)
+    local c=e:GetHandler()
+    local m=c:GetOriginalCode()
+    local cm=_G["c"..m]
+    if e:IsHasType(EFFECT_TYPE_ACTIVATE) then
+        cm.cos_g=Duel.GetMatchingGroup(Card.IsCode,tp,LOCATION_EMBLEM,0,nil,10800730)
+        cm.cos_val={nil,num,num}
+    end
+    if chk==0 then
+        return Duel.IsExistingMatchingCard(Card.IsCode,tp,LOCATION_EMBLEM,0,num,nil,10800730)
+    end
+    local sg=Duel.GetMatchingGroup(Card.IsCode,tp,LOCATION_EMBLEM,0,nil,10800730)
+    local g=VgF.GetCardsFromGroup(sg,num)
+    Duel.Sendto(g,tp,0,POS_FACEUP,REASON_COST)
+    return Duel.GetOperatedGroup():GetCount()
 end
 ---用于效果的Cost。它返回一个执行“【费用】[灵魂爆发num]”的函数。
 ---@param num integer 灵魂爆发的数量
 ---@return function 效果的Cost函数
 function VgF.OverlayCost(num)
-    return function (e,tp,eg,ep,ev,re,r,rp,chk)
-        local c=e:GetHandler()
-        local m=c:GetOriginalCode()
-        local cm=_G["c"..m]
-        if e:IsHasType(EFFECT_TYPE_ACTIVATE) then
-            cm.cos_g=Duel.GetMatchingGroup(VgF.VMonsterFilter,tp,LOCATION_MZONE,0,nil,nil):GetFirst():GetOverlayGroup():FilterCount(Card.IsAbleToGraveAsCost,nil)
-            cm.cos_val={nil,num,num}
+    function VgF.EnergyCost(num)
+        return function (e,tp,eg,ep,ev,re,r,rp,chk)
+            return VgF.OverlayCostOp(num,e,tp,eg,ep,ev,re,r,rp,chk)
         end
-        if chk==0 then
-            return Duel.GetMatchingGroup(VgF.VMonsterFilter,tp,LOCATION_MZONE,0,nil,nil):GetFirst():GetOverlayGroup():FilterCount(Card.IsAbleToGraveAsCost,nil)>=num
-        end
-        Duel.Hint(HINT_SELECTMSG,tp,HINTMSG_REMOVEXYZ)
-        local g=Duel.GetMatchingGroup(VgF.VMonsterFilter,tp,LOCATION_MZONE,0,nil):GetFirst():GetOverlayGroup():FilterSelect(tp,Card.IsAbleToGraveAsCost,num,num,nil)
-        Duel.SendtoGrave(g,REASON_COST)
     end
+end
+function VgF.OverlayCostOp(num,e,tp,eg,ep,ev,re,r,rp,chk)
+    local c=e:GetHandler()
+    local m=c:GetOriginalCode()
+    local cm=_G["c"..m]
+    if e:IsHasType(EFFECT_TYPE_ACTIVATE) then
+        cm.cos_g=Duel.GetMatchingGroup(VgF.VMonsterFilter,tp,LOCATION_MZONE,0,nil,nil):GetFirst():GetOverlayGroup():FilterCount(Card.IsAbleToGraveAsCost,nil)
+        cm.cos_val={nil,num,num}
+    end
+    if chk==0 then
+        return Duel.GetMatchingGroup(VgF.VMonsterFilter,tp,LOCATION_MZONE,0,nil,nil):GetFirst():GetOverlayGroup():FilterCount(Card.IsAbleToGraveAsCost,nil)>=num
+    end
+    Duel.Hint(HINT_SELECTMSG,tp,HINTMSG_REMOVEXYZ)
+    local g=Duel.GetMatchingGroup(VgF.VMonsterFilter,tp,LOCATION_MZONE,0,nil):GetFirst():GetOverlayGroup():FilterSelect(tp,Card.IsAbleToGraveAsCost,num,num,nil)
+    Duel.SendtoGrave(g,REASON_COST)
+    return Duel.GetOperatedGroup():GetCount()
 end
 ---用于效果的Cost或Operation。它返回一个执行“【费用】[灵魂填充num]”的函数。
 ---@param num integer 灵魂填充的数量
 ---@return function 效果的Cost或Operation函数
 function VgF.OverlayFill(num)
     return function (e,tp,eg,ep,ev,re,r,rp,chk)
-        local c=e:GetHandler()
-        local m=c:GetOriginalCode()
-        local cm=_G["c"..m]
-        if e:IsHasType(EFFECT_TYPE_ACTIVATE) then
-            cm.cos_g=Duel.GetFieldGroupCount(tp,LOCATION_DECK)
-            cm.cos_val={nil,num,num}
-        end
-        if chk==0 then
-            return Duel.GetFieldGroupCount(tp,LOCATION_DECK,0)>=num
-        end
-        VgF.OverlayFillOP(num,e,tp,eg,ep,ev,re,r,rp)
+        return VgF.OverlayFillOP(num,e,tp,eg,ep,ev,re,r,rp,chk)
     end
 end
-function VgF.OverlayFillOP(num,e,tp,eg,ep,ev,re,r,rp)
+function VgF.OverlayFillOP(num,e,tp,eg,ep,ev,re,r,rp,chk)
+    local c=e:GetHandler()
+    local m=c:GetOriginalCode()
+    local cm=_G["c"..m]
+    if e:IsHasType(EFFECT_TYPE_ACTIVATE) then
+        cm.cos_g=Duel.GetFieldGroupCount(tp,LOCATION_DECK)
+        cm.cos_val={nil,num,num}
+    end
+    if chk==0 then
+        return Duel.GetFieldGroupCount(tp,LOCATION_DECK,0)>=num
+    end
     local rc=Duel.GetMatchingGroup(VgF.VMonsterFilter,tp,LOCATION_MZONE,0,nil):GetFirst()
     local g=Duel.GetDecktopGroup(tp,num)
     Duel.DisableShuffleCheck()
     Duel.Overlay(rc,g)
+    return Duel.GetOperatedGroup():GetCount()
 end
 ---用于效果的Cost。它返回一个执行“【费用】[计数爆发num]”的函数。
 ---@param num integer 计数爆发的数量
 ---@return function 效果的Cost函数
 function VgF.DamageCost(num)
     return function (e,tp,eg,ep,ev,re,r,rp,chk)
-        local c=e:GetHandler()
-        local m=c:GetOriginalCode()
-        local cm=_G["c"..m]
-        if e:IsHasType(EFFECT_TYPE_ACTIVATE) then
-            cm.cos_g=Duel.GetMatchingGroup(Card.IsFaceup,tp,LOCATION_DAMAGE,0,nil)
-            cm.cos_val={nil,num,num}
-        end
-        if chk==0 then
-            return Duel.IsExistingMatchingCard(Card.IsFaceup,tp,LOCATION_DAMAGE,0,num,nil)
-        end
-        Duel.Hint(HINT_SELECTMSG,tp,HINTMSG_DAMAGE)
-        local g=Duel.SelectMatchingCard(tp,Card.IsFaceup,tp,LOCATION_DAMAGE,0,num,num,nil)
-        Duel.ChangePosition(g,POS_FACEDOWN_ATTACK)
+        return VgF.DamageCostOP(num,e,tp,eg,ep,ev,re,r,rp,chk)
     end
+end
+function VgF.DamageCostOP(num,e,tp,eg,ep,ev,re,r,rp,chk)
+    local c=e:GetHandler()
+    local m=c:GetOriginalCode()
+    local cm=_G["c"..m]
+    if e:IsHasType(EFFECT_TYPE_ACTIVATE) then
+        cm.cos_g=Duel.GetMatchingGroup(Card.IsFaceup,tp,LOCATION_DAMAGE,0,nil)
+        cm.cos_val={nil,num,num}
+    end
+    if chk==0 then
+        return Duel.IsExistingMatchingCard(Card.IsFaceup,tp,LOCATION_DAMAGE,0,num,nil)
+    end
+    Duel.Hint(HINT_SELECTMSG,tp,HINTMSG_DAMAGE)
+    local g=Duel.SelectMatchingCard(tp,Card.IsFaceup,tp,LOCATION_DAMAGE,0,num,num,nil)
+    Duel.ChangePosition(g,POS_FACEDOWN_ATTACK)
+    return Duel.GetOperatedGroup():GetCount()
 end
 ---用于效果的Operation。执行“从loc中选取1张满足f的卡，返回手牌。”。
 ---@param loc integer 要选取的区域。不填则返回nil，而不是效果的Operation函数。

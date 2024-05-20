@@ -36,10 +36,10 @@ function cm.cost1(e,tp,eg,ep,ev,re,r,rp,chk)
 	end
 end
 function cm.con1(e,tp,eg,ep,ev,re,r,rp)
-	return eg:IsExists(cm.filter,1,nil) and eg:Count()==1
+	return eg:IsExists(cm.filter,1,nil,e) and eg:Count()==1
 end
-function cm.filter(c)
-	return c:IsSummonType(SUMMON_VALUE_CALL)
+function cm.filter(c,e)
+	return c:IsSummonType(SUMMON_VALUE_CALL) and c:GetControler()~=e:GetHandler():GetControler()
 end
 function cm.op1(e,tp,eg,ep,ev,re,r,rp)
 	local zone=vgf.GetAvailableLocation(tp)
@@ -47,11 +47,15 @@ function cm.op1(e,tp,eg,ep,ev,re,r,rp)
 	if ct>e:GetLabel() then ct=e:GetLabel() end
 	Duel.Hint(HINT_MESSAGE,tp,HINTMSG_CALL)
 	local g=Duel.SelectMatchingCard(tp,cm.filter1,tp,0,LOCATION_ORDER,ct,ct,nil,e,tp)
-	if #g>0 then
-		Duel.HintSelection(g)
-		vgf.Call(g,0,tp)
+	Duel.HintSelection(g)
+	for tc in vgf.Next(g) do
+		if tc:IsCanBeSpecialSummoned(e,0,tp,false,false,POS_FACEUP_ATTACK) then
+			vgf.Call(tc,0,tp)
+		else
+			Duel.SendtoGrave(tc,REASON_EFFECT)
+		end
 	end
 end
 function cm.filter1(c,e,tp)
-	return c:IsCanBeSpecialSummoned(e,0,tp,false,false,POS_FACEUP_ATTACK,tp) or c:IsType(TYPE_SPELL)
+	return c:GetFlagEffect(ImprisonFlag)>0
 end
