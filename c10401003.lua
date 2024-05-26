@@ -8,8 +8,8 @@ function cm.op(e,tp,eg,ep,ev,re,r,rp)
 	local ct=c:GetOverlayCount()
 	if ct>=5 then Duel.Draw(tp,1,REASON_EFFECT) end
 	if ct>=10 then
-		local t={vgf.AtkUp(c,c,10000),vgf.StarUp(c,c,1)}
-		vgf.EffectReset(c,t,EVENT_BATTLED)
+		vgf.AtkUp(c,c,10000,nil,nil,EFFECT_TYPE_SINGLE,EVENT_BATTLED)
+		vgf.StarUp(c,c,1,nil,nil,EFFECT_TYPE_SINGLE,EVENT_BATTLED)
 	end
 	if ct>=15 then
 		local g1=Duel.GetMatchingGroup(vgf.RMonsterFilter,tp,LOCATION_MZONE,0,nil)
