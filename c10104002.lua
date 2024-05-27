@@ -22,7 +22,8 @@ function cm.operation(e,tp,eg,ep,ev,re,r,rp)
 end
 function cm.operation2(e,tp,eg,ep,ev,re,r,rp)
 	local c=e:GetHandler()
-	vgf.AtkUp(c,c,10000,nil)
+	local e1=vgf.AtkUp(c,c,10000,nil)
+	vgf.EffectReset(c,e1,EVENT_BATTLED)
 end
 function cm.condition(e,tp,eg,ep,ev,re,r,rp)
 	local c=e:GetHandler()

@@ -380,34 +380,24 @@ end
 ---@param g Card|Group 要被上升攻击力的卡
 ---@param val integer 要上升的攻击力（可以为负）
 ---@param reset integer|nil 指示重置的时点，默认为“回合结束时”。无论如何，都会在离场时重置。
-function VgF.AtkUp(c,g,val,reset,resetcount,resettype,resetcode)
+function VgF.AtkUp(c,g,val,reset,resetcount)
     if not c then return end
-    if not reset then reset=RESET_PHASE+PHASE_END end
     if not resetcount then resetcount=1 end
-    if not resettype then resettype=EFFECT_TYPE_FIELD end
-    if not resetcode then resetcode=0 end
+    if not reset then reset=RESET_PHASE+PHASE_END end
     if not val or val==0 then return end
     if VgF.GetValueType(g)=="Group" and g:GetCount()>0 then
+        local e={}
         for tc in VgF.Next(g) do
             local e1=Effect.CreateEffect(c)
             e1:SetType(EFFECT_TYPE_SINGLE)
             e1:SetCode(EFFECT_UPDATE_ATTACK)
             e1:SetValue(val)
+            e1:SetReset(RESET_EVENT+RESETS_STANDARD+reset)
             e1:SetReset(RESET_EVENT+RESETS_STANDARD+reset,resetcount)
             tc:RegisterEffect(e1)
-            if resetcode>0 then
-                local e2=Effect.CreateEffect(c)
-                e2:SetType(resettype+EFFECT_TYPE_CONTINUOUS)
-                e2:SetCode(resetcode)
-                e2:SetRange(LOCATION_MZONE)
-                e2:SetReset(RESET_EVENT+RESETS_STANDARD)
-                e2:SetOperation(function (te)
-                    e1:Reset()
-                    te:Reset()
-                end)
-                tc:RegisterEffect(e2)
-            end
+            table.insert(e,e1)
         end
+        return e
     elseif VgF.GetValueType(g)=="Card" then
         local tc=VgF.ReturnCard(g)
         local e1=Effect.CreateEffect(c)
@@ -416,18 +406,7 @@ function VgF.AtkUp(c,g,val,reset,resetcount,resettype,resetcode)
         e1:SetValue(val)
         e1:SetReset(RESET_EVENT+RESETS_STANDARD+reset,resetcount)
         tc:RegisterEffect(e1)
-        if resetcode>0 then
-            local e2=Effect.CreateEffect(c)
-            e2:SetType(resettype+EFFECT_TYPE_CONTINUOUS)
-            e2:SetCode(resetcode)
-            e2:SetRange(LOCATION_MZONE)
-            e2:SetReset(RESET_EVENT+RESETS_STANDARD)
-            e2:SetOperation(function (te)
-                e1:Reset()
-                te:Reset()
-            end)
-            tc:RegisterEffect(e2)
-        end
+        return e1
     end
 end
 ---以c的名义，使g（中的每一张卡）的盾值上升val，并在reset时重置。
@@ -435,13 +414,13 @@ end
 ---@param g Card|Group 要被上升盾值的卡
 ---@param val integer 要上升的盾值（可以为负）
 ---@param reset integer|nil 指示重置的时点，默认为“回合结束时”。无论如何，都会在离场时重置。
-function VgF.DefUp(c,g,val,reset,resetcount,resettype,resetcode)
+function VgF.DefUp(c,g,val,reset,resetcount)
     if not c then return end
     if not reset then reset=RESET_PHASE+PHASE_END end
     if not resetcount then resetcount=1 end
-    if not resettype then resettype=EFFECT_TYPE_FIELD end
     if not val or val==0 then return end
     if VgF.GetValueType(g)=="Group" and g:GetCount()>0 then
+        local e={}
         for tc in VgF.Next(g) do
             local e1=Effect.CreateEffect(c)
             e1:SetType(EFFECT_TYPE_SINGLE)
@@ -449,19 +428,9 @@ function VgF.DefUp(c,g,val,reset,resetcount,resettype,resetcode)
             e1:SetValue(val)
             e1:SetReset(RESET_EVENT+RESETS_STANDARD+reset,resetcount)
             tc:RegisterEffect(e1)
-            if resetcode>0 then
-                local e2=Effect.CreateEffect(c)
-                e2:SetType(resettype+EFFECT_TYPE_CONTINUOUS)
-                e2:SetCode(resetcode)
-                e2:SetRange(LOCATION_MZONE)
-                e2:SetReset(RESET_EVENT+RESETS_STANDARD)
-                e2:SetOperation(function (te)
-                    e1:Reset()
-                    te:Reset()
-                end)
-                tc:RegisterEffect(e2)
-            end
+            table.insert(e,e1)
         end
+        return e
     elseif VgF.GetValueType(g)=="Card" then
         local tc=VgF.ReturnCard(g)
         local e1=Effect.CreateEffect(c)
@@ -470,18 +439,7 @@ function VgF.DefUp(c,g,val,reset,resetcount,resettype,resetcode)
         e1:SetValue(val)
         e1:SetReset(RESET_EVENT+RESETS_STANDARD+reset,resetcount)
         tc:RegisterEffect(e1)
-        if resetcode>0 then
-            local e2=Effect.CreateEffect(c)
-            e2:SetType(resettype+EFFECT_TYPE_CONTINUOUS)
-            e2:SetCode(resetcode)
-            e2:SetRange(LOCATION_MZONE)
-            e2:SetReset(RESET_EVENT+RESETS_STANDARD)
-            e2:SetOperation(function (te)
-                e1:Reset()
-                te:Reset()
-            end)
-            tc:RegisterEffect(e2)
-        end
+        return e1
     end
 end
 ---以c的名义，使g（中的每一张卡）的☆上升val，并在reset时重置。
@@ -489,13 +447,14 @@ end
 ---@param g Card|Group 要被上升☆的卡
 ---@param val integer 要上升的☆（可以为负）
 ---@param reset integer|nil 指示重置的时点，默认为“回合结束时”。无论如何，都会在离场时重置。
-function VgF.StarUp(c,g,val,reset,resetcount,resettype,resetcode)
+function VgF.StarUp(c,g,val,reset,resetcount)
     if not c or not g then return end
     if not reset then reset=RESET_PHASE+PHASE_END end
     if not resetcount then resetcount=1 end
-    if not resettype then resettype=EFFECT_TYPE_FIELD end
     if not val or val==0 then return end
     if VgF.GetValueType(g)=="Group" and g:GetCount()>0 then
+        local t1={}
+        local t2={}
         for tc in VgF.Next(g) do
             local e1=Effect.CreateEffect(c)
             e1:SetType(EFFECT_TYPE_SINGLE)
@@ -508,25 +467,10 @@ function VgF.StarUp(c,g,val,reset,resetcount,resettype,resetcode)
             local e2=e1:Clone()
             e2:SetCode(EFFECT_UPDATE_RSCALE)
             tc:RegisterEffect(e2)
-            if resetcode>0 then
-                local e3=Effect.CreateEffect(c)
-                e3:SetType(resettype+EFFECT_TYPE_CONTINUOUS)
-                e3:SetCode(resetcode)
-                e3:SetRange(LOCATION_MZONE)
-                e3:SetReset(RESET_EVENT+RESETS_STANDARD)
-                e3:SetOperation(function (te)
-                    e1:Reset()
-                    te:Reset()
-                end)
-                tc:RegisterEffect(e3)
-                local e4=e3:Clone()
-                e4:SetOperation(function (te)
-                    e2:Reset()
-                    te:Reset()
-                end)
-                tc:RegisterEffect(e4)
-            end
+            table.insert(t1,e1)
+            table.insert(t2,e2)
         end
+        return t1,t2
     elseif VgF.GetValueType(g)=="Card" then
         local tc=VgF.ReturnCard(g)
         local e1=Effect.CreateEffect(c)
@@ -540,24 +484,7 @@ function VgF.StarUp(c,g,val,reset,resetcount,resettype,resetcode)
         local e2=e1:Clone()
         e2:SetCode(EFFECT_UPDATE_RSCALE)
         tc:RegisterEffect(e2)
-        if resetcode>0 then
-            local e3=Effect.CreateEffect(c)
-            e3:SetType(resettype+EFFECT_TYPE_CONTINUOUS)
-            e3:SetCode(resetcode)
-            e3:SetRange(LOCATION_MZONE)
-            e3:SetReset(RESET_EVENT+RESETS_STANDARD)
-            e3:SetOperation(function (te)
-                e1:Reset()
-                te:Reset()
-            end)
-            tc:RegisterEffect(e3)
-            local e4=e3:Clone()
-            e4:SetOperation(function (te)
-                e2:Reset()
-                te:Reset()
-            end)
-            tc:RegisterEffect(e4)
-        end
+        return e1,e2
     end
 end
 ---判断c是否可以以规则的手段到G区域。
@@ -817,17 +744,32 @@ function VgF.CheckPrison(p)
 end
 --重置Effect
 function VgF.EffectReset(c,e,code,con)
-    local e1=Effect.CreateEffect(c)
-    e1:SetType(EFFECT_TYPE_FIELD+EFFECT_TYPE_CONTINUOUS)
-    e1:SetCode(code)
-    e1:SetProperty(EFFECT_FLAG_CANNOT_DISABLE)
-    e1:SetRange(LOCATION_ALL)
-    e1:SetLabelObject(e)
-    if VgF.GetValueType(con)=="function" then e1:SetCondition(con) end
-    e1:SetOperation(VgF.EffectResetOperation)
-    c:RegisterEffect(e1)
+    if VgF.GetValueType(e)=="Effect" then
+        local e1=Effect.CreateEffect(c)
+        e1:SetType(EFFECT_TYPE_FIELD+EFFECT_TYPE_CONTINUOUS)
+        e1:SetCode(code)
+        e1:SetProperty(EFFECT_FLAG_CANNOT_DISABLE)
+        e1:SetRange(LOCATION_ALL)
+        e1:SetLabelObject(e)
+        if VgF.GetValueType(con)=="function" then e1:SetCondition(con) end
+        e1:SetOperation(VgF.EffectResetOperation)
+        c:RegisterEffect(e1)
+    elseif VgF.GetValueType(e)=="table" then
+        for i,v in ipairs(e) do
+            local e1=Effect.CreateEffect(c)
+            e1:SetType(EFFECT_TYPE_FIELD+EFFECT_TYPE_CONTINUOUS)
+            e1:SetCode(code)
+            e1:SetProperty(EFFECT_FLAG_CANNOT_DISABLE)
+            e1:SetRange(LOCATION_ALL)
+            e1:SetLabelObject(v)
+            if VgF.GetValueType(con)=="function" then e1:SetCondition(con) end
+            e1:SetOperation(VgF.EffectResetOperation)
+            c:RegisterEffect(e1)
+        end
+    end
 end
 function VgF.EffectResetOperation(e,tp,eg,ep,ev,re,r,rp)
     local e1=e:GetLabelObject()
     if VgF.GetValueType(e1)=="Effect" then e1:Reset() end
+    e:Reset()
 end

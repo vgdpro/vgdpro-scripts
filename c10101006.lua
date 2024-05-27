@@ -7,7 +7,8 @@ function cm.initial_effect(c)
 end
 function cm.operation(e,tp,eg,ep,ev,re,r,rp)
 	local c=e:GetHandler()
-	VgF.AtkUp(c,c,10000,nil,nil,EFFECT_TYPE_SINGLE,EVENT_BATTLED)
+	local e1=vgf.AtkUp(c,c,5000,nil)
+	vgf.EffectReset(c,e1,EVENT_BATTLED)
 	if Duel.GetMatchingGroup(VgF.VMonsterFilter,tp,LOCATION_MZONE,0,nil,nil):GetFirst():GetOverlayGroup():FilterCount(Card.IsAbleToGraveAsCost,nil)>=2 and Duel.SelectEffectYesNo(tp,vgf.stringid(VgID,10)) then
 		local cg=Duel.GetMatchingGroup(VgF.VMonsterFilter,tp,LOCATION_MZONE,0,nil):GetFirst():GetOverlayGroup():FilterSelect(tp,Card.IsAbleToGraveAsCost,2,2,nil)
         if Duel.SendtoGrave(cg,REASON_COST)==2 then

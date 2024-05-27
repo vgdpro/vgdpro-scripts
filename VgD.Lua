@@ -961,14 +961,11 @@ function VgD.EffectTypeTriggerWhenHitting(c,m,loc,typ,op,cost,con,tg,count,p,pro
 end
 function VgD.EffectTypeTriggerWhenHittingCon(typ,con,p)
     return function (e,tp,eg,ep,ev,re,r,rp)
-        if Duel.GetAttacker():GetControler()~=p then return false end
+        if eg:GetFirst():GetControler()==p and (VgF.GetValueType(con)=="function" and not con(e,tp,eg,ep,ev,re,r,rp)) then return false end
         if typ==EFFECT_TYPE_SINGLE then
-            if VgF.GetValueType(con)~="function" or con(e,tp,eg,ep,ev,re,r,rp) then
-                return Duel.GetAttacker()==e:GetHandler()
-            end
-            return false
+            return Duel.GetAttacker()==e:GetHandler()
         end
-        return VgF.GetValueType(con)~="function" or con(e,tp,eg,ep,ev,re,r,rp)
+        return true
     end
 end
 function VgD.QuickSpell(c,code,op,cost,con,tg)
