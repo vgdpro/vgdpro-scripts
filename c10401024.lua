@@ -7,7 +7,7 @@ function cm.initial_effect(c)
 end
 function cm.condition(e,tp,eg,ep,ev,re,r,rp)
 	local c=e:GetHandler()
-	return not(c:IsSummonType(SUMMON_TYPE_RIDE) or c:IsSummonType(SUMMON_TYPE_SELFRIDE)) and c:IsPreviousLocation(LOCATION_HAND)
+	return not(c:IsSummonType(SUMMON_TYPE_RIDE) or c:IsSummonType(SUMMON_TYPE_SELFRIDE)) and c:IsSummonLocation(LOCATION_HAND)
 end
 --效果二处理
 function cm.operation(e,tp,eg,ep,ev,re,r,rp)
