@@ -2,8 +2,7 @@
 local cm,m,o=GetID()
 function cm.initial_effect(c)
     VgF.VgCard(c)
-    vgd.SpellActivate(c,m,cm.operation,nil,0,0,0,0,0,2)
-    
+    vgd.SpellActivate(c,m,cm.operation)
 end
 function cm.operation(e,tp,eg,ep,ev,re,r,rp)
     Duel.Draw(tp,2,REASON_EFFECT)

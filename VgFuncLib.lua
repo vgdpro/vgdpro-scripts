@@ -500,10 +500,10 @@ end
 ---@return function 效果的Cost函数
 function VgF.DisCardCost(num)
     return function (e,tp,eg,ep,ev,re,r,rp,chk)
-        return VgF.DisCardCostOp(num,e,tp,eg,ep,ev,re,r,rp,chk)
+        return VgF.DisCardCostOP(num,e,tp,eg,ep,ev,re,r,rp,chk)
     end
 end
-function VgF.DisCardCostOp(num,e,tp,eg,ep,ev,re,r,rp,chk)
+function VgF.DisCardCostOP(num,e,tp,eg,ep,ev,re,r,rp,chk)
     local c=e:GetHandler()
     local m=c:GetOriginalCode()
     local cm=_G["c"..m]
@@ -524,10 +524,10 @@ end
 ---@return function 效果的Cost函数
 function VgF.EnergyCost(num)
     return function (e,tp,eg,ep,ev,re,r,rp,chk)
-        return VgF.EnergyCostOp(num,e,tp,eg,ep,ev,re,r,rp,chk)
+        return VgF.EnergyCostOP(num,e,tp,eg,ep,ev,re,r,rp,chk)
     end
 end
-function VgF.EnergyCostOp(num,e,tp,eg,ep,ev,re,r,rp,chk)
+function VgF.EnergyCostOP(num,e,tp,eg,ep,ev,re,r,rp,chk)
     local c=e:GetHandler()
     local m=c:GetOriginalCode()
     local cm=_G["c"..m]
@@ -548,10 +548,10 @@ end
 ---@return function 效果的Cost函数
 function VgF.OverlayCost(num)
     return function (e,tp,eg,ep,ev,re,r,rp,chk)
-        return VgF.OverlayCostOp(num,e,tp,eg,ep,ev,re,r,rp,chk)
+        return VgF.OverlayCostOP(num,e,tp,eg,ep,ev,re,r,rp,chk)
     end
 end
-function VgF.OverlayCostOp(num,e,tp,eg,ep,ev,re,r,rp,chk)
+function VgF.OverlayCostOP(num,e,tp,eg,ep,ev,re,r,rp,chk)
     local c=e:GetHandler()
     local m=c:GetOriginalCode()
     local cm=_G["c"..m]
@@ -611,6 +611,7 @@ function VgF.DamageCostOP(num,e,tp,eg,ep,ev,re,r,rp,chk)
     if chk==0 then
         return Duel.IsExistingMatchingCard(Card.IsFaceup,tp,LOCATION_DAMAGE,0,num,nil)
     end
+    Debug.Message(chk)
     Duel.Hint(HINT_SELECTMSG,tp,HINTMSG_DAMAGE)
     local g=Duel.SelectMatchingCard(tp,Card.IsFaceup,tp,LOCATION_DAMAGE,0,num,num,nil)
     Duel.ChangePosition(g,POS_FACEDOWN_ATTACK)
