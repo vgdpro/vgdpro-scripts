@@ -18,13 +18,18 @@ function cm.con1(e)
 	local c=e:GetHandler()
 	local tp=e:GetHandlerPlayer()
     local a = Duel.IsExistingMatchingCard(vgf.RMonsterFilter,tp,LOCATION_MZONE,0,1,c)
-	return vgf.VMonsterCondition(e) and not a and Duel.GetTurnPlayer()==tp
+    if a == true then
+        a = flase
+    else
+        a = true
+    end
+	return vgf.VMonsterCondition(e) and a and Duel.GetTurnPlayer()==tp
 end
 
 function cm.con2(e)
 	local c = e:GetHandler()
     local g = c:GetMaterial()
-	return c:IsSummonType(SUMMON_TYPE_RIDE) and g:IsExists(Card.IsCode,1,nil,10501102)
+	return vgf.VMonsterCondition(e) and c:IsSummonType(SUMMON_TYPE_RIDE) and g:IsExists(Card.IsCode,1,nil,10501102)
 end
 
 
