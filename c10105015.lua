@@ -45,7 +45,7 @@ function cm.op1(e,tp,eg,ep,ev,re,r,rp)
 	local zone=vgf.GetAvailableLocation(tp)
 	local ct=bit.ReturnCount(zone)
 	if ct>e:GetLabel() then ct=e:GetLabel() end
-	Duel.Hint(HINT_MESSAGE,tp,HINTMSG_CALL)
+	Duel.Hint(HINT_SELECTMSG,tp,HINTMSG_CALL)
 	local g=Duel.SelectMatchingCard(tp,cm.filter1,tp,0,LOCATION_ORDER,ct,ct,nil,e,tp)
 	Duel.HintSelection(g)
 	for tc in vgf.Next(g) do

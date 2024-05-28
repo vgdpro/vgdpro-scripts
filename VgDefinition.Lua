@@ -866,7 +866,8 @@ DefenseEntirelyFlag     =VgID+3 --完全防御标识
 ConditionFlag           =VgID+4 --处于XX状态标识
 SupportFlag             =VgID+5 --支援状态标识
 AttackAtRearFlag        =VgID+6 --后列攻击
-ImprisonFlag            =VgID+6 --被收容
+ImprisonFlag            =VgID+7 --被收容
+DamageFlag              =VgID+8 --被收容
 --AffectedByEffect
 AFFECT_CODE_MIX         =VgID   --魔合成
 AFFECT_CODE_MIX_DIFFERENT_NAME  =VgID+1     --魔合成(卡名不同)

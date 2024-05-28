@@ -328,7 +328,9 @@ function VgD.MonsterBattle(c)
     local e17=e7:Clone()
     e17:SetRange(LOCATION_HAND)
     e17:SetCost(VgD.SendToGCost)
-    e17:SetCondition(VgD.SendToGCondition(nil))
+    e17:SetCondition(VgD.SendToGCondition(function (tc)
+        tc:IsType(TYPE_MONSTER)
+    end))
     c:RegisterEffect(e17)
     local e8=Effect.CreateEffect(c)
     e8:SetType(EFFECT_TYPE_FIELD+EFFECT_TYPE_CONTINUOUS)
@@ -725,19 +727,15 @@ function VgD.EventRideStart(e,tp,eg,ep,ev,re,r,rp)
 end
 function VgD.RuleWin(e,tp,eg,ep,ev,re,r,rp)
     if Duel.GetCurrentChain()>0 then return end
-    for WinReason=0x1, 0xff, 1 do
-        if WinReason==0x2 then
-            local g1=Duel.GetFieldGroupCount(tp,LOCATION_DECK,0)
-            local g2=Duel.GetFieldGroupCount(tp,0,LOCATION_DECK)
-            if g1==0 and g2==0 then
-                Duel.Win(PLAYER_NONE,WinReason)
-            elseif g1==0 then
-                Duel.Win(1-tp,WinReason)
-            elseif g2==0 then
-                Duel.Win(tp,WinReason)
-            end
-        end
-    end
+    local g1=Duel.GetFieldGroupCount(tp,LOCATION_DECK,0)
+    local g2=Duel.GetFieldGroupCount(tp,0,LOCATION_DECK)
+    if g1==0 and g2==0 then
+        Duel.Win(PLAYER_NONE,0x2)
+    elseif g1==0 then
+        Duel.Win(1-tp,0x2)
+    elseif g2==0 then
+        Duel.Win(tp,0x2)
+     end
 end
 function VgD.RuelDrawCondition(e,tp,eg,ep,ev,re,r,rp)
     return VgF.RuleTurnCondtion(e) and VgF.RuleCardCondtion(e)
@@ -973,8 +971,7 @@ end
 function VgD.QuickSpell(c,code,op,cost,con,tg)
     local e1=Effect.CreateEffect(c)
     e1:SetType(EFFECT_TYPE_ACTIVATE)
-    e1:SetCode(code)
-    e1:SetProperty(EFFECT_FLAG_DELAY+EFFECT_FLAG_DAMAGE_STEP)
+    e1:SetCode(EVENT_BATTLE_START)
     e1:SetCondition(VgD.LvCondition(con))
     if VgF.GetValueType(cost)=="function" then e1:SetCost(cost) end
     if VgF.GetValueType(tg)=="function" then e1:SetTarget(tg) end
@@ -984,13 +981,15 @@ end
 function VgD.LvCondition(con)
     return function (e,tp,eg,ep,ev,re,r,rp)
         if VgF.GetValueType(con)=="function" and not con(e,tp,eg,ep,ev,re,r,rp) then return false end
-        return VgF.LvCondition(e)
+        local bc=Duel.GetAttackTarget()
+        return bc and bc:IsControler(tp) and VgF.LvCondition(e)
     end
 end
 function VgD.ContinuousSpell(c,cost,con,tg)
     local e1=Effect.CreateEffect(c)
     e1:SetType(EFFECT_TYPE_ACTIVATE)
     e1:SetCode(EVENT_FREE_CHAIN)
+    e1:SetCountLimit(1,VgID+EFFECT_COUNT_CODE_OATH)
     e1:SetCondition(VgD.LvCondition(con))
     if VgF.GetValueType(cost)=="function" then e1:SetCost(cost) end
     if VgF.GetValueType(tg)=="function" then e1:SetTarget(tg) end

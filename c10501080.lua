@@ -7,7 +7,7 @@ function cm.initial_effect(c)
     VgD.EffectTypeContinuousChangeAttack(c,EFFECT_TYPE_SINGLE,5000,cm.con1)
 end
 
-function cm.con1()
+function cm.con1(e)
 	local c=e:GetHandler()
 	local tp=e:GetHandlerPlayer()
     local a = Duel.IsExistingMatchingCard(nil,tp,LOCATION_ORDER,0,2,c)
