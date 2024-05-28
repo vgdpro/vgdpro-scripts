@@ -22,8 +22,8 @@ function cm.op(e,tp,eg,ep,ev,re,r,rp)
 end
 function cm.cost(e,tp,eg,ep,ev,re,r,rp,chk)
 	if chk==0 then
-		return vgf.DamageCostOP(1,e,tp,eg,ep,ev,re,r,rp,chk) and vgf.DisCardCostOp(1,e,tp,eg,ep,ev,re,r,rp,chk)
+		return vgf.DamageCostOP(1,e,tp,eg,ep,ev,re,r,rp,chk) and vgf.DisCardCostOP(1,e,tp,eg,ep,ev,re,r,rp,chk)
 	end
 	vgf.DamageCostOP(1,e,tp,eg,ep,ev,re,r,rp,chk)
-	vgf.DisCardCostOp(1,e,tp,eg,ep,ev,re,r,rp,chk)
+	vgf.DisCardCostOP(1,e,tp,eg,ep,ev,re,r,rp,chk)
 end

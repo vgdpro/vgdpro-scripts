@@ -7,26 +7,21 @@ function cm.initial_effect(c)
 	vgd.EffectTypeTrigger(c,m,LOCATION_MZONE,EFFECT_TYPE_FIELD,EVENT_ATTACK_ANNOUNCE,cm.operation2,cm.cost,cm.condition2)
 end
 function cm.condition2(e,tp,eg,ep,ev,re,r,rp)
-	local c=e:GetHandler()
-	local g=Duel.GetAttacker()
-	return vgf.RMonsterCondition(e) and Duel.GetMatchingGroupCount(vgf.RMonsterFilter,tp,0,LOCATION_MZONE,nil)<=2 and VgF.VMonsterFilter(g)
-
+	local c=Duel.GetAttacker()
+	return vgf.RMonsterCondition(e) and Duel.GetMatchingGroupCount(vgf.RMonsterFilter,tp,0,LOCATION_MZONE,nil)<=2 and VgF.VMonsterFilter(c)
 end
 function cm.cost(e,tp,eg,ep,ev,re,r,rp,chk)
     local c=e:GetHandler()
-    if chk==0 then return true end
+    if chk==0 then return c:IsCanOverlay() end
     local rc=Duel.GetMatchingGroup(VgF.VMonsterFilter,tp,LOCATION_MZONE,0,nil):GetFirst()
     Duel.Overlay(rc,c)
 end
-
 function cm.operation2(e,tp,eg,ep,ev,re,r,rp)
 	local c=e:GetHandler()
 	Duel.Hint(HINT_SELECTMSG,tp,HINTMSG_CRITICAL_STRIKE)
-	local g=Duel.SelectMatchingCard(tp,cm.filter,tp,LOCATION_MZONE,0,1,1,nil)
+	local g=Duel.SelectMatchingCard(tp,vgf.VMonsterFilter,tp,LOCATION_MZONE,0,1,1,nil)
 	if g:GetCount()>0 then
-		VgF.StarUp(c,g,1,EVENT_BATTLED)
+		local e1=VgF.StarUp(c,g,1,nil)
+		vgf.EffectReset(c,e1,EVENT_BATTLED)
     end
-end
-function cm.filter(c)
-    return vgf.VMonsterFilter(c)
 end

@@ -319,13 +319,17 @@ function VgD.MonsterBattle(c)
     local e7=Effect.CreateEffect(c)
     e7:SetType(EFFECT_TYPE_FIELD+EFFECT_TYPE_TRIGGER_O)
     e7:SetCode(EVENT_BATTLE_START)
-    e7:SetRange(LOCATION_HAND+LOCATION_MZONE)
+    e7:SetRange(LOCATION_MZONE)
     e7:SetProperty(EFFECT_FLAG_CANNOT_DISABLE)
-    e7:SetCountLimit(1)
-    e7:SetCost(VgD.SendToGCost)
-    e7:SetCondition(VgD.SendToGCondition)
+    e7:SetCountLimit(1,EFFECT_COUNT_CODE_CHAIN)
+    e7:SetCondition(VgD.SendToGCondition(VgF.IsAbleToGZone))
     e7:SetOperation(VgD.SendToGOperation)
     c:RegisterEffect(e7)
+    local e17=e7:Clone()
+    e17:SetRange(LOCATION_HAND)
+    e17:SetCost(VgD.SendToGCost)
+    e17:SetCondition(VgD.SendToGCondition(nil))
+    c:RegisterEffect(e17)
     local e8=Effect.CreateEffect(c)
     e8:SetType(EFFECT_TYPE_FIELD+EFFECT_TYPE_CONTINUOUS)
     e8:SetCode(EVENT_DAMAGE_STEP_END)
@@ -457,22 +461,20 @@ function VgD.SupportValue(e)
 end
 function VgD.SendToGCost(e,tp,eg,ep,ev,re,r,rp,chk)
     local c=e:GetHandler()
-    if c:IsLocation(LOCATION_MZONE) then
-        if chk==0 then return true end
-    else
-        if chk==0 then return not Duel.IsPlayerAffectedByEffect(tp,OAFFECT_CODE_SENDTOG) or Duel.IsExistingMatchingCard(nil,tp,LOCATION_GZONE,0,1,nil) or Duel.IsExistingMatchingCard(VgF.IsAbleToGZone,tp,LOCATION_HAND,0,1,c) end
-        if Duel.IsPlayerAffectedByEffect(tp,OAFFECT_CODE_SENDTOG) and not Duel.IsExistingMatchingCard(nil,tp,LOCATION_GZONE,0,1,nil) then
-            local tc=Duel.SelectMatchingCard(tp,VgF.IsAbleToGZone,tp,LOCATION_HAND,0,1,1,c)
-            tc=VgF.ReturnCard(tc)
-            Duel.ConfirmCards(1-tp,tc)
-            e:SetLabelObject(tc)
-        end
+    if chk==0 then return not Duel.IsPlayerAffectedByEffect(tp,OAFFECT_CODE_SENDTOG) or Duel.IsExistingMatchingCard(nil,tp,LOCATION_GZONE,0,1,nil) or Duel.IsExistingMatchingCard(VgF.IsAbleToGZone,tp,LOCATION_HAND,0,1,c) end
+    if Duel.IsPlayerAffectedByEffect(tp,OAFFECT_CODE_SENDTOG) and not Duel.IsExistingMatchingCard(nil,tp,LOCATION_GZONE,0,1,nil) then
+        local tc=Duel.SelectMatchingCard(tp,VgF.IsAbleToGZone,tp,LOCATION_HAND,0,1,1,c)
+        tc=VgF.ReturnCard(tc)
+        Duel.ConfirmCards(1-tp,tc)
+        e:SetLabelObject(tc)
     end
 end
-function VgD.SendToGCondition(e,tp,eg,ep,ev,re,r,rp)
-    local c=e:GetHandler()
-    local bc=Duel.GetAttackTarget()
-    return bc and bc:IsControler(tp) and bc~=c and VgF.IsAbleToGZone(c)
+function VgD.SendToGCondition(f)
+    return function(e,tp,eg,ep,ev,re,r,rp)
+        local c=e:GetHandler()
+        local bc=Duel.GetAttackTarget()
+        return bc and bc:IsControler(tp) and bc~=c and (vgf.GetValueType(f)~="function" or f(c))
+    end
 end
 function VgD.SendToGOperation(e,tp,eg,ep,ev,re,r,rp)
     local c=e:GetHandler()
@@ -766,7 +768,7 @@ end
 ---@param op function|nil 作为指令卡的效果
 ---@param con function|nil 作为指令卡的发动条件
 ---@param cost any|nil 作为指令卡的发动费用
-function VgD.SpellActivate(c,m,op,con,cost)
+function VgD.SpellActivate(c,m,op,cost,con)
     local e1=Effect.CreateEffect(c)
     if m then e1:SetDescription(VgF.Stringid(m, 0)) end
     e1:SetType(EFFECT_TYPE_ACTIVATE)

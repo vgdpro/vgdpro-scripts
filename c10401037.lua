@@ -7,7 +7,7 @@ function cm.initial_effect(c)
 end
 function cm.operation(e,tp,eg,ep,ev,re,r,rp)
 	local c=e:GetHandler()
-	vgf.OverlayFillOp(1,e,tp,eg,ep,ev,re,r,rp,1)
+	vgf.OverlayFillOP(1,e,tp,eg,ep,ev,re,r,rp,1)
 	Duel.BreakEffect()
 	Duel.Hint(HINT_SELECTMSG,tp,HINTMSG_ATKUP)
 	local e1=Duel.GetMatchingGroupCount(nil,tp,LOCATION_OVERLAY,0,nil)/5
@@ -18,7 +18,4 @@ function cm.operation(e,tp,eg,ep,ev,re,r,rp)
 	if Duel.GetMatchingGroupCount(nil,tp,LOCATION_OVERLAY,0,nil)>=10 then
 		Duel.Draw(tp,1,REASON_EFFECT)
 	end
-end
-function cm.filter(c)
-	return c:IsCode(10101006)
 end

@@ -491,7 +491,6 @@ end
 ---@param c Card 要判断的卡
 ---@return boolean 指示c能否去到G区域。
 function VgF.IsAbleToGZone(c)
-    if c:IsLocation(LOCATION_HAND) then return true end
     local tp=c:GetControler()
     return c:IsAttribute(SKILL_BLOCK) and VgF.IsSequence(c,0,4) and not Duel.IsPlayerAffectedByEffect(tp,AFFECT_CODE_SENDTOG_MZONE) and c:IsLocation(LOCATION_MZONE) and c:IsFaceup()
 end
@@ -507,11 +506,11 @@ function VgF.DisCardCostOP(num,e,tp,eg,ep,ev,re,r,rp,chk)
     local c=e:GetHandler()
     local m=c:GetOriginalCode()
     local cm=_G["c"..m]
-    if e:IsHasType(EFFECT_TYPE_ACTIVATE) then
-        cm.cos_g=Duel.GetMatchingGroup(Card.IsDiscardable,tp,LOCATION_HAND,0,nil)
-        cm.cos_val={nil,num,num}
-    end
     if chk==0 then
+        if e:IsHasType(EFFECT_TYPE_ACTIVATE) then
+            cm.cos_g=Duel.GetMatchingGroup(Card.IsDiscardable,tp,LOCATION_HAND,0,nil)
+            cm.cos_val={nil,num,num}
+        end
         return Duel.IsExistingMatchingCard(Card.IsDiscardable,tp,LOCATION_HAND,0,num,nil)
     end
     Duel.Hint(HINT_SELECTMSG,tp,HINTMSG_DISCARD)
@@ -531,11 +530,11 @@ function VgF.EnergyCostOP(num,e,tp,eg,ep,ev,re,r,rp,chk)
     local c=e:GetHandler()
     local m=c:GetOriginalCode()
     local cm=_G["c"..m]
-    if e:IsHasType(EFFECT_TYPE_ACTIVATE) then
-        cm.cos_g=Duel.GetMatchingGroup(Card.IsCode,tp,LOCATION_EMBLEM,0,nil,10800730)
-        cm.cos_val={nil,num,num}
-    end
     if chk==0 then
+        if e:IsHasType(EFFECT_TYPE_ACTIVATE) then
+            cm.cos_g=Duel.GetMatchingGroup(Card.IsCode,tp,LOCATION_EMBLEM,0,nil,10800730)
+            cm.cos_val={nil,num,num}
+        end
         return Duel.IsExistingMatchingCard(Card.IsCode,tp,LOCATION_EMBLEM,0,num,nil,10800730)
     end
     local sg=Duel.GetMatchingGroup(Card.IsCode,tp,LOCATION_EMBLEM,0,nil,10800730)
@@ -555,11 +554,11 @@ function VgF.OverlayCostOP(num,e,tp,eg,ep,ev,re,r,rp,chk)
     local c=e:GetHandler()
     local m=c:GetOriginalCode()
     local cm=_G["c"..m]
-    if e:IsHasType(EFFECT_TYPE_ACTIVATE) then
-        cm.cos_g=Duel.GetMatchingGroup(VgF.VMonsterFilter,tp,LOCATION_MZONE,0,nil,nil):GetFirst():GetOverlayGroup():FilterCount(Card.IsAbleToGraveAsCost,nil)
-        cm.cos_val={nil,num,num}
-    end
     if chk==0 then
+        if e:IsHasType(EFFECT_TYPE_ACTIVATE) then
+            cm.cos_g=Duel.GetMatchingGroup(VgF.VMonsterFilter,tp,LOCATION_MZONE,0,nil,nil):GetFirst():GetOverlayGroup():FilterCount(Card.IsAbleToGraveAsCost,nil)
+            cm.cos_val={nil,num,num}
+        end
         return Duel.GetMatchingGroup(VgF.VMonsterFilter,tp,LOCATION_MZONE,0,nil,nil):GetFirst():GetOverlayGroup():FilterCount(Card.IsAbleToGraveAsCost,nil)>=num
     end
     Duel.Hint(HINT_SELECTMSG,tp,HINTMSG_REMOVEXYZ)
@@ -579,11 +578,11 @@ function VgF.OverlayFillOP(num,e,tp,eg,ep,ev,re,r,rp,chk)
     local c=e:GetHandler()
     local m=c:GetOriginalCode()
     local cm=_G["c"..m]
-    if e:IsHasType(EFFECT_TYPE_ACTIVATE) then
-        cm.cos_g=Duel.GetFieldGroupCount(tp,LOCATION_DECK)
-        cm.cos_val={nil,num,num}
-    end
     if chk==0 then
+        if e:IsHasType(EFFECT_TYPE_ACTIVATE) then
+            cm.cos_g=Duel.GetFieldGroup(tp,LOCATION_DECK,0)
+            cm.cos_val={nil,num,num}
+        end
         return Duel.GetFieldGroupCount(tp,LOCATION_DECK,0)>=num
     end
     local rc=Duel.GetMatchingGroup(VgF.VMonsterFilter,tp,LOCATION_MZONE,0,nil):GetFirst()
@@ -604,11 +603,11 @@ function VgF.DamageCostOP(num,e,tp,eg,ep,ev,re,r,rp,chk)
     local c=e:GetHandler()
     local m=c:GetOriginalCode()
     local cm=_G["c"..m]
-    if e:IsHasType(EFFECT_TYPE_ACTIVATE) then
-        cm.cos_g=Duel.GetMatchingGroup(Card.IsFaceup,tp,LOCATION_DAMAGE,0,nil)
-        cm.cos_val={nil,num,num}
-    end
     if chk==0 then
+        if e:IsHasType(EFFECT_TYPE_ACTIVATE) then
+            cm.cos_g=Duel.GetMatchingGroup(Card.IsFaceup,tp,LOCATION_DAMAGE,0,nil)
+            cm.cos_val={nil,num,num}
+        end
         return Duel.IsExistingMatchingCard(Card.IsFaceup,tp,LOCATION_DAMAGE,0,num,nil)
     end
     Debug.Message(chk)

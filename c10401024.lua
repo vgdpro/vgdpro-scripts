@@ -22,7 +22,7 @@ function cm.fliter2(c)
 end
 --计数爆发1，灵魂爆发1
 function cm.cost(e,tp,eg,ep,ev,re,r,rp,chk)
-	if chk==0 then return vgf.DamageCostOp(1,e,tp,eg,ep,ev,re,r,rp,0) and vgf.OverlayCostOp(1,e,tp,eg,ep,ev,re,r,rp,0) end
-vgf.DamageCostOp(1,e,tp,eg,ep,ev,re,r,rp,1)
-vgf.OverlayCostOp(1,e,tp,eg,ep,ev,re,r,rp,1)
+	if chk==0 then return vgf.DamageCostOP(1,e,tp,eg,ep,ev,re,r,rp,0) and vgf.OverlayCostOP(1,e,tp,eg,ep,ev,re,r,rp,0) end
+vgf.DamageCostOP(1,e,tp,eg,ep,ev,re,r,rp,1)
+vgf.OverlayCostOP(1,e,tp,eg,ep,ev,re,r,rp,1)
 end

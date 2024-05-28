@@ -11,18 +11,16 @@ end
 function cm.operation(e,tp,eg,ep,ev,re,r,rp)
 	Duel.Draw(tp,1,REASON_EFFECT)
 	Duel.Hint(HINT_SELECTMSG,tp,HINTMSG_XMATERIAL)
-	local c=e:GetHandler()
-	local g=Duel.SelectMatchingCard(tp,nil,tp,LOCATION_GRAVE,0,1,1,nil)
+	local g=Duel.SelectMatchingCard(tp,nil,tp,LOCATION_GRAVE,0,0,1,nil)
 	if g:GetCount()>0 then
 		Duel.Overlay(VgF.GetVMonster(tp),g)
 	end
 end
 function cm.operation1(e,tp,eg,ep,ev,re,r,rp)
 	local c=e:GetHandler()
-	vgf.OverlayFillOp(1,e,tp,eg,ep,ev,re,r,rp,1)
+	vgf.OverlayFillOP(1,e,tp,eg,ep,ev,re,r,rp,1)
 	local e1=vgf.AtkUp(c,c,5000)
 	vgf.EffectReset(c,e1,EVENT_BATTLED)
-
 end
 function cm.condition (e,tp,eg,ep,ev,re,r,rp)
 	return Duel.GetMatchingGroupCount(vgf.RMonsterFilter,tp,0,LOCATION_MZONE,nil)<=2

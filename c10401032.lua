@@ -13,11 +13,10 @@ function cm.condition(e,tp,eg,ep,ev,re,r,rp)
 end
 function cm.condition1(e,tp,eg,ep,ev,re,r,rp)
 	local c=e:GetHandler()
-	return vgf.RMonsterCondition(e) and Duel.GetMatchingGroupCount(nil,tp,LOCATION_OVERLAY,0,nil)>=10
+	return vgf.RMonsterCondition(e) and VgF.GetVMonster(tp):GetOverlayCount()>=10
 end
-function cm.operation()
-
+function cm.operation(e,tp,eg,ep,ev,re,r,rp)
+	local c=e:GetHandler()
 	local g2=Duel.GetMatchingGroup(VgF.IsSequence,tp,LOCATION_MZONE,0,nil,0,4,5)
     VgF.AtkUp(c,g2,10000,nil)
-	
 end

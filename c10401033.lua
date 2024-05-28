@@ -11,7 +11,7 @@ end
 function cm.operation(e,tp,eg,ep,ev,re,r,rp)
 	local c=e:GetHandler()
 	Duel.Draw(tp,1,REASON_EFFECT)
-	VgF.OverlayFillOp(1,e,tp,eg,ep,ev,re,r,rp,1)
+	VgF.OverlayFillOP(1,e,tp,eg,ep,ev,re,r,rp,1)
 end
 function cm.cost(e,tp,eg,ep,ev,re,r,rp,chk)
 	if chk==0 then return Duel.GetMatchingGroupCount(nil,tp,0,LOCATION_HAND,nil)>=1 end
@@ -25,5 +25,5 @@ function cm.condition(e,tp,eg,ep,ev,re,r,rp)
 	return not(c:IsSummonType(SUMMON_TYPE_RIDE) or c:IsSummonType(SUMMON_TYPE_SELFRIDE))
 end
 function cm.operation1(e,tp,eg,ep,ev,re,r,rp)
-	vgf.OverlayFillOp(2,e,tp,eg,ep,ev,re,r,rp,1)
+	vgf.OverlayFillOP(2,e,tp,eg,ep,ev,re,r,rp,1)
 end

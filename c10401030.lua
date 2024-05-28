@@ -7,14 +7,14 @@ function cm.initial_effect(c)
 end
 --计数爆发1，灵魂爆发1
 function cm.cost(e,tp,eg,ep,ev,re,r,rp,chk)
-	if chk==0 then return vgf.DamageCostOp(1,e,tp,eg,ep,ev,re,r,rp,0) and vgf.OverlayCostOp(1,e,tp,eg,ep,ev,re,r,rp,0) end
-vgf.DamageCostOp(1,e,tp,eg,ep,ev,re,r,rp,1)
-vgf.OverlayCostOp(1,e,tp,eg,ep,ev,re,r,rp,1)
+	if chk==0 then return vgf.DamageCostOP(1,e,tp,eg,ep,ev,re,r,rp,0) and vgf.OverlayCostOP(1,e,tp,eg,ep,ev,re,r,rp,0) end
+vgf.DamageCostOP(1,e,tp,eg,ep,ev,re,r,rp,1)
+vgf.OverlayCostOP(1,e,tp,eg,ep,ev,re,r,rp,1)
 end
 --选择对手的1张等级2以上的后防者
 function cm.condition(e,tp,eg,ep,ev,re,r,rp)
 	local c=e:GetHandler()
-	return not(c:IsSummonType(SUMMON_TYPE_RIDE) or c:IsSummonType(SUMMON_TYPE_SELFRIDE)) and c:IsPreviousLocation(LOCATION_HAND)
+	return not (c:IsSummonType(SUMMON_TYPE_RIDE) or c:IsSummonType(SUMMON_TYPE_SELFRIDE))
 end
 function cm.operation(e,tp,eg,ep,ev,re,r,rp)
 	local c=e:GetHandler()

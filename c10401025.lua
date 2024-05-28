@@ -14,12 +14,12 @@ function cm.operation(e,tp,eg,ep,ev,re,r,rp)
 	VgF.StarUp(c,g1,1,nil)
 	Duel.Hint(HINT_SELECTMSG,tp,HINTMSG_ATKUP)
 	local g2=Duel.GetMatchingGroup(VgF.IsSequence,tp,LOCATION_MZONE,0,nil,0,4,5)
-            VgF.AtkUp(c,g2,10000,nil)
+    VgF.AtkUp(c,g2,10000,nil)
 	if Duel.GetMatchingGroupCount(nil,tp,LOCATION_DAMAGE,0,nil)>=Duel.GetMatchingGroupCount(nil,tp,0,LOCATION_DAMAGE,nil) then
     	Duel.Hint(HINT_SELECTMSG,tp,HINTMSG_TODROP)
         local tc=Duel.SelectMatchingCard(tp,nil,tp,LOCATION_DAMAGE,0,1,1,nil):GetFirst()
         if tc then
             Duel.SendtoGrave(tc,REASON_TRIGGER)
         end
-    	end
+    end
 end

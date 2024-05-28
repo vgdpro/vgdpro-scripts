@@ -8,15 +8,14 @@ end
 --这个单位从手牌登场到R时
 function cm.condition(e,tp,eg,ep,ev,re,r,rp)
 	local c=e:GetHandler()
-	return not(c:IsSummonType(SUMMON_TYPE_RIDE) or c:IsSummonType(SUMMON_TYPE_SELFRIDE)) and c:IsPreviousLocation(LOCATION_HAND)
+	return not (c:IsSummonType(SUMMON_TYPE_RIDE) or c:IsSummonType(SUMMON_TYPE_SELFRIDE))
 end
 function cm.operation(e,tp,eg,ep,ev,re,r,rp)
 	local c=e:GetHandler()
-	vgf.OverlayFillOp(1,e,tp,eg,ep,ev,re,r,rp)
+	vgf.OverlayFillOP(1,e,tp,eg,ep,ev,re,r,rp)
 	Duel.Hint(HINT_SELECTMSG,tp,HINTMSG_LEAVEONFIELD)
-			local g=Duel.SelectTarget(tp,vgf.RMonsterFilter,tp,0,LOCATION_MZONE,1,1,nil)
-			if g then
-				Duel.HintSelection(g)
-				Duel.SendtoGrave(g,REASON_EFFECT)
-			end
+	local g=Duel.SelectTarget(tp,vgf.RMonsterFilter,tp,0,LOCATION_MZONE,1,1,nil)
+	if g:GetCount()>0 then
+		Duel.SendtoGrave(g,REASON_EFFECT)
+	end
 end
