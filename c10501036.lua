@@ -29,7 +29,7 @@ end
 function cm.con2(e)
 	local c = e:GetHandler()
     local g = c:GetMaterial()
-	return c:IsSummonType(SUMMON_TYPE_RIDE) and g:IsExists(Card.IsCode,1,nil,10501090)
+	return VgF.VMonsterCondition(e) and c:IsSummonType(SUMMON_TYPE_RIDE) and g:IsExists(Card.IsCode,1,nil,10501090)
 end
 
 
