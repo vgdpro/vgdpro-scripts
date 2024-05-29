@@ -675,6 +675,7 @@ EVENT_DAMAGE_TRIGGER    =VgID+2 --受伤判定完毕时点
 EVENT_RIDE_START        =VgID+3 --骑升时点
 EVENT_SUPPORT           =VgID+4 --支援时点
 EVENT_TRIGGERCOUNTUP    =VgID+5 --驱动追加
+EVENT_SING              =VgID+6 --演唱时
 
 --攻击时(EVENT_ATTACK_ANNOUNCE)
 --支援时(EVENT_CUSTOM+EVENT_SUPPORT)
@@ -867,12 +868,12 @@ ConditionFlag           =VgID+4 --处于XX状态标识
 SupportFlag             =VgID+5 --支援状态标识
 AttackAtRearFlag        =VgID+6 --后列攻击
 ImprisonFlag            =VgID+7 --被收容
-DamageFlag              =VgID+8 --被收容
 --AffectedByEffect
 AFFECT_CODE_MIX         =VgID   --魔合成
 AFFECT_CODE_MIX_DIFFERENT_NAME  =VgID+1     --魔合成(卡名不同)
 AFFECT_CODE_SENDTOG     =VgID+2 --需要两张卡才能防御
 AFFECT_CODE_SENDTOG_MZONE       =VgID+3     --不能截击
+AFFECT_CODE_SENDTOG_HAND        =VgID+4     --不能交盾
 
 
 POS_FACEUP_DEFENCE=POS_FACEUP_DEFENSE

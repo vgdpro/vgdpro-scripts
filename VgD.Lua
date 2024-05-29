@@ -322,15 +322,13 @@ function VgD.MonsterBattle(c)
     e7:SetRange(LOCATION_MZONE)
     e7:SetProperty(EFFECT_FLAG_CANNOT_DISABLE)
     e7:SetCountLimit(1,EFFECT_COUNT_CODE_CHAIN)
-    e7:SetCondition(VgD.SendToGCondition(VgF.IsAbleToGZone))
+    e7:SetCondition(VgD.SendToGCondition(LOCATION_MZONE))
     e7:SetOperation(VgD.SendToGOperation)
     c:RegisterEffect(e7)
     local e17=e7:Clone()
     e17:SetRange(LOCATION_HAND)
     e17:SetCost(VgD.SendToGCost)
-    e17:SetCondition(VgD.SendToGCondition(function (tc)
-        tc:IsType(TYPE_MONSTER)
-    end))
+    e17:SetCondition(VgD.SendToGCondition(LOCATION_HAND))
     c:RegisterEffect(e17)
     local e8=Effect.CreateEffect(c)
     e8:SetType(EFFECT_TYPE_FIELD+EFFECT_TYPE_CONTINUOUS)
@@ -463,19 +461,19 @@ function VgD.SupportValue(e)
 end
 function VgD.SendToGCost(e,tp,eg,ep,ev,re,r,rp,chk)
     local c=e:GetHandler()
-    if chk==0 then return not Duel.IsPlayerAffectedByEffect(tp,OAFFECT_CODE_SENDTOG) or Duel.IsExistingMatchingCard(nil,tp,LOCATION_GZONE,0,1,nil) or Duel.IsExistingMatchingCard(VgF.IsAbleToGZone,tp,LOCATION_HAND,0,1,c) end
+    if chk==0 then return not Duel.IsPlayerAffectedByEffect(tp,OAFFECT_CODE_SENDTOG) or Duel.IsExistingMatchingCard(nil,tp,LOCATION_GZONE,0,1,nil) or Duel.IsExistingMatchingCard(VgF.IsAbleToGZone,tp,LOCATION_HAND,0,1,c,LOCATION_HAND) end
     if Duel.IsPlayerAffectedByEffect(tp,OAFFECT_CODE_SENDTOG) and not Duel.IsExistingMatchingCard(nil,tp,LOCATION_GZONE,0,1,nil) then
-        local tc=Duel.SelectMatchingCard(tp,VgF.IsAbleToGZone,tp,LOCATION_HAND,0,1,1,c)
+        local tc=Duel.SelectMatchingCard(tp,VgF.IsAbleToGZone,tp,LOCATION_HAND,0,1,1,c,LOCATION_HAND)
         tc=VgF.ReturnCard(tc)
         Duel.ConfirmCards(1-tp,tc)
         e:SetLabelObject(tc)
     end
 end
-function VgD.SendToGCondition(f)
+function VgD.SendToGCondition(loc)
     return function(e,tp,eg,ep,ev,re,r,rp)
         local c=e:GetHandler()
         local bc=Duel.GetAttackTarget()
-        return bc and bc:IsControler(tp) and bc~=c and (vgf.GetValueType(f)~="function" or f(c))
+        return bc and bc:IsControler(tp) and bc~=c and vgf.IsAbleToGZone(c,loc)
     end
 end
 function VgD.SendToGOperation(e,tp,eg,ep,ev,re,r,rp)

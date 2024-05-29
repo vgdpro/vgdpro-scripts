@@ -487,12 +487,31 @@ function VgF.StarUp(c,g,val,reset,resetcount)
         return e1,e2
     end
 end
+---用于效果的Operation。它返回一个执行“[计数回充num]”的函数。
+---@param num integer 计数回充的数量
+---@return function 效果的Operation函数
+function VgF.DamageFill(num)
+    return function (e,tp,eg,ep,ev,re,r,rp)
+        return VgF.DamageFillOP(num,e,tp,eg,ep,ev,re,r,rp)
+    end
+end
+function VgF.DamageFillOP(num,e,tp,eg,ep,ev,re,r,rp)
+    local c=e:GetHandler()
+    Duel.Hint(HINT_SELECTMSG,tp,HINTMSG_POSCHANGE)
+    local g=Duel.SelectMatchingCard(tp,Card.IsFaceup,tp,LOCATION_DAMAGE,0,num,num,nil)
+    Duel.ChangePosition(g,POS_FACEUP_ATTACK)
+    return Duel.GetOperatedGroup():GetCount()
+end
 ---判断c是否可以以规则的手段到G区域。
 ---@param c Card 要判断的卡
 ---@return boolean 指示c能否去到G区域。
-function VgF.IsAbleToGZone(c)
+function VgF.IsAbleToGZone(c,loc)
     local tp=c:GetControler()
-    return c:IsAttribute(SKILL_BLOCK) and VgF.IsSequence(c,0,4) and not Duel.IsPlayerAffectedByEffect(tp,AFFECT_CODE_SENDTOG_MZONE) and c:IsLocation(LOCATION_MZONE) and c:IsFaceup()
+    if loc==LOCATION_HAND then
+        return c:IsType(TYPE_MONSTER) and not Duel.IsPlayerAffectedByEffect(tp,AFFECT_CODE_SENDTOG_HAND)
+    elseif loc==LOCATION_MZONE then
+        return c:IsAttribute(SKILL_BLOCK) and VgF.IsSequence(c,0,4) and not Duel.IsPlayerAffectedByEffect(tp,AFFECT_CODE_SENDTOG_MZONE) and c:IsLocation(LOCATION_MZONE) and c:IsFaceup()
+    end
 end
 ---用于效果的Cost。它返回一个执行“【费用】[将手牌中的num张卡舍弃]”的函数。
 ---@param num integer 要舍弃的卡的数量
@@ -610,7 +629,6 @@ function VgF.DamageCostOP(num,e,tp,eg,ep,ev,re,r,rp,chk)
         end
         return Duel.IsExistingMatchingCard(Card.IsFaceup,tp,LOCATION_DAMAGE,0,num,nil)
     end
-    Debug.Message(chk)
     Duel.Hint(HINT_SELECTMSG,tp,HINTMSG_DAMAGE)
     local g=Duel.SelectMatchingCard(tp,Card.IsFaceup,tp,LOCATION_DAMAGE,0,num,num,nil)
     Duel.ChangePosition(g,POS_FACEDOWN_ATTACK)
