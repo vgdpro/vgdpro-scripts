@@ -508,9 +508,9 @@ end
 function VgF.IsAbleToGZone(c,loc)
     local tp=c:GetControler()
     if loc==LOCATION_HAND then
-        return c:IsType(TYPE_MONSTER) and not Duel.IsPlayerAffectedByEffect(tp,AFFECT_CODE_SENDTOG_HAND)
+        return c:IsType(TYPE_MONSTER)
     elseif loc==LOCATION_MZONE then
-        return c:IsAttribute(SKILL_BLOCK) and VgF.IsSequence(c,0,4) and not Duel.IsPlayerAffectedByEffect(tp,AFFECT_CODE_SENDTOG_MZONE) and c:IsLocation(LOCATION_MZONE) and c:IsFaceup()
+        return c:IsAttribute(SKILL_BLOCK) and VgF.IsSequence(c,0,4) and c:IsLocation(LOCATION_MZONE) and c:IsFaceup()
     end
 end
 ---用于效果的Cost。它返回一个执行“【费用】[将手牌中的num张卡舍弃]”的函数。

@@ -317,6 +317,7 @@ function VgD.MonsterBattle(c)
     c:RegisterEffect(e9)
     --防御
     local e7=Effect.CreateEffect(c)
+    e7:SetCategory(CATEGORY_DEFENDER)
     e7:SetType(EFFECT_TYPE_FIELD+EFFECT_TYPE_TRIGGER_O)
     e7:SetCode(EVENT_BATTLE_START)
     e7:SetRange(LOCATION_MZONE)

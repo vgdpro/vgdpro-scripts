@@ -94,6 +94,8 @@ TRRIGGER_DRAW			=0x4		--抽牌触发
 TRRIGGER_HEAL			=0x8		--治愈触发
 TRRIGGER_ADVANCE		=0x10		--前列触发
 TRRIGGER_SUPER		    =0x20		--超限触发
+--Category	效果分类
+CATEGORY_DEFENDER       =0x1		--守护者
 --Reason 卡片到当前位置的原因
 REASON_DESTROY		=0x1		--破坏
 REASON_RELEASE		=0x2		--解放
@@ -872,8 +874,6 @@ ImprisonFlag            =VgID+7 --被收容
 AFFECT_CODE_MIX         =VgID   --魔合成
 AFFECT_CODE_MIX_DIFFERENT_NAME  =VgID+1     --魔合成(卡名不同)
 AFFECT_CODE_SENDTOG     =VgID+2 --需要两张卡才能防御
-AFFECT_CODE_SENDTOG_MZONE       =VgID+3     --不能截击
-AFFECT_CODE_SENDTOG_HAND        =VgID+4     --不能交盾
 
 
 POS_FACEUP_DEFENCE=POS_FACEUP_DEFENSE
