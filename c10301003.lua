@@ -15,8 +15,7 @@ end
 function cm.operation(e,tp,eg,ep,ev,re,r,rp)
 	local c=e:GetHandler()
 	if vgf.GetAvailableLocation(tp)<=0 then return end
-	Duel.Hint(HINT_SELECTMSG,tp,HINTMSG_Call)
-	local g=Duel.SelectMatchingCard(tp,cm.filter,tp,LOCATION_GRAVE,0,1,1,nil,e,tp)
+	local g=vgf.SelectMatchingCard(HINTMSG_Call,e,tp,cm.filter,tp,LOCATION_GRAVE,0,1,1,nil,e,tp)
 	Duel.HintSelection(g)
 	vgf.Call(g,0,tp,nil,POS_FACEUP_DEFENSE)
 end

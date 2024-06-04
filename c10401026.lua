@@ -18,8 +18,7 @@ function cm.cost(e,tp,eg,ep,ev,re,r,rp,chk)
 end
 function cm.operation2(e,tp,eg,ep,ev,re,r,rp)
 	local c=e:GetHandler()
-	Duel.Hint(HINT_SELECTMSG,tp,HINTMSG_CRITICAL_STRIKE)
-	local g=Duel.SelectMatchingCard(tp,vgf.VMonsterFilter,tp,LOCATION_MZONE,0,1,1,nil)
+	local g=vgf.SelectMatchingCard(HINTMSG_CRITICAL_STRIKE,e,tp,vgf.VMonsterFilter,tp,LOCATION_MZONE,0,1,1,nil)
 	if g:GetCount()>0 then
 		local e1=VgF.StarUp(c,g,1,nil)
 		vgf.EffectReset(c,e1,EVENT_BATTLED)

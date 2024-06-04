@@ -7,8 +7,7 @@ function cm.initial_effect(c)
 end
 function cm.cost(e,tp,eg,ep,ev,re,r,rp,chk)
 	if chk==0 then return Duel.IsExistingMatchingCard(cm.filter,tp,LOCATION_MZONE,0,2,nil) end
-	Duel.Hint(HINT_SELECTMSG,tp,HINTMSG_POSCHANGE)
-	local g=Duel.SelectMatchingCard(tp,cm.filter,tp,LOCATION_MZONE,0,2,2,nil)
+	local g=vgf.SelectMatchingCard(HINTMSG_POSCHANGE,e,tp,cm.filter,tp,LOCATION_MZONE,0,2,2,nil)
 	Duel.ChangePosition(g,POS_FACEUP_DEFENCE)
 end
 function cm.filter(c)
@@ -16,8 +15,7 @@ function cm.filter(c)
 end
 function cm.op(e,tp,eg,ep,ev,re,r,rp)
 	local c=e:GetHandler()
-	Duel.Hint(HINT_SELECTMSG,tp,HINTMSG_LEAVEONFIELD)
-	local g=Duel.SelectTarget(tp,vgf.VMonsterFilter,tp,0,LOCATION_MZONE,1,1,nil)
+	local g=VgF.SelectMatchingCard(HINTMSG_LEAVEONFIELD,e,tp,vgf.VMonsterFilter,tp,0,LOCATION_MZONE,1,1,nil)
 	if g:GetCount()>0 then Duel.SendtoGrave(g,REASON_EFFECT) end
 	vgf.AtkUp(c,c,10000)
 end

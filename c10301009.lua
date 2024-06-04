@@ -28,8 +28,7 @@ function cm.operation(e,tp,eg,ep,ev,re,r,rp)
 	else
 		Duel.SendtoHand(g,nil,REASON_EFFECT)
 		Duel.ConfirmCards(1-tp,g)
-        Duel.Hint(HINT_SELECTMSG,tp,HINTMSG_DISCARD)
-		local tg=Duel.SelectMatchingCard(tp,Card.IsDiscardable,tp,LOCATION_HAND,0,1,1,nil,REASON_EFFECT)
+		local tg=vgf.SelectMatchingCard(HINTMSG_DISCARD,e,tp,Card.IsDiscardable,tp,LOCATION_HAND,0,1,1,nil,REASON_EFFECT)
 		Duel.SendtoGrave(tg,REASON_COST)
 	end
 end

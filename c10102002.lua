@@ -20,8 +20,7 @@ end
 function cm.cost(e,tp,eg,ep,ev,re,r,rp,chk)
 	local c=e:GetHandler()
 	if chk==0 then return Duel.IsExistingMatchingCard(cm.filter,tp,LOCATION_MZONE,0,1,nil) end
-	Duel.Hint(HINT_SELECTMSG,tp,HINTMSG_XMATERIAL)
-	local g=Duel.SelectMatchingCard(tp,cm.filter,tp,LOCATION_MZONE,0,1,1,nil)
+	local g=vgf.SelectMatchingCard(HINTMSG_XMATERIAL,e,tp,cm.filter,tp,LOCATION_MZONE,0,1,1,nil)
 	Duel.Overlay(c,g)
 end
 function cm.con(e,tp,eg,ep,ev,re,r,rp)

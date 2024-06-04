@@ -10,8 +10,8 @@ vgf=VgF
 function VgF.VgCard(c)
     VgD.Rule(c)
     VgF.DefineArguments()
+    VgD.RideUp(c)
     if c:IsType(TYPE_MONSTER) then
-        VgD.RideUp(c)
         VgD.CallToR(c)
         VgD.MonsterBattle(c)
     end
@@ -646,8 +646,7 @@ function VgF.SearchCard(loc,f)
 end
 function VgF.SearchCardOP(loc,f,e,tp,eg,ep,ev,re,r,rp)
     if not loc then return end
-    Duel.Hint(HINT_SELECTMSG,tp ,HINTMSG_ATOHAND)
-    local g=Duel.SelectMatchingCard(tp,function (c)
+    local g=VgF.SelectMatchingCard(HINTMSG_ATOHAND,e,tp,function (c)
         if VgF.GetValueType(f)=="function" and not f(c) then return false end
         return c:IsAbleToHand()
     end,tp,loc,0,1,1,nil)
@@ -670,8 +669,7 @@ function VgF.SearchCardSpecialSummon(loc,f)
 end
 function VgF.SearchCardSpecialSummonOP(loc,f,e,tp,eg,ep,ev,re,r,rp)
     if not loc then return end
-    Duel.Hint(HINT_SELECTMSG,tp,HINTMSG_CALL)
-    local g=Duel.SelectMatchingCard(tp,function (c)
+    local g=VgF.SelectMatchingCard(HINTMSG_CALL,e,tp,function (c)
         if VgF.GetValueType(f)=="function" and not f(c) then return false end
         return c:IsCanBeSpecialSummoned(e,0,tp,false,false,POS_FACEUP_ATTACK)
     end,tp,loc,0,1,1,nil)
@@ -752,13 +750,35 @@ function VgF.SendtoPrison(g,p)
     end
 	Duel.MoveSequence(oc,og:GetCount()-1)
 end
+--[[
+function VgF.PrisonFilter(c,tp)
+    return c:IsSetCard(0x3040) and not Duel.IsExistingMatchingCard(function (tc)
+        return tc:GetSequence()<c:GetSequence()
+    end,tp,LOCATION_ORDER,0,1,c)
+end
+---收容g（中的每一张卡）到p的监狱。没有监狱时，不操作。
+---@param g Card|Group
+---@param p integer
+function VgF.SendtoPrison(g,p)
+    if not VgF.CheckPrison(p) or not g then return end
+	local og=Duel.GetFieldGroup(p,LOCATION_ORDER,0)
+	local oc=og:Filter(VgF.PrisonFilter,nil,p):GetFirst()
+    if VgF.GetValueType(g)=="Card" then
+	    Duel.Sendto(g,p,LOCATION_ORDER,POS_FACEUP_ATTACK,REASON_EFFECT,1)
+        g:RegisterFlagEffect(ImprisonFlag,RESET_EVENT+RESETS_STANDARD,EFFECT_FLAG_CLIENT_HINT,1,0,vgf.Stringid(10105015,0))
+    elseif VgF.GetValueType(g)=="Group" then
+        for tc in VgF.Next(g) do
+            Duel.Sendto(tc,p,LOCATION_ORDER,POS_FACEUP_ATTACK,REASON_EFFECT,1)
+            tc:RegisterFlagEffect(ImprisonFlag,RESET_EVENT+RESETS_STANDARD,EFFECT_FLAG_CLIENT_HINT,1,0,vgf.Stringid(10105015,0))
+        end
+    end
+end]]
 ---检测p场上有没有监狱。
 ---@param p integer
 ---@return boolean 指示p场上有没有监狱。
 function VgF.CheckPrison(p)
 	local og=Duel.GetFieldGroup(p,LOCATION_ORDER,0)
-	local oc=og:Filter(VgF.PrisonFilter,nil,og:GetCount()):GetFirst()
-	return oc:IsSetCard(0x3040)
+	return og:IsExists(Card.IsSetCard,1,nil,0x3040)
 end
 --重置Effect
 function VgF.EffectReset(c,e,code,con)
@@ -790,4 +810,34 @@ function VgF.EffectResetOperation(e,tp,eg,ep,ev,re,r,rp)
     local e1=e:GetLabelObject()
     if VgF.GetValueType(e1)=="Effect" then e1:Reset() end
     e:Reset()
+end
+function VgF.SelectMatchingCard(hintmsg,e,select_tp,f,tp,loc_self,loc_op,int_min,int_max,except_g,...)
+    local a=false
+    if ((select_tp==tp and loc_self|LOCATION_DECK>0) or (select_tp~=tp and loc_op|LOCATION_DECK>0)) and Duel.SelectYesNo(select_tp,VgF.Stringid(VgID,13)) then
+        local g=Duel.GetFieldGroup(select_tp,LOCATION_DECK,0)
+        Duel.DisableShuffleCheck()
+        Duel.ConfirmCards(select_tp,g) 
+        a=true
+    end
+    local g=Group.CreateGroup()
+    if loc_self|LOCATION_MZONE>0 then
+        local g1=Duel.GetMatchingGroup(Card.IsCanBeEffectTarget,tp,LOCATION_MZONE,0,nil,e)
+        loc_self=loc_self-LOCATION_MZONE
+        if g1:GetCount()>0 then g:Merge(g1) end
+    end
+    if loc_op|LOCATION_MZONE>0 then
+        local g1=Duel.GetMatchingGroup(Card.IsCanBeEffectTarget,tp,0,LOCATION_MZONE,nil,e)
+        loc_op=loc_op-LOCATION_MZONE
+        if g1:GetCount()>0 then g:Merge(g1) end
+    end
+    local g1=Duel.GetMatchingGroup(nil,tp,0,loc_op,nil)
+    if g1:GetCount()>0 then g:Merge(g1) end
+    local g2=Duel.GetMatchingGroup(nil,tp,loc_self,0,nil)
+    if g2:GetCount()>0 then g:Merge(g2) end
+    if g:GetCount()>0 then
+        Duel.Hint(HINT_SELECTMSG,select_tp,hintmsg)
+        g=g:FilterSelect(select_tp,f,int_min,int_max,except_g,...)
+    end
+    if a then Duel.ShuffleDeck(select_tp) end
+    return g
 end

@@ -7,8 +7,7 @@ function cm.initial_effect(c)
 end
 function cm.cost(e,tp,eg,ep,ev,re,r,rp,chk)
     if chk==0 then return Duel.IsExistingMatchingCard(vgf.IsLevel,tp,LOCATION_HAND,0,2,nil,3) end
-    Duel.Hint(HINT_SELECTMSG,tp,HINTMSG_CONFIRM)
-    local g=Duel.SelectMatchingCard(tp,vgf.IsLevel,tp,LOCATION_HAND,0,2,2,nil,3)
+    local g=vgf.SelectMatchingCard(HINTMSG_CONFIRM,e,tp,vgf.IsLevel,tp,LOCATION_HAND,0,2,2,nil,3)
     Duel.ConfirmCards(1-tp,g)
 end
 function cm.operation(e,tp,eg,ep,ev,re,r,rp)
@@ -24,8 +23,7 @@ function cm.operation(e,tp,eg,ep,ev,re,r,rp)
 end
 function cm.operation2(e,tp,eg,ep,ev,re,r,rp)
     local c=e:GetHandler()
-    Duel.Hint(HINT_SELECTMSG,tp,HINTMSG_ATKUP)
-    local g=Duel.SelectMatchingCard(tp,cm.filter,tp,LOCATION_MZONE,0,1,1,nil)
+    local g=vgf.SelectMatchingCard(HINTMSG_ATKUP,e,tp,cm.filter,tp,LOCATION_MZONE,0,1,1,nil)
     if g:GetCount()>0 then
         vgf.AtkUp(c,g,5000)
     end

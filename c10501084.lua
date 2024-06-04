@@ -7,8 +7,7 @@ function cm.initial_effect(c)
     vgd.BeRidedByCard(c,m,nil,cm.operation,nil,nil)
 end
 function cm.operation(e,tp,eg,ep,ev,re,r,rp)
-    Duel.Hint(HINT_SELECTMSG,tp,HINTMSG_TOFIELD)
-    local g=Duel.SelectMatchingCard(tp,cm.filter,tp,LOCATION_HAND+LOCATION_DECK,0,0,1,nil)
+    local g=vgf.SelectMatchingCard(HINTMSG_TOFIELD,e,tp,cm.filter,tp,LOCATION_HAND+LOCATION_DECK,0,0,1,nil)
     if #g>0 then
         local tc=g:GetFirst()
         local chk=tc:IsLocation(LOCATION_HAND)

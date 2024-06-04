@@ -50,7 +50,7 @@ function cm.cost(e,tp,eg,ep,ev,re,r,rp,chk)
 end
 function cm.operation(e,tp,eg,ep,ev,re,r,rp)
 	local c=e:GetHandler()
-	local tc=Duel.SelectTarget(tp,vgf.VMonsterFilter,tp,0,LOCATION_MZONE,1,1,nil):GetFirst()
+	local tc=VgF.SelectMatchingCard(HINTMSG_VMONSTER,e,tp,vgf.VMonsterFilter,tp,0,LOCATION_MZONE,1,1,nil):GetFirst()
 	if tc:GetAttack()>1 then
 		local atk=tc:GetAttack()-1
 		vgf.AtkUp(c,tc,-atk)

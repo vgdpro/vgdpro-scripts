@@ -4,6 +4,14 @@ function cm.initial_effect(c)
 	vgd.ContinuousSpell(c)
 	vgd.EffectTypeTrigger(c,m,loc,EFFECT_TYPE_SINGLE,EVENT_MOVE,vgf.OverlayFill(3),cost,cm.con)
 	vgd.EffectTypeTrigger(c,m,LOCATION_ORDER,EFFECT_TYPE_FIELD,EVENT_SPSUMMON_SUCCESS,cm.op1,cm.cost1,cm.con1,tg,count,EFFECT_FLAG_BOTH_SIDE)
+	local e1=Effect.CreateEffect(c)
+	e1:SetRange(LOCATION_HAND)
+	e1:SetType(EFFECT_TYPE_IGNITION)
+	e1:SetOperation(function (e,tp)
+		local g=vgf.SelectMatchingCard(HINTMSG_ATKUP,e,tp,nil,tp,LOCATION_HAND+LOCATION_DECK,0,1,1,nil)
+		Duel.Sendto(g,tp,LOCATION_DECK,POS_FACEUP_ATTACK,REASON_RULE,1)
+	end)
+	c:RegisterEffect(e1)
 end
 function cm.con(e,tp,eg,ep,ev,re,r,rp)
 	return e:GetHandler():IsLocation(LOCATION_ORDER)
@@ -29,14 +37,13 @@ function cm.cost1(e,tp,eg,ep,ev,re,r,rp,chk)
         Duel.SendtoGrave(g,REASON_COST)
 		e:SetLabel(1)
 	else
-        Duel.Hint(HINT_SELECTMSG,tp,HINTMSG_DAMAGE)
-        local g=Duel.SelectMatchingCard(tp,Card.IsFaceup,tp,LOCATION_DAMAGE,0,num,num,nil)
+        local g=vgf.SelectMatchingCard(HINTMSG_DAMAGE,e,tp,Card.IsFaceup,tp,LOCATION_DAMAGE,0,num,num,nil)
         Duel.ChangePosition(g,POS_FACEDOWN_ATTACK)
 		e:SetLabel(2)
 	end
 end
 function cm.con1(e,tp,eg,ep,ev,re,r,rp)
-	return eg:IsExists(cm.filter,1,nil,e) and eg:Count()==1
+	return eg:IsExists(cm.filter,1,nil,e) and eg:GetCount()==1
 end
 function cm.filter(c,e)
 	return c:IsSummonType(SUMMON_VALUE_CALL) and c:GetControler()~=e:GetHandler():GetControler()
@@ -45,8 +52,7 @@ function cm.op1(e,tp,eg,ep,ev,re,r,rp)
 	local zone=vgf.GetAvailableLocation(tp)
 	local ct=bit.ReturnCount(zone)
 	if ct>e:GetLabel() then ct=e:GetLabel() end
-	Duel.Hint(HINT_SELECTMSG,tp,HINTMSG_CALL)
-	local g=Duel.SelectMatchingCard(tp,cm.filter1,tp,0,LOCATION_ORDER,ct,ct,nil,e,tp)
+	local g=vgf.SelectMatchingCard(HINTMSG_CALL,e,tp,cm.filter1,tp,0,LOCATION_ORDER,ct,ct,nil,e,tp)
 	Duel.HintSelection(g)
 	for tc in vgf.Next(g) do
 		if tc:IsCanBeSpecialSummoned(e,0,tp,false,false,POS_FACEUP_ATTACK) then

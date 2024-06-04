@@ -13,8 +13,7 @@ function cm.con(e,tp,eg,ep,ev,re,r,rp)
 end
 function cm.operation(e,tp,eg,ep,ev,re,r,rp)
 	local c=e:GetHandler()
-	Duel.Hint(HINT_SELECTMSG,tp,HINTMSG_CALL)
-	local g=Duel.SelectMatchingCard(tp,cm.filter,tp,LOCATION_HAND,0,1,1,nil,e,tp)
+	local g=vgf.SelectMatchingCard(HINTMSG_CALL,e,tp,cm.filter,tp,LOCATION_HAND,0,1,1,nil,e,tp)
 	if vgf.Call(g,SUMMON_VALUE_REVOLT,tp,0x20)>0 then
 		local mg=Duel.GetOperatedGroup()
 		vgd.TriggerCountUp(c,-2,RESET_PHASE+PHASE_END,mg)

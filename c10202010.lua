@@ -9,9 +9,8 @@ function cm.condition(e,tp,eg,ep,ev,re,r,rp)
 	return VgF.GetVMonster(tp):IsSetCard(0xe8) and VgF.RMonsterFilter(e:GetHandler())
 end
 function cm.operation(e,tp,eg,ep,ev,re,r,rp)
-	Duel.Hint(HINT_SELECTMSG,tp,HINTMSG_XMATERIAL)
 	local c=e:GetHandler()
-	local g=Duel.SelectMatchingCard(tp,nil,tp,LOCATION_GRAVE,0,1,1,nil)
+	local g=vgf.SelectMatchingCard(HINTMSG_XMATERIAL,e,tp,nil,tp,LOCATION_GRAVE,0,1,1,nil)
 	if g:GetCount()>0 then
 		Duel.Overlay(VgF.GetVMonster(tp),g)
 	end

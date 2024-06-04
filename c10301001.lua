@@ -17,8 +17,7 @@ function cm.condition(e,tp,eg,ep,ev,re,r,rp)
 end
 function cm.operation(e,tp,eg,ep,ev,re,r,rp)
 	local c=e:GetHandler()
-	Duel.Hint(HINT_SELECTMSG,tp,HINTMSG_RTOHAND)
-	local g=Duel.SelectMatchingCard(tp,cm.filter,tp,LOCATION_MZONE,0,1,2,nil)
+	local g=vgf.SelectMatchingCard(HINTMSG_RTOHAND,e,tp,cm.filter,tp,LOCATION_MZONE,0,1,2,nil)
 	Duel.HintSelection(g)
 	Duel.SendtoHand(g,nil,REASON_EFFECT)
 end
@@ -35,8 +34,7 @@ function cm.operation1(e,tp,eg,ep,ev,re,r,rp)
 	local ct=bit.ReturnCount(zone)
     zone=bit.bor(zone,0xffffff00)
 	if ct>2 then ct=2 end
-	Duel.Hint(HINT_SELECTMSG,tp,HINTMSG_CALL)
-	local g=Duel.SelectMatchingCard(tp,Card.IsCanBeSpecialSummoned,tp,LOCATION_HAND,0,0,ct,nil,e,0,tp,false,false,POS_FACEUP_ATTACK)
+	local g=vgf.SelectMatchingCard(HINTMSG_CALL,e,tp,Card.IsCanBeSpecialSummoned,tp,LOCATION_HAND,0,0,ct,nil,e,0,tp,false,false,POS_FACEUP_ATTACK)
 	if g:GetCount()==1 then
 		vgf.Call(g,0,tp)
 	elseif g:GetCount()==2 then
