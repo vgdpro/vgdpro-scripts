@@ -884,16 +884,21 @@ function VgF.Sendto(loc,sg,...)
         local list={...}
         local move_tp=list[1]
         local target_tp=list[2]
-        table.remove(list,1)
-        table.remove(list,1)
+        local pos=list[3]
+        local enable=list[4]
         for tc in VgF.Next(g) do
-            Duel.MoveToField(tc,move_tp,target_tp,loc,...)
+            Duel.MoveToField(tc,move_tp,target_tp,loc,pos,enable)
         end
     elseif (loc|0xf800>0) then
         AddOverlayGroup(g)
         local list={...}
         local tp=list[1]
-        table.remove(list,1)
-        return Duel.Sendto(g,tp,loc,...)
+        local pos=list[2]
+        local reason=list[3]
+        if #list>=4 then
+            local seq=list[4]
+            return Duel.Sendto(g,tp,loc,pos,reason,seq)
+        end
+        return Duel.Sendto(g,tp,loc,pos,reason)
     end
 end
