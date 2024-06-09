@@ -24,7 +24,7 @@ function cm.op(e,tp,eg,ep,ev,re,r,rp)
 	end
 	local sg=Duel.GetFieldGroup(tp,LOCATION_HAND,0)
 	if sg:GetCount()>=2 then
-		sg=sg:FilterSelect(tp,Card.IsDiscardable,1,1,nil,REASON_EFFECT)
-		Duel.SendtoGrave(sg,REASON_DISCARD+REASON_EFFECT)
+		sg=sg:Select(tp,1,1,nil)
+		vgf.Sendto(LOCATION_GRAVE,sg,REASON_DISCARD+REASON_EFFECT)
 	end
 end

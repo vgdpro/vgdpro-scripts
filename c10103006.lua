@@ -1,7 +1,7 @@
 --斧钺的骑士 拉夫尔克
 local cm,m,o=GetID()
 function cm.initial_effect(c)
-    VgF.VgCard(c)
+    vgf.VgCard(c)
     vgd.EffectTypeIgnition(c,m,LOCATION_MZONE,cm.operation,cm.cost,vgf.RMonsterCondition)
 end
 function cm.operation(e,tp,eg,ep,ev,re,r,rp)
@@ -9,7 +9,7 @@ function cm.operation(e,tp,eg,ep,ev,re,r,rp)
     local g=vgf.SelectMatchingCard(HINTMSG_ATKUP,e,tp,cm.filter,tp,LOCATION_MZONE,0,1,1,nil)
     if g then
         Duel.HintSelection(g)
-        VgF.AtkUp(c,g,10000,nil)
+        vgf.AtkUp(c,g,10000,nil)
     end
 end
 function cm.filter(c)
@@ -17,7 +17,7 @@ function cm.filter(c)
 end
 function cm.cost(e,tp,eg,ep,ev,re,r,rp,chk)
     local c=e:GetHandler()
-    if chk==0 then return c:IsCanOverlay() end
-    local rc=Duel.GetMatchingGroup(VgF.VMonsterFilter,tp,LOCATION_MZONE,0,nil):GetFirst()
-    Duel.Overlay(rc,c)
+    if chk==0 then return true end
+    local rc=Duel.GetMatchingGroup(vgf.VMonsterFilter,tp,LOCATION_MZONE,0,nil):GetFirst()
+	vgf.Sendto(LOCATION_OVERLAY,c,rc)
 end

@@ -24,7 +24,7 @@ function cm.operation(e,tp,eg,ep,ev,re,r,rp)
 	Duel.Hint(HINT_SELECTMSG,tp,HINTMSG_ATOHAND)
 	local sg=g:FilterSelect(tp,cm.filter,0,1,nil)
 	if #sg > 0 then
-		Duel.SendtoHand(sg,nil,REASON_EFFECT)
+		vgf.Sendto(LOCATION_HAND,sg,nil,REASON_EFFECT)
 		Duel.ConfirmCards(1-tp,sg)
 		Duel.ShuffleHand(tp)
 		g:RemoveCard(vgf.ReturnCard(sg))
@@ -35,5 +35,5 @@ function cm.operation(e,tp,eg,ep,ev,re,r,rp)
 	end
 end
 function cm.filter(c)
-	return c:IsSetCard(0xb6) and c:IsLevelBelow(2) and c:IsAbleToHand()
+	return c:IsSetCard(0xb6) and c:IsLevelBelow(2)
 end

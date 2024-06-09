@@ -2,9 +2,9 @@
 local cm,m,o=GetID()
 function cm.initial_effect(c)--这个函数下面用于注册效果
     vgf.VgCard(c)
-    vgd.EffectTypeTrigger(c,m,LOCATION_MZONE,EFFECT_TYPE_SINGLE,EVENT_SPSUMMON_SUCCESS,vgf.SearchCard(LOCATION_DECK,cm.filter),VgF.DamageCost(1),cm.con2)
+    vgd.EffectTypeTrigger(c,m,LOCATION_MZONE,EFFECT_TYPE_SINGLE,EVENT_SPSUMMON_SUCCESS,vgf.SearchCard(LOCATION_DECK,cm.filter),vgf.DamageCost(1),cm.con2)
     -- 【自】【V】：这个单位的攻击击中时，抽1张卡，选择你的1张含有「诚意真心」的后防者，这个回合中，力量+5000。
-    vgd.EffectTypeTriggerWhenHitting(c,m,LOCATION_MZONE,EFFECT_TYPE_SINGLE,cm.operation1,nil,VgF.VMonsterCondition)
+    vgd.EffectTypeTriggerWhenHitting(c,m,LOCATION_MZONE,EFFECT_TYPE_SINGLE,cm.operation1,nil,vgf.VMonsterCondition)
 end
 function cm.con2(e)
     local c=e:GetHandler()

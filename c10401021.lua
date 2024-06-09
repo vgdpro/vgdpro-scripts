@@ -13,8 +13,8 @@ end
 function cm.cost(e,tp,eg,ep,ev,re,r,rp,chk)
 	local c=e:GetHandler()
 	if chk==0 then
-		return vgf.OverlayCostOP(1,e,tp,eg,ep,ev,re,r,rp,chk) and c:IsAbleToGraveAsCost()
+		return vgf.OverlayCostOP(1,e,tp,eg,ep,ev,re,r,rp,chk)
 	end
 	vgf.OverlayCostOP(1,e,tp,eg,ep,ev,re,r,rp,chk)
-	Duel.SendtoGrave(c,REASON_COST)
+	vgf.Sendto(LOCATION_GRAVE,c,REASON_COST)
 end

@@ -12,7 +12,7 @@ function cm.operation(e,tp,eg,ep,ev,re,r,rp)
 	Duel.Draw(tp,1,REASON_EFFECT)
 	local g=vgf.SelectMatchingCard(HINTMSG_XMATERIAL,e,tp,nil,tp,LOCATION_GRAVE,0,0,1,nil)
 	if g:GetCount()>0 then
-		Duel.Overlay(VgF.GetVMonster(tp),g)
+	vgf.Sendto(LOCATION_OVERLAY,g,vgf.GetVMonster(tp))
 	end
 end
 function cm.operation1(e,tp,eg,ep,ev,re,r,rp)

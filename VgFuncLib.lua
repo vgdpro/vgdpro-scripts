@@ -329,13 +329,13 @@ function VgF.Call(g,sumtype,tp,zone,pos)
             local tc=Duel.GetMatchingGroup(VgF.VMonsterFilter,tp,LOCATION_MZONE,0,nil):GetFirst()
             local mg=tc:GetOverlayGroup()
             if mg:GetCount()~=0 then
-                Duel.Overlay(sc,mg)
+                VgF.Sendto(LOCATION_OVERLAY,mg,sc)
             end
             sc:SetMaterial(Group.FromCards(tc))
-            Duel.Overlay(sc,Group.FromCards(tc))
+            VgF.Sendto(LOCATION_OVERLAY,Group.FromCards(tc),sc)
         elseif Duel.IsExistingMatchingCard(VgD.CallFilter,tp,LOCATION_MZONE,0,1,nil,tp,szone) then
             local tc=Duel.GetMatchingGroup(VgD.CallFilter,tp,LOCATION_MZONE,0,nil,tp,szone):GetFirst()
-            Duel.SendtoGrave(tc,REASON_COST)
+            VgF.Sendto(LOCATION_GRAVE,tc,REASON_COST)
         end
 	    return Duel.SpecialSummon(sc,sumtype,tp,tp,false,false,pos,szone)
     else
@@ -348,17 +348,17 @@ function VgF.Call(g,sumtype,tp,zone,pos)
                 local rc=Duel.GetMatchingGroup(VgF.VMonsterFilter,tp,LOCATION_MZONE,0,nil):GetFirst()
                 local mg=rc:GetOverlayGroup()
                 if mg:GetCount()~=0 then
-                    Duel.Overlay(sc,mg)
+                    VgF.Sendto(LOCATION_OVERLAY,mg,sc)
                 end
                 sc:SetMaterial(Group.FromCards(rc))
-                Duel.Overlay(sc,Group.FromCards(rc))
+                VgF.Sendto(LOCATION_OVERLAY,Group.FromCards(rc),sc)
                 Duel.SpecialSummonStep(sc,sumtype,tp,tp,false,false,pos,0x20)
             else
                 Duel.Hint(HINT_SELECTMSG,tp,HINTMSG_CallZONE)
                 local szone=Duel.SelectField(tp,1,LOCATION_MZONE,0,z)
                 if Duel.IsExistingMatchingCard(VgD.CallFilter,tp,LOCATION_MZONE,0,1,nil,tp,szone) then
                     local tc=Duel.GetMatchingGroup(VgD.CallFilter,tp,LOCATION_MZONE,0,nil,tp,szone):GetFirst()
-                    Duel.SendtoGrave(tc,REASON_COST)
+                    VgF.Sendto(LOCATION_GRAVE,tc,REASON_COST)
                 end
                 Duel.SpecialSummonStep(sc,sumtype,tp,tp,false,false,pos,szone)
                 z=bit.bor(z,szone)
@@ -527,14 +527,14 @@ function VgF.DisCardCostOP(num,e,tp,eg,ep,ev,re,r,rp,chk)
     local cm=_G["c"..m]
     if chk==0 then
         if e:IsHasType(EFFECT_TYPE_ACTIVATE) then
-            cm.cos_g=Duel.GetMatchingGroup(Card.IsDiscardable,tp,LOCATION_HAND,0,nil)
+            cm.cos_g=Duel.GetMatchingGroup(nil,tp,LOCATION_HAND,0,nil)
             cm.cos_val={nil,num,num}
         end
-        return Duel.IsExistingMatchingCard(Card.IsDiscardable,tp,LOCATION_HAND,0,num,nil)
+        return Duel.IsExistingMatchingCard(nil,tp,LOCATION_HAND,0,num,nil)
     end
     Duel.Hint(HINT_SELECTMSG,tp,HINTMSG_DISCARD)
-    local g=Duel.SelectMatchingCard(tp,Card.IsDiscardable,tp,LOCATION_HAND,0,num,num,nil)
-    Duel.SendtoGrave(g,REASON_COST+REASON_DISCARD)
+    local g=Duel.SelectMatchingCard(tp,nil,tp,LOCATION_HAND,0,num,num,nil)
+    VgF.Sendto(LOCATION_GRAVE,g,REASON_COST+REASON_DISCARD)
     return Duel.GetOperatedGroup():GetCount()
 end
 ---用于效果的Cost。它返回一个执行“【费用】[能量爆发num]”的函数。
@@ -558,7 +558,7 @@ function VgF.EnergyCostOP(num,e,tp,eg,ep,ev,re,r,rp,chk)
     end
     local sg=Duel.GetMatchingGroup(Card.IsCode,tp,LOCATION_EMBLEM,0,nil,10800730)
     local g=VgF.GetCardsFromGroup(sg,num)
-    Duel.Sendto(g,tp,0,POS_FACEUP,REASON_COST)
+    VgF.Sendto(0,g,tp,POS_FACEUP,REASON_COST)
     return Duel.GetOperatedGroup():GetCount()
 end
 ---用于效果的Cost。它返回一个执行“【费用】[灵魂爆发num]”的函数。
@@ -575,14 +575,14 @@ function VgF.OverlayCostOP(num,e,tp,eg,ep,ev,re,r,rp,chk)
     local cm=_G["c"..m]
     if chk==0 then
         if e:IsHasType(EFFECT_TYPE_ACTIVATE) then
-            cm.cos_g=Duel.GetMatchingGroup(VgF.VMonsterFilter,tp,LOCATION_MZONE,0,nil,nil):GetFirst():GetOverlayGroup():FilterCount(Card.IsAbleToGraveAsCost,nil)
+            cm.cos_g=Duel.GetMatchingGroup(VgF.VMonsterFilter,tp,LOCATION_MZONE,0,nil,nil):GetFirst():GetOverlayGroup()
             cm.cos_val={nil,num,num}
         end
-        return Duel.GetMatchingGroup(VgF.VMonsterFilter,tp,LOCATION_MZONE,0,nil,nil):GetFirst():GetOverlayGroup():FilterCount(Card.IsAbleToGraveAsCost,nil)>=num
+        return Duel.GetMatchingGroup(VgF.VMonsterFilter,tp,LOCATION_MZONE,0,nil,nil):GetFirst():GetOverlayCount()>=num
     end
     Duel.Hint(HINT_SELECTMSG,tp,HINTMSG_REMOVEXYZ)
-    local g=Duel.GetMatchingGroup(VgF.VMonsterFilter,tp,LOCATION_MZONE,0,nil):GetFirst():GetOverlayGroup():FilterSelect(tp,Card.IsAbleToGraveAsCost,num,num,nil)
-    Duel.SendtoGrave(g,REASON_COST)
+    local g=Duel.GetMatchingGroup(VgF.VMonsterFilter,tp,LOCATION_MZONE,0,nil):GetFirst():GetOverlayGroup():Select(tp,nil,num,num,nil)
+    VgF.Sendto(LOCATION_GRAVE,g,REASON_COST)
     return Duel.GetOperatedGroup():GetCount()
 end
 ---用于效果的Cost或Operation。它返回一个执行“【费用】[灵魂填充num]”的函数。
@@ -607,7 +607,7 @@ function VgF.OverlayFillOP(num,e,tp,eg,ep,ev,re,r,rp,chk)
     local rc=Duel.GetMatchingGroup(VgF.VMonsterFilter,tp,LOCATION_MZONE,0,nil):GetFirst()
     local g=Duel.GetDecktopGroup(tp,num)
     Duel.DisableShuffleCheck()
-    Duel.Overlay(rc,g)
+    VgF.Sendto(LOCATION_OVERLAY,g,rc)
     return Duel.GetOperatedGroup():GetCount()
 end
 ---用于效果的Cost。它返回一个执行“【费用】[计数爆发num]”的函数。
@@ -648,10 +648,10 @@ function VgF.SearchCardOP(loc,f,e,tp,eg,ep,ev,re,r,rp)
     if not loc then return end
     local g=VgF.SelectMatchingCard(HINTMSG_ATOHAND,e,tp,function (c)
         if VgF.GetValueType(f)=="function" and not f(c) then return false end
-        return c:IsAbleToHand()
+        return true
     end,tp,loc,0,1,1,nil)
     if g:GetCount()>0 then
-        Duel.SendtoHand(g,nil,REASON_EFFECT)
+        VgF.Sendto(LOCATION_HAND,g,nil,REASON_EFFECT)
         Duel.ConfirmCards(1-tp,g)
     end
     local sg=Duel.GetOperatedGroup()
@@ -671,7 +671,7 @@ function VgF.SearchCardSpecialSummonOP(loc,f,e,tp,eg,ep,ev,re,r,rp)
     if not loc then return end
     local g=VgF.SelectMatchingCard(HINTMSG_CALL,e,tp,function (c)
         if VgF.GetValueType(f)=="function" and not f(c) then return false end
-        return c:IsCanBeSpecialSummoned(e,0,tp,false,false,POS_FACEUP_ATTACK)
+        return true
     end,tp,loc,0,1,1,nil)
     if g:GetCount()>0 then
         if loc&LOCATION_DECK+LOCATION_HAND+LOCATION_EXTRA==0 then Duel.HintSelection(g) end
@@ -740,12 +740,12 @@ function VgF.SendtoPrison(g,p)
 	local og=Duel.GetFieldGroup(p,LOCATION_ORDER,0)
 	local oc=og:Filter(VgF.PrisonFilter,nil,og:GetCount()):GetFirst()
     if VgF.GetValueType(g)=="Card" then
-	    Duel.Sendto(g,p,LOCATION_ORDER,POS_FACEUP_ATTACK,REASON_EFFECT)
-        g:RegisterFlagEffect(ImprisonFlag,RESET_EVENT+RESETS_STANDARD,EFFECT_FLAG_CLIENT_HINT,1,0,vgf.Stringid(10105015,0))
+	    VgF.Sendto(LOCATION_ORDER,g,p,POS_FACEUP_ATTACK,REASON_EFFECT)
+        g:RegisterFlagEffect(ImprisonFlag,RESET_EVENT+RESETS_STANDARD,EFFECT_FLAG_CLIENT_HINT,1,0,VgF.Stringid(10105015,0))
     elseif VgF.GetValueType(g)=="Group" then
         for tc in VgF.Next(g) do
-            Duel.Sendto(tc,p,LOCATION_ORDER,POS_FACEUP_ATTACK,REASON_EFFECT)
-            tc:RegisterFlagEffect(ImprisonFlag,RESET_EVENT+RESETS_STANDARD,EFFECT_FLAG_CLIENT_HINT,1,0,vgf.Stringid(10105015,0))
+            VgF.Sendto(LOCATION_ORDER,tc,p,POS_FACEUP_ATTACK,REASON_EFFECT)
+            tc:RegisterFlagEffect(ImprisonFlag,RESET_EVENT+RESETS_STANDARD,EFFECT_FLAG_CLIENT_HINT,1,0,VgF.Stringid(10105015,0))
         end
     end
 	Duel.MoveSequence(oc,og:GetCount()-1)
@@ -765,11 +765,11 @@ function VgF.SendtoPrison(g,p)
 	local oc=og:Filter(VgF.PrisonFilter,nil,p):GetFirst()
     if VgF.GetValueType(g)=="Card" then
 	    Duel.Sendto(g,p,LOCATION_ORDER,POS_FACEUP_ATTACK,REASON_EFFECT,1)
-        g:RegisterFlagEffect(ImprisonFlag,RESET_EVENT+RESETS_STANDARD,EFFECT_FLAG_CLIENT_HINT,1,0,vgf.Stringid(10105015,0))
+        g:RegisterFlagEffect(ImprisonFlag,RESET_EVENT+RESETS_STANDARD,EFFECT_FLAG_CLIENT_HINT,1,0,VgF.Stringid(10105015,0))
     elseif VgF.GetValueType(g)=="Group" then
         for tc in VgF.Next(g) do
             Duel.Sendto(tc,p,LOCATION_ORDER,POS_FACEUP_ATTACK,REASON_EFFECT,1)
-            tc:RegisterFlagEffect(ImprisonFlag,RESET_EVENT+RESETS_STANDARD,EFFECT_FLAG_CLIENT_HINT,1,0,vgf.Stringid(10105015,0))
+            tc:RegisterFlagEffect(ImprisonFlag,RESET_EVENT+RESETS_STANDARD,EFFECT_FLAG_CLIENT_HINT,1,0,VgF.Stringid(10105015,0))
         end
     end
 end]]
@@ -840,4 +840,53 @@ function VgF.SelectMatchingCard(hintmsg,e,select_tp,f,tp,loc_self,loc_op,int_min
     end
     if a then Duel.ShuffleDeck(select_tp) end
     return g
+end
+function VgF.Sendto(loc,sg,...)
+    local function AddOverlayGroup(g)
+        for tc in VgF.Next(sg) do
+            if tc:GetOverlayCount()>0 then
+                local mg=tc:GetOverlayGroup()
+                g:Merge(mg)
+            end
+        end
+    end
+    local g=nil
+    if VgF.GetValueType(sg)=="Group" then
+        g=Group.Clone(sg)
+    elseif VgF.GetValueType(sg)=="Card" then
+        g=Group.FromCards(sg)
+    end
+    if loc==LOCATION_GRAVE then
+        AddOverlayGroup(g)
+        return Duel.SendtoGrave(g,...)
+    elseif loc==LOCATION_DECK then
+        return Duel.SendtoDeck(g,...)
+    elseif loc==LOCATION_HAND then
+        return Duel.SendtoHand(g,...)
+    elseif loc==LOCATION_REMOVED then
+        AddOverlayGroup(g)
+        return Duel.Remove(g,...)
+    elseif loc==LOCATION_EXILE then
+        AddOverlayGroup(g)
+        return Duel.Exile(g,...)
+    elseif loc==LOCATION_OVERLAY then
+        local tc=VgF.ReturnCard(sg)
+        local list={...}
+        local c=list[1]
+        Duel.Overlay(c,tc)
+    elseif loc==LOCATION_TRIGGER then
+        local tc=VgF.ReturnCard(sg)
+        Duel.MoveToField(tc,...)
+    else
+        local loclist={LOCATION_GZONE,LOCATION_ORDER,LOCATION_DAMAGE,LOCATION_SPARE,LOCATION_EMBLEM}
+        for i,v in ipairs{loclist} do
+            if loc==v then
+                AddOverlayGroup(g)
+                local list={...}
+                local tp=list[1]
+                table.remove(list,1)
+                return Duel.Sendto(g,tp,loc,...)
+            end
+        end
+    end
 end

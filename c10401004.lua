@@ -20,9 +20,9 @@ function cm.con1(e,tp,eg,ep,ev,re,r,rp)
 	return Duel.GetFlagEffect(tp,m)>0 and cm.con(e,tp,eg,ep,ev,re,r,rp)
 end
 function cm.op(e,tp,eg,ep,ev,re,r,rp)
-	local g=VgF.SelectMatchingCard(HINTMSG_LEAVEONFIELD,e,tp,vgf.RMonsterFilter,tp,0,LOCATION_MZONE,1,1,nil)
+	local g=vgf.SelectMatchingCard(HINTMSG_LEAVEONFIELD,e,tp,vgf.RMonsterFilter,tp,0,LOCATION_MZONE,1,1,nil)
 	if g then
 		Duel.HintSelection(g)
-		Duel.SendtoGrave(g,REASON_EFFECT)
+		vgf.Sendto(LOCATION_GRAVE,g,REASON_EFFECT)
 	end
 end

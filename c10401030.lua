@@ -18,9 +18,9 @@ function cm.condition(e,tp,eg,ep,ev,re,r,rp)
 end
 function cm.operation(e,tp,eg,ep,ev,re,r,rp)
 	local c=e:GetHandler()
-	local g=VgF.SelectMatchingCard(HINTMSG_LEAVEONFIELD,e,tp,cm.fliter,tp,0,LOCATION_MZONE,1,1,nil)
+	local g=vgf.SelectMatchingCard(HINTMSG_LEAVEONFIELD,e,tp,cm.fliter,tp,0,LOCATION_MZONE,1,1,nil)
 	if g:GetCount()>0 then
-		Duel.SendtoGrave(g,REASON_EFFECT)
+		vgf.Sendto(LOCATION_GRAVE,g,REASON_EFFECT)
 	end
 end	
 function cm.fliter(c)

@@ -8,10 +8,10 @@ function cm.operation(e,tp,eg,ep,ev,re,r,rp)
 	local c=e:GetHandler()
 	local g=vgf.SelectMatchingCard(HINTMSG_RTOHAND,e,tp,cm.filter,tp,LOCATION_MZONE,0,1,1,nil)
 	Duel.HintSelection(g)
-	Duel.SendtoHand(g,nil,REASON_EFFECT)
+	vgf.Sendto(LOCATION_HAND,g,nil,REASON_EFFECT)
 end
 function cm.filter(c)
-	return vgf.RMonsterFilter(c) and c:IsAbleToHand()
+	return vgf.RMonsterFilter(c)
 end
 function cm.con(e,tp,eg,ep,ev,re,r,rp)
 	return Duel.IsExistingMatchingCard(cm.cfilter,tp,LOCATION_MZONE,0,1,nil,e:GetHandler()) and Duel.GetAttacker()==e:GetHandler() and vgf.RMonsterCondition(e)

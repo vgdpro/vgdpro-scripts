@@ -9,7 +9,7 @@ function cm.op(e,tp,eg,ep,ev,re,r,rp)
 	local g=Duel.GetFieldGroup(tp,LOCATION_HAND,0)
 	if g:GetCount()>=2 then
 		Duel.Hint(HINT_SELECTMSG,tp,HINTMSG_DISCARD)
-		g=g:FilterSelect(tp,Card.IsDiscardable,1,1,nil,REASON_EFFECT)
-		Duel.SendtoGrave(g,REASON_EFFECT+REASON_DISCARD)
+		g=g:Select(tp,1,1,nil)
+		vgf.Sendto(LOCATION_GRAVE,g,REASON_EFFECT+REASON_DISCARD)
 	end
 end

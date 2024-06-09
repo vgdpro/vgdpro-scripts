@@ -6,7 +6,7 @@ function cm.initial_effect(c)
 	vgd.EffectTypeTrigger(c,m,LOCATION_MZONE,EFFECT_TYPE_SINGLE,EVENT_SPSUMMON_SUCCESS,cm.operation,nil,cm.condition)
 end
 function cm.condition(e,tp,eg,ep,ev,re,r,rp)
-	return VgF.RMonsterFilter(e:GetHandler())
+	return vgf.RMonsterFilter(e:GetHandler())
 end
 function cm.operation(e,tp,eg,ep,ev,re,r,rp)
 	local g=Duel.GetDecktopGroup(tp,2)
@@ -15,7 +15,7 @@ function cm.operation(e,tp,eg,ep,ev,re,r,rp)
 	Duel.Hint(HINT_SELECTMSG,tp,HINTMSG_XMATERIAL)
 	local sc=g:FilterSelect(tp,Card.IsCanOverlay,1,1,nil):GetFirst()
 	if sc then
-		Duel.Overlay(VgF.GetVMonster(tp),sc)
+		vgf.Sendto(LOCATION_OVERLAY,sc,vgf.GetVMonster(tp))
 		g:RemoveCard(sc)
 	end
 	if #g>1 then

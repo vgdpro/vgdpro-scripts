@@ -15,8 +15,8 @@ function cm.filter(c)
 end
 function cm.op(e,tp,eg,ep,ev,re,r,rp)
 	local c=e:GetHandler()
-	local g=VgF.SelectMatchingCard(HINTMSG_LEAVEONFIELD,e,tp,vgf.VMonsterFilter,tp,0,LOCATION_MZONE,1,1,nil)
-	if g:GetCount()>0 then Duel.SendtoGrave(g,REASON_EFFECT) end
+	local g=vgf.SelectMatchingCard(HINTMSG_LEAVEONFIELD,e,tp,vgf.VMonsterFilter,tp,0,LOCATION_MZONE,1,1,nil)
+	if g:GetCount()>0 then vgf.Sendto(LOCATION_GRAVE,g,REASON_EFFECT) end
 	vgf.AtkUp(c,c,10000)
 end
 function cm.con(e,tp,eg,ep,ev,re,r,rp)
@@ -29,14 +29,14 @@ function cm.op1(e,tp,eg,ep,ev,re,r,rp)
 	Duel.ConfirmCards(g)
 	local ct1=vgf.GetAvailableLocation(tp)
 	Duel.Hint(HINT_SELECTMSG,tp,HINTMSG_CALL)
-	local sg=g:FilterSelect(tp,Card.IsCanBeSpecialSummoned,0,ct1,nil)
+	local sg=g:FilterSelect(tp,Card.IsType,0,ct1,nil,TYPE_MONSTER)
 	if sg:GetCount()>0 then
 		vgf.Call(sg,0,tp)
-		for tc in vgf.Next(sg) do g:RemoveCard(tc) end
+		g:Sub(sg)
 	end
 	if g:GetCount()>0 then
 		local tc=vgf.GetVMonster(tp)
-		Duel.Overlay(tc,g)
+		vgf.Sendto(LOCATION_OVERLAY,g,tc)
 	end
 end
 function cm.checkcon(e,tp,eg,ep,ev,re,r,rp)

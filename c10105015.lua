@@ -9,24 +9,24 @@ function cm.con(e,tp,eg,ep,ev,re,r,rp)
 	return e:GetHandler():IsLocation(LOCATION_ORDER)
 end
 function cm.cost1(e,tp,eg,ep,ev,re,r,rp,chk)
-	local a=Duel.GetMatchingGroup(VgF.VMonsterFilter,tp,LOCATION_MZONE,0,nil,nil):GetFirst():GetOverlayGroup():FilterCount(Card.IsAbleToGraveAsCost,nil)>=1
+	local a=Duel.GetMatchingGroup(vgf.VMonsterFilter,tp,LOCATION_MZONE,0,nil,nil):GetFirst():GetOverlayCount()>=1
 	local b=Duel.IsExistingMatchingCard(Card.IsFaceup,tp,LOCATION_DAMAGE,0,1,nil)
 	if chk==0 then return a or b end
 	local off=1
     local ops={}
     if a then
-        ops[off]=VgF.Stringid(VgID,11)
+        ops[off]=vgf.Stringid(VgID,11)
         off=off+1
     end
     if b then
-        ops[off]=VgF.Stringid(VgID,12)
+        ops[off]=vgf.Stringid(VgID,12)
         off=off+1
     end
 	local sel=Duel.SelectOption(tp,table.unpack(ops))
 	if sel==0 and a then
 		Duel.Hint(HINT_SELECTMSG,tp,HINTMSG_REMOVEXYZ)
-        local g=Duel.GetMatchingGroup(VgF.VMonsterFilter,tp,LOCATION_MZONE,0,nil):GetFirst():GetOverlayGroup():FilterSelect(tp,Card.IsAbleToGraveAsCost,num,num,nil)
-        Duel.SendtoGrave(g,REASON_COST)
+        local g=Duel.GetMatchingGroup(vgf.VMonsterFilter,tp,LOCATION_MZONE,0,nil):GetFirst():GetOverlayGroup():Select(tp,1,1,nil)
+        vgf.Sendto(LOCATION_GRAVE,g,REASON_COST)
 		e:SetLabel(1)
 	else
         local g=vgf.SelectMatchingCard(HINTMSG_DAMAGE,e,tp,Card.IsFaceup,tp,LOCATION_DAMAGE,0,num,num,nil)
@@ -47,10 +47,10 @@ function cm.op1(e,tp,eg,ep,ev,re,r,rp)
 	local g=vgf.SelectMatchingCard(HINTMSG_CALL,e,tp,cm.filter1,tp,0,LOCATION_ORDER,ct,ct,nil,e,tp)
 	Duel.HintSelection(g)
 	for tc in vgf.Next(g) do
-		if tc:IsCanBeSpecialSummoned(e,0,tp,false,false,POS_FACEUP_ATTACK) then
+		if tc:IsType(TYPE_MONSTER) then
 			vgf.Call(tc,0,tp)
 		else
-			Duel.SendtoGrave(tc,REASON_EFFECT)
+			vgf.Sendto(LOCATION_GRAVE,tc,REASON_EFFECT)
 		end
 	end
 end

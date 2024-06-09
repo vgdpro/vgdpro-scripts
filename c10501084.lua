@@ -11,7 +11,7 @@ function cm.operation(e,tp,eg,ep,ev,re,r,rp)
     if #g>0 then
         local tc=g:GetFirst()
         local chk=tc:IsLocation(LOCATION_HAND)
-        Duel.Sendto(tc,tp,LOCATION_ORDER,POS_FACEUP_ATTACK,REASON_EFFECT)
+        vgf.Sendto(LOCATION_ORDER,tc,tp,POS_FACEUP_ATTACK,REASON_EFFECT)
         Duel.ShuffleDeck(tp)
         if chk then
             Duel.Draw(tp,1,REASON_EFFECT)
@@ -19,5 +19,5 @@ function cm.operation(e,tp,eg,ep,ev,re,r,rp)
     end
 end
 function cm.filter(c)
-    return c:IsSetCard(0xa040) and c:IsAbleToHand() and vgf.IsLevel(c,1)
+    return c:IsSetCard(0xa040) and vgf.IsLevel(c,1)
 end

@@ -1,7 +1,7 @@
 --天枪的骑士 勒克斯
 local cm,m,o=GetID()
 function cm.initial_effect(c)
-    VgF.VgCard(c)
+    vgf.VgCard(c)
     vgd.BeRidedByCard(c,m,10103001,cm.operation,cm.cost)
     local e1=Effect.CreateEffect(c)
     e1:SetType(EFFECT_TYPE_SINGLE)

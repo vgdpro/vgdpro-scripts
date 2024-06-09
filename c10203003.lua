@@ -29,13 +29,13 @@ function cm.operation(e,tp,eg,ep,ev,re,r,rp)
 		Duel.Hint(HINT_SELECTMSG,tp,HINTMSG_ATOHAND)
 		local sg=g:FilterSelect(tp,cm.filter,1,1,nil)
 		Duel.DisableShuffleCheck()
-		Duel.SendtoHand(sg,nil,REASON_EFFECT)
+		vgf.Sendto(LOCATION_HAND,sg,nil,REASON_EFFECT)
 		Duel.ConfirmCards(1-tp,sg)
 		Duel.ShuffleHand(tp)
 		g:RemoveCard(vgf.ReturnCard(sg))
 	elseif (sel==1 and a and b) or (sel==0 and not a and b) then
 		Duel.Hint(HINT_SELECTMSG,tp,HINTMSG_CALL)
-		local sg=g:FilterSelect(tp,cm.filter1,1,1,nil,e,tp)
+		local sg=g:FilterSelect(tp,cm.filter1,1,1,nil,tp)
 		vgf.Call(sg,0,tp)
 		g:RemoveCard(vgf.ReturnCard(sg))
 	end
@@ -48,8 +48,8 @@ function cm.operation(e,tp,eg,ep,ev,re,r,rp)
 	end
 end
 function cm.filter(c)
-	return c:IsSetCard(0x77) and c:IsAbleToHand()
+	return c:IsSetCard(0x77)
 end
-function cm.filter1(c,e,tp)
-	return c:IsLevelBelow(3) and c:IsCanBeSpecialSummoned(e,0,tp,false,false,POS_FACEUP_ATTACK) and vgf.GetAvailableLocation(tp)>0
+function cm.filter1(c,tp)
+	return c:IsLevelBelow(3) and c:IsType(TYPE_MONSTER) and vgf.GetAvailableLocation(tp)>0
 end
