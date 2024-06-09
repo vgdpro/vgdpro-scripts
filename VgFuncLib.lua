@@ -836,14 +836,18 @@ function VgF.SelectMatchingCard(hintmsg,e,select_tp,f,tp,loc_self,loc_op,int_min
     if g2:GetCount()>0 then g:Merge(g2) end
     if g:GetCount()>0 then
         Duel.Hint(HINT_SELECTMSG,select_tp,hintmsg)
-        g=g:FilterSelect(select_tp,f,int_min,int_max,except_g,...)
+        if VgF.GetValueType(f)=="function" then
+            g=g:FilterSelect(select_tp,f,int_min,int_max,except_g,...)
+        else
+            g=g:Select(select_tp,int_min,int_max,except_g)
+        end
     end
     if a then Duel.ShuffleDeck(select_tp) end
     return g
 end
 function VgF.Sendto(loc,sg,...)
     local function AddOverlayGroup(g)
-        for tc in VgF.Next(sg) do
+        for tc in VgF.Next(g) do
             if tc:GetOverlayCount()>0 then
                 local mg=tc:GetOverlayGroup()
                 g:Merge(mg)
@@ -855,6 +859,7 @@ function VgF.Sendto(loc,sg,...)
         g=Group.Clone(sg)
     elseif VgF.GetValueType(sg)=="Card" then
         g=Group.FromCards(sg)
+    else return 0
     end
     if loc==LOCATION_GRAVE then
         AddOverlayGroup(g)
@@ -870,23 +875,25 @@ function VgF.Sendto(loc,sg,...)
         AddOverlayGroup(g)
         return Duel.Exile(g,...)
     elseif loc==LOCATION_OVERLAY then
-        local tc=VgF.ReturnCard(sg)
+        AddOverlayGroup(g)
         local list={...}
         local c=list[1]
-        Duel.Overlay(c,tc)
+        Duel.Overlay(c,g)
     elseif loc==LOCATION_TRIGGER then
-        local tc=VgF.ReturnCard(sg)
-        Duel.MoveToField(tc,...)
-    else
-        local loclist={LOCATION_GZONE,LOCATION_ORDER,LOCATION_DAMAGE,LOCATION_SPARE,LOCATION_EMBLEM}
-        for i,v in ipairs{loclist} do
-            if loc==v then
-                AddOverlayGroup(g)
-                local list={...}
-                local tp=list[1]
-                table.remove(list,1)
-                return Duel.Sendto(g,tp,loc,...)
-            end
+        AddOverlayGroup(g)
+        local list={...}
+        local move_tp=list[1]
+        local target_tp=list[2]
+        table.remove(list,1)
+        table.remove(list,1)
+        for tc in VgF.Next(g) do
+            Duel.MoveToField(tc,move_tp,target_tp,loc,...)
         end
+    elseif (loc|0xf800>0) then
+        AddOverlayGroup(g)
+        local list={...}
+        local tp=list[1]
+        table.remove(list,1)
+        return Duel.Sendto(g,tp,loc,...)
     end
 end

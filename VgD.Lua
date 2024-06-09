@@ -27,7 +27,7 @@ function VgD.RideUpFilter1(c,e,lv,code,rc)
     if rc:IsAttribute(SKILL_SELF_RIDE) and c:IsCode(code) then
         return false
     end
-    return ((c:IsLevel(lv,lv+1) and c:IsLocation(LOCATION_HAND)) or (c:IsLevel(lv+1) and c:IsLocation(LOCATION_RIDE) and Duel.IsExistingMatchingCard(nil,tp,LOCATION_HAND,0,1))) and c:IsType(TYPE_MONSTER)
+    return ((c:IsLevel(lv,lv+1) and c:IsLocation(LOCATION_HAND)) or (c:IsLevel(lv+1) and c:IsLocation(LOCATION_RIDE) and Duel.IsExistingMatchingCard(nil,tp,LOCATION_HAND,0,1,nil))) and c:IsType(TYPE_MONSTER)
 end
 function VgD.DisCardRideUpFilter(c,e,lv,code,rc)
     local tp=c:GetControler()
@@ -482,10 +482,6 @@ function VgD.SendToGOperation(e,tp,eg,ep,ev,re,r,rp)
         tc=VgF.ReturnCard(tc)
         g:AddCard(tc)
     end
-    local mg=c:GetOverlayGroup()
-    if mg:GetCount()>0 then
-        g:Merge(mg)
-    end
     VgF.Sendto(LOCATION_GZONE,g,tp,POS_FACEUP,REASON_EFFECT)
 end
 function VgD.GToGraveOperation(e,tp,eg,ep,ev,re,r,rp)
@@ -498,9 +494,8 @@ end
 function VgD.MonsterAttackCondition(e,tp,eg,ep,ev,re,r,rp)
     local c=e:GetHandler()
     if not VgF.VMonsterFilter(c) then return false end
-    local bc=c:GetBattleTarget()
     local a=c:GetFlagEffectLabel(AttackTriggerFlag) and c:GetFlagEffectLabel(AttackTriggerFlag)>0
-    return bc and Duel.GetAttackTarget()==bc and a
+    return a and Duel.GetAttacker()==c
 end
 function VgD.MonsterAttackCost(e,tp,eg,ep,ev,re,r,rp,chk)
     local c=e:GetHandler()
