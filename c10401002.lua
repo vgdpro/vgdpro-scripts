@@ -31,7 +31,7 @@ function cm.op1(e,tp,eg,ep,ev,re,r,rp)
 	Duel.Hint(HINT_SELECTMSG,tp,HINTMSG_CALL)
 	local sg=g:FilterSelect(tp,Card.IsType,0,ct1,nil,TYPE_MONSTER)
 	if sg:GetCount()>0 then
-		vgf.Call(sg,0,tp)
+		vgf.Sendto(LOCATION_MZONE,sg,0,tp)
 		g:Sub(sg)
 	end
 	if g:GetCount()>0 then

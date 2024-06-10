@@ -14,7 +14,7 @@ end
 function cm.operation(e,tp,eg,ep,ev,re,r,rp)
 	local c=e:GetHandler()
 	local g=vgf.SelectMatchingCard(HINTMSG_CALL,e,tp,cm.filter,tp,LOCATION_HAND,0,1,1,nil)
-	if vgf.Call(g,SUMMON_VALUE_REVOLT,tp,0x20)>0 then
+	if vgf.Sendto(LOCATION_MZONE,g,SUMMON_VALUE_REVOLT,tp,0x20)>0 then
 		local mg=Duel.GetOperatedGroup()
 		vgd.TriggerCountUp(c,-2,RESET_PHASE+PHASE_END,mg)
 	end

@@ -34,7 +34,7 @@ end
 function cm.op1(e,tp,eg,ep,ev,re,r,rp)
 	Duel.Hint(HINT_SELECTMSG,tp,HINTMSG_Call)
 	local g=vgf.GetVMonster(tp):GetOverlayGroup():FilterSelect(tp,cm.filter,1,1,nil,e,tp)
-	vgf.Call(g,0,tp,0x20,POS_FACEDOWN_DEFENCE)
+	vgf.Sendto(LOCATION_MZONE,g,0,tp,0x20,POS_FACEDOWN_DEFENCE)
 end
 function cm.filter(c,e,tp)
 	return c:IsSetCard(0x202) and c:IsType(TYPE_MONSTER)

@@ -21,7 +21,7 @@ function cm.operation(e,tp,eg,ep,ev,re,r,rp)
 	local tc=vgf.ReturnCard(g)
 	Duel.DisableShuffleCheck()
 	if tc:IsType(TYPE_MONSTER) and vgf.IsLevel(tc,0,1,2) then
-        vgf.Call(g,0,tp)
+        vgf.Sendto(LOCATION_MZONE,g,0,tp)
 	else
 		vgf.Sendto(LOCATION_OVERLAY,g,c)
 	end

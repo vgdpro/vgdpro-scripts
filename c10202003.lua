@@ -12,7 +12,7 @@ end
 function cm.operation(e,tp,eg,ep,ev,re,r,rp)
 	local c=e:GetLabelObject()
 	if c:IsRelateToEffect(e) then
-		vgf.Call(c,0,tp)
+		vgf.Sendto(LOCATION_MZONE,c,0,tp)
 	end
 end
 function cm.operation2(e,tp,eg,ep,ev,re,r,rp)

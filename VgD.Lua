@@ -85,7 +85,7 @@ function VgD.RideUpOperation(e,tp,eg,ep,ev,re,r,rp)
         end
         sc:SetMaterial(Group.FromCards(rc))
         VgF.Sendto(LOCATION_OVERLAY,Group.FromCards(rc),sc)
-        VgF.Call(sc,SUMMON_TYPE_RIDE,tp,0x20)
+        vgf.Sendto(LOCATION_MZONE,sc,SUMMON_TYPE_RIDE,tp,0x20)
         if Duel.IsExistingMatchingCard(Card.IsType,tp,LOCATION_RIDE,0,1,nil,TYPE_EMBLEM) then
             local tc=Duel.GetMatchingGroup(Card.IsType,tp,LOCATION_RIDE,0,nil,TYPE_EMBLEM):GetFirst()
             VgF.Sendto(LOCATION_EMBLEM,tc,tp,POS_FACEUP_DEFENSE,REASON_EFFECT)
@@ -100,7 +100,7 @@ function VgD.RideUpOperation(e,tp,eg,ep,ev,re,r,rp)
         end
         sc:SetMaterial(Group.FromCards(rc))
         VgF.Sendto(LOCATION_OVERLAY,Group.FromCards(rc),sc)
-        VgF.Call(sc,SUMMON_TYPE_SELFRIDE,tp,0x20)
+        vgf.Sendto(LOCATION_MZONE,sc,SUMMON_TYPE_SELFRIDE,tp,0x20)
         Duel.Draw(tp,1,REASON_EFFECT)
         local e1=Effect.CreateEffect(c)
         e1:SetType(EFFECT_TYPE_FIELD)
@@ -127,7 +127,7 @@ function VgD.RideZeroOperation(e,tp,eg,ep,ev,re,r,rp)
         Duel.Hint(HINT_SELECTMSG,tp,HINTMSG_CALL)
         g=g:Select(tp,1,1,nil)
     end
-    VgF.Call(g,SUMMON_TYPE_RIDE,tp,0x20)
+    vgf.Sendto(LOCATION_MZONE,g,SUMMON_TYPE_RIDE,tp,0x20)
 end
 --Call到R位
 function VgD.CallToR(c)

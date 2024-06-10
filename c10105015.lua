@@ -48,7 +48,7 @@ function cm.op1(e,tp,eg,ep,ev,re,r,rp)
 	Duel.HintSelection(g)
 	for tc in vgf.Next(g) do
 		if tc:IsType(TYPE_MONSTER) then
-			vgf.Call(tc,0,tp)
+			vgf.Sendto(LOCATION_MZONE,tc,0,tp)
 		else
 			vgf.Sendto(LOCATION_GRAVE,tc,REASON_EFFECT)
 		end

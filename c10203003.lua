@@ -36,7 +36,7 @@ function cm.operation(e,tp,eg,ep,ev,re,r,rp)
 	elseif (sel==1 and a and b) or (sel==0 and not a and b) then
 		Duel.Hint(HINT_SELECTMSG,tp,HINTMSG_CALL)
 		local sg=g:FilterSelect(tp,cm.filter1,1,1,nil,tp)
-		vgf.Call(sg,0,tp)
+		vgf.Sendto(LOCATION_MZONE,sg,0,tp)
 		g:RemoveCard(vgf.ReturnCard(sg))
 	end
 	if #g>1 then

@@ -17,7 +17,7 @@ function cm.operation(e,tp,eg,ep,ev,re,r,rp)
 	if vgf.GetAvailableLocation(tp)<=0 then return end
 	local g=vgf.SelectMatchingCard(HINTMSG_Call,e,tp,cm.filter,tp,LOCATION_GRAVE,0,1,1,nil)
 	Duel.HintSelection(g)
-	vgf.Call(g,0,tp,nil,POS_FACEUP_DEFENSE)
+	vgf.Sendto(LOCATION_MZONE,g,0,tp,nil,POS_FACEUP_DEFENSE)
 end
 function cm.filter(c)
 	return c:IsLevel(c,0,1) and c:IsType(TYPE_MONSTER)

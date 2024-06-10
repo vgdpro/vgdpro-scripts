@@ -36,7 +36,7 @@ function cm.operation1(e,tp,eg,ep,ev,re,r,rp)
 	if ct>2 then ct=2 end
 	local g=vgf.SelectMatchingCard(HINTMSG_CALL,e,tp,Card.IsType,tp,LOCATION_HAND,0,0,ct,nil,TYPE_MONSTER)
 	if g:GetCount()==1 then
-		vgf.Call(g,0,tp)
+		vgf.Sendto(LOCATION_MZONE,g,0,tp)
 	elseif g:GetCount()==2 then
 		local tc1=g:GetFirst()
 		Duel.Hint(HINT_SELECTMSG,tp,HINTMSG_CallZONE)

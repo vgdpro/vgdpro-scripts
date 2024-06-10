@@ -889,6 +889,19 @@ function VgF.Sendto(loc,sg,...)
         for tc in VgF.Next(g) do
             Duel.MoveToField(tc,move_tp,target_tp,loc,pos,enable)
         end
+    elseif loc==LOCATION_MZONE then
+        local list={...}
+        local sumtype=list[1]
+        local tp=list[2]
+        local zone=nil
+        if #list>2 then
+            zone=list[3]
+        end
+        local pos=nil
+        if #list>3 then
+            pos=list[4]
+        end
+        return VgF.Call(g,sumtype,tp,zone,pos)
     elseif (loc|0xf800>0) then
         AddOverlayGroup(g)
         local list={...}
