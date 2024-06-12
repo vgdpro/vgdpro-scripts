@@ -898,9 +898,23 @@ function VgF.Sendto(loc,sg,...)
     elseif loc==LOCATION_OVERLAY then
         AddOverlayGroup(g)
         local list={...}
-        local c=list[1]
-        Duel.Overlay(c,g)
-        return g:GetCount()
+        local c=nil
+        local ct=0
+        if #list>0 then
+            c=list[1]
+            Duel.Overlay(c,g)
+            ct=Duel.GetOperatedGroup():GetCount()
+        else
+            for tp=0,1 do
+                c=VgF.GetVMonster(tp)
+                local og=g:Filter(Card.IsControler,nil,tp)
+                if og:GetCount()>0 then
+                    Duel.Overlay(c,og)
+                    ct=ct+Duel.GetOperatedGroup():GetCount()
+                end
+            end
+        end
+        return ct
     elseif loc==LOCATION_TRIGGER then
         AddOverlayGroup(g)
         local list={...}
