@@ -627,7 +627,6 @@ function VgD.CardTriggerOperation(chkop,f)
                 VgF.Sendto(LOCATION_EXILE,c,REASON_TRIGGER)
             else
                 VgF.Sendto(LOCATION_HAND,c,nil,REASON_TRIGGER)
-                Duel.ConfirmCards(1-tp,c)
             end
             local rc=Duel.GetMatchingGroup(VgF.VMonsterFilter,tp,LOCATION_MZONE,0,nil):GetFirst()
             local label=rc:GetFlagEffectLabel(AttackTriggerFlag)
@@ -994,19 +993,19 @@ function VgD.ContinuousSpellOperation(e,tp,eg,ep,ev,re,r,rp)
     local c=e:GetHandler()
     VgF.Sendto(LOCATION_ORDER,c,tp,POS_FACEUP_ATTACK,REASON_RULE)
 end
-function VgD.EffectTypeContinuousChangeAttack(c,typ,val,con,tg,mc,code,reset,loc,loc1,loc2)
+function VgD.EffectTypeContinuousChangeAttack(c,typ,val,con,tg,mc,code,reset,loc,loc_self,loc_op)
     if VgF.GetValueType(mc)~="Card" then mc=c end
     if not typ then typ=EFFECT_TYPE_SINGLE end
     if not code then code=EFFECT_UPDATE_ATTACK end
     if not loc then loc=LOCATION_MZONE end
-    if not loc1 then loc1=0 end
-    if not loc2 then loc2=0 end
+    if not loc_self then loc_self=0 end
+    if not loc_op then loc_op=0 end
     local e1=Effect.CreateEffect(c)
     e1:SetType(typ)
     e1:SetCode(code)
     e1:SetRange(loc)
     if reset and reset>0 then e1:SetReset(reset) end
-    if typ==EFFECT_TYPE_FIELD then e1:SetTargetRange(loc1,loc2) end
+    if typ==EFFECT_TYPE_FIELD then e1:SetTargetRange(loc_self,loc_op) end
     if VgF.GetValueType(con)=="function" then e1:SetCondition(con) end
     if VgF.GetValueType(tg)=="function" then e1:SetTarget(tg) end
     e1:SetValue(val)

@@ -44,6 +44,7 @@ function VgF.DefineArguments()
     if not con then con=nil end
     if not tg then tg=nil end
     if not f then f=nil end
+    if not zone then zone=nil end
 end
 ---根据控制者，区域和编号获取zone；不合法的数据会返回0
 ---@param p integer 控制者
@@ -309,9 +310,12 @@ end
 ---@param zone integer 指示要Call到的格子。<br>前列的R：17； 后列的R：14； 全部的R：31； V：32
 ---@param pos integer 表示形式
 ---@return integer Call成功的数量
-function VgF.Call(g,sumtype,tp,zone,pos)
+function VgF.Call(g,sumtype,tp,zone,pos,chk)
     if (VgF.GetValueType(g)~="Card" and VgF.GetValueType(g)~="Group") or (VgF.GetValueType(g)=="Group" and g:GetCount()==0) then return 0 end
     if VgF.GetValueType(pos)~="number" then pos=POS_FACEUP_ATTACK end
+    if chk==0 then
+        return Duel.SpecialSummon(g,sumtype,tp,tp,false,false,pos)
+    end
     if zone and zone>0 then
         local sc=VgF.ReturnCard(g)
         local z=VgF.GetAvailableLocation(tp,zone)
@@ -634,47 +638,47 @@ function VgF.DamageCostOP(num,e,tp,eg,ep,ev,re,r,rp,chk)
     Duel.ChangePosition(g,POS_FACEDOWN_ATTACK)
     return Duel.GetOperatedGroup():GetCount()
 end
----用于效果的Operation。执行“从loc中选取1张满足f的卡，返回手牌。”。
+---用于效果的Operation。执行“从loc中选取int_min到int_max张满足f的卡，返回手牌。”。
 ---@param loc integer 要选取的区域。不填则返回nil，而不是效果的Operation函数。
 ---@param f function 卡片过滤的条件
 ---@return function|nil 效果的Operation函数
-function VgF.SearchCard(loc,f)
+function VgF.SearchCard(loc,f,int_max,int_min)
     if not loc then return end
     return function (e,tp,eg,ep,ev,re,r,rp)
-        VgF.SearchCardOP(loc,f,e,tp,eg,ep,ev,re,r,rp)
+        VgF.SearchCardOP(loc,f,e,tp,eg,ep,ev,re,r,rp,int_max,int_min)
     end
 end
-function VgF.SearchCardOP(loc,f,e,tp,eg,ep,ev,re,r,rp)
+function VgF.SearchCardOP(loc,f,e,tp,eg,ep,ev,re,r,rp,int_max,int_min)
     if not loc then return end
+    if VgF.GetValueType(int_max)~="number" then int_max=1 end
+    if VgF.GetValueType(int_min)~="number" then int_min=int_max end
     local g=VgF.SelectMatchingCard(HINTMSG_ATOHAND,e,tp,function (c)
-        if VgF.GetValueType(f)=="function" and not f(c) then return false end
-        return true
-    end,tp,loc,0,1,1,nil)
+        return VgF.GetValueType(f)~="function" or f(c)
+    end,tp,loc,0,int_min,int_max,nil)
     if g:GetCount()>0 then
         VgF.Sendto(LOCATION_HAND,g,nil,REASON_EFFECT)
-        Duel.ConfirmCards(1-tp,g)
     end
     local sg=Duel.GetOperatedGroup()
     return sg:GetCount()
 end
-    ---用于效果的Operation。执行“从loc中选取1张满足f的卡，Call到R上。”。
+    ---用于效果的Operation。执行“从loc中选取int_min到int_max张满足f的卡，Call到R上。”。
 ---@param loc integer 要选取的区域。不填则返回nil，而不是效果的Operation函数。
 ---@param f function 卡片过滤的条件
 ---@return function|nil 效果的Operation函数
-function VgF.SearchCardSpecialSummon(loc,f)
+function VgF.SearchCardSpecialSummon(loc,f,int_max,int_min)
     if not loc then return end
     return function (e,tp,eg,ep,ev,re,r,rp)
-        VgF.SearchCardSpecialSummonOP(loc,f,e,tp,eg,ep,ev,re,r,rp)
+        VgF.SearchCardSpecialSummonOP(loc,f,e,tp,eg,ep,ev,re,r,rp,int_max,int_min)
     end
 end
-function VgF.SearchCardSpecialSummonOP(loc,f,e,tp,eg,ep,ev,re,r,rp)
+function VgF.SearchCardSpecialSummonOP(loc,f,e,tp,eg,ep,ev,re,r,rp,int_max,int_min)
     if not loc then return end
+    if VgF.GetValueType(int_max)~="number" then int_max=1 end
+    if VgF.GetValueType(int_min)~="number" then int_min=int_max end
     local g=VgF.SelectMatchingCard(HINTMSG_CALL,e,tp,function (c)
-        if VgF.GetValueType(f)=="function" and not f(c) then return false end
-        return true
+        return VgF.GetValueType(f)~="function" or f(c)
     end,tp,loc,0,1,1,nil)
     if g:GetCount()>0 then
-        if loc&LOCATION_DECK+LOCATION_HAND+LOCATION_EXTRA==0 then Duel.HintSelection(g) end
         VgF.Call(g,0,tp)
     end
     local sg=Duel.GetOperatedGroup()
@@ -842,6 +846,10 @@ function VgF.SelectMatchingCard(hintmsg,e,select_tp,f,tp,loc_self,loc_op,int_min
             g=g:Select(select_tp,int_min,int_max,except_g)
         end
     end
+    local cg=g:Filter(function (tc)
+        return not tc:IsLocation(LOCATION_DECK+LOCATION_HAND+LOCATION_EXTRA)
+    end,nil)
+    if cg:GetCount()>0 then Duel.HintSelection(cg) end
     if a then Duel.ShuffleDeck(select_tp) end
     return g
 end
@@ -867,7 +875,16 @@ function VgF.Sendto(loc,sg,...)
     elseif loc==LOCATION_DECK then
         return Duel.SendtoDeck(g,...)
     elseif loc==LOCATION_HAND then
-        return Duel.SendtoHand(g,...)
+        local ct=Duel.SendtoHand(g,...)
+        local cg=Duel.GetOperatedGroup()
+        for tp=0,1 do
+            local confirm_group=cg:Filter(Card.IsControler,nil,tp)
+            if confirm_group:GetCount()>0 then
+                Duel.ConfirmCards(1-tp,confirm_group)
+                Duel.ShuffleHand(tp)
+            end
+        end
+        return ct
     elseif loc==LOCATION_REMOVED then
         AddOverlayGroup(g)
         return Duel.Remove(g,...)
@@ -901,7 +918,11 @@ function VgF.Sendto(loc,sg,...)
         if #list>3 then
             pos=list[4]
         end
-        return VgF.Call(g,sumtype,tp,zone,pos)
+        local chk=1
+        if #list>4 then
+            chk=list[5]
+        end
+        return VgF.Call(g,sumtype,tp,zone,pos,chk)
     elseif (loc|0xf800>0) then
         AddOverlayGroup(g)
         local list={...}
