@@ -26,7 +26,7 @@ function cm.cost1(e,tp,eg,ep,ev,re,r,rp,chk)
 	if sel==0 and a then
 		Duel.Hint(HINT_SELECTMSG,tp,HINTMSG_REMOVEXYZ)
         local g=Duel.GetMatchingGroup(vgf.VMonsterFilter,tp,LOCATION_MZONE,0,nil):GetFirst():GetOverlayGroup():Select(tp,1,1,nil)
-        vgf.Sendto(LOCATION_GRAVE,g,REASON_COST)
+        vgf.Sendto(LOCATION_DROP,g,REASON_COST)
 		e:SetLabel(1)
 	else
         local g=vgf.SelectMatchingCard(HINTMSG_DAMAGE,e,tp,Card.IsFaceup,tp,LOCATION_DAMAGE,0,num,num,nil)
@@ -50,7 +50,7 @@ function cm.op1(e,tp,eg,ep,ev,re,r,rp)
 		if tc:IsType(TYPE_MONSTER) then
 			vgf.Sendto(LOCATION_MZONE,tc,0,tp)
 		else
-			vgf.Sendto(LOCATION_GRAVE,tc,REASON_EFFECT)
+			vgf.Sendto(LOCATION_DROP,tc,REASON_EFFECT)
 		end
 	end
 end

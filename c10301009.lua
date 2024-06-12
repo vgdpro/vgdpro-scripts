@@ -24,6 +24,6 @@ function cm.operation(e,tp,eg,ep,ev,re,r,rp)
 		vgf.Sendto(LOCATION_HAND,g,nil,REASON_EFFECT)
 		Duel.ConfirmCards(1-tp,g)
 		local tg=vgf.SelectMatchingCard(HINTMSG_DISCARD,e,tp,nil,tp,LOCATION_HAND,0,1,1,nil)
-		vgf.Sendto(LOCATION_GRAVE,tg,REASON_COST)
+		vgf.Sendto(LOCATION_DROP,tg,REASON_COST)
 	end
 end

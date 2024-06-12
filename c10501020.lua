@@ -13,7 +13,7 @@ function cm.op(e,tp,eg,ep,ev,re,r,rp)
 	local e1=vgf.AtkUp(c,c,5000,nil)
 	vgf.EffectReset(c,e1,EVENT_BATTLED)
 	if vgf.IsSequence(c,2) then
-		vgf.DamageFillOP(1,e,tp,eg,ep,ev,re,r,rp)
+		vgf.DamageFill(1)(e,tp,eg,ep,ev,re,r,rp)
 	end
 end
 function cm.checkfilter(c,tp,re)

@@ -17,7 +17,7 @@ function cm.operation(e,tp,eg,ep,ev,re,r,rp)
 	if Duel.GetMatchingGroupCount(nil,tp,LOCATION_DAMAGE,0,nil)>=Duel.GetMatchingGroupCount(nil,tp,0,LOCATION_DAMAGE,nil) then
         local tc=vgf.SelectMatchingCard(HINTMSG_TODROP,e,tp,nil,tp,LOCATION_DAMAGE,0,1,1,nil):GetFirst()
         if tc then
-            vgf.Sendto(LOCATION_GRAVE,tc,REASON_TRIGGER)
+            vgf.Sendto(LOCATION_DROP,tc,REASON_TRIGGER)
         end
     end
 end

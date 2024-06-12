@@ -10,6 +10,6 @@ function cm.op(e,tp,eg,ep,ev,re,r,rp)
 	if g:GetCount()>=2 then
 		Duel.Hint(HINT_SELECTMSG,tp,HINTMSG_DISCARD)
 		g=g:Select(tp,1,1,nil)
-		vgf.Sendto(LOCATION_GRAVE,g,REASON_EFFECT+REASON_DISCARD)
+		vgf.Sendto(LOCATION_DROP,g,REASON_EFFECT+REASON_DISCARD)
 	end
 end

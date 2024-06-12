@@ -10,7 +10,7 @@ function cm.condition(e,tp,eg,ep,ev,re,r,rp)
 end
 function cm.operation(e,tp,eg,ep,ev,re,r,rp)
 	local c=e:GetHandler()
-	local g=vgf.SelectMatchingCard(HINTMSG_XMATERIAL,e,tp,nil,tp,LOCATION_GRAVE,0,1,1,nil)
+	local g=vgf.SelectMatchingCard(HINTMSG_XMATERIAL,e,tp,nil,tp,LOCATION_DROP,0,1,1,nil)
 	if g:GetCount()>0 then
 		vgf.Sendto(LOCATION_OVERLAY,g,vgf.GetVMonster(tp))
 	end

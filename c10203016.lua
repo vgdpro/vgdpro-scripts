@@ -12,7 +12,7 @@ function cm.cost(e,tp,eg,ep,ev,re,r,rp,chk)
 	Duel.Hint(HINT_SELECTMSG,tp,HINTMSG_REMOVEXYZ)
 	local g=Duel.GetMatchingGroup(vgf.VMonsterFilter,tp,LOCATION_MZONE,0,nil):GetFirst():GetOverlayGroup():Select(tp,1,1,nil)
 	g:AddCard(e:GetHandler())
-	vgf.Sendto(LOCATION_GRAVE,g,REASON_COST)
+	vgf.Sendto(LOCATION_DROP,g,REASON_COST)
 end
 function cm.operation(e,tp,eg,ep,ev,re,r,rp)
     local g=Duel.GetDecktopGroup(tp,3)

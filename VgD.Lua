@@ -77,7 +77,7 @@ function VgD.RideUpOperation(e,tp,eg,ep,ev,re,r,rp)
         if sc:IsLocation(LOCATION_EXTRA) then
             Duel.Hint(HINT_SELECTMSG,tp,HINTMSG_DISCARD)
             local g=Duel.SelectMatchingCard(tp,VgD.DisCardRideUpFilter,tp,LOCATION_HAND,0,1,1,nil,e,lv,code,rc)
-            VgF.Sendto(LOCATION_GRAVE,g,REASON_COST+REASON_DISCARD)
+            VgF.Sendto(LOCATION_DROP,g,REASON_COST+REASON_DISCARD)
         end
         local mg=rc:GetOverlayGroup()
         if mg:GetCount()~=0 then
@@ -163,7 +163,7 @@ function VgD.CallOperation(e,tp,eg,ep,ev,re,r,rp)
     local zone=Duel.SelectField(tp,1,LOCATION_MZONE,0,z)
     if Duel.IsExistingMatchingCard(VgD.CallFilter,tp,LOCATION_MZONE,0,1,nil,tp,zone) then
         local tc=Duel.GetMatchingGroup(VgD.CallFilter,tp,LOCATION_MZONE,0,nil,tp,zone):GetFirst()
-        VgF.Sendto(LOCATION_GRAVE,tc,REASON_COST)
+        VgF.Sendto(LOCATION_DROP,tc,REASON_COST)
     end
     e:SetValue(function () return SUMMON_VALUE_CALL,zone end)
 end
@@ -486,7 +486,7 @@ function VgD.SendToGOperation(e,tp,eg,ep,ev,re,r,rp)
 end
 function VgD.GToGraveOperation(e,tp,eg,ep,ev,re,r,rp)
     local c=e:GetHandler()
-    VgF.Sendto(LOCATION_GRAVE,c,REASON_RULE)
+    VgF.Sendto(LOCATION_DROP,c,REASON_RULE)
 end
 function VgD.MonsterAttackAnnounceCondition(e,c)
     return e:GetHandler():IsPosition(POS_DEFENSE) or (VgF.IsSequence(e:GetHandler(),1,2,3) and e:GetHandler():GetFlagEffect(AttackAtRearFlag)==0)
@@ -583,7 +583,7 @@ function VgD.CardTriggerOperation(chkop,f)
                 Duel.Hint(HINT_SELECTMSG,tp,HINTMSG_TODROP)
                 local tc=Duel.SelectMatchingCard(tp,nil,tp,LOCATION_DAMAGE,0,1,1,nil):GetFirst()
                 if tc then
-                    VgF.Sendto(LOCATION_GRAVE,tc,REASON_TRIGGER)
+                    VgF.Sendto(LOCATION_DROP,tc,REASON_TRIGGER)
                     Duel.Recover(tp,1,REASON_RULE)
                 end
             end
@@ -777,7 +777,7 @@ function VgF.MixFilter(mg, cf, cval, bf, bmin, bmax, bval)
 	end
 end
 function VgD.MixCostFilter(c,e,tp,eg,ep,ev,re,r,rp,mc)
-    if Duel.IsPlayerAffectedByEffect(tp,AFFECT_CODE_MIX_DIFFERENT_NAME) and c:IsCode(mc:GetCode()) then return false end
+if Duel.IsPlayerAffectedByEffect(tp,AFFECT_CODE_MIX_DIFFERENT_NAME) and c:IsCode(mc:GetCode()) then return false end
     local ce = c:GetActivateEffect()
     if not ce or (ce:GetCost() and not ce:GetCost()(e,tp,eg,ep,ev,re,r,rp,0)) then return false end
     local cg, cval = mc.cos_g, mc.cos_val
@@ -797,8 +797,8 @@ function VgD.MixCost(cost)
 	return function(e,tp,eg,ep,ev,re,r,rp,chk,bool)
 		local c=e:GetHandler()
 		if chk==0 then return VgF.GetValueType(cost)~="function" or cost(e,tp,eg,ep,ev,re,r,rp,0) end
-		if not bool and (Duel.IsPlayerAffectedByEffect(tp,AFFECT_CODE_MIX) and Duel.IsExistingMatchingCard(VgD.MixCostFilter,tp,LOCATION_GRAVE,0,1,nil,e,tp,eg,ep,ev,re,r,rp,c) and Duel.SelectYesNo(tp,VgF.Stringid(VgID,6))) then
-			local bc=Duel.SelectMatchingCard(tp,VgD.MixCostFilter,tp,LOCATION_GRAVE,0,1,1,nil,e,tp,eg,ep,ev,re,r,rp,c):GetFirst()
+		if not bool and (Duel.IsPlayerAffectedByEffect(tp,AFFECT_CODE_MIX) and Duel.IsExistingMatchingCard(VgD.MixCostFilter,tp,LOCATION_DROP,0,1,nil,e,tp,eg,ep,ev,re,r,rp,c) and Duel.SelectYesNo(tp,VgF.Stringid(VgID,6))) then
+			local bc=Duel.SelectMatchingCard(tp,VgD.MixCostFilter,tp,LOCATION_DROP,0,1,1,nil,e,tp,eg,ep,ev,re,r,rp,c):GetFirst()
             if cost then cost(e,tp,eg,ep,ev,re,r,rp) end
             if bc then
                 VgF.Sendto(LOCATION_REMOVED,bc,POS_FACEUP,REASON_COST)

@@ -43,7 +43,7 @@ function cm.operation1(e,tp,eg,ep,ev,re,r,rp)
 		local szone=Duel.SelectField(tp,1,LOCATION_MZONE,0,zone)
 		if Duel.IsExistingMatchingCard(vgd.CallFilter,tp,LOCATION_MZONE,0,1,nil,tp,szone) then
 			local tc=Duel.GetMatchingGroup(vgd.CallFilter,tp,LOCATION_MZONE,0,nil,tp,szone):GetFirst()
-			vgf.Sendto(LOCATION_GRAVE,tc,REASON_COST)
+			vgf.Sendto(LOCATION_DROP,tc,REASON_COST)
 		end
 		Duel.SpecialSummonStep(tc1,0,tp,tp,false,false,POS_FACEUP_ATTACK,szone)
 		if szone&0x11>0 then
@@ -56,7 +56,7 @@ function cm.operation1(e,tp,eg,ep,ev,re,r,rp)
 		szone=Duel.SelectField(tp,1,LOCATION_MZONE,0,zone)
 		if Duel.IsExistingMatchingCard(vgd.CallFilter,tp,LOCATION_MZONE,0,1,nil,tp,szone) then
 			local tc=Duel.GetMatchingGroup(vgd.CallFilter,tp,LOCATION_MZONE,0,nil,tp,szone):GetFirst()
-			vgf.Sendto(LOCATION_GRAVE,tc,REASON_COST)
+			vgf.Sendto(LOCATION_DROP,tc,REASON_COST)
 		end
 		Duel.SpecialSummonStep(tc2,0,tp,tp,false,false,POS_FACEUP_ATTACK,szone)
 		Duel.SpecialSummonComplete()

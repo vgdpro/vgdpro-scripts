@@ -10,14 +10,14 @@ function cm.initial_effect(c)
 end
 function cm.operation(e,tp,eg,ep,ev,re,r,rp)
 	Duel.Draw(tp,1,REASON_EFFECT)
-	local g=vgf.SelectMatchingCard(HINTMSG_XMATERIAL,e,tp,nil,tp,LOCATION_GRAVE,0,0,1,nil)
+	local g=vgf.SelectMatchingCard(HINTMSG_XMATERIAL,e,tp,nil,tp,LOCATION_DROP,0,0,1,nil)
 	if g:GetCount()>0 then
 	vgf.Sendto(LOCATION_OVERLAY,g,vgf.GetVMonster(tp))
 	end
 end
 function cm.operation1(e,tp,eg,ep,ev,re,r,rp)
 	local c=e:GetHandler()
-	vgf.OverlayFillOP(1,e,tp,eg,ep,ev,re,r,rp,1)
+	vgf.OverlayFill(1)(e,tp,eg,ep,ev,re,r,rp,1)
 	local e1=vgf.AtkUp(c,c,5000)
 	vgf.EffectReset(c,e1,EVENT_BATTLED)
 end

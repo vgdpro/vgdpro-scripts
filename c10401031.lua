@@ -26,6 +26,6 @@ function cm.op(e,tp,eg,ep,ev,re,r,rp)
 	local sg=Duel.GetFieldGroup(tp,LOCATION_HAND,0)
 	if sg:GetCount()>=2 then
 		sg=sg:Select(tp,1,1,nil)
-		vgf.Sendto(LOCATION_GRAVE,sg,REASON_DISCARD+REASON_EFFECT)
+		vgf.Sendto(LOCATION_DROP,sg,REASON_DISCARD+REASON_EFFECT)
 	end
 end

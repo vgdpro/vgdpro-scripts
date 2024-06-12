@@ -18,7 +18,7 @@ function cm.operation(e,tp,eg,ep,ev,re,r,rp)
     if tc:IsType(TYPE_MONSTER) then
         vgf.Sendto(LOCATION_MZONE,g,0,tp)
     else
-        vgf.Sendto(LOCATION_GRAVE,g,REASON_EFFECT)
+        vgf.Sendto(LOCATION_DROP,g,REASON_EFFECT)
     end
 end
 function cm.operation2(e,tp,eg,ep,ev,re,r,rp)

@@ -7,7 +7,7 @@ function cm.initial_effect(c)
 end
 function cm.operation(e,tp,eg,ep,ev,re,r,rp)
 	local c=e:GetHandler()
-	vgf.OverlayFillOP(1,e,tp,eg,ep,ev,re,r,rp,1)
+	vgf.OverlayFill(1)(e,tp,eg,ep,ev,re,r,rp,1)
 	Duel.BreakEffect()
 	Duel.Hint(HINT_SELECTMSG,tp,HINTMSG_ATKUP)
 	local e1=Duel.GetMatchingGroupCount(nil,tp,LOCATION_OVERLAY,0,nil)/5

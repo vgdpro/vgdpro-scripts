@@ -22,5 +22,5 @@ function cm.cost(e,tp,eg,ep,ev,re,r,rp,chk)
     Duel.ChangePosition(g1,POS_FACEDOWN)
     Duel.Hint(HINT_SELECTMSG,tp,HINTMSG_REMOVEXYZ)
     local g2=Duel.GetMatchingGroup(vgf.VMonsterFilter,tp,LOCATION_MZONE,0,nil):GetFirst():GetOverlayGroup():Select(tp,1,1,nil)
-    vgf.Sendto(LOCATION_GRAVE,g2,REASON_COST)
+    vgf.Sendto(LOCATION_DROP,g2,REASON_COST)
 end

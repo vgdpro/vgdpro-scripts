@@ -46,7 +46,7 @@ function cm.cost(e,tp,eg,ep,ev,re,r,rp,chk)
 	end
 	Duel.Hint(HINT_SELECTMSG,tp,HINTMSG_REMOVEXYZ)
 	local sg=g:SelectSubGroup(tp,cm.check,true,4,4)
-	vgf.Sendto(LOCATION_GRAVE,sg,REASON_EFFECT)
+	vgf.Sendto(LOCATION_DROP,sg,REASON_EFFECT)
 end
 function cm.operation(e,tp,eg,ep,ev,re,r,rp)
 	local c=e:GetHandler()
