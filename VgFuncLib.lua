@@ -100,7 +100,7 @@ function VgF.GetValueType(v)
 end
 ---如果g是Group的话，返回其第一张卡；如果g是Card的话，返回其本身；否则返回nil。
 ---@param g any 要操作的变量
----@return Card|nil
+---@return Card
 function VgF.ReturnCard(g)
     local tc
     if VgF.GetValueType(g)=="Group" then
@@ -853,7 +853,7 @@ function VgF.SelectMatchingCard(hintmsg,e,select_tp,f,tp,loc_self,loc_op,int_min
     if a then Duel.ShuffleDeck(select_tp) end
     return g
 end
----用于效果的Operation。执行“从loc_from中选取最少int_min，最多int_max张满足f的卡，送去loc_to。”。
+---用于效果的Operation。执行“把卡sg，送去loc,第三个参数开始为额外参数，内容与原函数相同。”。
 ---@param loc integer 要送去的区域。不填则返回0。
 ---@param sg integer 要操作的卡|卡片组。
 ---@return number 具体操作的卡的数量
