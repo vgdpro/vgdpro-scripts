@@ -32,7 +32,7 @@ function cm.con(e,c)
 	return Duel.GetFlagEffect(tp,m)>0
 end
 function cm.condition(e,tp,eg,ep,ev,re,r,rp)
-	return VgF.VMonsterFilter(e:GetHandler()) and vgf.VMonsterFilter(Duel.GetAttackTarget())
+	return vgf.VMonsterFilter(e:GetHandler()) and vgf.VMonsterFilter(Duel.GetAttackTarget())
 end
 function cm.check(g)
 	return g:GetClassCount(Card.GetLevel)==#g
@@ -46,17 +46,17 @@ function cm.cost(e,tp,eg,ep,ev,re,r,rp,chk)
 	end
 	Duel.Hint(HINT_SELECTMSG,tp,HINTMSG_REMOVEXYZ)
 	local sg=g:SelectSubGroup(tp,cm.check,true,4,4)
-	Duel.SendtoGrave(sg,REASON_EFFECT)
+	vgf.Sendto(LOCATION_DROP,sg,REASON_EFFECT)
 end
 function cm.operation(e,tp,eg,ep,ev,re,r,rp)
 	local c=e:GetHandler()
-	local tc=Duel.SelectTarget(tp,vgf.VMonsterFilter,tp,0,LOCATION_MZONE,1,1,nil):GetFirst()
+	local tc=vgf.SelectMatchingCard(HINTMSG_VMONSTER,e,tp,vgf.VMonsterFilter,tp,0,LOCATION_MZONE,1,1,nil):GetFirst()
 	if tc:GetAttack()>1 then
 		local atk=tc:GetAttack()-1
 		vgf.AtkUp(c,tc,-atk)
 	end
 	if Duel.IsExistingMatchingCard(tp,cm.filter,tp,0,LOCATION_MZONE,1,1,nil) then
-		VgF.StarUp(c,c,1)
+		vgf.StarUp(c,c,1)
 	end
 end
 function cm.filter(c)

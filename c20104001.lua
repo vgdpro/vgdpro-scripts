@@ -10,7 +10,7 @@ end
 --效果一处理
 function cm.operation(e,tp,eg,ep,ev,re,r,rp)
 	local c=e:GetHandler()
-	vgf.SearchCardOP(LOCATION_DECK,cm.fliter,e,tp,eg,ep,ev,re,r,rp)
+	vgf.SearchCard(LOCATION_HAND,LOCATION_DECK,cm.fliter)(e,tp,eg,ep,ev,re,r,rp)
 	vgf.AtkUp(c,c,10000,nil)
 end
 --返回效果一寻找目标
@@ -25,7 +25,7 @@ end
 --效果二处理
 function cm.operation2(e,tp,eg,ep,ev,re,r,rp)
 	local c=e:GetHandler()
-	vgf.SearchCardSpecialSummonOP(LOCATION_DROP,cm.fliter2,e,tp,eg,ep,ev,re,r,rp)
+	vgf.SearchCard(LOCATION_MZONE,LOCATION_DROP,cm.fliter2)(e,tp,eg,ep,ev,re,r,rp)
 	local g=Duel.GetOperatedGroup()
 	vgf.AtkUp(c,g,10000)
 end

@@ -9,34 +9,33 @@ function cm.con(e,tp,eg,ep,ev,re,r,rp)
 	return e:GetHandler():IsLocation(LOCATION_ORDER)
 end
 function cm.cost1(e,tp,eg,ep,ev,re,r,rp,chk)
-	local a=Duel.GetMatchingGroup(VgF.VMonsterFilter,tp,LOCATION_MZONE,0,nil,nil):GetFirst():GetOverlayGroup():FilterCount(Card.IsAbleToGraveAsCost,nil)>=1
+	local a=Duel.GetMatchingGroup(vgf.VMonsterFilter,tp,LOCATION_MZONE,0,nil,nil):GetFirst():GetOverlayCount()>=1
 	local b=Duel.IsExistingMatchingCard(Card.IsFaceup,tp,LOCATION_DAMAGE,0,1,nil)
 	if chk==0 then return a or b end
 	local off=1
     local ops={}
     if a then
-        ops[off]=VgF.Stringid(VgID,11)
+        ops[off]=vgf.Stringid(VgID,11)
         off=off+1
     end
     if b then
-        ops[off]=VgF.Stringid(VgID,12)
+        ops[off]=vgf.Stringid(VgID,12)
         off=off+1
     end
 	local sel=Duel.SelectOption(tp,table.unpack(ops))
 	if sel==0 and a then
 		Duel.Hint(HINT_SELECTMSG,tp,HINTMSG_REMOVEXYZ)
-        local g=Duel.GetMatchingGroup(VgF.VMonsterFilter,tp,LOCATION_MZONE,0,nil):GetFirst():GetOverlayGroup():FilterSelect(tp,Card.IsAbleToGraveAsCost,num,num,nil)
-        Duel.SendtoGrave(g,REASON_COST)
+        local g=Duel.GetMatchingGroup(vgf.VMonsterFilter,tp,LOCATION_MZONE,0,nil):GetFirst():GetOverlayGroup():Select(tp,1,1,nil)
+        vgf.Sendto(LOCATION_DROP,g,REASON_COST)
 		e:SetLabel(1)
 	else
-        Duel.Hint(HINT_SELECTMSG,tp,HINTMSG_DAMAGE)
-        local g=Duel.SelectMatchingCard(tp,Card.IsFaceup,tp,LOCATION_DAMAGE,0,num,num,nil)
+        local g=vgf.SelectMatchingCard(HINTMSG_DAMAGE,e,tp,Card.IsFaceup,tp,LOCATION_DAMAGE,0,num,num,nil)
         Duel.ChangePosition(g,POS_FACEDOWN_ATTACK)
 		e:SetLabel(2)
 	end
 end
 function cm.con1(e,tp,eg,ep,ev,re,r,rp)
-	return eg:IsExists(cm.filter,1,nil,e) and eg:Count()==1
+	return eg:IsExists(cm.filter,1,nil,e) and eg:GetCount()==1
 end
 function cm.filter(c,e)
 	return c:IsSummonType(SUMMON_VALUE_CALL) and c:GetControler()~=e:GetHandler():GetControler()
@@ -45,14 +44,13 @@ function cm.op1(e,tp,eg,ep,ev,re,r,rp)
 	local zone=vgf.GetAvailableLocation(tp)
 	local ct=bit.ReturnCount(zone)
 	if ct>e:GetLabel() then ct=e:GetLabel() end
-	Duel.Hint(HINT_SELECTMSG,tp,HINTMSG_CALL)
-	local g=Duel.SelectMatchingCard(tp,cm.filter1,tp,0,LOCATION_ORDER,ct,ct,nil,e,tp)
+	local g=vgf.SelectMatchingCard(HINTMSG_CALL,e,tp,cm.filter1,tp,0,LOCATION_ORDER,ct,ct,nil,e,tp)
 	Duel.HintSelection(g)
 	for tc in vgf.Next(g) do
-		if tc:IsCanBeSpecialSummoned(e,0,tp,false,false,POS_FACEUP_ATTACK) then
-			vgf.Call(tc,0,tp)
+		if tc:IsType(TYPE_MONSTER) then
+			vgf.Sendto(LOCATION_MZONE,tc,0,tp)
 		else
-			Duel.SendtoGrave(tc,REASON_EFFECT)
+			vgf.Sendto(LOCATION_DROP,tc,REASON_EFFECT)
 		end
 	end
 end

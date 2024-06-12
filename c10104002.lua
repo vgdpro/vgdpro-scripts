@@ -13,10 +13,10 @@ function cm.operation(e,tp,eg,ep,ev,re,r,rp)
 	local g=Duel.GetDecktopGroup(tp,1)
 	local tc=vgf.ReturnCard(g)
 	Duel.DisableShuffleCheck()
-	if tc:IsCanBeSpecialSummoned(e,0,tp,false,false,POS_FACEUP_ATTACK) then
-        vgf.Call(g,0,tp)
-	elseif tc:IsAbleToHand() then
-		Duel.SendtoHand(g,nil,REASON_EFFECT)
+	if tc:IsType(TYPE_MONSTER) then
+        vgf.Sendto(LOCATION_MZONE,g,0,tp)
+	else
+		vgf.Sendto(LOCATION_HAND,g,nil,REASON_EFFECT)
 		Duel.ConfirmCards(1-tp,g)
 	end
 end

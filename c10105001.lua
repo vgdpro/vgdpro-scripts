@@ -14,7 +14,6 @@ function cm.filter(c)
 end
 function cm.op1(e,tp,eg,ep,ev,re,r,rp)
 	if not vgf.CheckPrison(tp) then return end
-	Duel.Hint(HINT_SELECTMSG,tp,HINTMSG_IMPRISON)
-	local g1=Duel.SelectMatchingCard(tp,vgf.RMonsterFilter,tp,0,LOCATION_MZONE,2,2,nil)
+	local g1=vgf.SelectMatchingCard(HINTMSG_IMPRISON,e,tp,vgf.RMonsterFilter,tp,0,LOCATION_MZONE,2,2,nil)
 	vgf.SendtoPrison(g1,tp)
 end

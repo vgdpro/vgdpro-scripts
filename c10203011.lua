@@ -9,5 +9,5 @@ end
 function cm.operation(e,tp,eg,ep,ev,re,r,rp)
 	local c=e:GetHandler()
 	if vgf.GetAvailableLocation(tp)<=0 then return end
-	vgf.Call(c,0,tp)
+	vgf.Sendto(LOCATION_MZONE,c,0,tp)
 end

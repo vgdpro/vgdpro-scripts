@@ -15,13 +15,12 @@ end
 function cm.operation(e,tp,eg,ep,ev,re,r,rp)
 	local c=e:GetHandler()
 	if vgf.GetAvailableLocation(tp)<=0 then return end
-	Duel.Hint(HINT_SELECTMSG,tp,HINTMSG_Call)
-	local g=Duel.SelectMatchingCard(tp,cm.filter,tp,LOCATION_GRAVE,0,1,1,nil,e,tp)
+	local g=vgf.SelectMatchingCard(HINTMSG_Call,e,tp,cm.filter,tp,LOCATION_DROP,0,1,1,nil)
 	Duel.HintSelection(g)
-	vgf.Call(g,0,tp,nil,POS_FACEUP_DEFENSE)
+	vgf.Sendto(LOCATION_MZONE,g,0,tp,nil,POS_FACEUP_DEFENSE)
 end
-function cm.filter(c,e,tp)
-	return c:IsLevel(c,0,1) and c:IsCanBeSpecialSummoned(e,0,tp,false,false,POS_FACEUP_ATTACK)
+function cm.filter(c)
+	return c:IsLevel(c,0,1) and c:IsType(TYPE_MONSTER)
 end
 function cm.operation1(e,tp,eg,ep,ev,re,r,rp)
 	local c=e:GetHandler()

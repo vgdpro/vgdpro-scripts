@@ -1,7 +1,7 @@
 --天枪的骑士 勒克斯
 local cm,m,o=GetID()
 function cm.initial_effect(c)
-    VgF.VgCard(c)
+    vgf.VgCard(c)
     vgd.BeRidedByCard(c,m,10103001,cm.operation,cm.cost)
     local e1=Effect.CreateEffect(c)
     e1:SetType(EFFECT_TYPE_SINGLE)
@@ -25,8 +25,7 @@ function cm.operation(e,tp,eg,ep,ev,re,r,rp)
 end
 function cm.cost(e,tp,eg,ep,ev,re,r,rp,chk)
     if chk==0 then return Duel.IsExistingMatchingCard(vgf.IsLevel,tp,LOCATION_HAND,0,3,nil,3) end
-    Duel.Hint(HINT_SELECTMSG,tp,HINTMSG_CONFIRM)
-    local g=Duel.SelectMatchingCard(tp,vgf.IsLevel,tp,LOCATION_HAND,0,3,3,nil,3)
+    local g=vgf.SelectMatchingCard(HINTMSG_CONFIRM,e,tp,vgf.IsLevel,tp,LOCATION_HAND,0,3,3,nil,3)
     Duel.ConfirmCards(1-tp,g)
 end
 function cm.condition(e,c)

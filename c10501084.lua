@@ -7,12 +7,11 @@ function cm.initial_effect(c)
     vgd.BeRidedByCard(c,m,nil,cm.operation,nil,nil)
 end
 function cm.operation(e,tp,eg,ep,ev,re,r,rp)
-    Duel.Hint(HINT_SELECTMSG,tp,HINTMSG_TOFIELD)
-    local g=Duel.SelectMatchingCard(tp,cm.filter,tp,LOCATION_HAND+LOCATION_DECK,0,0,1,nil)
+    local g=vgf.SelectMatchingCard(HINTMSG_TOFIELD,e,tp,cm.filter,tp,LOCATION_HAND+LOCATION_DECK,0,0,1,nil)
     if #g>0 then
         local tc=g:GetFirst()
         local chk=tc:IsLocation(LOCATION_HAND)
-        Duel.Sendto(tc,tp,LOCATION_ORDER,POS_FACEUP_ATTACK,REASON_EFFECT)
+        vgf.Sendto(LOCATION_ORDER,tc,tp,POS_FACEUP_ATTACK,REASON_EFFECT)
         Duel.ShuffleDeck(tp)
         if chk then
             Duel.Draw(tp,1,REASON_EFFECT)
@@ -20,5 +19,5 @@ function cm.operation(e,tp,eg,ep,ev,re,r,rp)
     end
 end
 function cm.filter(c)
-    return c:IsSetCard(0xa040) and c:IsAbleToHand() and vgf.IsLevel(c,1)
+    return c:IsSetCard(0xa040) and vgf.IsLevel(c,1)
 end

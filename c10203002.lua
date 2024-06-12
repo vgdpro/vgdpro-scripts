@@ -1,8 +1,8 @@
 local cm,m,o=GetID()
 function cm.initial_effect(c)
 	vgf.VgCard(c)
-	vgd.BeRidedByCard(c,m,cm.filter,vgf.SearchCard(LOCATION_DROP,cm.filter1),VgF.DamageCost(1))
-	vgd.EffectTypeTrigger(c,m,LOCATION_MZONE,EFFECT_TYPE_FIELD,EVENT_CUSTOM+EVENT_SUPPORT,cm.operation1,VgF.OverlayCost(1),cm.condition1)
+	vgd.BeRidedByCard(c,m,cm.filter,vgf.SearchCard(LOCATION_HAND,LOCATION_DROP,cm.filter1),vgf.DamageCost(1))
+	vgd.EffectTypeTrigger(c,m,LOCATION_MZONE,EFFECT_TYPE_FIELD,EVENT_CUSTOM+EVENT_SUPPORT,cm.operation1,vgf.OverlayCost(1),cm.condition1)
 end
 function cm.filter(c)
 	return c:IsSetCard(0x202)

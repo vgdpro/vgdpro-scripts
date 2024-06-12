@@ -16,23 +16,11 @@ function cm.op(e,tp,eg,ep,ev,re,r,rp)
 		local g2=Duel.GetMatchingGroup(vgf.RMonsterFilter,tp,0,LOCATION_MZONE,nil)
 		local tc1=vgf.GetVMonster(tp)
 		local tc2=vgf.GetVMonster(1-tp)
-		for tc in vgf.Next(g1) do
-			local og=tc:GetOverlayGroup()
-			if og:GetCount()>0 then
-				Duel.Overlay(tc1,og)
-			end
-		end
-		for tc in vgf.Next(g2) do
-			local og=tc:GetOverlayGroup()
-			if og:GetCount()>0 then
-				Duel.Overlay(tc2,og)
-			end
-		end
-		Duel.Overlay(tc1,g1)
-		Duel.Overlay(tc2,g2)
+		vgf.Sendto(LOCATION_OVERLAY,g1,tc1)
+		vgf.Sendto(LOCATION_OVERLAY,g2,tc2)
 		if vgf.GetAvailableLocation(tp)>0 then
-			local g=tc1:GetOverlayGroup():FilterSelect(tp,Card.IsCanBeSpecialSummoned,tp,0,2,nil,e,0,tp,false,false,POS_FACEUP_ATTACK)
-			vgf.Call(g,0,tp)
+			local g=tc1:GetOverlayGroup():FilterSelect(tp,Card.IsType,tp,0,2,nil,TYPE_MONSTER)
+			vgf.Sendto(LOCATION_MZONE,g,0,tp)
 		end
 	end
 end

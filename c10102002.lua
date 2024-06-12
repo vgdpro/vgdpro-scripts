@@ -14,15 +14,11 @@ end
 function cm.op(e,tp,eg,ep,ev,re,r,rp)
 	Duel.Draw(tp,1,REASON_EFFECT)
 end
-function cm.filter(c)
-	return c:IsCanOverlay() and vgf.RMonsterFilter(c)
-end
 function cm.cost(e,tp,eg,ep,ev,re,r,rp,chk)
 	local c=e:GetHandler()
-	if chk==0 then return Duel.IsExistingMatchingCard(cm.filter,tp,LOCATION_MZONE,0,1,nil) end
-	Duel.Hint(HINT_SELECTMSG,tp,HINTMSG_XMATERIAL)
-	local g=Duel.SelectMatchingCard(tp,cm.filter,tp,LOCATION_MZONE,0,1,1,nil)
-	Duel.Overlay(c,g)
+	if chk==0 then return Duel.IsExistingMatchingCard(vgf.RMonsterFilter,tp,LOCATION_MZONE,0,1,nil) end
+	local g=vgf.SelectMatchingCard(HINTMSG_XMATERIAL,e,tp,vgf.RMonsterFilter,tp,LOCATION_MZONE,0,1,1,nil)
+	vgf.Sendto(LOCATION_OVERLAY,g,c)
 end
 function cm.con(e,tp,eg,ep,ev,re,r,rp)
 	local c=e:GetHandler()

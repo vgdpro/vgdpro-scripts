@@ -16,13 +16,12 @@ function cm.con2(e,tp,eg,ep,ev,re,r,rp)
 end
 function cm.con(e,tp,eg,ep,ev,re,r,rp)
 	local c=e:GetHandler()
-	return vgf.IsSequence(c,5) and r==REASON_RIDEUP
+	return (c:IsSummonType(SUMMON_TYPE_RIDE) or c:IsSummonType(SUMMON_TYPE_SELFRIDE))
 end
 function cm.op(e,tp,eg,ep,ev,re,r,rp)
 	if vgf.GetAvailableLocation(tp)&0x4<=0 then return end
 	Duel.Hint(HINT_SELECTMSG,tp,HINTMSG_CALL)
-	local g=Duel.GetMatchingGroup(VgF.VMonsterFilter,tp,LOCATION_MZONE,0,nil):GetFirst():GetOverlayGroup():FilterSelect(tp,Card.IsCanBeSpecialSummoned,1,1,nil,e,0,tp,false,false,POS_FACEUP_ATTACK,0x4)
-	if vgf.Call(g,0,tp,0x4)>0 then
-		vgf.OverlayFillOP(num,e,tp,eg,ep,ev,re,r,rp)
-	end
+	local g=Duel.GetMatchingGroup(vgf.VMonsterFilter,tp,LOCATION_MZONE,0,nil):GetFirst():GetOverlayGroup():Select(tp,1,1,nil)
+	vgf.Sendto(LOCATION_MZONE,g,0,tp,0x4)
+	vgf.OverlayFill(1)(e,tp,eg,ep,ev,re,r,rp)
 end

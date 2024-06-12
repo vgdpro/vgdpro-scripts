@@ -94,6 +94,8 @@ TRRIGGER_DRAW			=0x4		--抽牌触发
 TRRIGGER_HEAL			=0x8		--治愈触发
 TRRIGGER_ADVANCE		=0x10		--前列触发
 TRRIGGER_SUPER		    =0x20		--超限触发
+--Category	效果分类
+CATEGORY_DEFENDER       =0x1		--守护者
 --Reason 卡片到当前位置的原因
 REASON_DESTROY		=0x1		--破坏
 REASON_RELEASE		=0x2		--解放
@@ -675,6 +677,7 @@ EVENT_DAMAGE_TRIGGER    =VgID+2 --受伤判定完毕时点
 EVENT_RIDE_START        =VgID+3 --骑升时点
 EVENT_SUPPORT           =VgID+4 --支援时点
 EVENT_TRIGGERCOUNTUP    =VgID+5 --驱动追加
+EVENT_SING              =VgID+6 --演唱时
 
 --攻击时(EVENT_ATTACK_ANNOUNCE)
 --支援时(EVENT_CUSTOM+EVENT_SUPPORT)
@@ -742,8 +745,8 @@ HINTMSG_REMOVEXYZ		=519	--请选择要取除的超量素材
 HINTMSG_CONTROL			=520	--请选择要改变控制权的怪兽
 HINTMSG_DESREPLACE		=521	--请选择要代替破坏的卡
 HINTMSG_FACEUPATTACK	=522	--
-HINTMSG_FACEUPDEFENSE	=523	--请选择表侧守备表示的怪兽
-HINTMSG_FACEDOWNATTACK	=524	--请选择里侧攻击表示的怪兽
+HINTMSG_FACEUPDEFENSE	=523	--
+HINTMSG_FACEDOWNATTACK	=524	--
 HINTMSG_FACEDOWNDEFENSE	=525	--请选择里侧守备表示的怪兽
 HINTMSG_CONFIRM			=526	--请选择给对方确认的卡
 HINTMSG_TOFIELD			=527	--请选择要放置到场上的卡
@@ -784,6 +787,8 @@ HINTMSG_ATKUP		    =HINTMSG_FMATERIAL	--请选择力量上升的卡
 HINTMSG_CRITICAL_STRIKE	=HINTMSG_SMATERIAL	--请选择☆值上升的卡
 HINTMSG_IMPRISON        =HINTMSG_DESTROY    --请选择要收容的卡
 HINTMSG_VMONSTER        =HINTMSG_FACEUPATTACK       --请选择先导者
+HINTMSG_RMONSTER        =HINTMSG_FACEUPDEFENSE      --请选择后防者
+HINTMSG_MONSTER         =HINTMSG_FACEDOWNATTACK     --请选择单位
 --Select	--请选择
 SELECT_HEADS				=60	--正面
 SELECT_TAILS				=61	--反面
@@ -867,12 +872,10 @@ ConditionFlag           =VgID+4 --处于XX状态标识
 SupportFlag             =VgID+5 --支援状态标识
 AttackAtRearFlag        =VgID+6 --后列攻击
 ImprisonFlag            =VgID+7 --被收容
-DamageFlag              =VgID+8 --被收容
 --AffectedByEffect
 AFFECT_CODE_MIX         =VgID   --魔合成
 AFFECT_CODE_MIX_DIFFERENT_NAME  =VgID+1     --魔合成(卡名不同)
 AFFECT_CODE_SENDTOG     =VgID+2 --需要两张卡才能防御
-AFFECT_CODE_SENDTOG_MZONE       =VgID+3     --不能截击
 
 
 POS_FACEUP_DEFENCE=POS_FACEUP_DEFENSE

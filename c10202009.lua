@@ -3,10 +3,10 @@ local cm,m,o=GetID()
 function cm.initial_effect(c)
 	vgf.VgCard(c)
 	--【起】【R】【1回合1次】：你有等级3以上的先导者的话，通过【费用】[计数爆发2]，抽1张卡。
-	vgd.EffectTypeIgnition(c,m,LOCATION_MZONE,cm.operation,VgF.DamageCost(2),cm.condition,nil,1)
+	vgd.EffectTypeIgnition(c,m,LOCATION_MZONE,cm.operation,vgf.DamageCost(2),cm.condition,nil,1)
 end
 function cm.condition(e,tp,eg,ep,ev,re,r,rp)
-	return VgF.RMonsterFilter(e:GetHandler()) and VgF.GetVMonster(tp):IsLevelAbove(4)
+	return vgf.RMonsterFilter(e:GetHandler()) and vgf.GetVMonster(tp):IsLevelAbove(4)
 end
 function cm.operation(e,tp,eg,ep,ev,re,r,rp)
 	Duel.Draw(tp,1,REASON_EFFECT)
