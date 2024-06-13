@@ -6,12 +6,10 @@ function cm.initial_effect(c)
     vgd.EffectTypeTrigger(c,m,LOCATION_MZONE,EFFECT_TYPE_FIELD,EVENT_CUSTOM+EVENT_SUPPORT,cm.op,nil,cm.con)
 
 end
-
 function cm.con(e,tp,eg,ep,ev,re,r,rp)
     local c=e:GetHandler()
-    return vgf.RMonsterFilter(c)
+    return vgf.RMonsterFilter(c) and eg:IsContains(c)
 end
-
 function cm.op(e,tp,eg,ep,ev,re,r,rp)
     local c=e:GetHandler()
     vgf.AtkUp(c,c,2000)

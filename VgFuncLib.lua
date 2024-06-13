@@ -875,7 +875,25 @@ function VgF.Sendto(loc,sg,...)
     end
     if loc==LOCATION_DROP then
         AddOverlayGroup(g)
-        return Duel.SendtoGrave(g,...)
+        local function repfilter(c,tp)
+            return c:IsControler(tp) and (c:IsLocation(LOCATION_GZONE) or vgf.RMonsterFilter(c)) and c:IsType(TYPE_MONSTER) and c:GetLevel()%2==1
+        end
+        local print=0
+        for tp=0,1 do
+            local replace_to_overlay_group=g:Filter(repfilter,nil,tp)
+            local ct=replace_to_overlay_group:GetCount()
+            if Duel.IsPlayerAffectedByEffect(tp,10501118) and ct>0 and Duel.SelectYesNo(tp,VgF.Stringid(10501118,0)) then
+                if ct>1 then replace_to_overlay_group=replace_to_overlay_group:Select(tp,1,ct,nil) end
+                local ct1=VgF.Sendto(LOCATION_OVERLAY,replace_to_overlay_group,VgF.GetVMonster(tp))
+                print=print+ct1
+                g:Sub(replace_to_overlay_group)
+            end
+        end
+        if g:GetCount()>0 then
+            local ct=Duel.SendtoGrave(g,...)
+            print=print+ct
+        end
+        return print
     elseif loc==LOCATION_DECK then
         return Duel.SendtoDeck(g,...)
     elseif loc==LOCATION_HAND then

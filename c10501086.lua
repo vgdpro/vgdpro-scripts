@@ -8,12 +8,13 @@ end
 function cm.con(e,tp,eg,ep,ev,re,r,rp)
     local c=e:GetHandler()
     -- 下面这段感觉有点问题
-    return VgF.RMonsterCondition(e) and eg:IsExists(cm.filter,1,nil,tp)
+    return VgF.RMonsterCondition(e) and eg:IsExists(cm.filter,1,nil,tp,c)
 end
 function cm.op(e,tp,eg,ep,ev,re,r,rp)
 	local c=e:GetHandler()
     vgf.AtkUp(c,c,2000)
 end
-function cm.filter(c)
-    return c:IsExists(VgF.GetColumnGroup)
+function cm.filter(c,tp,mc)
+    local g=VgF.GetColumnGroup(mc)
+    return g:GetCount()>0 and g:IsContains(c)
 end
