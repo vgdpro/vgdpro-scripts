@@ -332,7 +332,8 @@ function VgD.MonsterBattle(c)
     e8:SetType(EFFECT_TYPE_FIELD+EFFECT_TYPE_CONTINUOUS)
     e8:SetCode(EVENT_DAMAGE_STEP_END)
     e8:SetProperty(EFFECT_FLAG_DAMAGE_STEP+EFFECT_FLAG_CANNOT_DISABLE+EFFECT_FLAG_DELAY)
-    e8:SetRange(LOCATION_GZONE)
+    e8:SetRange(LOCATION_ALL)
+    e8:SetCondition(VgF.RuleCardCondtion)
     e8:SetOperation(VgD.GToGraveOperation)
     c:RegisterEffect(e8)
     --其他永续
@@ -485,8 +486,8 @@ function VgD.SendToGOperation(e,tp,eg,ep,ev,re,r,rp)
     VgF.Sendto(LOCATION_GZONE,g,tp,POS_FACEUP,REASON_EFFECT)
 end
 function VgD.GToGraveOperation(e,tp,eg,ep,ev,re,r,rp)
-    local c=e:GetHandler()
-    VgF.Sendto(LOCATION_DROP,c,REASON_RULE)
+    local g=Duel.GetFieldGroup(tp,LOCATION_GZONE,0)
+    if g:GetCount()>0 then VgF.Sendto(LOCATION_DROP,g,REASON_RULE) end
 end
 function VgD.MonsterAttackAnnounceCondition(e,c)
     return e:GetHandler():IsPosition(POS_DEFENSE) or (VgF.IsSequence(e:GetHandler(),1,2,3) and e:GetHandler():GetFlagEffect(AttackAtRearFlag)==0)
@@ -708,7 +709,7 @@ function VgD.Rule(c)
     e16:SetCode(EFFECT_QP_ACT_IN_NTPHAND)
     e16:SetRange(LOCATION_ALL)
     e16:SetCondition(VgF.RuleCardCondtion)
-    e16:SetProperty(EFFECT_FLAG_PLAYER_TARGET+EFFECT_FLAG_CANNOT_DISABLE)
+    e16:SetProperty(EFFECT_FLAG_CANNOT_DISABLE)
     e16:SetTargetRange(LOCATION_HAND,0)
     c:RegisterEffect(e16)
 end
@@ -961,7 +962,7 @@ function VgD.EffectTypeTriggerWhenHittingCon(typ,con,p)
         return true
     end
 end
-function VgD.QuickSpell(c,code,op,cost,con,tg)
+function VgD.QuickSpell(c,op,cost,con,tg)
     local e1=Effect.CreateEffect(c)
     e1:SetType(EFFECT_TYPE_ACTIVATE)
     e1:SetCode(EVENT_BATTLE_START)

@@ -11,7 +11,6 @@ function cm.op(e,tp,eg,ep,ev,re,r,rp)
 	local atk=5000
 	if Duel.IsExistingMatchingCard(vgf.IsSequence,tp,LOCATION_MZONE,0,3,nil,1,2,3) then atk=15000 end
 	if g then
-		Duel.HintSelection(g)
 		vgf.AtkUp(c,g,atk)
 	end
 end
