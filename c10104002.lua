@@ -17,7 +17,6 @@ function cm.operation(e,tp,eg,ep,ev,re,r,rp)
         vgf.Sendto(LOCATION_MZONE,g,0,tp)
 	else
 		vgf.Sendto(LOCATION_HAND,g,nil,REASON_EFFECT)
-		Duel.ConfirmCards(1-tp,g)
 	end
 end
 function cm.operation2(e,tp,eg,ep,ev,re,r,rp)

@@ -23,10 +23,8 @@ function cm.operation(e,tp,eg,ep,ev,re,r,rp)
 	Duel.DisableShuffleCheck()
 	Duel.Hint(HINT_SELECTMSG,tp,HINTMSG_ATOHAND)
 	local sg=g:FilterSelect(tp,cm.filter,0,1,nil)
-	if #sg > 0 then
+	if #sg>0 then
 		vgf.Sendto(LOCATION_HAND,sg,nil,REASON_EFFECT)
-		Duel.ConfirmCards(1-tp,sg)
-		Duel.ShuffleHand(tp)
 		g:RemoveCard(vgf.ReturnCard(sg))
 	end
 	for i=1,#g do

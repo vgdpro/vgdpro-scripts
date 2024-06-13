@@ -9,6 +9,7 @@ function cm.cost(e,tp,eg,ep,ev,re,r,rp,chk)
     if chk==0 then return Duel.IsExistingMatchingCard(vgf.IsLevel,tp,LOCATION_HAND,0,2,nil,3) end
     local g=vgf.SelectMatchingCard(HINTMSG_CONFIRM,e,tp,vgf.IsLevel,tp,LOCATION_HAND,0,2,2,nil,3)
     Duel.ConfirmCards(1-tp,g)
+    Duel.ShuffleHand(tp)
 end
 function cm.operation(e,tp,eg,ep,ev,re,r,rp)
     Duel.ConfirmDecktop(tp,1)

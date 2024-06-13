@@ -21,10 +21,9 @@ function cm.operation(e,tp,eg,ep,ev,re,r,rp)
 	local sg=g:FilterSelect(tp,cm.filter,0,1,nil)
 	if sg:GetCount()>0 then
 		vgf.Sendto(LOCATION_HAND,sg,nil,REASON_EFFECT)
-		Duel.ConfirmCards(1-tp,sg)
 	else
-		Duel.Draw(tp,1,REASON_EFFECT)
 		Duel.ShuffleDeck(tp)
+		Duel.Draw(tp,1,REASON_EFFECT)
 	end
 end
 function cm.filter(c)

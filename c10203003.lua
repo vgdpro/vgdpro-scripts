@@ -30,8 +30,6 @@ function cm.operation(e,tp,eg,ep,ev,re,r,rp)
 		local sg=g:FilterSelect(tp,cm.filter,1,1,nil)
 		Duel.DisableShuffleCheck()
 		vgf.Sendto(LOCATION_HAND,sg,nil,REASON_EFFECT)
-		Duel.ConfirmCards(1-tp,sg)
-		Duel.ShuffleHand(tp)
 		g:RemoveCard(vgf.ReturnCard(sg))
 	elseif (sel==1 and a and b) or (sel==0 and not a and b) then
 		Duel.Hint(HINT_SELECTMSG,tp,HINTMSG_CALL)
