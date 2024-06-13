@@ -27,9 +27,10 @@ function cm.operation(e,tp,eg,ep,ev,re,r,rp)
 		vgf.Sendto(LOCATION_HAND,sg,nil,REASON_EFFECT)
 		g:RemoveCard(vgf.ReturnCard(sg))
 	end
-	for i=1,#g do
-		local dg=Duel.GetDecktopGroup(tp,1)
+	while g:GetCount()>0 do
+		local dg=g:RandomSelect(tp,1)
 		Duel.MoveSequence(dg:GetFirst(),SEQ_DECKBOTTOM)
+		g:Sub(dg)
 	end
 end
 function cm.filter(c)
