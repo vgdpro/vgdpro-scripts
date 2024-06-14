@@ -14,7 +14,7 @@ function cm.operation(e,tp,eg,ep,ev,re,r,rp)
 	local off=1
 	local ops={}
 	local a=g:IsExists(cm.filter,1,nil)
-	local b=g:IsExists(cm.filter1,1,nil,e,tp)
+	local b=g:IsExists(cm.filter1,1,nil,tp)
 	if a then
 		ops[off]=1190
 		off=off+1
