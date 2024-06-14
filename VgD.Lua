@@ -27,11 +27,11 @@ function VgD.RideUpFilter1(c,e,lv,code,rc)
     if rc:IsAttribute(SKILL_SELF_RIDE) and c:IsCode(code) then
         return false
     end
-    return ((c:IsLevel(lv,lv+1) and c:IsLocation(LOCATION_HAND)) or (c:IsLevel(lv+1) and c:IsLocation(LOCATION_RIDE) and Duel.IsExistingMatchingCard(nil,tp,LOCATION_HAND,0,1,nil))) and c:IsType(TYPE_MONSTER)
+    return ((c:IsLevel(lv,lv+1) and c:IsLocation(LOCATION_HAND)) or (c:IsLevel(lv+1) and c:IsLocation(LOCATION_RIDE) and VgF.IsExistingMatchingCard(nil,tp,LOCATION_HAND,0,1,nil))) and c:IsType(TYPE_MONSTER)
 end
 function VgD.DisCardRideUpFilter(c,e,lv,code,rc)
     local tp=c:GetControler()
-    return c:IsDiscardable() and Duel.IsExistingMatchingCard(VgD.RideUpFilter1,tp,LOCATION_HAND+LOCATION_RIDE,0,1,c,e,lv,code,rc)
+    return c:IsDiscardable() and VgF.IsExistingMatchingCard(VgD.RideUpFilter1,tp,LOCATION_HAND+LOCATION_RIDE,0,1,c,e,lv,code,rc)
 end
 function VgD.RideUpFilter2(c,e,lv,code,rc)
     local tp=e:GetHandlerPlayer()
@@ -85,8 +85,8 @@ function VgD.RideUpOperation(e,tp,eg,ep,ev,re,r,rp)
         end
         sc:SetMaterial(Group.FromCards(rc))
         VgF.Sendto(LOCATION_OVERLAY,Group.FromCards(rc),sc)
-        vgf.Sendto(LOCATION_MZONE,sc,SUMMON_TYPE_RIDE,tp,0x20)
-        if Duel.IsExistingMatchingCard(Card.IsType,tp,LOCATION_RIDE,0,1,nil,TYPE_EMBLEM) then
+        VgF.Sendto(LOCATION_MZONE,sc,SUMMON_TYPE_RIDE,tp,0x20)
+        if VgF.IsExistingMatchingCard(Card.IsType,tp,LOCATION_RIDE,0,1,nil,TYPE_EMBLEM) then
             local tc=Duel.GetMatchingGroup(Card.IsType,tp,LOCATION_RIDE,0,nil,TYPE_EMBLEM):GetFirst()
             VgF.Sendto(LOCATION_EMBLEM,tc,tp,POS_FACEUP_DEFENSE,REASON_EFFECT)
         end
@@ -100,7 +100,7 @@ function VgD.RideUpOperation(e,tp,eg,ep,ev,re,r,rp)
         end
         sc:SetMaterial(Group.FromCards(rc))
         VgF.Sendto(LOCATION_OVERLAY,Group.FromCards(rc),sc)
-        vgf.Sendto(LOCATION_MZONE,sc,SUMMON_TYPE_SELFRIDE,tp,0x20)
+        VgF.Sendto(LOCATION_MZONE,sc,SUMMON_TYPE_SELFRIDE,tp,0x20)
         Duel.Draw(tp,1,REASON_EFFECT)
         local e1=Effect.CreateEffect(c)
         e1:SetType(EFFECT_TYPE_FIELD)
@@ -127,7 +127,7 @@ function VgD.RideZeroOperation(e,tp,eg,ep,ev,re,r,rp)
         Duel.Hint(HINT_SELECTMSG,tp,HINTMSG_CALL)
         g=g:Select(tp,1,1,nil)
     end
-    vgf.Sendto(LOCATION_MZONE,g,SUMMON_TYPE_RIDE,tp,0x20)
+    VgF.Sendto(LOCATION_MZONE,g,SUMMON_TYPE_RIDE,tp,0x20)
 end
 --Call到R位
 function VgD.CallToR(c)
@@ -161,7 +161,7 @@ function VgD.CallOperation(e,tp,eg,ep,ev,re,r,rp)
     end
     Duel.Hint(HINT_SELECTMSG,tp,HINTMSG_CallZONE)
     local zone=Duel.SelectField(tp,1,LOCATION_MZONE,0,z)
-    if Duel.IsExistingMatchingCard(VgD.CallFilter,tp,LOCATION_MZONE,0,1,nil,tp,zone) then
+    if VgF.IsExistingMatchingCard(VgD.CallFilter,tp,LOCATION_MZONE,0,1,nil,tp,zone) then
         local tc=Duel.GetMatchingGroup(VgD.CallFilter,tp,LOCATION_MZONE,0,nil,tp,zone):GetFirst()
         VgF.Sendto(LOCATION_DROP,tc,REASON_COST)
     end
@@ -191,7 +191,7 @@ function VgD.OverDressCondition(f)
     return function (e,c)
     if c==nil then return true end
         local tp=e:GetHandlerPlayer()
-        return VgF.LvCondition(e) and Duel.IsExistingMatchingCard(VgD.OverDressFilter,tp,LOCATION_MZONE,0,1,nil,f)
+        return VgF.LvCondition(e) and VgF.IsExistingMatchingCard(VgD.OverDressFilter,tp,LOCATION_MZONE,0,1,nil,f)
     end
 end
 function VgD.OverDressFilter(c,f,zone)
@@ -460,8 +460,8 @@ function VgD.SupportValue(e)
 end
 function VgD.SendToGCost(e,tp,eg,ep,ev,re,r,rp,chk)
     local c=e:GetHandler()
-    if chk==0 then return not Duel.IsPlayerAffectedByEffect(tp,OAFFECT_CODE_SENDTOG) or Duel.IsExistingMatchingCard(nil,tp,LOCATION_GZONE,0,1,nil) or Duel.IsExistingMatchingCard(VgF.IsAbleToGZone,tp,LOCATION_HAND,0,1,c,LOCATION_HAND) end
-    if Duel.IsPlayerAffectedByEffect(tp,OAFFECT_CODE_SENDTOG) and not Duel.IsExistingMatchingCard(nil,tp,LOCATION_GZONE,0,1,nil) then
+    if chk==0 then return not Duel.IsPlayerAffectedByEffect(tp,OAFFECT_CODE_SENDTOG) or VgF.IsExistingMatchingCard(nil,tp,LOCATION_GZONE,0,1,nil) or VgF.IsExistingMatchingCard(VgF.IsAbleToGZone,tp,LOCATION_HAND,0,1,c,LOCATION_HAND) end
+    if Duel.IsPlayerAffectedByEffect(tp,OAFFECT_CODE_SENDTOG) and not VgF.IsExistingMatchingCard(nil,tp,LOCATION_GZONE,0,1,nil) then
         local tc=Duel.SelectMatchingCard(tp,VgF.IsAbleToGZone,tp,LOCATION_HAND,0,1,1,c,LOCATION_HAND)
         tc=VgF.ReturnCard(tc)
         Duel.ConfirmCards(1-tp,tc)
@@ -798,7 +798,7 @@ function VgD.MixCost(cost)
 	return function(e,tp,eg,ep,ev,re,r,rp,chk,bool)
 		local c=e:GetHandler()
 		if chk==0 then return VgF.GetValueType(cost)~="function" or cost(e,tp,eg,ep,ev,re,r,rp,0) end
-		if not bool and (Duel.IsPlayerAffectedByEffect(tp,AFFECT_CODE_MIX) and Duel.IsExistingMatchingCard(VgD.MixCostFilter,tp,LOCATION_DROP,0,1,nil,e,tp,eg,ep,ev,re,r,rp,c) and Duel.SelectYesNo(tp,VgF.Stringid(VgID,6))) then
+		if not bool and (Duel.IsPlayerAffectedByEffect(tp,AFFECT_CODE_MIX) and VgF.IsExistingMatchingCard(VgD.MixCostFilter,tp,LOCATION_DROP,0,1,nil,e,tp,eg,ep,ev,re,r,rp,c) and Duel.SelectYesNo(tp,VgF.Stringid(VgID,6))) then
 			local bc=Duel.SelectMatchingCard(tp,VgD.MixCostFilter,tp,LOCATION_DROP,0,1,1,nil,e,tp,eg,ep,ev,re,r,rp,c):GetFirst()
             if cost then cost(e,tp,eg,ep,ev,re,r,rp) end
             if bc then

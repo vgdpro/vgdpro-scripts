@@ -13,5 +13,5 @@ end
 function cm.con(e)
 	local c=e:GetHandler()
 	local tp=e:GetHandlerPlayer()
-	return vgf.RMonsterCondition(e) and Duel.IsExistingMatchingCard(vgf.RMonsterFilter,tp,LOCATION_MZONE,0,4,c)
+	return vgf.RMonsterCondition(e) and vgf.IsExistingMatchingCard(vgf.RMonsterFilter,tp,LOCATION_MZONE,0,4,c)
 end

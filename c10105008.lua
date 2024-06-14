@@ -6,7 +6,7 @@ function cm.initial_effect(c)
 end
 function cm.con(e,c)
 	local tp=e:GetHandler()
-	return Duel.IsExistingMatchingCard(cm.filter,tp,LOCATION_ORDER,0,1,nil)
+	return vgf.IsExistingMatchingCard(cm.filter,tp,LOCATION_ORDER,0,1,nil)
 end
 function cm.filter(c)
 	return c:GetFlagEffect(ImprisonFlag)>0

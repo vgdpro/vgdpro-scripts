@@ -14,7 +14,7 @@ function cm.filter(c)
 	return vgf.RMonsterFilter(c)
 end
 function cm.con(e,tp,eg,ep,ev,re,r,rp)
-	return Duel.IsExistingMatchingCard(cm.cfilter,tp,LOCATION_MZONE,0,1,nil,e:GetHandler()) and Duel.GetAttacker()==e:GetHandler() and vgf.RMonsterCondition(e)
+	return vgf.IsExistingMatchingCard(cm.cfilter,tp,LOCATION_MZONE,0,1,nil,e:GetHandler()) and Duel.GetAttacker()==e:GetHandler() and vgf.RMonsterCondition(e)
 end
 function cm.cfilter(c,mc)
 	return vgf.GetColumnGroup(c):IsContains(mc) and c:IsControler(mc:GetControler()) and c:GetFlagEffect(SupportFlag)>0

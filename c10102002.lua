@@ -16,7 +16,7 @@ function cm.op(e,tp,eg,ep,ev,re,r,rp)
 end
 function cm.cost(e,tp,eg,ep,ev,re,r,rp,chk)
 	local c=e:GetHandler()
-	if chk==0 then return Duel.IsExistingMatchingCard(vgf.RMonsterFilter,tp,LOCATION_MZONE,0,1,nil) end
+	if chk==0 then return vgf.IsExistingMatchingCard(vgf.RMonsterFilter,tp,LOCATION_MZONE,0,1,nil) end
 	local g=vgf.SelectMatchingCard(HINTMSG_XMATERIAL,e,tp,vgf.RMonsterFilter,tp,LOCATION_MZONE,0,1,1,nil)
 	vgf.Sendto(LOCATION_OVERLAY,g,c)
 end

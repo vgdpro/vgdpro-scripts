@@ -17,7 +17,7 @@ end
 function cm.con(e)
 	local c=e:GetHandler()
 	local tp=e:GetHandlerPlayer()
-	return vgf.RMonsterFilter(c) and Duel.IsExistingMatchingCard(cm.filter,tp,LOCATION_ORDER,0,1,nil)
+	return vgf.RMonsterFilter(c) and vgf.IsExistingMatchingCard(cm.filter,tp,LOCATION_ORDER,0,1,nil)
 end
 function cm.filter(c)
 	return c:GetFlagEffect(ImprisonFlag)>0

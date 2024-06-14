@@ -12,7 +12,7 @@ function cm.op(e,tp,eg,ep,ev,re,r,rp)
 end
 function cm.con(e,tp,eg,ep,ev,re,r,rp)
 	local c=e:GetHandler()
-    return not(c:IsSummonType(SUMMON_TYPE_RIDE) or c:IsSummonType(SUMMON_TYPE_SELFRIDE)) and Duel.IsExistingMatchingCard(cm.filter,tp,LOCATION_MZONE,0,1,c)
+    return not(c:IsSummonType(SUMMON_TYPE_RIDE) or c:IsSummonType(SUMMON_TYPE_SELFRIDE)) and vgf.IsExistingMatchingCard(cm.filter,tp,LOCATION_MZONE,0,1,c)
 end
 function cm.filter(c)
     return c:IsSetCard(0xa013) and vgf.RMonsterFilter(c)

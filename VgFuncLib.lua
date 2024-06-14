@@ -337,7 +337,7 @@ function VgF.Call(g,sumtype,tp,zone,pos,chk)
             end
             sc:SetMaterial(Group.FromCards(tc))
             VgF.Sendto(LOCATION_OVERLAY,Group.FromCards(tc),sc)
-        elseif Duel.IsExistingMatchingCard(VgD.CallFilter,tp,LOCATION_MZONE,0,1,nil,tp,szone) then
+        elseif VgF.IsExistingMatchingCard(VgD.CallFilter,tp,LOCATION_MZONE,0,1,nil,tp,szone) then
             local tc=Duel.GetMatchingGroup(VgD.CallFilter,tp,LOCATION_MZONE,0,nil,tp,szone):GetFirst()
             VgF.Sendto(LOCATION_DROP,tc,REASON_COST)
         end
@@ -360,7 +360,7 @@ function VgF.Call(g,sumtype,tp,zone,pos,chk)
             else
                 Duel.Hint(HINT_SELECTMSG,tp,HINTMSG_CallZONE)
                 local szone=Duel.SelectField(tp,1,LOCATION_MZONE,0,z)
-                if Duel.IsExistingMatchingCard(VgD.CallFilter,tp,LOCATION_MZONE,0,1,nil,tp,szone) then
+                if VgF.IsExistingMatchingCard(VgD.CallFilter,tp,LOCATION_MZONE,0,1,nil,tp,szone) then
                     local tc=Duel.GetMatchingGroup(VgD.CallFilter,tp,LOCATION_MZONE,0,nil,tp,szone):GetFirst()
                     VgF.Sendto(LOCATION_DROP,tc,REASON_COST)
                 end
@@ -374,7 +374,7 @@ end
 function VgF.LvCondition(e_or_c)
     local c=VgF.GetValueType(e_or_c)=="Effect" and e_or_c:GetHandler() or e_or_c
     local tp,lv=c:GetControler(),c:GetLevel()
-    return Duel.IsExistingMatchingCard(VgF.LvConditionFilter,tp,LOCATION_MZONE,0,1,nil,lv)
+    return VgF.IsExistingMatchingCard(VgF.LvConditionFilter,tp,LOCATION_MZONE,0,1,nil,lv)
 end
 function VgF.LvConditionFilter(c,lv)
     return VgF.VMonsterFilter(c) and c:IsLevelAbove(lv)
@@ -528,7 +528,7 @@ function VgF.DisCardCost(num)
                 cm.cos_g=Duel.GetMatchingGroup(nil,tp,LOCATION_HAND,0,nil)
                 cm.cos_val={nil,num,num}
             end
-            return Duel.IsExistingMatchingCard(nil,tp,LOCATION_HAND,0,num,nil)
+            return VgF.IsExistingMatchingCard(nil,tp,LOCATION_HAND,0,num,nil)
         end
         Duel.Hint(HINT_SELECTMSG,tp,HINTMSG_DISCARD)
         local g=Duel.SelectMatchingCard(tp,nil,tp,LOCATION_HAND,0,num,num,nil)
@@ -549,7 +549,7 @@ function VgF.EnergyCost(num)
                 cm.cos_g=Duel.GetMatchingGroup(Card.IsCode,tp,LOCATION_EMBLEM,0,nil,10800730)
                 cm.cos_val={nil,num,num}
             end
-            return Duel.IsExistingMatchingCard(Card.IsCode,tp,LOCATION_EMBLEM,0,num,nil,10800730)
+            return VgF.IsExistingMatchingCard(Card.IsCode,tp,LOCATION_EMBLEM,0,num,nil,10800730)
         end
         local sg=Duel.GetMatchingGroup(Card.IsCode,tp,LOCATION_EMBLEM,0,nil,10800730)
         local g=VgF.GetCardsFromGroup(sg,num)
@@ -613,7 +613,7 @@ function VgF.DamageCost(num)
                 cm.cos_g=Duel.GetMatchingGroup(Card.IsFaceup,tp,LOCATION_DAMAGE,0,nil)
                 cm.cos_val={nil,num,num}
             end
-            return Duel.IsExistingMatchingCard(Card.IsFaceup,tp,LOCATION_DAMAGE,0,num,nil)
+            return VgF.IsExistingMatchingCard(Card.IsFaceup,tp,LOCATION_DAMAGE,0,num,nil)
         end
         Duel.Hint(HINT_SELECTMSG,tp,HINTMSG_DAMAGE)
         local g=Duel.SelectMatchingCard(tp,Card.IsFaceup,tp,LOCATION_DAMAGE,0,num,num,nil)
@@ -756,7 +756,7 @@ function VgF.SendtoPrison(g,p)
 end
 --[[
 function VgF.PrisonFilter(c,tp)
-    return c:IsSetCard(0x3040) and not Duel.IsExistingMatchingCard(function (tc)
+    return c:IsSetCard(0x3040) and not VgF.IsExistingMatchingCard(function (tc)
         return tc:GetSequence()<c:GetSequence()
     end,tp,LOCATION_ORDER,0,1,c)
 end
@@ -815,29 +815,54 @@ function VgF.EffectResetOperation(e,tp,eg,ep,ev,re,r,rp)
     if VgF.GetValueType(e1)=="Effect" then e1:Reset() end
     e:Reset()
 end
+function VgF.IsExistingMatchingCard(f,tp,loc_self,loc_op,int,except_g,...)
+    local g=Group.CreateGroup()
+    if loc_self|LOCATION_MZONE>0 then
+        local g1=Duel.GetMatchingGroup(Card.IsFaceup,tp,LOCATION_MZONE,0,nil)
+        loc_self=loc_self-LOCATION_MZONE
+        if g1:GetCount()>0 then g:Merge(g1) end
+    end
+    if loc_op|LOCATION_MZONE>0 then
+        local g1=Duel.GetMatchingGroup(Card.IsFaceup,tp,0,LOCATION_MZONE,nil)
+        loc_op=loc_op-LOCATION_MZONE
+        if g1:GetCount()>0 then g:Merge(g1) end
+    end
+    if loc_self>0 or loc_op>0 then
+        local g1=Duel.GetMatchingGroup(nil,tp,loc_self,loc_op,nil)
+        if g1:GetCount()>0 then g:Merge(g1) end
+    end
+    if g:GetCount()>0 then
+        g=g:Filter(f,except_g,...)
+    end
+    return g:GetCount()>=int
+end
 function VgF.SelectMatchingCard(hintmsg,e,select_tp,f,tp,loc_self,loc_op,int_min,int_max,except_g,...)
     local a=false
     if ((select_tp==tp and loc_self|LOCATION_DECK>0) or (select_tp~=tp and loc_op|LOCATION_DECK>0)) and Duel.SelectYesNo(select_tp,VgF.Stringid(VgID,13)) then
         local g=Duel.GetFieldGroup(select_tp,LOCATION_DECK,0)
         Duel.DisableShuffleCheck()
-        Duel.ConfirmCards(select_tp,g) 
+        Duel.ConfirmCards(select_tp,g)
         a=true
     end
     local g=Group.CreateGroup()
     if loc_self|LOCATION_MZONE>0 then
-        local g1=Duel.GetMatchingGroup(Card.IsCanBeEffectTarget,tp,LOCATION_MZONE,0,nil,e)
+        local g1=Duel.GetMatchingGroup(function (c)
+            return c:IsCanBeEffectTarget(e) and c:IsFaceup()
+        end,tp,LOCATION_MZONE,0,nil)
         loc_self=loc_self-LOCATION_MZONE
         if g1:GetCount()>0 then g:Merge(g1) end
     end
     if loc_op|LOCATION_MZONE>0 then
-        local g1=Duel.GetMatchingGroup(Card.IsCanBeEffectTarget,tp,0,LOCATION_MZONE,nil,e)
+        local g1=Duel.GetMatchingGroup(function (c)
+            return c:IsCanBeEffectTarget(e) and c:IsFaceup()
+        end,tp,0,LOCATION_MZONE,nil)
         loc_op=loc_op-LOCATION_MZONE
         if g1:GetCount()>0 then g:Merge(g1) end
     end
-    local g1=Duel.GetMatchingGroup(nil,tp,0,loc_op,nil)
-    if g1:GetCount()>0 then g:Merge(g1) end
-    local g2=Duel.GetMatchingGroup(nil,tp,loc_self,0,nil)
-    if g2:GetCount()>0 then g:Merge(g2) end
+    if loc_self>0 or loc_op>0 then
+        local g1=Duel.GetMatchingGroup(nil,tp,loc_self,loc_op,nil)
+        if g1:GetCount()>0 then g:Merge(g1) end
+    end
     if g:GetCount()>0 then
         Duel.Hint(HINT_SELECTMSG,select_tp,hintmsg)
         if VgF.GetValueType(f)=="function" then
@@ -876,7 +901,7 @@ function VgF.Sendto(loc,sg,...)
     if loc==LOCATION_DROP then
         AddOverlayGroup(g)
         local function repfilter(c,tp)
-            return c:IsControler(tp) and (c:IsLocation(LOCATION_GZONE) or vgf.RMonsterFilter(c)) and c:IsType(TYPE_MONSTER) and c:GetLevel()%2==1
+            return c:IsControler(tp) and (c:IsLocation(LOCATION_GZONE) or VgF.RMonsterFilter(c)) and c:IsType(TYPE_MONSTER) and c:GetLevel()%2==1
         end
         local print=0
         for tp=0,1 do

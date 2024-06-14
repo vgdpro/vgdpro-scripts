@@ -13,7 +13,7 @@ function cm.filter(c)
 end
 function cm.condition1(e,tp,eg,ep,ev,re,r,rp)
 	local c=e:GetHandler()
-	return not cm.condition(e,tp,eg,ep,ev,re,r,rp) and Duel.IsExistingMatchingCard(cm.filter1,tp,LOCATION_ORDER,0,1,nil)
+	return not cm.condition(e,tp,eg,ep,ev,re,r,rp) and vgf.IsExistingMatchingCard(cm.filter1,tp,LOCATION_ORDER,0,1,nil)
 end
 function cm.filter1(c)
 	return c:GetFlagEffect(ImprisonFlag)>0
@@ -22,7 +22,7 @@ function cm.operation1(e,tp,eg,ep,ev,re,r,rp)
 	Duel.Draw(tp,1,REASON_EFFECT)
 end
 function cm.cost(e,tp,eg,ep,ev,re,r,rp,chk)
-	if chk==0 then return Duel.IsExistingMatchingCard(Card.IsFaceup,tp,LOCATION_DAMAGE,0,1,nil) and Duel.GetMatchingGroup(vgf.VMonsterFilter,tp,LOCATION_MZONE,0,nil,nil):GetFirst():GetOverlayCount()>=1 end
+	if chk==0 then return vgf.IsExistingMatchingCard(Card.IsFaceup,tp,LOCATION_DAMAGE,0,1,nil) and Duel.GetMatchingGroup(vgf.VMonsterFilter,tp,LOCATION_MZONE,0,nil,nil):GetFirst():GetOverlayCount()>=1 end
 	local g1=vgf.SelectMatchingCard(HINTMSG_DAMAGE,e,tp,Card.IsFaceup,tp,LOCATION_DAMAGE,0,1,1,nil)
 	Duel.ChangePosition(g1,POS_FACEDOWN)
 	Duel.Hint(HINT_SELECTMSG,tp,HINTMSG_REMOVEXYZ)

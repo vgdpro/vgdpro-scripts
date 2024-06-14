@@ -10,7 +10,7 @@ function cm.con(e,tp,eg,ep,ev,re,r,rp)
 end
 function cm.cost1(e,tp,eg,ep,ev,re,r,rp,chk)
 	local a=Duel.GetMatchingGroup(vgf.VMonsterFilter,tp,LOCATION_MZONE,0,nil,nil):GetFirst():GetOverlayCount()>=1
-	local b=Duel.IsExistingMatchingCard(Card.IsFaceup,tp,LOCATION_DAMAGE,0,1,nil)
+	local b=vgf.IsExistingMatchingCard(Card.IsFaceup,tp,LOCATION_DAMAGE,0,1,nil)
 	if chk==0 then return a or b end
 	local off=1
     local ops={}

@@ -41,7 +41,7 @@ function cm.operation1(e,tp,eg,ep,ev,re,r,rp)
 		local tc1=g:GetFirst()
 		Duel.Hint(HINT_SELECTMSG,tp,HINTMSG_CallZONE)
 		local szone=Duel.SelectField(tp,1,LOCATION_MZONE,0,zone)
-		if Duel.IsExistingMatchingCard(vgd.CallFilter,tp,LOCATION_MZONE,0,1,nil,tp,szone) then
+		if vgf.IsExistingMatchingCard(vgd.CallFilter,tp,LOCATION_MZONE,0,1,nil,tp,szone) then
 			local tc=Duel.GetMatchingGroup(vgd.CallFilter,tp,LOCATION_MZONE,0,nil,tp,szone):GetFirst()
 			vgf.Sendto(LOCATION_DROP,tc,REASON_COST)
 		end
@@ -54,7 +54,7 @@ function cm.operation1(e,tp,eg,ep,ev,re,r,rp)
 		local tc2=g:GetNext()
 		Duel.Hint(HINT_SELECTMSG,tp,HINTMSG_CallZONE)
 		szone=Duel.SelectField(tp,1,LOCATION_MZONE,0,zone)
-		if Duel.IsExistingMatchingCard(vgd.CallFilter,tp,LOCATION_MZONE,0,1,nil,tp,szone) then
+		if vgf.IsExistingMatchingCard(vgd.CallFilter,tp,LOCATION_MZONE,0,1,nil,tp,szone) then
 			local tc=Duel.GetMatchingGroup(vgd.CallFilter,tp,LOCATION_MZONE,0,nil,tp,szone):GetFirst()
 			vgf.Sendto(LOCATION_DROP,tc,REASON_COST)
 		end

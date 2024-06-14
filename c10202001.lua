@@ -55,7 +55,7 @@ function cm.operation(e,tp,eg,ep,ev,re,r,rp)
 		local atk=tc:GetAttack()-1
 		vgf.AtkUp(c,tc,-atk)
 	end
-	if Duel.IsExistingMatchingCard(tp,cm.filter,tp,0,LOCATION_MZONE,1,1,nil) then
+	if vgf.IsExistingMatchingCard(tp,cm.filter,tp,0,LOCATION_MZONE,1,1,nil) then
 		vgf.StarUp(c,c,1)
 	end
 end
