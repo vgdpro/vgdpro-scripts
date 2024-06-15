@@ -987,7 +987,7 @@ function VgF.Sendto(loc,sg,...)
             chk=list[5]
         end
         return VgF.Call(g,sumtype,tp,zone,pos,chk)
-    elseif loc|0xf800>0 then
+    elseif bit.band(loc,0xf800)>0 then
         AddOverlayGroup(g)
         local list={...}
         local tp=list[1]
