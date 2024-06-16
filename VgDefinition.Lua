@@ -876,6 +876,8 @@ ImprisonFlag            =VgID+7 --被收容
 AFFECT_CODE_MIX         =VgID   --魔合成
 AFFECT_CODE_MIX_DIFFERENT_NAME  =VgID+1     --魔合成(卡名不同)
 AFFECT_CODE_SENDTOG     =VgID+2 --需要两张卡才能防御
+AFFECT_CODE_NIGHT       =VgID+3 --黑夜
+AFFECT_CODE_DEEP_NIGHT  =VgID+4 --深渊黑夜
 
 
 POS_FACEUP_DEFENCE=POS_FACEUP_DEFENSE
