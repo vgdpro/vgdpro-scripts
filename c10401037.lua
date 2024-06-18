@@ -13,7 +13,6 @@ function cm.operation(e,tp,eg,ep,ev,re,r,rp)
 	local e1=Duel.GetMatchingGroupCount(nil,tp,LOCATION_OVERLAY,0,nil)/5
 	local e2=e1*10000
 	local g=vgf.SelectMatchingCard(HINTMSG_ATKUP,e,tp,nil,tp,LOCATION_MZONE,0,1,1,nil)
-	Duel.HintSelection(g)
 	vgf.AtkUp(c,g,e2,nil)
 	if Duel.GetMatchingGroupCount(nil,tp,LOCATION_OVERLAY,0,nil)>=10 then
 		Duel.Draw(tp,1,REASON_EFFECT)

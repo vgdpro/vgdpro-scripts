@@ -7,7 +7,6 @@ end
 function cm.op(e,tp,eg,ep,ev,re,r,rp)
 	local c=e:GetHandler()
 	local g=vgf.SelectMatchingCard(HINTMSG_FACEUP,e,tp,cm.filter,tp,LOCATION_ORDER,0,1,1,nil)
-	Duel.HintSelection(g)
 	Duel.RaiseEvent(g,EVENT_CUSTOM+EVENT_SING,e,0,tp,tp,0)
 end
 function cm.filter(c)
@@ -20,7 +19,6 @@ end
 function cm.op2(e,tp,eg,ep,ev,re,r,rp)
 	local c=e:GetHandler()
 	local g=vgf.SelectMatchingCard(HINTMSG_FACEUP,e,tp,cm.filter,tp,LOCATION_ORDER,0,1,1,nil)
-	Duel.HintSelection(g)
 	Duel.RaiseEvent(g,EVENT_CUSTOM+EVENT_SING,e,0,tp,tp,0)
     local e1=Effect.CreateEffect(c)
     e1:SetType(EFFECT_TYPE_FIELD)

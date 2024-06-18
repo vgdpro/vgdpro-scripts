@@ -7,10 +7,7 @@ end
 function cm.operation(e,tp,eg,ep,ev,re,r,rp)
     local c=e:GetHandler()
     local g=vgf.SelectMatchingCard(HINTMSG_ATKUP,e,tp,cm.filter,tp,LOCATION_MZONE,0,1,1,nil)
-    if g then
-        Duel.HintSelection(g)
-        vgf.AtkUp(c,g,10000,nil)
-    end
+    vgf.AtkUp(c,g,10000,nil)
 end
 function cm.filter(c)
     return vgf.IsLevel(c,3) and vgf.RMonsterFilter(c)

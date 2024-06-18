@@ -12,12 +12,12 @@ end
 --效果二处理
 function cm.operation(e,tp,eg,ep,ev,re,r,rp)
 	local c=e:GetHandler()
-	vgf.SearchCard(LOCATION_MZONE,LOCATION_DROP,cm.fliter2)(e,tp,eg,ep,ev,re,r,rp)
+	vgf.SearchCard(LOCATION_MZONE,LOCATION_DROP,cm.filter2)(e,tp,eg,ep,ev,re,r,rp)
 	local g=Duel.GetOperatedGroup()
 	vgf.AtkUp(c,g,5000)
 end
 --效果二召唤等级筛选
-function cm.fliter2(c)
+function cm.filter2(c)
 	return vgf.IsLevel(c,0,1,2)
 end
 --计数爆发1，灵魂爆发1

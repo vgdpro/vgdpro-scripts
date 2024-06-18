@@ -45,7 +45,6 @@ function cm.op1(e,tp,eg,ep,ev,re,r,rp)
 	local ct=bit.ReturnCount(zone)
 	if ct>e:GetLabel() then ct=e:GetLabel() end
 	local g=vgf.SelectMatchingCard(HINTMSG_CALL,e,tp,cm.filter1,tp,0,LOCATION_ORDER,ct,ct,nil,e,tp)
-	Duel.HintSelection(g)
 	for tc in vgf.Next(g) do
 		if tc:IsType(TYPE_MONSTER) then
 			vgf.Sendto(LOCATION_MZONE,tc,0,tp)

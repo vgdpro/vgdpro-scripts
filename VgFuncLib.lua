@@ -892,7 +892,7 @@ function VgF.Sendto(loc,sg,...)
         end
     end
     local g=nil
-    if VgF.GetValueType(sg)=="Group" then
+    if VgF.GetValueType(sg)=="Group" and sg:GetCount()>0 then
         g=Group.Clone(sg)
     elseif VgF.GetValueType(sg)=="Card" then
         g=Group.FromCards(sg)

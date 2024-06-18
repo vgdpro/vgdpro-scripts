@@ -40,7 +40,6 @@ function cm.operation(e,tp,eg,ep,ev,re,r,rp)
     local c=e:GetHandler()
     local g=vgf.SelectMatchingCard(HINTMSG_RMONSTER,e,tp,cm.filter,tp,LOCATION_MZONE,0,1,1,nil)
     if g:GetCount()>0 then
-        Duel.HintSelection(g)
         Duel.ChangePosition(g,POS_FACEUP_ATTACK)
         vgf.AtkUp(c,g,10000,nil)
     end

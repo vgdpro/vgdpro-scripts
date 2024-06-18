@@ -16,7 +16,6 @@ function cm.operation(e,tp,eg,ep,ev,re,r,rp)
 	local c=e:GetHandler()
 	if vgf.GetAvailableLocation(tp)<=0 then return end
 	local g=vgf.SelectMatchingCard(HINTMSG_Call,e,tp,cm.filter,tp,LOCATION_DROP,0,1,1,nil)
-	Duel.HintSelection(g)
 	vgf.Sendto(LOCATION_MZONE,g,0,tp,nil,POS_FACEUP_DEFENSE)
 end
 function cm.filter(c)

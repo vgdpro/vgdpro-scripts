@@ -7,7 +7,6 @@ end
 function cm.operation(e,tp,eg,ep,ev,re,r,rp)
 	local c=e:GetHandler()
 	local g=vgf.SelectMatchingCard(HINTMSG_RTOHAND,e,tp,cm.filter,tp,LOCATION_MZONE,0,1,1,nil)
-	Duel.HintSelection(g)
 	vgf.Sendto(LOCATION_HAND,g,nil,REASON_EFFECT)
 end
 function cm.filter(c)

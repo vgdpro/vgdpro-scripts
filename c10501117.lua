@@ -12,7 +12,6 @@ function cm.op(e,tp,eg,ep,ev,re,r,rp)
     if g:GetCount()>0 then
         Duel.Hint(HINT_SELECTMSG,tp,HINTMSG_ATKUP)
         g=g:FilterSelect(tp,Card.IsCanBeEffectTarget,1,1,nil,e)
-        Duel.HintSelection(g)
         local e1=vgf.AtkUp(c,g,30000)
         vgf.EffectReset(c,e1,EVENT_BATTLED)
     end

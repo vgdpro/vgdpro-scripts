@@ -17,7 +17,6 @@ function cm.cost(e,tp,eg,ep,ev,re,r,rp,chk)
 	if chk==0 then return Duel.GetMatchingGroupCount(nil,tp,0,LOCATION_HAND,nil)>=1 end
 	local rc=Duel.GetMatchingGroup(vgf.VMonsterFilter,tp,LOCATION_MZONE,0,nil):GetFirst()
 	local g=vgf.SelectMatchingCard(HINTMSG_OVERLAY,e,tp,nil,tp,LOCATION_HAND,0,1,1,nil,e,tp)
-	Duel.HintSelection(g)
 	vgf.Sendto(LOCATION_OVERLAY,g,rc)
 end
 function cm.condition(e,tp,eg,ep,ev,re,r,rp)
