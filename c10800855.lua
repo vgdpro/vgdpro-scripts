@@ -42,15 +42,15 @@ function cm.op1(e,tp,eg,ep,ev,re,r,rp)
     vgf.Sendto(LOCATION_EMBLEM,g,tp,POS_FACEUP_ATTACK,REASON_EFFECT)
 end
 function cm.con2(e,tp,eg,ep,ev,re,r,rp)
-    return Duel.GetTurnPlayer()==tp and Duel.GetMatchingGroupCount(Card.IsCode,tp,LOCATION_EMBLEM,0,nil,code)<10
+    return Duel.GetTurnPlayer()==tp and vgf.GetMatchingGroupCount(Card.IsCode,tp,LOCATION_EMBLEM,0,nil,code)<10
 end
 function cm.op2(e,tp,eg,ep,ev,re,r,rp)
     local c=e:GetHandler()
     local code=10800730
     local selfcode1,selfcode2=c:GetOriginalCode()
     if selfcode2==10800855 then code=code+1 end
-    if Duel.GetMatchingGroupCount(Card.IsCode,tp,LOCATION_EMBLEM,0,nil,code)>=10 then return end
-    local ct=10-Duel.GetMatchingGroupCount(Card.IsCode,tp,LOCATION_EMBLEM,0,nil,code)
+    if vgf.GetMatchingGroupCount(Card.IsCode,tp,LOCATION_EMBLEM,0,nil,code)>=10 then return end
+    local ct=10-vgf.GetMatchingGroupCount(Card.IsCode,tp,LOCATION_EMBLEM,0,nil,code)
     local token1=Duel.CreateToken(tp,code)
     local token2=Duel.CreateToken(tp,code)
     local token3=Duel.CreateToken(tp,code)

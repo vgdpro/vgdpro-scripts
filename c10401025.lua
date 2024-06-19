@@ -11,9 +11,9 @@ function cm.operation(e,tp,eg,ep,ev,re,r,rp)
 	local g1=vgf.SelectMatchingCard(HINTMSG_CRITICAL_STRIKE,e,tp,nil,tp,LOCATION_MZONE,0,1,1,nil)
 	vgf.StarUp(c,g1,1,nil)
 	Duel.Hint(HINT_SELECTMSG,tp,HINTMSG_ATKUP)
-	local g2=Duel.GetMatchingGroup(vgf.IsSequence,tp,LOCATION_MZONE,0,nil,0,4,5)
+	local g2=vgf.GetMatchingGroup(vgf.IsSequence,tp,LOCATION_MZONE,0,nil,0,4,5)
     vgf.AtkUp(c,g2,10000,nil)
-	if Duel.GetMatchingGroupCount(nil,tp,LOCATION_DAMAGE,0,nil)>=Duel.GetMatchingGroupCount(nil,tp,0,LOCATION_DAMAGE,nil) then
+	if vgf.GetMatchingGroupCount(nil,tp,LOCATION_DAMAGE,0,nil)>=vgf.GetMatchingGroupCount(nil,tp,0,LOCATION_DAMAGE,nil) then
         local tc=vgf.SelectMatchingCard(HINTMSG_TODROP,e,tp,nil,tp,LOCATION_DAMAGE,0,1,1,nil):GetFirst()
         if tc then
             vgf.Sendto(LOCATION_DROP,tc,REASON_TRIGGER)

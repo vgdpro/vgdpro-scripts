@@ -12,7 +12,7 @@ function cm.con(e,tp,eg,ep,ev,re,r,rp)
 	return Duel.GetTurnPlayer()==tp and vgf.VMonsterCondition(e)
 end
 function cm.op2(e,tp,eg,ep,ev,re,r,rp)
-	local g=Duel.GetMatchingGroup(vgf.IsSequence,tp,LOCATION_MZONE,0,nil,0,4)
+	local g=vgf.GetMatchingGroup(vgf.IsSequence,tp,LOCATION_MZONE,0,nil,0,4)
 	Duel.ChangePosition(g,POS_FACEUP_ATTACK)
 end
 function cm.con2(e,tp,eg,ep,ev,re,r,rp)

@@ -15,7 +15,7 @@ function cm.filter(c)
     return c:IsCode(0xc040) and c:IsAbleToHand()
 end
 function cm.cost1(e,tp,eg,ep,ev,re,r,rp,chk)
-    if chk==0 then return Duel.GetMatchingGroupCount(nil,tp,LOCATION_HAND,0,nil)>0 end
+    if chk==0 then return vgf.GetMatchingGroupCount(nil,tp,LOCATION_HAND,0,nil)>0 end
     local rc=vgf.GetVMonster(tp)
     local g=vgf.SelectMatchingCard(HINTMSG_XMATERIAL,tp,nil,tp,LOCATION_HAND,0,1,1,nil,e,tp)
     vgf.Sendto(LOCATION_OVERLAY,g,rc)

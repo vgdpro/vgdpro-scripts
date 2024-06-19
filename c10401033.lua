@@ -14,8 +14,8 @@ function cm.operation(e,tp,eg,ep,ev,re,r,rp)
 	vgf.OverlayFill(1)(e,tp,eg,ep,ev,re,r,rp,chk)
 end
 function cm.cost(e,tp,eg,ep,ev,re,r,rp,chk)
-	if chk==0 then return Duel.GetMatchingGroupCount(nil,tp,0,LOCATION_HAND,nil)>=1 end
-	local rc=Duel.GetMatchingGroup(vgf.VMonsterFilter,tp,LOCATION_MZONE,0,nil):GetFirst()
+	if chk==0 then return vgf.GetMatchingGroupCount(nil,tp,0,LOCATION_HAND,nil)>=1 end
+	local rc=vgf.GetMatchingGroup(vgf.VMonsterFilter,tp,LOCATION_MZONE,0,nil):GetFirst()
 	local g=vgf.SelectMatchingCard(HINTMSG_OVERLAY,e,tp,nil,tp,LOCATION_HAND,0,1,1,nil,e,tp)
 	vgf.Sendto(LOCATION_OVERLAY,g,rc)
 end

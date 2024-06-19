@@ -12,8 +12,8 @@ function cm.op(e,tp,eg,ep,ev,re,r,rp)
 		vgf.EffectReset(c,t,EVENT_BATTLED)
 	end
 	if ct>=15 then
-		local g1=Duel.GetMatchingGroup(vgf.RMonsterFilter,tp,LOCATION_MZONE,0,nil)
-		local g2=Duel.GetMatchingGroup(vgf.RMonsterFilter,tp,0,LOCATION_MZONE,nil)
+		local g1=vgf.GetMatchingGroup(vgf.RMonsterFilter,tp,LOCATION_MZONE,0,nil)
+		local g2=vgf.GetMatchingGroup(vgf.RMonsterFilter,tp,0,LOCATION_MZONE,nil)
 		local tc1=vgf.GetVMonster(tp)
 		local tc2=vgf.GetVMonster(1-tp)
 		vgf.Sendto(LOCATION_OVERLAY,g1,tc1)

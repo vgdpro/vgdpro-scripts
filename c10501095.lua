@@ -9,7 +9,7 @@ end
 function cm.op(e,tp,eg,ep,ev,re,r,rp)
     local c=e:GetHandler()
     local g=vgf.SelectMatchingCard(HINTMSG_ATKUP,tp,nil,tp,LOCATION_MZONE,0,1,1,c)
-    local ct=Duel.GetMatchingGroupCount(cm.filter2,tp,LOCATION_MZONE,0,c)
+    local ct=vgf.GetMatchingGroupCount(cm.filter2,tp,LOCATION_MZONE,0,c)
     local atk=5000*ct
     vgf.AtkUp(c,g,atk)
 end

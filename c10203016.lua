@@ -8,9 +8,9 @@ function cm.condition(e,tp,eg,ep,ev,re,r,rp)
 	return vgf.RMonsterFilter(c) and vgf.VMonsterFilter(Duel.GetAttackTarget()) and vgf.IsExistingMatchingCard(nil,tp,LOCATION_MZONE,0,4,nil)
 end
 function cm.cost(e,tp,eg,ep,ev,re,r,rp,chk)
-	if chk==0 then return Duel.GetMatchingGroup(vgf.VMonsterFilter,tp,LOCATION_MZONE,0,nil,nil):GetFirst():GetOverlayCount()>=1 end
+	if chk==0 then return vgf.GetMatchingGroup(vgf.VMonsterFilter,tp,LOCATION_MZONE,0,nil,nil):GetFirst():GetOverlayCount()>=1 end
 	Duel.Hint(HINT_SELECTMSG,tp,HINTMSG_REMOVEXYZ)
-	local g=Duel.GetMatchingGroup(vgf.VMonsterFilter,tp,LOCATION_MZONE,0,nil):GetFirst():GetOverlayGroup():Select(tp,1,1,nil)
+	local g=vgf.GetMatchingGroup(vgf.VMonsterFilter,tp,LOCATION_MZONE,0,nil):GetFirst():GetOverlayGroup():Select(tp,1,1,nil)
 	g:AddCard(e:GetHandler())
 	vgf.Sendto(LOCATION_DROP,g,REASON_COST)
 end

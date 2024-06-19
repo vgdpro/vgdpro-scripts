@@ -39,11 +39,11 @@ function cm.op1(e,tp,eg,ep,ev,re,r,rp)
     end
 end
 function cm.con2(e,tp,eg,ep,ev,re,r,rp)
-    return Duel.GetTurnPlayer()==tp and Duel.GetMatchingGroupCount(Card.IsCode,tp,LOCATION_EMBLEM,0,nil,20401001)<10
+    return Duel.GetTurnPlayer()==tp and vgf.GetMatchingGroupCount(Card.IsCode,tp,LOCATION_EMBLEM,0,nil,20401001)<10
 end
 function cm.op2(e,tp,eg,ep,ev,re,r,rp)
     local c=e:GetHandler()
-    if Duel.GetMatchingGroupCount(Card.IsCode,tp,LOCATION_EMBLEM,0,nil,20401001)>=10 then return end
+    if vgf.GetMatchingGroupCount(Card.IsCode,tp,LOCATION_EMBLEM,0,nil,20401001)>=10 then return end
     local token=Duel.CreateToken(tp,20401001)
     vgf.Sendto(LOCATION_EMBLEM,token,tp,POS_FACEUP,REASON_EFFECT)
 end

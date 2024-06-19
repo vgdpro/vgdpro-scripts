@@ -21,7 +21,7 @@ end
 function cm.op(e,tp,eg,ep,ev,re,r,rp)
 	if vgf.GetAvailableLocation(tp)&0x4<=0 then return end
 	Duel.Hint(HINT_SELECTMSG,tp,HINTMSG_CALL)
-	local g=Duel.GetMatchingGroup(vgf.VMonsterFilter,tp,LOCATION_MZONE,0,nil):GetFirst():GetOverlayGroup():Select(tp,1,1,nil)
+	local g=vgf.GetMatchingGroup(vgf.VMonsterFilter,tp,LOCATION_MZONE,0,nil):GetFirst():GetOverlayGroup():Select(tp,1,1,nil)
 	vgf.Sendto(LOCATION_MZONE,g,0,tp,0x4)
 	vgf.OverlayFill(1)(e,tp,eg,ep,ev,re,r,rp)
 end

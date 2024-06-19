@@ -15,6 +15,6 @@ end
 function cm.cost(e,tp,eg,ep,ev,re,r,rp,chk)
     local c=e:GetHandler()
     if chk==0 then return true end
-    local rc=Duel.GetMatchingGroup(vgf.VMonsterFilter,tp,LOCATION_MZONE,0,nil):GetFirst()
+    local rc=vgf.GetMatchingGroup(vgf.VMonsterFilter,tp,LOCATION_MZONE,0,nil):GetFirst()
 	vgf.Sendto(LOCATION_OVERLAY,c,rc)
 end

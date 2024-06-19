@@ -9,7 +9,7 @@ function cm.con(e,tp,eg,ep,ev,re,r,rp)
 	return e:GetHandler():IsLocation(LOCATION_ORDER)
 end
 function cm.cost1(e,tp,eg,ep,ev,re,r,rp,chk)
-	local a=Duel.GetMatchingGroup(vgf.VMonsterFilter,tp,LOCATION_MZONE,0,nil,nil):GetFirst():GetOverlayCount()>=1
+	local a=vgf.GetMatchingGroup(vgf.VMonsterFilter,tp,LOCATION_MZONE,0,nil,nil):GetFirst():GetOverlayCount()>=1
 	local b=vgf.IsExistingMatchingCard(Card.IsFaceup,tp,LOCATION_DAMAGE,0,1,nil)
 	if chk==0 then return a or b end
 	local off=1
@@ -25,7 +25,7 @@ function cm.cost1(e,tp,eg,ep,ev,re,r,rp,chk)
 	local sel=Duel.SelectOption(tp,table.unpack(ops))
 	if sel==0 and a then
 		Duel.Hint(HINT_SELECTMSG,tp,HINTMSG_REMOVEXYZ)
-        local g=Duel.GetMatchingGroup(vgf.VMonsterFilter,tp,LOCATION_MZONE,0,nil):GetFirst():GetOverlayGroup():Select(tp,1,1,nil)
+        local g=vgf.GetMatchingGroup(vgf.VMonsterFilter,tp,LOCATION_MZONE,0,nil):GetFirst():GetOverlayGroup():Select(tp,1,1,nil)
         vgf.Sendto(LOCATION_DROP,g,REASON_COST)
 		e:SetLabel(1)
 	else

@@ -22,5 +22,5 @@ function cm.operation1(e,tp,eg,ep,ev,re,r,rp)
 	vgf.EffectReset(c,e1,EVENT_BATTLED)
 end
 function cm.condition (e,tp,eg,ep,ev,re,r,rp)
-	return Duel.GetMatchingGroupCount(vgf.RMonsterFilter,tp,0,LOCATION_MZONE,nil)<=2
+	return vgf.GetMatchingGroupCount(vgf.RMonsterFilter,tp,0,LOCATION_MZONE,nil)<=2
 end

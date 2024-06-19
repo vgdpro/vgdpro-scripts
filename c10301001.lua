@@ -41,7 +41,7 @@ function cm.operation1(e,tp,eg,ep,ev,re,r,rp)
 		Duel.Hint(HINT_SELECTMSG,tp,HINTMSG_CallZONE)
 		local szone=Duel.SelectField(tp,1,LOCATION_MZONE,0,zone)
 		if vgf.IsExistingMatchingCard(vgd.CallFilter,tp,LOCATION_MZONE,0,1,nil,tp,szone) then
-			local tc=Duel.GetMatchingGroup(vgd.CallFilter,tp,LOCATION_MZONE,0,nil,tp,szone):GetFirst()
+			local tc=vgf.GetMatchingGroup(vgd.CallFilter,tp,LOCATION_MZONE,0,nil,tp,szone):GetFirst()
 			vgf.Sendto(LOCATION_DROP,tc,REASON_COST)
 		end
 		Duel.SpecialSummonStep(tc1,0,tp,tp,false,false,POS_FACEUP_ATTACK,szone)
@@ -54,7 +54,7 @@ function cm.operation1(e,tp,eg,ep,ev,re,r,rp)
 		Duel.Hint(HINT_SELECTMSG,tp,HINTMSG_CallZONE)
 		szone=Duel.SelectField(tp,1,LOCATION_MZONE,0,zone)
 		if vgf.IsExistingMatchingCard(vgd.CallFilter,tp,LOCATION_MZONE,0,1,nil,tp,szone) then
-			local tc=Duel.GetMatchingGroup(vgd.CallFilter,tp,LOCATION_MZONE,0,nil,tp,szone):GetFirst()
+			local tc=vgf.GetMatchingGroup(vgd.CallFilter,tp,LOCATION_MZONE,0,nil,tp,szone):GetFirst()
 			vgf.Sendto(LOCATION_DROP,tc,REASON_COST)
 		end
 		Duel.SpecialSummonStep(tc2,0,tp,tp,false,false,POS_FACEUP_ATTACK,szone)

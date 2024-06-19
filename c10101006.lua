@@ -9,8 +9,8 @@ function cm.operation(e,tp,eg,ep,ev,re,r,rp)
 	local c=e:GetHandler()
 	local e1=vgf.AtkUp(c,c,5000,nil)
 	vgf.EffectReset(c,e1,EVENT_BATTLED)
-	if Duel.GetMatchingGroup(vgf.VMonsterFilter,tp,LOCATION_MZONE,0,nil,nil):GetFirst():GetOverlayCount()>=2 and Duel.SelectEffectYesNo(tp,vgf.stringid(VgID,10)) then
-		local cg=Duel.GetMatchingGroup(vgf.VMonsterFilter,tp,LOCATION_MZONE,0,nil):GetFirst():GetOverlayGroup():Select(tp,2,2,nil)
+	if vgf.GetMatchingGroup(vgf.VMonsterFilter,tp,LOCATION_MZONE,0,nil,nil):GetFirst():GetOverlayCount()>=2 and Duel.SelectEffectYesNo(tp,vgf.stringid(VgID,10)) then
+		local cg=vgf.GetMatchingGroup(vgf.VMonsterFilter,tp,LOCATION_MZONE,0,nil):GetFirst():GetOverlayGroup():Select(tp,2,2,nil)
         if vgf.Sendto(LOCATION_DROP,cg,REASON_COST)==2 then
 			local g=vgf.SelectMatchingCard(HINTMSG_LEAVEONFIELD,e,tp,vgf.RMonsterFilter,tp,0,LOCATION_MZONE,1,1,nil)
 			vgf.Sendto(LOCATION_DROP,g,REASON_EFFECT)
