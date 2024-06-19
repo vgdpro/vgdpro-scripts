@@ -831,7 +831,7 @@ function VgF.IsExistingMatchingCard(f,tp,loc_self,loc_op,int,except_g,...)
         local g1=Duel.GetMatchingGroup(nil,tp,loc_self,loc_op,nil)
         if g1:GetCount()>0 then g:Merge(g1) end
     end
-    if g:GetCount()>0 then
+    if g:GetCount()>0 and VgF.GetValueType(f)=="function" then
         g=g:Filter(f,except_g,...)
     end
     return g:GetCount()>=int
@@ -878,6 +878,9 @@ function VgF.SelectMatchingCard(hintmsg,e,select_tp,f,tp,loc_self,loc_op,int_min
     if a then Duel.ShuffleDeck(select_tp) end
     return g
 end
+function VgF.GetMatchingGroupCount(f,tp,loc_self,loc_op,except_g,...)
+    return VgF.GetMatchingGroup(f,tp,loc_self,loc_op,except_g,...):GetCount()
+end
 function VgF.GetMatchingGroup(f,tp,loc_self,loc_op,except_g,...)
     local g=Group.CreateGroup()
     if loc_self|LOCATION_MZONE>0 then
@@ -894,7 +897,7 @@ function VgF.GetMatchingGroup(f,tp,loc_self,loc_op,except_g,...)
         local g1=Duel.GetMatchingGroup(nil,tp,loc_self,loc_op,nil)
         if g1:GetCount()>0 then g:Merge(g1) end
     end
-    if g:GetCount()>0 then
+    if g:GetCount()>0 and VgF.GetValueType(f)=="function" then
         g=g:Filter(f,except_g,...)
     end
     return g
