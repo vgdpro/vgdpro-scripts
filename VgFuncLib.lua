@@ -878,6 +878,27 @@ function VgF.SelectMatchingCard(hintmsg,e,select_tp,f,tp,loc_self,loc_op,int_min
     if a then Duel.ShuffleDeck(select_tp) end
     return g
 end
+function VgF.GetMatchingGroup(f,tp,loc_self,loc_op,except_g,...)
+    local g=Group.CreateGroup()
+    if loc_self|LOCATION_MZONE>0 then
+        local g1=Duel.GetMatchingGroup(Card.IsFaceup,tp,LOCATION_MZONE,0,nil)
+        loc_self=loc_self-LOCATION_MZONE
+        if g1:GetCount()>0 then g:Merge(g1) end
+    end
+    if loc_op|LOCATION_MZONE>0 then
+        local g1=Duel.GetMatchingGroup(Card.IsFaceup,tp,0,LOCATION_MZONE,nil)
+        loc_op=loc_op-LOCATION_MZONE
+        if g1:GetCount()>0 then g:Merge(g1) end
+    end
+    if loc_self>0 or loc_op>0 then
+        local g1=Duel.GetMatchingGroup(nil,tp,loc_self,loc_op,nil)
+        if g1:GetCount()>0 then g:Merge(g1) end
+    end
+    if g:GetCount()>0 then
+        g=g:Filter(f,except_g,...)
+    end
+    return g
+end
 ---用于效果的Operation。执行“把卡sg，送去loc,第三个参数开始为额外参数，内容与原函数相同。”。
 ---@param loc integer 要送去的区域。不填则返回0。
 ---@param sg integer 要操作的卡|卡片组。

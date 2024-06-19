@@ -22,7 +22,7 @@ function cm.filter2(c)
 end
 --计数爆发1，灵魂爆发1
 function cm.cost(e,tp,eg,ep,ev,re,r,rp,chk)
-	if chk==0 then return vgf.DamageCost(1)(e,tp,eg,ep,ev,re,r,rp,0) and vgf.OverlayCost(1)(e,tp,eg,ep,ev,re,r,rp,0) end
-vgf.DamageCost(1)(e,tp,eg,ep,ev,re,r,rp,1)
-vgf.OverlayCost(1)(e,tp,eg,ep,ev,re,r,rp,1)
+	if chk==0 then return vgf.DamageCost(1)(e,tp,eg,ep,ev,re,r,rp,chk) and vgf.OverlayCost(1)(e,tp,eg,ep,ev,re,r,rp,chk) end
+vgf.DamageCost(1)(e,tp,eg,ep,ev,re,r,rp,chk)
+vgf.OverlayCost(1)(e,tp,eg,ep,ev,re,r,rp,chk)
 end

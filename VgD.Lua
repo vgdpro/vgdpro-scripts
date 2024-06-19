@@ -530,7 +530,21 @@ function VgD.CardToGCondition(e,tp,eg,ep,ev,re,r,rp)
 	return c:IsLocation(LOCATION_GZONE) and Duel.GetAttackTarget()
 end
 function VgD.CardToGOperation(e,tp,eg,ep,ev,re,r,rp)
-	Duel.GetAttackTarget():RegisterFlagEffect(DefenseEntirelyFlag,RESET_EVENT+RESETS_STANDARD,0,1)
+    local c=e:GetHandler()
+    local tc=Duel.GetAttackTarget()
+    if vgf.RMonsterFilter(tc) then
+        local e1=Effect.CreateEffect(c)
+        e1:SetType(EFFECT_TYPE_SINGLE)
+        e1:SetProperty(EFFECT_FLAG_SINGLE_RANGE)
+        e1:SetRange(LOCATION_MZONE)
+        e1:SetCode(EFFECT_INDESTRUCTABLE_BATTLE)
+        e1:SetReset(RESET_EVENT+RESETS_STANDARD)
+        e1:SetValue(1)
+        tc:RegisterEffect(e1)
+        vgf.EffectReset(c,e1,EVENT_BATTLED)
+    elseif vgf.VMonsterFilter(tc) then
+        tc:RegisterFlagEffect(DefenseEntirelyFlag,RESET_EVENT+RESETS_STANDARD,0,1)
+    end
 end
 
 --判定
@@ -780,7 +794,7 @@ end
 function VgD.MixCostFilter(c,e,tp,eg,ep,ev,re,r,rp,mc)
 if Duel.IsPlayerAffectedByEffect(tp,AFFECT_CODE_MIX_DIFFERENT_NAME) and c:IsCode(mc:GetCode()) then return false end
     local ce = c:GetActivateEffect()
-    if not ce or (ce:GetCost() and not ce:GetCost()(e,tp,eg,ep,ev,re,r,rp,0)) then return false end
+    if not ce or (ce:GetCost() and not ce:GetCost()(e,tp,eg,ep,ev,re,r,rp,chk)) then return false end
     local cg, cval = mc.cos_g, mc.cos_val
     local bg, bval = c.cos_g, c.cos_val
     if not (cg and bg and cval and bval) then return 1 end
@@ -797,7 +811,7 @@ end
 function VgD.MixCost(cost)
 	return function(e,tp,eg,ep,ev,re,r,rp,chk,bool)
 		local c=e:GetHandler()
-		if chk==0 then return VgF.GetValueType(cost)~="function" or cost(e,tp,eg,ep,ev,re,r,rp,0) end
+		if chk==0 then return VgF.GetValueType(cost)~="function" or cost(e,tp,eg,ep,ev,re,r,rp,chk) end
 		if not bool and (Duel.IsPlayerAffectedByEffect(tp,AFFECT_CODE_MIX) and VgF.IsExistingMatchingCard(VgD.MixCostFilter,tp,LOCATION_DROP,0,1,nil,e,tp,eg,ep,ev,re,r,rp,c) and Duel.SelectYesNo(tp,VgF.Stringid(VgID,6))) then
 			local bc=Duel.SelectMatchingCard(tp,VgD.MixCostFilter,tp,LOCATION_DROP,0,1,1,nil,e,tp,eg,ep,ev,re,r,rp,c):GetFirst()
             if cost then cost(e,tp,eg,ep,ev,re,r,rp) end
@@ -805,7 +819,7 @@ function VgD.MixCost(cost)
                 VgF.Sendto(LOCATION_REMOVED,bc,POS_FACEUP,REASON_COST)
                 e:SetLabelObject(bc)
                 local bce = bc:GetActivateEffect()
-                if bce and bce:GetCost() then bce:GetCost()(e,tp,eg,ep,ev,re,r,rp,1,true) end
+                if bce and bce:GetCost() then bce:GetCost()(e,tp,eg,ep,ev,re,r,rp,chk,true) end
             end
         else
             if cost then cost(e,tp,eg,ep,ev,re,r,rp) end
@@ -820,7 +834,7 @@ function VgD.SpellCondtion(con)
 end
 function VgD.SpellOperation(op)
     return function (e,tp,eg,ep,ev,re,r,rp,bool)
-        if op then op(e,tp,eg,ep,ev,re,r,rp) end
+        if op then op(e,tp,eg,ep,ev,re,r,rp,1) end
         local mc=e:GetLabelObject()
         if bool or not mc then return end
         local te=mc:GetActivateEffect()
@@ -835,7 +849,7 @@ end
 ---@param op function|nil 触发的效果
 ---@param cost function|nil 效果的费用
 ---@param con function|nil 效果的条件
----@param tg function|nil 未知。请资讯群主。
+---@param tg function|nil 
 function VgD.BeRidedByCard(c,m,code,op,cost,con,tg)
     local e1=Effect.CreateEffect(c)
     e1:SetType(EFFECT_TYPE_SINGLE+EFFECT_TYPE_CONTINUOUS)
@@ -889,7 +903,7 @@ end
 ---@param op function|nil 触发的效果
 ---@param cost function|nil 效果的费用
 ---@param con function|nil 效果触发的条件
----@param tg function|nil 未知。请资讯群主。
+---@param tg function|nil 
 ---@param count integer|nil 指示效果在同一回合内最多发动的次数
 ---@param property integer|nil 指示效果的特殊属性。如确有必要填，请咨询群主。
 function VgD.EffectTypeTrigger(c,m,loc,typ,code,op,cost,con,tg,count,property,stringid)
@@ -919,7 +933,7 @@ end
 ---@param op function|nil 触发的效果
 ---@param cost function|nil 效果的费用
 ---@param con function|nil 效果触发的条件
----@param tg function|nil 未知。请资讯群主。
+---@param tg function|nil 
 ---@param count integer|nil 指示效果在同一回合内最多发动的次数
 ---@param property integer|nil 指示效果的特殊属性。如确有必要填，请咨询群主。
 function VgD.EffectTypeIgnition(c,m,loc,op,cost,con,tg,count,property,stringid)

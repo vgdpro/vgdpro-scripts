@@ -6,7 +6,7 @@ end
 function cm.op(e,tp,eg,ep,ev,re,r,rp)
 	local c=e:GetHandler()
 	Duel.Hint(HINT_SELECTMSG,tp,HINTMSG_MONSTER)
-	local g=vgf.SelectMatchingCard(HINTMSG_MONSTER,e,tp,Card.IsFaceup,tp,LOCATION_MZONE,0,1,1,nil)
+	local g=vgf.SelectMatchingCard(HINTMSG_MONSTER,e,tp,nil,tp,LOCATION_MZONE,0,1,1,nil)
 	if g:GetCount()>0 then
 		local tc=g:GetFirst()
 		if vgf.RMonsterFilter(tc) then

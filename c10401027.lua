@@ -17,7 +17,7 @@ function cm.operation(e,tp,eg,ep,ev,re,r,rp)
 end
 function cm.operation1(e,tp,eg,ep,ev,re,r,rp)
 	local c=e:GetHandler()
-	vgf.OverlayFill(1)(e,tp,eg,ep,ev,re,r,rp,1)
+	vgf.OverlayFill(1)(e,tp,eg,ep,ev,re,r,rp,chk)
 	local e1=vgf.AtkUp(c,c,5000)
 	vgf.EffectReset(c,e1,EVENT_BATTLED)
 end
