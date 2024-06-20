@@ -9,6 +9,9 @@ end
 function cm.con(e,tp,eg,ep,ev,re,r,rp)
     return VgF.GetVMonster(tp):IsCode(10501002)
 end
+function cm.filter(c)
+    return c:GetLevel()%2==0
+end
 function cm.op(e,tp,eg,ep,ev,re,r,rp)
     local c=e:GetHandler()
     local g=Group.FromCards(Duel.GetAttackTarget())
@@ -20,14 +23,38 @@ function cm.op(e,tp,eg,ep,ev,re,r,rp)
         local e1=vgf.AtkUp(c,g,atk)
         vgf.EffectReset(c,e1,EVENT_BATTLED)
     end
-    local e1=Effect.CreateEffect(c)
-    e1:SetType(EFFECT_TYPE_FIELD)
-    e1:SetProperty(EFFECT_FLAG_PLAYER_TARGET)
-    e1:SetCode(m)
-    e1:SetTargetRange(1,0)
-    e1:SetReset(RESET_PHASE+PHASE_END)
-    Duel.RegisterEffect(e1,tp)
+    local e4=Effect.CreateEffect(c)
+    e4:SetType(EFFECT_TYPE_FIELD+EFFECT_TYPE_CONTINUOUS)
+    e4:SetCode(EFFECT_SEND_REPLACE)
+    e4:SetTarget(cm.reptg)
+    e4:SetValue(cm.repval)
+    e4:SetReset(RESET_PHASE+PHASE_END)
+    Duel.RegisterEffect(e4,tp)
 end
-function cm.filter(c)
-    return c:GetLevel()%2==0
+function cm.repfilter(c,tp)
+    return c:IsControler(tp) and (c:IsLocation(LOCATION_GZONE) or vgf.RMonsterFilter(c)) and c:GetDestination()==LOCATION_GRAVE and c:IsType(TYPE_MONSTER) and c:IsFaceup() and not cm.filter(c)
+end
+function cm.reptg(e,tp,eg,ep,ev,re,r,rp,chk)
+    if chk==0 then return eg:IsExists(cm.repfilter,1,nil,tp) end
+    if Duel.SelectYesNo(tp,aux.Stringid(m,0)) then
+        local g=eg:Filter(cm.repfilter,nil,tp)
+        local ct=g:GetCount()
+        if ct>1 then
+            Duel.Hint(HINT_SELECTMSG,tp,HINTMSG_XMATERIAL)
+            g=g:Select(tp,1,ct,nil)
+        end
+        for tc in vgf.Next(g) do
+            local e1=Effect.CreateEffect(e:GetHandler())
+            e1:SetType(EFFECT_TYPE_SINGLE)
+            e1:SetCode(EFFECT_TO_GRAVE_REDIRECT)
+            e1:SetProperty(EFFECT_FLAG_CANNOT_DISABLE)
+            e1:SetValue(LOCATION_OVERLAY)
+            e1:SetReset(RESET_EVENT+RESETS_STANDARD+RESET_PHASE+PHASE_END)
+            tc:RegisterEffect(e1)
+        end
+        return true
+    else return false end
+end
+function cm.repval(e,c)
+    return false
 end
