@@ -24,10 +24,11 @@ function VgD.RideUp(c)
 end
 function VgD.RideUpFilter1(c,e,lv,code,rc)
     local tp=c:GetControler()
-    if rc:IsAttribute(SKILL_SELF_RIDE) and c:IsCode(code) then
-        return false
-    end
-    return ((c:IsLevel(lv,lv+1) and c:IsLocation(LOCATION_HAND)) or (c:IsLevel(lv+1) and c:IsLocation(LOCATION_RIDE) and VgF.IsExistingMatchingCard(nil,tp,LOCATION_HAND,0,1,nil))) and c:IsType(TYPE_MONSTER)
+    if not c:IsType(TYPE_MONSTER) then return false end
+    if rc:IsAttribute(SKILL_SELF_RIDE) and c:IsCode(code) then return false end
+    if (c:IsLevel(lv,lv+1) and c:IsLocation(LOCATION_HAND)) then return true end
+    if (c:IsLevel(lv+1) and c:IsLocation(LOCATION_RIDE) and (VgF.IsExistingMatchingCard(nil,tp,LOCATION_HAND,0,1,nil) or (Duel.IsPlayerAffectedByEffect(tp,AFFECT_CODE_OVERLAY_INSTEAD_WHEN_RIDE) and VgF.GetVMonster(tp):GetOverlayCount()>0))) then return true end
+    return false
 end
 function VgD.DisCardRideUpFilter(c,e,lv,code,rc)
     local tp=c:GetControler()
@@ -374,7 +375,7 @@ function VgD.MonsterBattle(c)
     e15:SetProperty(EFFECT_FLAG_CANNOT_DISABLE)
     e15:SetValue(100)
     c:RegisterEffect(e15)
-    local e16=e15:Clone()
+    local e16=Effect.CreateEffect(c)
     e16:SetType(EFFECT_TYPE_SINGLE)
     e16:SetCode(EFFECT_CANNOT_BE_BATTLE_TARGET)
     e16:SetProperty(EFFECT_FLAG_SINGLE_RANGE+EFFECT_FLAG_CANNOT_DISABLE)

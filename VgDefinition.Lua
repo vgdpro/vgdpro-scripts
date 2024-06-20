@@ -841,14 +841,14 @@ EFFECT_COUNT_CODE_DUEL			=0x20000000 --决斗中使用次数
 EFFECT_COUNT_CODE_CHAIN			=0x40000000 --同一连锁中使用次数
 EFFECT_COUNT_CODE_SINGLE		=0x1		--同一张卡的多个效果公共使用次数
 --特殊选项
-DUEL_TEST_MODE			=0x01		--测试模式(目前暫無)
-DUEL_ATTACK_FIRST_TURN	=0x02		--第一回合可以攻击(用于残局)
-DUEL_OLD_REPLAY			=0x04		--旧录像
-DUEL_OBSOLETE_RULING	=0x08		--使用舊規則
-DUEL_PSEUDO_SHUFFLE		=0x10		--不洗牌
-DUEL_TAG_MODE			=0x20		--双打PP
-DUEL_SIMPLE_AI			=0x40		--AI(用于残局)
-DUEL_RETURN_DECK_TOP	=0x80		--回卡组洗切的卡放到卡组最上方（不洗牌模式下曾经的默认行为）
+DUEL_TEST_MODE			=0x01	--测试模式(目前暫無)
+DUEL_ATTACK_FIRST_TURN	=0x02	--第一回合可以攻击(用于残局)
+DUEL_OLD_REPLAY			=0x04	--旧录像
+DUEL_OBSOLETE_RULING	=0x08	--使用舊規則
+DUEL_PSEUDO_SHUFFLE		=0x10	--不洗牌
+DUEL_TAG_MODE			=0x20	--双打PP
+DUEL_SIMPLE_AI			=0x40	--AI(用于残局)
+DUEL_RETURN_DECK_TOP	=0x80	--回卡组洗切的卡放到卡组最上方（不洗牌模式下曾经的默认行为）
 --Activity counter
 --global: 1-6 (binary: 5,6)
 --custom: 1-5,7 (binary: 1-5)
@@ -878,6 +878,9 @@ AFFECT_CODE_MIX_DIFFERENT_NAME  =VgID+1     --魔合成(卡名不同)
 AFFECT_CODE_SENDTOG     =VgID+2 --需要两张卡才能防御
 AFFECT_CODE_NIGHT       =VgID+3 --黑夜
 AFFECT_CODE_DEEP_NIGHT  =VgID+4 --深渊黑夜
+
+
+AFFECT_CODE_OVERLAY_INSTEAD_WHEN_RIDE   =10501082   --不执行『选择手牌中的1张卡，舍弃』而是执行『灵魂爆发1』来将卡RIDE
 
 
 POS_FACEUP_DEFENCE=POS_FACEUP_DEFENSE
