@@ -76,9 +76,13 @@ function VgD.RideUpOperation(e,tp,eg,ep,ev,re,r,rp)
         local sg=rg1:FilterSelect(tp,Card.IsLocation,1,1,nil,LOCATION_HAND+LOCATION_RIDE)
         local sc=sg:GetFirst()
         if sc:IsLocation(LOCATION_EXTRA) then
-            Duel.Hint(HINT_SELECTMSG,tp,HINTMSG_DISCARD)
-            local g=Duel.SelectMatchingCard(tp,VgD.DisCardRideUpFilter,tp,LOCATION_HAND,0,1,1,nil,e,lv,code,rc)
-            VgF.Sendto(LOCATION_DROP,g,REASON_COST+REASON_DISCARD)
+            if Duel.IsPlayerAffectedByEffect(tp,AFFECT_CODE_OVERLAY_INSTEAD_WHEN_RIDE) and Duel.SelectYesNo(tp,VgF.Stringid(VgID,14)) then
+                VgF.DamageCost(1)(e,tp,eg,ep,ev,re,r,rp,1)
+            else
+                Duel.Hint(HINT_SELECTMSG,tp,HINTMSG_DISCARD)
+                local g=Duel.SelectMatchingCard(tp,VgD.DisCardRideUpFilter,tp,LOCATION_HAND,0,1,1,nil,e,lv,code,rc)
+                VgF.Sendto(LOCATION_DROP,g,REASON_COST+REASON_DISCARD)
+            end
         end
         local mg=rc:GetOverlayGroup()
         if mg:GetCount()~=0 then
