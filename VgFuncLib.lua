@@ -15,7 +15,7 @@ function VgF.VgCard(c)
         VgD.CallToR(c)
         VgD.MonsterBattle(c)
     end
-    if not c:IsRace(TRRIGGER_SUPER) then
+    if not c:IsRace(TRIGGER_SUPER) then
 	    VgD.CardTrigger(c,nil)
     end
 end

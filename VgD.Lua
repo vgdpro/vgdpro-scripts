@@ -579,7 +579,7 @@ end
 function VgD.CardTriggerOperation(chkop,f)
     return function (e,tp,eg,ep,ev,re,r,rp)
         local c=e:GetHandler()
-        if c:IsRace(TRRIGGER_CRITICAL_STRIKE) then
+        if c:IsRace(TRIGGER_CRITICAL_STRIKE) then
             Duel.Hint(HINT_SELECTMSG,tp,HINTMSG_CRITICAL_STRIKE)
             local g1=Duel.SelectMatchingCard(tp,nil,tp,LOCATION_MZONE,0,1,1,nil)
             Duel.HintSelection(g1)
@@ -588,13 +588,13 @@ function VgD.CardTriggerOperation(chkop,f)
             local g2=Duel.SelectMatchingCard(tp,nil,tp,LOCATION_MZONE,0,1,1,nil)
             Duel.HintSelection(g2)
             VgF.AtkUp(c,g2,10000,nil)
-        elseif c:IsRace(TRRIGGER_DRAW) then
+        elseif c:IsRace(TRIGGER_DRAW) then
             Duel.Hint(HINT_SELECTMSG,tp,HINTMSG_ATKUP)
             local g=Duel.SelectMatchingCard(tp,nil,tp,LOCATION_MZONE,0,1,1,nil)
             Duel.HintSelection(g)
             VgF.AtkUp(c,g,10000,nil)
             Duel.Draw(tp,1,REASON_TRIGGER)
-        elseif c:IsRace(TRRIGGER_HEAL) then
+        elseif c:IsRace(TRIGGER_HEAL) then
             Duel.Hint(HINT_SELECTMSG,tp,HINTMSG_ATKUP)
             local g=Duel.SelectMatchingCard(tp,nil,tp,LOCATION_MZONE,0,1,1,nil)
             Duel.HintSelection(g)
@@ -607,12 +607,12 @@ function VgD.CardTriggerOperation(chkop,f)
                     Duel.Recover(tp,1,REASON_RULE)
                 end
             end
-        elseif c:IsRace(TRRIGGER_ADVANCE) then
+        elseif c:IsRace(TRIGGER_ADVANCE) then
             local g=Duel.GetMatchingGroup(VgF.IsSequence,tp,LOCATION_MZONE,0,nil,0,4,5)
             VgF.AtkUp(c,g,10000,nil)
         end
         if chkop==0 then
-            if c:IsRace(TRRIGGER_SUPER) then
+            if c:IsRace(TRIGGER_SUPER) then
                 Duel.Hint(HINT_SELECTMSG,tp,HINTMSG_ATKUP)
                 local g=Duel.SelectMatchingCard(tp,nil,tp,LOCATION_MZONE,0,1,1,nil)
                 Duel.HintSelection(g)
@@ -637,7 +637,7 @@ function VgD.CardTriggerOperation(chkop,f)
                 Duel.RaiseEvent(rc,EVENT_CUSTOM+EVENT_DAMAGE_TRIGGER,e,0,tp,tp,0)
             end
         else
-            if c:IsRace(TRRIGGER_SUPER) then
+            if c:IsRace(TRIGGER_SUPER) then
                 Duel.Hint(HINT_SELECTMSG,tp,HINTMSG_ATKUP)
                 local g=Duel.SelectMatchingCard(tp,nil,tp,LOCATION_MZONE,0,1,1,nil)
                 Duel.HintSelection(g)
