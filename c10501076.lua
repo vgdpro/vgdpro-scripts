@@ -9,6 +9,6 @@ end
 function cm.con(e)
 	local c = e:GetHandler()
 	local tp = e:GetHandlerPlayer()
-    local a = vgf.IsExistingMatchingCard(nil,tp,LOCATION_ORDER,0,1,c)
+    local a = vgf.IsExistingMatchingCard(nil,tp,LOCATION_ORDER,0,1,nil)
 	return vgf.RMonsterCondition(e) and a and Duel.GetTurnPlayer()==tp
 end

@@ -1,5 +1,4 @@
 --爽朗的王子 哈里耶特
--- 未测试
 local cm,m,o=GetID()
 function cm.initial_effect(c)
 	vgf.VgCard(c)
@@ -10,7 +9,6 @@ end
 function cm.con1(e)
 	local c=e:GetHandler()
 	local tp=e:GetHandlerPlayer()
-    local a = vgf.IsExistingMatchingCard(nil,tp,LOCATION_ORDER,0,2,c)
-	return vgf.RMonsterCondition(e) and a and Duel.GetTurnPlayer()==tp
+	return vgf.RMonsterCondition(e) and vgf.IsExistingMatchingCard(nil,tp,LOCATION_ORDER,0,2,nil) and Duel.GetTurnPlayer()==tp
 end
 

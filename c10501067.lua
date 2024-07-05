@@ -7,8 +7,8 @@ function cm.initial_effect(c)
     vgd.EffectTypeContinuousChangeAttack(c,EFFECT_TYPE_SINGLE,5000,cm.con2,tg,EFFECT_UPDATE_DEFENSE,reset,LOCATION_GZONE)
 end
 
-function cm.con1(e,tp,eg,ep,ev,re,r,rp)
-    return cm.con2(e,tp,eg,ep,ev,re,r,rp) and vgf.RMonsterCondition(e)
+function cm.con1(e)
+    return cm.con2(e) and vgf.RMonsterCondition(e)
 end
 
 function cm.con2(e)

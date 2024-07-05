@@ -15,7 +15,7 @@ function cm.initial_effect(c)
     -- -2000
     vgd.EffectTypeContinuousChangeAttack(c,EFFECT_TYPE_SINGLE,-2000,cm.con)
 end
-function cm.con(e,tp,eg,ep,ev,re,r,rp)
+function cm.con(e)
     local c = e:GetHandler()
-    return VgF.BackFilter(c) and vgf.RMonsterCondition(e)
+    return VgF.BackFilter(c)
 end

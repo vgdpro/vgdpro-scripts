@@ -1,4 +1,5 @@
 --美丽的假日 菲尔缇萝萨
+local cm,m,o=GetID()
 function cm.initial_effect(c)
     vgf.VgCard(c)
     -- 【自】：这个单位被RIDE时，通过【费用】[灵魂爆发1]，选择你的弃牌区中的至多1张〈幽灵〉，加入手牌。
@@ -11,8 +12,9 @@ function cm.op(e,tp,eg,ep,ev,re,r,rp)
     VgF.SearchCard(LOCATION_HAND,LOCATION_GRAVE,cm.filter,1,0)(e,tp,eg,ep,ev,re,r,rp)
 end
 
-function cm.con(e,tp,eg,ep,ev,re,r,rp)
-    return  vgf.IsExistingMatchingCard(cm.filter1,tp,LOCATION_MZONE,0,1,nil) and Duel.GetTurnPlayer()==tp
+function cm.con(e)
+    local tp=e:GetHandlerPlayer()
+    return vgf.IsExistingMatchingCard(cm.filter1,tp,LOCATION_MZONE,0,1,nil) and Duel.GetTurnPlayer()==tp
 end
 
 function cm.filter(c)

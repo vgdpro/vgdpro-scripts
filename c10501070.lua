@@ -1,4 +1,5 @@
 --扎起头发的憧憬 海尔维希
+local cm,m,o=GetID()
 function cm.initial_effect(c)
     vgf.VgCard(c)
     -- 【自】：你的战斗阶段中这个单位登场到R时，通过【费用】[将这个单位放置到灵魂里]，抽1张卡。
@@ -7,15 +8,12 @@ end
 function cm.con(e,tp,eg,ep,ev,re,r,rp)
     local c = e:GetHandler()
     local ph = Duel.GetCurrentPhase() 
-    return vgf.RMonsterFilter(c) and (ph>=PHASE_BATTLE_START and ph<=PHASE_BATTLE) and Duel.GetTurnPlayer() == tp
-    -- 非ride或人格ride
-    -- not cm.condition(e,tp,eg,ep,ev,re,r,rp) 
+    return not cm.condition(e,tp,eg,ep,ev,re,r,rp) and (ph>=PHASE_BATTLE_START and ph<=PHASE_BATTLE) and Duel.GetTurnPlayer() == tp
 end
--- 检测是ride或人格ride
--- function cm.condition(e,tp,eg,ep,ev,re,r,rp)
--- 	local c=e:GetHandler()
--- 	return c:IsSummonType(SUMMON_TYPE_RIDE) or c:IsSummonType(SUMMON_TYPE_SELFRIDE)
--- end
+function cm.condition(e,tp,eg,ep,ev,re,r,rp)
+    local c=e:GetHandler()
+    return c:IsSummonType(SUMMON_TYPE_RIDE) or c:IsSummonType(SUMMON_TYPE_SELFRIDE)
+end
 
 function cm.op(e,tp,eg,ep,ev,re,r,rp)
     Duel.Draw(tp,1,REASON_EFFECT)

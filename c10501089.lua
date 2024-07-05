@@ -8,8 +8,8 @@ function cm.initial_effect(c)
     vgd.EffectTypeContinuousChangeAttack(c,EFFECT_TYPE_SINGLE,2000,cm.con1)
 end
 
-function cm.con1(e,tp,eg,ep,ev,re,r,rp)
-    local c=e:GetHandler()
+function cm.con1(e)
+    local tp=e:GetHandlerPlayer()
     return vgf.RMonsterCondition(e) and Duel.GetFlagEffect(tp,m)>0
 end
 

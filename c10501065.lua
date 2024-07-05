@@ -8,18 +8,18 @@ function cm.initial_effect(c)
     vgd.EffectTypeContinuousChangeAttack(c,EFFECT_TYPE_SINGLE,10000,cm.con)
 end
 
-function cm.con1(e,tp,eg,ep,ev,re,r,rp)
-    local c = e:GetHandler()
+function cm.con(e)
+    local tp=e:GetHandlerPlayer()
     return vgf.RMonsterCondition(e) and Duel.GetFlagEffect(tp,m)>0 and Duel.GetFlagEffect(tp,m+1)>0
 end
 
 function cm.checkcon1(e,tp,eg,ep,ev,re,r,rp)
-    local rc = re:GetHandler() 
+    local rc = re:GetHandler()
     return rc:IsCode(10501116) and rp==tp
 end
 
 function cm.checkcon2(e,tp,eg,ep,ev,re,r,rp)
-    local rc = re:GetHandler() 
+    local rc = re:GetHandler()
     return rc:IsCode(10501055) and rp==tp
 end
 

@@ -8,7 +8,6 @@ function cm.initial_effect(c)
     vgd.EffectTypeTrigger(c,m,LOCATION_MZONE,EFFECT_TYPE_SINGLE,EVENT_SPSUMMON_SUCCESS,cm.operation,nil,cm.con2,nil,1)
 end
 function cm.con1(e)
-	local c=e:GetHandler()
 	local tp=e:GetHandlerPlayer()
 	return vgf.VMonsterCondition(e) and not vgf.IsExistingMatchingCard(vgf.RMonsterFilter,tp,LOCATION_MZONE,0,1,nil) and Duel.GetTurnPlayer()==tp
 end
