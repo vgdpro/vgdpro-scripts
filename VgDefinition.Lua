@@ -878,6 +878,7 @@ AFFECT_CODE_MIX_DIFFERENT_NAME  =VgID+1     --魔合成(卡名不同)
 AFFECT_CODE_SENDTOG     =VgID+2 --需要两张卡才能防御
 AFFECT_CODE_NIGHT       =VgID+3 --黑夜
 AFFECT_CODE_DEEP_NIGHT  =VgID+4 --深渊黑夜
+AFFECT_CODE_BOTH_WING   =VgID+5 --你的卡片的白翼能力和黑翼能力两方均有效
 
 
 AFFECT_CODE_OVERLAY_INSTEAD_WHEN_RIDE   =10501082   --不执行『选择手牌中的1张卡，舍弃』而是执行『灵魂爆发1』来将卡RIDE
