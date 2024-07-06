@@ -673,7 +673,7 @@ function VgF.SearchCard(loc_to,loc_from,f,int_max,int_min)
                 local rc=VgF.GetVMonster(tp)
                 return VgF.Sendto(loc_to,g,rc)
             end
-        elseif loc_to|0xf800>0 then
+        elseif bit.band(loc_to,0xf800)>0 then
             local g=VgF.SelectMatchingCard(HINTMSG_CALL,e,tp,function (c)
                 return VgF.GetValueType(f)~="function" or f(c)
             end,tp,loc_from,0,int_min,int_max,nil)
@@ -817,12 +817,12 @@ function VgF.EffectResetOperation(e,tp,eg,ep,ev,re,r,rp)
 end
 function VgF.IsExistingMatchingCard(f,tp,loc_self,loc_op,int,except_g,...)
     local g=Group.CreateGroup()
-    if loc_self|LOCATION_MZONE>0 then
+    if bit.band(loc_self,LOCATION_MZONE)>0 then
         local g1=Duel.GetMatchingGroup(Card.IsFaceup,tp,LOCATION_MZONE,0,nil)
         loc_self=loc_self-LOCATION_MZONE
         if g1:GetCount()>0 then g:Merge(g1) end
     end
-    if loc_op|LOCATION_MZONE>0 then
+    if bit.band(loc_op,LOCATION_MZONE)>0 then
         local g1=Duel.GetMatchingGroup(Card.IsFaceup,tp,0,LOCATION_MZONE,nil)
         loc_op=loc_op-LOCATION_MZONE
         if g1:GetCount()>0 then g:Merge(g1) end
@@ -838,21 +838,21 @@ function VgF.IsExistingMatchingCard(f,tp,loc_self,loc_op,int,except_g,...)
 end
 function VgF.SelectMatchingCard(hintmsg,e,select_tp,f,tp,loc_self,loc_op,int_min,int_max,except_g,...)
     local a=false
-    if ((select_tp==tp and loc_self|LOCATION_DECK>0) or (select_tp~=tp and loc_op|LOCATION_DECK>0)) and Duel.SelectYesNo(select_tp,VgF.Stringid(VgID,13)) then
+    if ((select_tp==tp and bit.band(loc_self,LOCATION_DECK)>0) or (select_tp~=tp and bit.band(loc_op,LOCATION_DECK)>0)) and Duel.SelectYesNo(select_tp,VgF.Stringid(VgID,13)) then
         local g=Duel.GetFieldGroup(select_tp,LOCATION_DECK,0)
         Duel.DisableShuffleCheck()
         Duel.ConfirmCards(select_tp,g)
         a=true
     end
     local g=Group.CreateGroup()
-    if loc_self|LOCATION_MZONE>0 then
+    if bit.band(loc_self,LOCATION_MZONE)>0 then
         local g1=Duel.GetMatchingGroup(function (c)
             return c:IsCanBeEffectTarget(e) and c:IsFaceup()
         end,tp,LOCATION_MZONE,0,nil)
         loc_self=loc_self-LOCATION_MZONE
         if g1:GetCount()>0 then g:Merge(g1) end
     end
-    if loc_op|LOCATION_MZONE>0 then
+    if bit.band(loc_op,LOCATION_MZONE)>0 then
         local g1=Duel.GetMatchingGroup(function (c)
             return c:IsCanBeEffectTarget(e) and c:IsFaceup()
         end,tp,0,LOCATION_MZONE,nil)
@@ -883,12 +883,12 @@ function VgF.GetMatchingGroupCount(f,tp,loc_self,loc_op,except_g,...)
 end
 function VgF.GetMatchingGroup(f,tp,loc_self,loc_op,except_g,...)
     local g=Group.CreateGroup()
-    if loc_self|LOCATION_MZONE>0 then
+    if bit.band(loc_self,LOCATION_MZONE)>0 then
         local g1=Duel.GetMatchingGroup(Card.IsFaceup,tp,LOCATION_MZONE,0,nil)
         loc_self=loc_self-LOCATION_MZONE
         if g1:GetCount()>0 then g:Merge(g1) end
     end
-    if loc_op|LOCATION_MZONE>0 then
+    if bit.band(loc_op,LOCATION_MZONE)>0 then
         local g1=Duel.GetMatchingGroup(Card.IsFaceup,tp,0,LOCATION_MZONE,nil)
         loc_op=loc_op-LOCATION_MZONE
         if g1:GetCount()>0 then g:Merge(g1) end

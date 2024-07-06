@@ -330,7 +330,6 @@ function VgD.MonsterBattle(c)
     c:RegisterEffect(e7)
     local e17=e7:Clone()
     e17:SetRange(LOCATION_HAND)
-    e17:SetCost(VgD.SendToGCost)
     e17:SetCondition(VgD.SendToGCondition(LOCATION_HAND))
     c:RegisterEffect(e17)
     local e8=Effect.CreateEffect(c)
@@ -463,16 +462,6 @@ function VgD.SupportValue(e)
         return 0
     end
 end
-function VgD.SendToGCost(e,tp,eg,ep,ev,re,r,rp,chk)
-    local c=e:GetHandler()
-    if chk==0 then return not Duel.IsPlayerAffectedByEffect(tp,OAFFECT_CODE_SENDTOG) or VgF.IsExistingMatchingCard(nil,tp,LOCATION_GZONE,0,1,nil) or VgF.IsExistingMatchingCard(VgF.IsAbleToGZone,tp,LOCATION_HAND,0,1,c,LOCATION_HAND) end
-    if Duel.IsPlayerAffectedByEffect(tp,OAFFECT_CODE_SENDTOG) and not VgF.IsExistingMatchingCard(nil,tp,LOCATION_GZONE,0,1,nil) then
-        local tc=Duel.SelectMatchingCard(tp,VgF.IsAbleToGZone,tp,LOCATION_HAND,0,1,1,c,LOCATION_HAND)
-        tc=VgF.ReturnCard(tc)
-        Duel.ConfirmCards(1-tp,tc)
-        e:SetLabelObject(tc)
-    end
-end
 function VgD.SendToGCondition(loc)
     return function(e,tp,eg,ep,ev,re,r,rp)
         local c=e:GetHandler()
@@ -482,13 +471,7 @@ function VgD.SendToGCondition(loc)
 end
 function VgD.SendToGOperation(e,tp,eg,ep,ev,re,r,rp)
     local c=e:GetHandler()
-    local tc=e:GetLabelObject()
-    local g=Group.FromCards(c)
-    if tc then
-        tc=VgF.ReturnCard(tc)
-        g:AddCard(tc)
-    end
-    VgF.Sendto(LOCATION_GZONE,g,tp,POS_FACEUP,REASON_EFFECT)
+    VgF.Sendto(LOCATION_GZONE,c,tp,POS_FACEUP,REASON_EFFECT)
 end
 function VgD.GToGraveOperation(e,tp,eg,ep,ev,re,r,rp)
     local g=Duel.GetFieldGroup(tp,LOCATION_GZONE,0)
