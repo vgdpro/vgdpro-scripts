@@ -19,7 +19,7 @@ function cm.op(e,tp,eg,ep,ev,re,r,rp)
 			tc:RegisterEffect(e1)
 			vgf.EffectReset(c,e1,EVENT_BATTLED)
 		elseif vgf.VMonsterFilter(tc) then
-			tc:RegisterFlagEffect(DefenseEntirelyFlag,RESET_EVENT+RESETS_STANDARD,0,1)
+			tc:RegisterFlagEffect(FLAG_DEFENSE_ENTIRELY,RESET_EVENT+RESETS_STANDARD,0,1)
 		end
 	end
 	local sg=Duel.GetFieldGroup(tp,LOCATION_HAND,0)

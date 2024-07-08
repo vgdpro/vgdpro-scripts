@@ -11,7 +11,7 @@ function cm.operation(e,tp,eg,ep,ev,re,r,rp)
 	local c=e:GetHandler()
 	vgf.OverlayFill(1)
 	Duel.BreakEffect()
-	if Duel.GetFlagEffectLabel(tp,ConditionFlag)==10102001 and vgf.IsExistingMatchingCard(Card.IsFaceup,tp,LOCATION_DAMAGE,0,1,nil) and Duel.SelectEffectYesNo(tp,vgf.stringid(VgID,10)) then
+	if Duel.GetFlagEffectLabel(tp,FLAG_CONDITION)==10102001 and vgf.IsExistingMatchingCard(Card.IsFaceup,tp,LOCATION_DAMAGE,0,1,nil) and Duel.SelectEffectYesNo(tp,vgf.stringid(VgID,10)) then
         local g=vgf.SelectMatchingCard(HINTMSG_DAMAGE,e,tp,Card.IsFaceup,tp,LOCATION_DAMAGE,0,1,1,nil)
         Duel.ChangePosition(g,POS_FACEDOWN_ATTACK)
 		vgf.AtkUp(c,c,15000)

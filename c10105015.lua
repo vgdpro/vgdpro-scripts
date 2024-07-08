@@ -54,5 +54,5 @@ function cm.op1(e,tp,eg,ep,ev,re,r,rp)
 	end
 end
 function cm.filter1(c,e,tp)
-	return c:GetFlagEffect(ImprisonFlag)>0
+	return c:GetFlagEffect(FLAG_IMPRISON)>0
 end

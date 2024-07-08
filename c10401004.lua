@@ -14,7 +14,7 @@ function cm.checkop(e,tp,eg,ep,ev,re,r,rp)
     Duel.RegisterFlagEffect(tp,m,RESET_PHASE+PHASE_END,0,1)
 end
 function cm.con(e,tp,eg,ep,ev,re,r,rp)
-	return Duel.GetFlagEffectLabel(tp,ConditionFlag)==10102001
+	return Duel.GetFlagEffectLabel(tp,FLAG_CONDITION)==10102001
 end
 function cm.con1(e,tp,eg,ep,ev,re,r,rp)
 	return Duel.GetFlagEffect(tp,m)>0 and cm.con(e,tp,eg,ep,ev,re,r,rp)

@@ -13,7 +13,7 @@ function cm.operation(e,tp,eg,ep,ev,re,r,rp)
     if g then
 		Duel.Hintselectgion(g)
 		for tc in vgf.Next(g) do
-			tc:RegisterFlagEffect(AttackAtRearFlag,RESET_EVENT+RESETS_STANDARD,EFFECT_FLAG_CLIENT_HINT,1,0,vgf.Stringid(VgID,10))
+			tc:RegisterFlagEffect(FLAG_ATTACK_AT_REAR,RESET_EVENT+RESETS_STANDARD,EFFECT_FLAG_CLIENT_HINT,1,0,vgf.Stringid(VgID,10))
 		end
 		vgf.AtkUp(c,g,5000,nil)
 	end

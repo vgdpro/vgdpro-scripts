@@ -245,7 +245,7 @@ function cm.operation2(e,tp,eg,ep,ev,re,r,rp)
 end
 function cm.condition2(e,tp,eg,ep,ev,re,r,rp)
 	local c=e:GetHandler()
-	return vgf.RMonsterCondition(e) and c:GetFlagEffectLabel(ConditionFlag)==201 and vgf.VMonsterFilter(Duel.GetAttackTarget())
+	return vgf.RMonsterCondition(e) and c:GetFlagEffectLabel(FLAG_CONDITION)==201 and vgf.VMonsterFilter(Duel.GetAttackTarget())
 end
 ```
 
@@ -351,7 +351,7 @@ function cm.condition2(e,tp,eg,ep,ev,re,r,rp)
 	local c=e:GetHandler()
 	-- vgf.RMonsterCondition(e) 判断 e的持有者(即这张卡) 是否为后防者
 	-- vgf.VMonsterFilter(Duel.GetAttackTarget()) 判断 被攻击的卡 是否为先导者
-	return vgf.RMonsterCondition(e) and c:GetFlagEffectLabel(ConditionFlag)==201 and vgf.VMonsterFilter(Duel.GetAttackTarget())
+	return vgf.RMonsterCondition(e) and c:GetFlagEffectLabel(FLAG_CONDITION)==201 and vgf.VMonsterFilter(Duel.GetAttackTarget())
 end
 ```
 

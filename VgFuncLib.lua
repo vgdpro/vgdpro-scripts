@@ -745,11 +745,11 @@ function VgF.SendtoPrison(g,p)
 	local oc=og:Filter(VgF.PrisonFilter,nil,og:GetCount()):GetFirst()
     if VgF.GetValueType(g)=="Card" then
 	    VgF.Sendto(LOCATION_ORDER,g,p,POS_FACEUP_ATTACK,REASON_EFFECT)
-        g:RegisterFlagEffect(ImprisonFlag,RESET_EVENT+RESETS_STANDARD,EFFECT_FLAG_CLIENT_HINT,1,0,VgF.Stringid(10105015,0))
+        g:RegisterFlagEffect(FLAG_IMPRISON,RESET_EVENT+RESETS_STANDARD,EFFECT_FLAG_CLIENT_HINT,1,0,VgF.Stringid(10105015,0))
     elseif VgF.GetValueType(g)=="Group" then
         for tc in VgF.Next(g) do
             VgF.Sendto(LOCATION_ORDER,tc,p,POS_FACEUP_ATTACK,REASON_EFFECT)
-            tc:RegisterFlagEffect(ImprisonFlag,RESET_EVENT+RESETS_STANDARD,EFFECT_FLAG_CLIENT_HINT,1,0,VgF.Stringid(10105015,0))
+            tc:RegisterFlagEffect(FLAG_IMPRISON,RESET_EVENT+RESETS_STANDARD,EFFECT_FLAG_CLIENT_HINT,1,0,VgF.Stringid(10105015,0))
         end
     end
 	Duel.MoveSequence(oc,og:GetCount()-1)
@@ -769,11 +769,11 @@ function VgF.SendtoPrison(g,p)
 	local oc=og:Filter(VgF.PrisonFilter,nil,p):GetFirst()
     if VgF.GetValueType(g)=="Card" then
 	    Duel.Sendto(g,p,LOCATION_ORDER,POS_FACEUP_ATTACK,REASON_EFFECT,1)
-        g:RegisterFlagEffect(ImprisonFlag,RESET_EVENT+RESETS_STANDARD,EFFECT_FLAG_CLIENT_HINT,1,0,VgF.Stringid(10105015,0))
+        g:RegisterFlagEffect(FLAG_IMPRISON,RESET_EVENT+RESETS_STANDARD,EFFECT_FLAG_CLIENT_HINT,1,0,VgF.Stringid(10105015,0))
     elseif VgF.GetValueType(g)=="Group" then
         for tc in VgF.Next(g) do
             Duel.Sendto(tc,p,LOCATION_ORDER,POS_FACEUP_ATTACK,REASON_EFFECT,1)
-            tc:RegisterFlagEffect(ImprisonFlag,RESET_EVENT+RESETS_STANDARD,EFFECT_FLAG_CLIENT_HINT,1,0,VgF.Stringid(10105015,0))
+            tc:RegisterFlagEffect(FLAG_IMPRISON,RESET_EVENT+RESETS_STANDARD,EFFECT_FLAG_CLIENT_HINT,1,0,VgF.Stringid(10105015,0))
         end
     end
 end]]

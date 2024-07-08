@@ -13,5 +13,5 @@ function cm.op(e,tp,eg,ep,ev,re,r,rp)
 	vgf.Sendto(LOCATION_DROP,g,REASON_EFFECT)
 end
 function cm.filter(c)
-	return c:GetFlagEffectLabel(ConditionFlag)==201
+	return c:GetFlagEffectLabel(FLAG_CONDITION)==201
 end

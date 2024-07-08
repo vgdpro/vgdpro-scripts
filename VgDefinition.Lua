@@ -853,14 +853,16 @@ FLAG_ID_CHAINING		=1
 FLAG_ID_UNION			=2
 FLAG_ID_NO_NORMAL_DRAW	=3
 --Flag
-CountTriggerFlag        =VgID   --计数标识
-AttackTriggerFlag       =VgID+1 --多次攻击判定标识
-DamageTriggerFlag       =VgID+2 --多次伤害判定标识
-DefenseEntirelyFlag     =VgID+3 --完全防御标识
-ConditionFlag           =VgID+4 --处于XX状态标识
-SupportFlag             =VgID+5 --支援状态标识
-AttackAtRearFlag        =VgID+6 --后列攻击
-ImprisonFlag            =VgID+7 --被收容
+FLAG_COUNT_TRIGGER      =VgID   --计数标识
+FLAG_ATTACK_TRIGGER     =VgID+1 --多次攻击判定标识
+FLAG_DAMAGE_TRIGGER     =VgID+2 --多次伤害判定标识
+FLAG_DEFENSE_ENTIRELY   =VgID+3 --完全防御标识
+FLAG_CONDITION          =VgID+4 --处于XX状态标识
+FLAG_SUPPORT            =VgID+5 --支援状态标识
+FLAG_ATTACK_AT_REAR     =VgID+6 --后列攻击
+FLAG_IMPRISON           =VgID+7 --被收容
+FLAG_SPELL_COUNT_LIMIT  =VgID+8 --指令卡次数
+FLAG_SPELL_USED_COUNT   =VgID+9 --指令卡已使用次数
 --AffectedByEffect
 AFFECT_CODE_MIX         =VgID   --魔合成
 AFFECT_CODE_MIX_DIFFERENT_NAME  =VgID+1     --魔合成(卡名不同)

@@ -10,7 +10,7 @@ function cm.con(e,c)
 	return Duel.GetTurnPlayer()==tp and vgf.VMonsterCondition(e) and vgf.IsExistingMatchingCard(cm.filter,tp,LOCATION_ORDER,0,1,nil)
 end
 function cm.filter(c)
-	return c:GetFlagEffect(ImprisonFlag)>0
+	return c:GetFlagEffect(FLAG_IMPRISON)>0
 end
 function cm.op1(e,tp,eg,ep,ev,re,r,rp)
 	if not vgf.CheckPrison(tp) then return end

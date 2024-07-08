@@ -16,7 +16,7 @@ function cm.condition1(e,tp,eg,ep,ev,re,r,rp)
 	return not cm.condition(e,tp,eg,ep,ev,re,r,rp) and vgf.IsExistingMatchingCard(cm.filter1,tp,LOCATION_ORDER,0,1,nil)
 end
 function cm.filter1(c)
-	return c:GetFlagEffect(ImprisonFlag)>0
+	return c:GetFlagEffect(FLAG_IMPRISON)>0
 end
 function cm.operation1(e,tp,eg,ep,ev,re,r,rp)
 	Duel.Draw(tp,1,REASON_EFFECT)

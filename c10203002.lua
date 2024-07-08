@@ -19,5 +19,5 @@ function cm.operation1(e,tp,eg,ep,ev,re,r,rp)
 	vgf.EffectReset(c,e1,EVENT_BATTLED)
 end
 function cm.cfilter(c,mc)
-	return vgf.GetColumnGroup(c):IsContains(mc) and c:IsControler(mc:GetControler()) and c:GetFlagEffect(SupportFlag)>0
+	return vgf.GetColumnGroup(c):IsContains(mc) and c:IsControler(mc:GetControler()) and c:GetFlagEffect(FLAG_SUPPORT)>0
 end

@@ -1,7 +1,11 @@
 local cm,m,o=GetID()
 function cm.initial_effect(c)
 	vgf.VgCard(c)
-	vgd.EffectTypeTrigger(c,m,nil,EFFECT_TYPE_SINGLE,EVENT_SPSUMMON_SUCCESS,cm.op)
+	vgd.EffectTypeTrigger(c,m,nil,EFFECT_TYPE_SINGLE,EVENT_SPSUMMON_SUCCESS,cm.op,nil,cm.con)
+end
+function cm.con(e,tp,eg,ep,ev,re,r,rp)
+    local c=e:GetHandler()
+    return not c:IsPreviousLocation(LOCATION_HAND) and not (c:IsSummonType(SUMMON_TYPE_RIDE) or c:IsSummonType(SUMMON_TYPE_SELFRIDE))
 end
 --对手要从手牌将卡CALL到G上之际，不将2张以上同时CALL的话则不能CALL出场。
 function cm.op(e,tp,eg,ep,ev,re,r,rp)
@@ -20,7 +24,7 @@ function cm.op(e,tp,eg,ep,ev,re,r,rp)
 end
 function cm.costtg(e,re,tp)
     e:SetLabelObject(re:GetHandler())
-    return re:IsHasCategory(CATEGORY_DEFENDER) and re:GetHandler():IsLocation(LOCATION_HAND) and re:GetHandlerPlayer()==tp and not vgf.IsExistingMatchingCard(nil,tp,LOCATION_GZONE,0,1,nil)
+    return re:IsHasCategory(CATEGORY_DEFENDER) and re:GetHandler():IsLocation(LOCATION_HAND) and re:GetHandlerPlayer()==tp and not vgf.IsExistingMatchingCard(nil,tp,LOCATION_GZONE,0,1,nil) and Duel.GetAttacker()==e:GetHandler()
 end
 function cm.costchk(e,re,tp)
     return vgf.IsExistingMatchingCard(vgf.IsAbleToGZone,tp,LOCATION_HAND,0,1,re:GetHandler(),LOCATION_HAND)

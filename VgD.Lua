@@ -251,7 +251,7 @@ function VgD.OverDressOperation(f)
 end
 function VgD.OverDressSum(e,tp,eg,ep,ev,re,r,rp)
     local c=e:GetHandler()
-    c:RegisterFlagEffect(ConditionFlag,RESET_EVENT+RESETS_STANDARD,EFFECT_FLAG_CLIENT_HINT,1,201,VgF.Stringid(10101006,0))
+    c:RegisterFlagEffect(FLAG_CONDITION,RESET_EVENT+RESETS_STANDARD,EFFECT_FLAG_CLIENT_HINT,1,201,VgF.Stringid(10101006,0))
 end
 
 --战斗阶段
@@ -401,7 +401,7 @@ function VgD.MonsterPosDefenseOperation(e,tp,eg,ep,ev,re,r,rp)
     elseif c:IsAttribute(SKILL_THRICE_TRIGGER) then
         label=label+2
     end
-    c:RegisterFlagEffect(AttackTriggerFlag,RESET_EVENT+RESETS_STANDARD,0,1,label)
+    c:RegisterFlagEffect(FLAG_ATTACK_TRIGGER,RESET_EVENT+RESETS_STANDARD,0,1,label)
     Duel.RaiseEvent(c,EVENT_CUSTOM+EVENT_TRIGGERCOUNTUP,e,0,tp,tp,0)
 end
 function VgD.MonsterPosAttackOperation(e,tp,eg,ep,ev,re,r,rp)
@@ -417,13 +417,13 @@ function VgD.MonsterBattleDamageCondition(e,tp,eg,ep,ev,re,r,rp)
     if not bc or not bc:IsRelateToBattle() then return false end
     local atk=bc:GetAttack()
     local def=c:GetAttack()
-    return VgF.VMonsterFilter(c) and c==Duel.GetAttackTarget() and atk>=def and bc:GetLeftScale()>0 and Duel.GetAttackTarget():GetFlagEffect(DefenseEntirelyFlag)==0
+    return VgF.VMonsterFilter(c) and c==Duel.GetAttackTarget() and atk>=def and bc:GetLeftScale()>0 and Duel.GetAttackTarget():GetFlagEffect(FLAG_DEFENSE_ENTIRELY)==0
 end
 function VgD.MonsterBattleDamageOperation(e,tp,eg,ep,ev,re,r,rp)
     local c=e:GetHandler()
     local bc=c:GetBattleTarget()
     local label=bc:GetLeftScale()-1
-    bc:RegisterFlagEffect(DamageTriggerFlag,RESET_EVENT+RESETS_STANDARD,0,1,label)
+    bc:RegisterFlagEffect(FLAG_DAMAGE_TRIGGER,RESET_EVENT+RESETS_STANDARD,0,1,label)
     VgD.TriggerCard(e,tp,eg,ep,ev,re,r,rp)
 end
 function VgD.MonsterNextTrigger(e,tp,eg,ep,ev,re,r,rp)
@@ -436,7 +436,7 @@ end
 function VgD.SupportOperation(e,tp,eg,ep,ev,re,r,rp)
     local c=e:GetHandler()
     Duel.ChangePosition(c,POS_FACEUP_DEFENSE)
-    c:RegisterFlagEffect(SupportFlag,RESET_EVENT+RESETS_STANDARD,0,1)
+    c:RegisterFlagEffect(FLAG_SUPPORT,RESET_EVENT+RESETS_STANDARD,0,1)
     Duel.RaiseEvent(c,EVENT_CUSTOM+EVENT_SUPPORT,e,0,tp,tp,0)
 end
 function VgD.SupportValue(e)
@@ -444,7 +444,7 @@ function VgD.SupportValue(e)
         local atk=0
         if Duel.GetAttacker()==e:GetHandler() then
         local g=Duel.GetMatchingGroup(function (c)
-            return c:GetFlagEffect(SupportFlag)>0
+            return c:GetFlagEffect(FLAG_SUPPORT)>0
         end,tp,LOCATION_MZONE,0,nil)
         for tc in VgF.Next(g) do
             atk=atk+tc:GetAttack()
@@ -478,18 +478,18 @@ function VgD.GToGraveOperation(e,tp,eg,ep,ev,re,r,rp)
     if g:GetCount()>0 then VgF.Sendto(LOCATION_DROP,g,REASON_RULE) end
 end
 function VgD.MonsterAttackAnnounceCondition(e,c)
-    return e:GetHandler():IsPosition(POS_DEFENSE) or (VgF.IsSequence(e:GetHandler(),1,2,3) and e:GetHandler():GetFlagEffect(AttackAtRearFlag)==0)
+    return e:GetHandler():IsPosition(POS_DEFENSE) or (VgF.IsSequence(e:GetHandler(),1,2,3) and e:GetHandler():GetFlagEffect(FLAG_ATTACK_AT_REAR)==0)
 end
 function VgD.MonsterAttackCondition(e,tp,eg,ep,ev,re,r,rp)
     local c=e:GetHandler()
     if not VgF.VMonsterFilter(c) then return false end
-    local a=c:GetFlagEffectLabel(AttackTriggerFlag) and c:GetFlagEffectLabel(AttackTriggerFlag)>0
+    local a=c:GetFlagEffectLabel(FLAG_ATTACK_TRIGGER) and c:GetFlagEffectLabel(FLAG_ATTACK_TRIGGER)>0
     return a and Duel.GetAttacker()==c
 end
 function VgD.MonsterAttackCost(e,tp,eg,ep,ev,re,r,rp,chk)
     local c=e:GetHandler()
-    if chk==0 then return c:GetFlagEffect(CountTriggerFlag)==0 end
-    c:RegisterFlagEffect(CountTriggerFlag,RESET_EVENT+RESETS_STANDARD+RESET_PHASE+PHASE_DAMAGE_CAL,0,1)
+    if chk==0 then return c:GetFlagEffect(FLAG_COUNT_TRIGGER)==0 end
+    c:RegisterFlagEffect(FLAG_COUNT_TRIGGER,RESET_EVENT+RESETS_STANDARD+RESET_PHASE+PHASE_DAMAGE_CAL,0,1)
 end
 function VgD.MonsterCannotBeDestoryCondition(e)
     local c=e:GetHandler()
@@ -531,7 +531,7 @@ function VgD.CardToGOperation(e,tp,eg,ep,ev,re,r,rp)
         tc:RegisterEffect(e1)
         vgf.EffectReset(c,e1,EVENT_BATTLED)
     elseif vgf.VMonsterFilter(tc) then
-        tc:RegisterFlagEffect(DefenseEntirelyFlag,RESET_EVENT+RESETS_STANDARD,0,1)
+        tc:RegisterFlagEffect(FLAG_DEFENSE_ENTIRELY,RESET_EVENT+RESETS_STANDARD,0,1)
     end
 end
 
@@ -608,15 +608,15 @@ function VgD.CardTriggerOperation(chkop,f)
             end
             local rc=Duel.GetMatchingGroup(VgF.VMonsterFilter,tp,LOCATION_MZONE,0,nil):GetFirst()
             local bc=rc:GetBattleTarget()
-            local label=bc:GetFlagEffectLabel(DamageTriggerFlag)
+            local label=bc:GetFlagEffectLabel(FLAG_DAMAGE_TRIGGER)
             if not label then return end
             if label>0 then
                 label=label-1
                 Duel.RaiseEvent(c,EVENT_CUSTOM+EVENT_TRIGGER,e,0,tp,tp,0)
-                bc:ResetFlagEffect(DamageTriggerFlag)
-                bc:RegisterFlagEffect(DamageTriggerFlag,RESET_EVENT+RESETS_STANDARD,0,1,label)
+                bc:ResetFlagEffect(FLAG_DAMAGE_TRIGGER)
+                bc:RegisterFlagEffect(FLAG_DAMAGE_TRIGGER,RESET_EVENT+RESETS_STANDARD,0,1,label)
             elseif label==0 then
-                bc:ResetFlagEffect(DamageTriggerFlag)
+                bc:ResetFlagEffect(FLAG_DAMAGE_TRIGGER)
                 Duel.RaiseEvent(rc,EVENT_CUSTOM+EVENT_DAMAGE_TRIGGER,e,0,tp,tp,0)
             end
         else
@@ -632,15 +632,15 @@ function VgD.CardTriggerOperation(chkop,f)
                 VgF.Sendto(LOCATION_HAND,c,nil,REASON_TRIGGER)
             end
             local rc=Duel.GetMatchingGroup(VgF.VMonsterFilter,tp,LOCATION_MZONE,0,nil):GetFirst()
-            local label=rc:GetFlagEffectLabel(AttackTriggerFlag)
+            local label=rc:GetFlagEffectLabel(FLAG_ATTACK_TRIGGER)
             if not label then return end
             if label>1 then
                 label=label-1
                 Duel.RaiseEvent(c,EVENT_CUSTOM+EVENT_TRIGGER,e,0,tp,tp,0)
-                rc:ResetFlagEffect(AttackTriggerFlag)
-                rc:RegisterFlagEffect(AttackTriggerFlag,RESET_EVENT+RESETS_STANDARD,0,1,label)
+                rc:ResetFlagEffect(FLAG_ATTACK_TRIGGER)
+                rc:RegisterFlagEffect(FLAG_ATTACK_TRIGGER,RESET_EVENT+RESETS_STANDARD,0,1,label)
             elseif label==1 then
-                rc:ResetFlagEffect(AttackTriggerFlag)
+                rc:ResetFlagEffect(FLAG_ATTACK_TRIGGER)
             end
         end
     end
@@ -751,8 +751,8 @@ function VgD.RuelDrawOperation(e,tp,eg,ep,ev,re,r,rp)
 end
 function VgD.ResetOperation(e,tp,eg,ep,ev,re,r,rp)
     local c=e:GetHandler()
-    if c:GetFlagEffect(SupportFlag)>0 then c:ResetFlagEffect(SupportFlag) end
-    if c:GetFlagEffect(DefenseEntirelyFlag)>0 then c:ResetFlagEffect(DefenseEntirelyFlag) end
+    if c:GetFlagEffect(FLAG_SUPPORT)>0 then c:ResetFlagEffect(FLAG_SUPPORT) end
+    if c:GetFlagEffect(FLAG_DEFENSE_ENTIRELY)>0 then c:ResetFlagEffect(FLAG_DEFENSE_ENTIRELY) end
 end
 
 --指令卡
@@ -770,6 +770,7 @@ function VgD.SpellActivate(c,m,op,cost,con)
     e1:SetCountLimit(1,VgID+EFFECT_COUNT_CODE_OATH)
     e1:SetCost(VgD.MixCost(cost))
     e1:SetCondition(VgD.SpellCondtion(con))
+    e1:Settarget(VgD.SpellTarget)
     e1:SetOperation(VgD.SpellOperation(op))
     c:RegisterEffect(e1)
 end
@@ -819,6 +820,14 @@ function VgD.SpellCondtion(con)
         if VgF.GetValueType(con)=="function" and not con(e,tp,eg,ep,ev,re,r,rp) then return false end
         return VgF.LvCondition(e)
     end
+end
+function VgD.SpellTarget(e,tp,eg,ep,ev,re,r,rp,chk)
+    local ct1=Duel.GetFlagEffectLabel(tp,FLAG_SPELL_COUNT_LIMIT)
+    local ct2=Duel.GetFlagEffectLabel(tp,FLAG_SPELL_USED_COUNT)
+    if VgF.GetValueType(ct1)~="number" then ct1=1 end
+    if VgF.GetValueType(ct2)~="number" then ct2=0 end
+    if chk==0 then return ct2<ct1 end
+    Duel.RegisterFlagEffect(tp,FLAG_SPELL_USED_COUNT,RESET_PHASE+PHASE_END,0,1,ct2+1)
 end
 function VgD.SpellOperation(op)
     return function (e,tp,eg,ep,ev,re,r,rp,bool)
@@ -1032,12 +1041,12 @@ end
 function VgD.TriggerCountUpOperation(num)
     return function (e,tp,eg,ep,ev,re,r,rp)
         local c=e:GetHandler()
-        local label=c:GetFlagEffectLabel(AttackTriggerFlag)
+        local label=c:GetFlagEffectLabel(FLAG_ATTACK_TRIGGER)
         if not label then label=0 end
         label=label+num
         if label<0 then label=0 end
-        c:ResetFlagEffect(AttackTriggerFlag)
-        c:RegisterFlagEffect(AttackTriggerFlag,RESET_EVENT+RESETS_STANDARD,0,1,label)
+        c:ResetFlagEffect(FLAG_ATTACK_TRIGGER)
+        c:RegisterFlagEffect(FLAG_ATTACK_TRIGGER,RESET_EVENT+RESETS_STANDARD,0,1,label)
     end
 end
 function VgD.GlobalCheckEffect(c,m,typ,code,con,op)

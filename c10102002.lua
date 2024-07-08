@@ -25,5 +25,5 @@ function cm.con(e,tp,eg,ep,ev,re,r,rp)
 	return c:IsSummonType(SUMMON_TYPE_RIDE) or c:IsSummonType(SUMMON_TYPE_SELFRIDE)
 end
 function cm.con2(e,tp,eg,ep,ev,re,r,rp)
-	return Duel.GetFlagEffectLabel(tp,ConditionFlag)==10102001
+	return Duel.GetFlagEffectLabel(tp,FLAG_CONDITION)==10102001
 end
