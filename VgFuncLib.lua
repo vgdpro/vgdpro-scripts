@@ -621,6 +621,12 @@ function VgF.DamageCost(num)
         return Duel.GetOperatedGroup():GetCount()
     end
 end
+function VgF.IsCanBeCalled(c,e,tp,sumtype,pos,zone)
+    if VgF.GetValueType(zone)~="number" then zone=VgF.GetAvailableLocation(tp) end
+    if VgF.GetValueType(sumtype)~="number" then sumtype=0 end
+    if VgF.GetValueType(pos)~="number" then pos=POS_FACEUP_ATTACK end
+    return zone>0 and c:IsCanBeSpecialSummoned(e,sumtype,tp,false,false,pos,tp,zone)
+end
 ---用于效果的Operation。执行“从loc_from中选取最少int_min，最多int_max张满足f的卡，送去loc_to。”。
 ---@param loc_to integer 要送去的区域。不填则返回0。
 ---@param loc_from integer 要选取的区域。不填则返回0。
@@ -639,6 +645,7 @@ function VgF.SearchCard(loc_to,loc_from,f,int_max,int_min)
             end
         elseif loc_to==LOCATION_MZONE then
             local g=VgF.SelectMatchingCard(HINTMSG_CALL,e,tp,function (c)
+                if not -
                 return VgF.GetValueType(f)~="function" or f(c)
             end,tp,loc_from,0,int_min,int_max,nil)
             if g:GetCount()>0 then
@@ -816,25 +823,7 @@ function VgF.EffectResetOperation(e,tp,eg,ep,ev,re,r,rp)
     e:Reset()
 end
 function VgF.IsExistingMatchingCard(f,tp,loc_self,loc_op,int,except_g,...)
-    local g=Group.CreateGroup()
-    if bit.band(loc_self,LOCATION_MZONE)>0 then
-        local g1=Duel.GetMatchingGroup(Card.IsFaceup,tp,LOCATION_MZONE,0,nil)
-        loc_self=loc_self-LOCATION_MZONE
-        if g1:GetCount()>0 then g:Merge(g1) end
-    end
-    if bit.band(loc_op,LOCATION_MZONE)>0 then
-        local g1=Duel.GetMatchingGroup(Card.IsFaceup,tp,0,LOCATION_MZONE,nil)
-        loc_op=loc_op-LOCATION_MZONE
-        if g1:GetCount()>0 then g:Merge(g1) end
-    end
-    if loc_self>0 or loc_op>0 then
-        local g1=Duel.GetMatchingGroup(nil,tp,loc_self,loc_op,nil)
-        if g1:GetCount()>0 then g:Merge(g1) end
-    end
-    if g:GetCount()>0 and VgF.GetValueType(f)=="function" then
-        g=g:Filter(f,except_g,...)
-    end
-    return g:GetCount()>=int
+    return VgF.GetMatchingGroupCount(f,tp,loc_self,loc_op,except_g,...)>int
 end
 function VgF.SelectMatchingCard(hintmsg,e,select_tp,f,tp,loc_self,loc_op,int_min,int_max,except_g,...)
     local a=false
