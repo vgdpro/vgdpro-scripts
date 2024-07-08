@@ -14,7 +14,7 @@ function cm.operation(e,tp,eg,ep,ev,re,r,rp)
 	local off=1
 	local ops={}
 	local a=g:IsExists(cm.filter,1,nil)
-	local b=g:IsExists(cm.filter1,1,nil,tp)
+	local b=g:IsExists(cm.filter1,1,nil,e,tp)
 	if a then
 		ops[off]=1190
 		off=off+1
@@ -33,7 +33,7 @@ function cm.operation(e,tp,eg,ep,ev,re,r,rp)
 		g:RemoveCard(vgf.ReturnCard(sg))
 	elseif (sel==1 and a and b) or (sel==0 and not a and b) then
 		Duel.Hint(HINT_SELECTMSG,tp,HINTMSG_CALL)
-		local sg=g:FilterSelect(tp,cm.filter1,1,1,nil,tp)
+		local sg=g:FilterSelect(tp,cm.filter1,1,1,nil,e,tp)
 		vgf.Sendto(LOCATION_MZONE,sg,0,tp)
 		g:RemoveCard(vgf.ReturnCard(sg))
 	end
@@ -48,6 +48,6 @@ end
 function cm.filter(c)
 	return c:IsSetCard(0x77)
 end
-function cm.filter1(c,tp)
-	return c:IsLevelBelow(3) and c:IsType(TYPE_MONSTER) and vgf.GetAvailableLocation(tp)>0
+function cm.filter1(c,e,tp)
+	return c:IsLevelBelow(3) and vgf.IsCanBeCalled(c,e,tp)
 end

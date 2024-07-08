@@ -46,7 +46,7 @@ function cm.op1(e,tp,eg,ep,ev,re,r,rp)
 	if ct>e:GetLabel() then ct=e:GetLabel() end
 	local g=vgf.SelectMatchingCard(HINTMSG_CALL,e,tp,cm.filter1,tp,0,LOCATION_ORDER,ct,ct,nil,e,tp)
 	for tc in vgf.Next(g) do
-		if tc:IsType(TYPE_MONSTER) then
+		if vgf.IsCanBeCalled(tc,e,tp) then
 			vgf.Sendto(LOCATION_MZONE,tc,0,tp)
 		else
 			vgf.Sendto(LOCATION_DROP,tc,REASON_EFFECT)
@@ -54,5 +54,5 @@ function cm.op1(e,tp,eg,ep,ev,re,r,rp)
 	end
 end
 function cm.filter1(c,e,tp)
-	return c:GetFlagEffect(FLAG_IMPRISON)>0
+	return c:GetFlagEffect(FLAG_IMPRISON)>0 and (vgf.IsCanBeCalled(c,e,tp) or not c:IsType(TYPE_MONSTER))
 end

@@ -13,7 +13,7 @@ function cm.con(e,tp,eg,ep,ev,re,r,rp)
 end
 function cm.operation(e,tp,eg,ep,ev,re,r,rp)
 	local c=e:GetHandler()
-	local g=vgf.SelectMatchingCard(HINTMSG_CALL,e,tp,cm.filter,tp,LOCATION_HAND,0,1,1,nil)
+	local g=vgf.SelectMatchingCard(HINTMSG_CALL,e,tp,cm.filter,tp,LOCATION_HAND,0,1,1,nil,e,tp)
 	if vgf.Sendto(LOCATION_MZONE,g,SUMMON_VALUE_REVOLT,tp,0x20)>0 then
 		local mg=Duel.GetOperatedGroup()
 		vgd.TriggerCountUp(c,-2,RESET_PHASE+PHASE_END,mg)
@@ -23,8 +23,8 @@ function cm.condition(e,tp,eg,ep,ev,re,r,rp)
 	local c=e:GetHandler()
 	return Duel.GetAttacker()==c
 end
-function cm.filter(c)
-	return c:IsSetCard(0x76) and c:IsType(TYPE_MONSTER)
+function cm.filter(c,e,tp)
+	return c:IsSetCard(0x76) and vgf.IsCanBeCalled(c,e,tp)
 end
 function cm.checkfilter(c)
 	return (c:IsSummonType(SUMMON_TYPE_SELFRIDE) or c:IsSummonType(SUMMON_TYPE_RIDE)) and c:IsLevelAbove(4)

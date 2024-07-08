@@ -16,7 +16,7 @@ function cm.operation(e,tp,eg,ep,ev,re,r,rp)
     local g=Duel.GetDecktopGroup(tp,1)
     local tc=vgf.ReturnCard(g)
     Duel.DisableShuffleCheck()
-    if tc:IsType(TYPE_MONSTER) then
+    if vgf.IsCanBeCalled(tc,e,tp) then
         vgf.Sendto(LOCATION_MZONE,g,0,tp)
     else
         vgf.Sendto(LOCATION_DROP,g,REASON_EFFECT)

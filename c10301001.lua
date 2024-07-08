@@ -33,7 +33,7 @@ function cm.operation1(e,tp,eg,ep,ev,re,r,rp)
 	local ct=bit.ReturnCount(zone)
     zone=bit.bor(zone,0xffffff00)
 	if ct>2 then ct=2 end
-	local g=vgf.SelectMatchingCard(HINTMSG_CALL,e,tp,Card.IsType,tp,LOCATION_HAND,0,0,ct,nil,TYPE_MONSTER)
+	local g=vgf.SelectMatchingCard(HINTMSG_CALL,e,tp,vgf.IsCanBeCalled,tp,LOCATION_HAND,0,0,ct,nil,e,tp)
 	if g:GetCount()==1 then
 		vgf.Sendto(LOCATION_MZONE,g,0,tp)
 	elseif g:GetCount()==2 then

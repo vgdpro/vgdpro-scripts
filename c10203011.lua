@@ -8,6 +8,7 @@ function cm.condition(e,tp,eg,ep,ev,re,r,rp)
 end
 function cm.operation(e,tp,eg,ep,ev,re,r,rp)
 	local c=e:GetHandler()
-	if vgf.GetAvailableLocation(tp)<=0 then return end
-	vgf.Sendto(LOCATION_MZONE,c,0,tp)
+	if vgf.IsCanBeCalled(c,e,tp) then
+		vgf.Sendto(LOCATION_MZONE,c,0,tp)
+	end
 end

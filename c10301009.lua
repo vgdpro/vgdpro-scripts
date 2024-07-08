@@ -11,7 +11,7 @@ function cm.operation(e,tp,eg,ep,ev,re,r,rp)
 	Duel.DisableShuffleCheck()
 	local off=1
     local ops={}
-	local a=tc:IsType(TYPE_MONSTERS) and vgf.GetAvailableLocation(tp)>0
+	local a=vgf.IsCanBeCalled(tc,e,tp)
     if a then
         ops[off]=1152
         off=off+1

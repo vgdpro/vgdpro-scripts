@@ -18,7 +18,7 @@ function cm.operation(e,tp,eg,ep,ev,re,r,rp)
     local g=Duel.GetDecktopGroup(tp,3)
     Duel.ConfirmCards(tp,g)
 	Duel.Hint(HINT_SELECTMSG,tp,HINTMSG_ATOHAND)
-	local sg=g:FilterSelect(tp,cm.filter,0,1,nil)
+	local sg=g:FilterSelect(tp,cm.filter,0,1,nil,e,tp)
 	if sg:GetCount()>0 then
 		vgf.Sendto(LOCATION_HAND,sg,nil,REASON_EFFECT)
 	else
@@ -26,6 +26,6 @@ function cm.operation(e,tp,eg,ep,ev,re,r,rp)
 		Duel.Draw(tp,1,REASON_EFFECT)
 	end
 end
-function cm.filter(c)
-	return c:IsLevelAbove(3) and c:IsType(TYPE_MONSTER)
+function cm.filter(c,e,tp)
+	return c:IsLevelAbove(3) and vgf.IsCanBeCalled(c,e,tp)
 end

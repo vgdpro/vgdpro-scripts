@@ -29,7 +29,7 @@ function cm.op1(e,tp,eg,ep,ev,re,r,rp)
 	Duel.ConfirmCards(g)
 	local ct1=vgf.GetAvailableLocation(tp)
 	Duel.Hint(HINT_SELECTMSG,tp,HINTMSG_CALL)
-	local sg=g:FilterSelect(tp,Card.IsType,0,ct1,nil,TYPE_MONSTER)
+	local sg=g:FilterSelect(tp,vgf.IsCanBeCalled,0,ct1,nil,e,tp)
 	if sg:GetCount()>0 then
 		vgf.Sendto(LOCATION_MZONE,sg,0,tp)
 		g:Sub(sg)

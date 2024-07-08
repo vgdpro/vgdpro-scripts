@@ -16,7 +16,7 @@ function cm.op(e,tp,eg,ep,ev,re,r,rp,chk)
 	if ct>0 then
 		Duel.DisableShuffleCheck()
 		Duel.Hint(HINT_SELECTMSG,tp,HINTMSG_CALL)
-		local sg=g:Select(tp,1,ct,nil)
+		local sg=g:FilterSelect(tp,vgf.IsCanBeCalled,0,ct,nil,e,tp)
 		vgf.Sendto(LOCATION_MZONE,sg,0,tp)
 		sg=Duel.GetOperatedGroup()
 		vgf.AtkUp(c,sg,5000)
