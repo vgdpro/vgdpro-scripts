@@ -19,7 +19,7 @@ function cm.op(e,tp,eg,ep,ev,re,r,rp)
 		vgf.Sendto(LOCATION_OVERLAY,g1,tc1)
 		vgf.Sendto(LOCATION_OVERLAY,g2,tc2)
 		if vgf.GetAvailableLocation(tp)>0 then
-			local g=tc1:GetOverlayGroup():FilterSelect(tp,Card.IsType,tp,0,2,nil,TYPE_MONSTER)
+			local g=tc1:GetOverlayGroup():FilterSelect(tp,vgf.IsCanBeCalled,tp,0,2,nil,e,tp)
 			vgf.Sendto(LOCATION_MZONE,g,0,tp)
 		end
 	end

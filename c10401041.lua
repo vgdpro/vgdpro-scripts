@@ -5,7 +5,9 @@ function cm.initial_effect(c)
 end
 function cm.op(e,tp,eg,ep,ev,re,r,rp)
 	local c=e:GetHandler()
-	vgf.Sendto(LOCATION_MZONE,c,0,tp)
+	if vgf.IsCanBeCalled(c,e,tp) then
+		vgf.Sendto(LOCATION_MZONE,c,0,tp)
+	end
 end
 function cm.con(e,tp,eg,ep,ev,re,r,rp)
 	return Duel.GetTurnPlayer()==tp and vgf.IsExistingMatchingCard(cm.filter,tp,LOCATION_ORDER,0,1,nil)
