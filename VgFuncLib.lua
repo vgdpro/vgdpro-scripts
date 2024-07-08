@@ -645,7 +645,7 @@ function VgF.SearchCard(loc_to,loc_from,f,int_max,int_min)
             end
         elseif loc_to==LOCATION_MZONE then
             local g=VgF.SelectMatchingCard(HINTMSG_CALL,e,tp,function (c)
-                if not -
+                if not VgF.IsCanBeCalled(c,e,tp) then return false end
                 return VgF.GetValueType(f)~="function" or f(c)
             end,tp,loc_from,0,int_min,int_max,nil)
             if g:GetCount()>0 then
