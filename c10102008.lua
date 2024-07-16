@@ -6,7 +6,8 @@ function cm.initial_effect(c)
 end
 function cm.op(e,tp,eg,ep,ev,re,r,rp)
 	local num=1
-	if Duel.GetFlagEffectLabel(tp,FLAG_CONDITION)==10102001 then num=num+1 end
+	local ct=Duel.GetFlagEffectLabel(tp,FLAG_CONDITION)
+	if VgF.GetValueType(ct)=="number" and ct==10102001 then num=num+1 end
 	vgf.OverlayFill(num)(e,tp,eg,ep,ev,re,r,rp)
 end
 function cm.con1(e,tp,eg,ep,ev,re,r,rp)

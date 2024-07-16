@@ -678,6 +678,7 @@ EVENT_RIDE_START        =VgID+3 --骑升时点
 EVENT_SUPPORT           =VgID+4 --支援时点
 EVENT_TRIGGERCOUNTUP    =VgID+5 --驱动追加
 EVENT_SING              =VgID+6 --演唱时
+EVENT_OVERLAY_FILL      =VgID+7 --灵魂填充时
 
 --攻击时(EVENT_ATTACK_ANNOUNCE)
 --支援时(EVENT_CUSTOM+EVENT_SUPPORT)

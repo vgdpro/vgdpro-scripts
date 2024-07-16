@@ -12,7 +12,8 @@ function cm.initial_effect(c)
     c:RegisterEffect(e1)
 end
 function cm.con2(e,tp,eg,ep,ev,re,r,rp)
-	return Duel.GetFlagEffectLabel(tp,FLAG_CONDITION)==10102001
+	local ct=Duel.GetFlagEffectLabel(tp,FLAG_CONDITION)
+	return VgF.GetValueType(ct)=="number" and ct==10102001
 end
 function cm.con(e,tp,eg,ep,ev,re,r,rp)
 	local c=e:GetHandler()
