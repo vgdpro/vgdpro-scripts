@@ -10,15 +10,17 @@ end
 function cm.cost(e,tp,eg,ep,ev,re,r,rp,chk)
 	local c = e:GetHandler()
 	if chk ==0 then
-		return c:IsAbleToGraveAsCost()(e,tp,eg,ep,ev,r,rp,chk)
+		return c:IsAbleToGraveAsCost()
 	end
 	vgf.Sendto(LOCATION_DROP,c,REASON_COST)
 end
 --你的主要阶段中对手的后防者退场时
 function cm.con(e,tp,eg,ep,re,r,rp)
-	return eg:IsExists(cm.filter,1,nil,tp) and Duel.GetCurrentPhase()==PHASE_MAIN1 and Duel.GetTurnPlayer()==tp
+	return eg:IsExists(cm.filter,1,nil,tp) and Duel.GetCurrentPhase()==PHASE_MAIN1 and Duel.GetTurnPlayer()==tp and vgf.RMonsterCondition(e)
 end
-
+function cm.filter(c,tp)
+	return c:IsPreviousLocation(LOCATION_MZONE) and c:IsPreviousControler(1-tp) and c:IsPreviousPosition(POS_FACEUP)
+end
 function cm.op(e,tp,eg,ep,re,r,rp)
 	local g=Duel.GetDecktopGroup(tp,1)
 	Duel.ConfirmCards(g)
@@ -27,8 +29,7 @@ function cm.op(e,tp,eg,ep,re,r,rp)
 	if sg:GetCount()>0 then
 		vgf.Sendto(LOCATION_MZONE,g,0,tp)
 		g:Sub(sg)
-	end
-	if g:GetCount()>0 then
+	else
 		local tc=vgf.GetVMonster(tp)
 		vgf.Sendto(LOCATION_OVERLAY,g,tc)
 	end

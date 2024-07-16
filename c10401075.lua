@@ -7,12 +7,10 @@ function cm.initial_effect(c)
 --【永】【R】：你的回合中，你的灵魂在10张以上的话，这个单位的力量+10000。
 	vgd.EffectTypeContinuousChangeAttack(c,EFFECT_TYPE_SINGLE,10000,cm.con2)
 end
-function cm.con1()
+function cm.con1(e,tp,eg,ep,ev,re,r,rp)
 	local c=e:GetHandler()
-    local g=c:GetMaterial()
 	return c:IsSummonType(SUMMON_TYPE_RIDE) or c:IsSummonType(SUMMON_TYPE_SELFRIDE)
 end
-
 function cm.con2(e,tp,eg,ep,ev,re,r,rp)
 	local c=e:GetHandler()
 	return vgf.RMonsterCondition(e) and vgf.GetVMonster(tp):GetOverlayCount()>=10

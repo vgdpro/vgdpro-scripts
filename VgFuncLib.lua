@@ -596,6 +596,7 @@ function VgF.OverlayFill(num)
         local rc=Duel.GetMatchingGroup(VgF.VMonsterFilter,tp,LOCATION_MZONE,0,nil):GetFirst()
         local g=Duel.GetDecktopGroup(tp,num)
         Duel.DisableShuffleCheck()
+        Duel.RaiseEvent(g,EVENT_CUSTOM+EVENT_OVERLAY_FILL,e,0,tp,tp,num)
         return VgF.Sendto(LOCATION_OVERLAY,g,rc)
     end
 end
