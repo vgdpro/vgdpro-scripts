@@ -13,16 +13,16 @@ function cm.operation(e,tp,eg,ep,ev,re,r,rp)
 	local g=Duel.GetDecktopGroup(tp,1)
 	local tc=vgf.ReturnCard(g)
 	Duel.DisableShuffleCheck()
-	if tc:IsCanBeSpecialSummoned(e,0,tp,false,false,POS_FACEUP_ATTACK) then
-        vgf.Call(g,0,tp)
-	elseif tc:IsAbleToHand() then
-		Duel.SendtoHand(g,nil,REASON_EFFECT)
-		Duel.ConfirmCards(1-tp,g)
+	if vgf.IsCanBeCalled(tc,e,tp) then
+        vgf.Sendto(LOCATION_MZONE,g,0,tp)
+	else
+		vgf.Sendto(LOCATION_HAND,g,nil,REASON_EFFECT)
 	end
 end
 function cm.operation2(e,tp,eg,ep,ev,re,r,rp)
 	local c=e:GetHandler()
-	vgf.AtkUp(c,c,10000,nil)
+	local e1=vgf.AtkUp(c,c,10000,nil)
+	vgf.EffectReset(c,e1,EVENT_BATTLED)
 end
 function cm.condition(e,tp,eg,ep,ev,re,r,rp)
 	local c=e:GetHandler()

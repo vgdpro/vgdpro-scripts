@@ -10,11 +10,11 @@ end
 --效果一处理
 function cm.operation(e,tp,eg,ep,ev,re,r,rp)
 	local c=e:GetHandler()
-	vgf.SearchCardOP(LOCATION_DECK,cm.fliter,e,tp,eg,ep,ev,re,r,rp)
+	vgf.SearchCard(LOCATION_HAND,LOCATION_DECK,cm.filter)(e,tp,eg,ep,ev,re,r,rp)
 	vgf.AtkUp(c,c,10000,nil)
 end
 --返回效果一寻找卡密
-function cm.fliter(c)
+function cm.filter(c)
 	return c:IsCode(m)
 end
 --检测打的是不是v
@@ -25,12 +25,8 @@ end
 --效果二处理
 function cm.operation2(e,tp,eg,ep,ev,re,r,rp)
 	local c=e:GetHandler()
-	Duel.Hint(HINT_SELECTMSG,tp,HINTMSG_LEAVEONFIELD)
-	local g=Duel.SelectTarget(tp,vgf.RMonsterFilter,tp,0,LOCATION_MZONE,1,1,nil)
-		if g then
-		Duel.HintSelection(g)
-		Duel.SendtoGrave(g,REASON_EFFECT)
-		end
+	local g=vgf.SelectMatchingCard(HINTMSG_LEAVEONFIELD,e,tp,vgf.RMonsterFilter,tp,0,LOCATION_MZONE,1,1,nil)
+	vgf.Sendto(LOCATION_DROP,g,REASON_EFFECT)
 	vgf.AtkUp(c,c,5000)
-	VgF.StarUp(c,c,1)
+	vgf.StarUp(c,c,1)
 end

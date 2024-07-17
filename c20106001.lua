@@ -10,11 +10,11 @@ end
 --效果一处理
 function cm.operation(e,tp,eg,ep,ev,re,r,rp)
 	local c=e:GetHandler()
-	vgf.SearchCardOP(LOCATION_DECK,cm.fliter,e,tp,eg,ep,ev,re,r,rp)
+	vgf.SearchCard(LOCATION_HAND,LOCATION_DECK,cm.filter)(e,tp,eg,ep,ev,re,r,rp)
 	vgf.AtkUp(c,c,10000,nil)
 end
 --返回找的卡密
-function cm.fliter(c)
+function cm.filter(c)
 	return c:IsCode(m)
 end
 --效果二检测被打的是v
@@ -25,10 +25,10 @@ end
 --效果二处理
 function cm.operation2(e,tp,eg,ep,ev,re,r,rp)
 	local c=e:GetHandler()
-	vgf.SearchCardSpecialSummonOP(LOCATION_HAND,cm.fliter2,e,tp,eg,ep,ev,re,r,rp)
+	vgf.SearchCard(LOCATION_MZONE,LOCATION_HAND,cm.filter2)(e,tp,eg,ep,ev,re,r,rp)
 	local g=Duel.GetOperatedGroup()
 	vgf.AtkUp(c,g,10000)
 end
-function cm.fliter2(c)
+function cm.filter2(c)
 	return vgf.IsLevel(c,1,2,3)
 end

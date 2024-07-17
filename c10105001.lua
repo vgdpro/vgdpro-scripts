@@ -7,14 +7,13 @@ function cm.initial_effect(c)
 end
 function cm.con(e,c)
 	local tp=e:GetHandler()
-	return Duel.GetTurnPlayer()==tp and vgf.VMonsterCondition(e) and Duel.IsExistingMatchingCard(cm.filter,tp,LOCATION_ORDER,0,1,nil)
+	return Duel.GetTurnPlayer()==tp and vgf.VMonsterCondition(e) and vgf.IsExistingMatchingCard(cm.filter,tp,LOCATION_ORDER,0,1,nil)
 end
 function cm.filter(c)
-	return c:GetFlagEffect(ImprisonFlag)>0
+	return c:GetFlagEffect(FLAG_IMPRISON)>0
 end
 function cm.op1(e,tp,eg,ep,ev,re,r,rp)
 	if not vgf.CheckPrison(tp) then return end
-	Duel.Hint(HINT_SELECTMSG,tp,HINTMSG_IMPRISON)
-	local g1=Duel.SelectMatchingCard(tp,vgf.RMonsterFilter,tp,0,LOCATION_MZONE,2,2,nil)
+	local g1=vgf.SelectMatchingCard(HINTMSG_IMPRISON,e,tp,vgf.RMonsterFilter,tp,0,LOCATION_MZONE,2,2,nil)
 	vgf.SendtoPrison(g1,tp)
 end

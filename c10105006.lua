@@ -10,7 +10,6 @@ end
 function cm.operation(e,tp,eg,ep,ev,re,r,rp)
 	local c=e:GetHandler()
 	if not vgf.CheckPrison(tp) then return end
-	Duel.Hint(HINT_MESSAGE,tp,HINTMSG_IMPRISON)
-	local g=Duel.SelectMatchingCard(tp,vgf.RMonsterFilter,tp,0,LOCATION_MZONE,1,1,nil)
+	local g=vgf.SelectMatchingCard(HINTMSG_IMPRISON,e,tp,vgf.RMonsterFilter,tp,0,LOCATION_MZONE,1,1,nil)
 	vgf.SendtoPrison(g,tp)
 end

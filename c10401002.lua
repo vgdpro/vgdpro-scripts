@@ -6,9 +6,8 @@ function cm.initial_effect(c)
 	vgd.GlobalCheckEffect(c,m,EFFECT_TYPE_FIELD+EFFECT_TYPE_CONTINUOUS,EVENT_TO_GRAVE,cm.checkcon,cm.checkop)
 end
 function cm.cost(e,tp,eg,ep,ev,re,r,rp,chk)
-	if chk==0 then Duel.IsExistingMatchingCard(cm.filter,tp,LOCATION_MZONE,0,2,nil) end
-	Duel.Hint(HINT_SELECTMSG,tp,HINTMSG_POSCHANGE)
-	local g=Duel.SelectMatchingCard(tp,cm.filter,tp,LOCATION_MZONE,0,2,2,nil)
+	if chk==0 then return vgf.IsExistingMatchingCard(cm.filter,tp,LOCATION_MZONE,0,2,nil) end
+	local g=vgf.SelectMatchingCard(HINTMSG_POSCHANGE,e,tp,cm.filter,tp,LOCATION_MZONE,0,2,2,nil)
 	Duel.ChangePosition(g,POS_FACEUP_DEFENCE)
 end
 function cm.filter(c)
@@ -16,9 +15,8 @@ function cm.filter(c)
 end
 function cm.op(e,tp,eg,ep,ev,re,r,rp)
 	local c=e:GetHandler()
-	Duel.Hint(HINT_SELECTMSG,tp,HINTMSG_LEAVEONFIELD)
-	local g=Duel.SelectTarget(tp,vgf.VMonsterFilter,tp,0,LOCATION_MZONE,1,1,nil)
-	if g:GetCount()>0 then Duel.SendtoGrave(g,REASON_EFFECT) end
+	local g=vgf.SelectMatchingCard(HINTMSG_LEAVEONFIELD,e,tp,vgf.VMonsterFilter,tp,0,LOCATION_MZONE,1,1,nil)
+	if g:GetCount()>0 then vgf.Sendto(LOCATION_DROP,g,REASON_EFFECT) end
 	vgf.AtkUp(c,c,10000)
 end
 function cm.con(e,tp,eg,ep,ev,re,r,rp)
@@ -31,14 +29,14 @@ function cm.op1(e,tp,eg,ep,ev,re,r,rp)
 	Duel.ConfirmCards(g)
 	local ct1=vgf.GetAvailableLocation(tp)
 	Duel.Hint(HINT_SELECTMSG,tp,HINTMSG_CALL)
-	local sg=g:FilterSelect(tp,Card.IsCanBeSpecialSummoned,0,ct1,nil)
+	local sg=g:FilterSelect(tp,vgf.IsCanBeCalled,0,ct1,nil,e,tp)
 	if sg:GetCount()>0 then
-		vgf.Call(sg,0,tp)
-		for tc in vgf.Next(sg) do g:RemoveCard(tc) end
+		vgf.Sendto(LOCATION_MZONE,sg,0,tp)
+		g:Sub(sg)
 	end
 	if g:GetCount()>0 then
 		local tc=vgf.GetVMonster(tp)
-		Duel.Overlay(tc,g)
+		vgf.Sendto(LOCATION_OVERLAY,g,tc)
 	end
 end
 function cm.checkcon(e,tp,eg,ep,ev,re,r,rp)

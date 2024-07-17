@@ -7,8 +7,7 @@ end
 function cm.operation(e,tp,eg,ep,ev,re,r,rp)
 	local c=e:GetHandler()
 	if not vgf.CheckPrison(tp) then return end
-	Duel.Hint(HINT_MESSAGE,1-tp,HINTMSG_IMPRISON)
-	local g=Duel.SelectMatchingCard(1-tp,nil,tp,LOCATION_HAND,0,1,1,nil)
+	local g=vgf.SelectMatchingCard(HINTMSG_IMPRISON,e,1-tp,nil,tp,0,LOCATION_HAND,1,1,nil)
 	vgf.SendtoPrison(g,tp)
 end
 function cm.condition(e,tp,eg,ep,ev,re,r,rp)
@@ -18,8 +17,8 @@ end
 function cm.con(e)
 	local c=e:GetHandler()
 	local tp=e:GetHandlerPlayer()
-	return vgf.RMonsterFilter(c) and Duel.IsExistingMatchingCard(cm.filter,tp,LOCATION_ORDER,0,1,nil)
+	return vgf.RMonsterFilter(c) and vgf.IsExistingMatchingCard(cm.filter,tp,LOCATION_ORDER,0,1,nil)
 end
 function cm.filter(c)
-	return c:GetFlagEffect(ImprisonFlag)>0
+	return c:GetFlagEffect(FLAG_IMPRISON)>0
 end

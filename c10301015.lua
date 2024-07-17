@@ -6,8 +6,7 @@ function cm.initial_effect(c)
 end
 function cm.operation(e,tp,eg,ep,ev,re,r,rp)
 	local c=e:GetHandler()
-	Duel.Hint(HINT_SELECTMSG,tp,HINTMSG_VMONSTER)
-	local g=Duel.SelectMatchingCard(tp,vgf.VMonsterFilter,tp,LOCATION_MZONE,0,1,1,nil)
+	local g=vgf.SelectMatchingCard(HINTMSG_VMONSTER,e,tp,vgf.VMonsterFilter,tp,LOCATION_MZONE,0,1,1,nil)
 	vgd.EffectTypeContinuousChangeAttack(c,EFFECT_TYPE_FIELD,5000,nil,cm.tg,g:GetFirst(),EFFECT_UPDATE_ATTACK,RESET_EVENT+RESETS_STANDARD+RESET_PHASE+PHASE_END,LOCATION_MZONE,LOCATION_MZONE)
 end
 function cm.tg(e,c)

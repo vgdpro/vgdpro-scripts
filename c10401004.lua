@@ -14,16 +14,13 @@ function cm.checkop(e,tp,eg,ep,ev,re,r,rp)
     Duel.RegisterFlagEffect(tp,m,RESET_PHASE+PHASE_END,0,1)
 end
 function cm.con(e,tp,eg,ep,ev,re,r,rp)
-	return Duel.GetFlagEffectLabel(tp,ConditionFlag)==10102001
+	local ct=Duel.GetFlagEffectLabel(tp,FLAG_CONDITION)
+	return VgF.GetValueType(ct)=="number" and ct==10102001
 end
 function cm.con1(e,tp,eg,ep,ev,re,r,rp)
 	return Duel.GetFlagEffect(tp,m)>0 and cm.con(e,tp,eg,ep,ev,re,r,rp)
 end
 function cm.op(e,tp,eg,ep,ev,re,r,rp)
-	Duel.Hint(HINT_SELECTMSG,tp,HINTMSG_LEAVEONFIELD)
-	local g=Duel.SelectTarget(tp,vgf.RMonsterFilter,tp,0,LOCATION_MZONE,1,1,nil)
-	if g then
-		Duel.HintSelection(g)
-		Duel.SendtoGrave(g,REASON_EFFECT)
-	end
+	local g=vgf.SelectMatchingCard(HINTMSG_LEAVEONFIELD,e,tp,vgf.RMonsterFilter,tp,0,LOCATION_MZONE,1,1,nil)
+	vgf.Sendto(LOCATION_DROP,g,REASON_EFFECT)
 end

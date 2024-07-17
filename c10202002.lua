@@ -12,8 +12,8 @@ function cm.condition(e,tp,eg,ep,ev,re,r,rp)
 end
 function cm.operation(e,tp,eg,ep,ev,re,r,rp)
 	local c=e:GetHandler()
-	vgf.OverlayFillOP(1,e,tp,eg,ep,ev,re,r,rp)
-	if VgF.GetVMonster(tp):GetOverlayGroup():GetClassCount(Card.GetLevel)>=3 then
+	vgf.OverlayFill(1)(e,tp,eg,ep,ev,re,r,rp)
+	if vgf.GetVMonster(tp):GetOverlayGroup():GetClassCount(Card.GetLevel)>=3 then
 		Duel.Draw(tp,1,REASON_EFFECT)
 	end
 end

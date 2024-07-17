@@ -6,22 +6,16 @@ function cm.initial_effect(c)
 end
 function cm.op(e,tp,eg,ep,ev,re,r,rp)
 	local c=e:GetHandler()
-	Duel.RegisterFlagEffect(tp,ConditionFlag,RESET_PHASE+PHASE_END,0,1,m)
-	local e=Effect.CreateEffect(c)
-	e:SetType(EFFECT_TYPE_FIELD)
-	e:SetProperty(EFFECT_FLAG_PLAYER_TARGET+EFFECT_FLAG_CLIENT_HINT)
-	e:SetCode(m)
-	e:SetTargetRange(1,0)
-	e:SetDescription(vgf.Stringid(m,0))
-	Duel.RegisterEffect(e,tp)
+	Duel.RegisterFlagEffect(tp,FLAG_CONDITION,RESET_PHASE+PHASE_END,EFFECT_FLAG_CLIENT_HINT,1,m,vgf.Stringid(m,0))
 end
 function cm.con(e,tp,eg,ep,ev,re,r,rp)
 	return Duel.GetTurnPlayer()==tp and vgf.VMonsterCondition(e)
 end
 function cm.op2(e,tp,eg,ep,ev,re,r,rp)
-	local g=Duel.GetMatchingGroup(vgf.IsSequence,tp,LOCATION_MZONE,0,nil,0,4)
+	local g=vgf.GetMatchingGroup(vgf.IsSequence,tp,LOCATION_MZONE,0,nil,0,4)
 	Duel.ChangePosition(g,POS_FACEUP_ATTACK)
 end
 function cm.con2(e,tp,eg,ep,ev,re,r,rp)
-	return Duel.GetFlagEffectLabel(tp,ConditionFlag)==10102001 and vgf.VMonsterCondition(e)
+	local ct=Duel.GetFlagEffectLabel(tp,FLAG_CONDITION)
+	return VgF.GetValueType(ct)=="number" and ct==10102001 and vgf.VMonsterCondition(e)
 end

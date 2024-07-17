@@ -87,13 +87,15 @@ SKILL_TWICE_TRIGGER =0x10       --三判
 SKILL_SELF_RIDE		=0x20		--人格骑升
 SKILL_DEBRIS	    =0x40		--结晶碎片
 --触发类型          --种族
-TRRIGGER_ALL			=0x3ffffff	--All
-TRRIGGER_NONE		    =0x1		--无
-TRRIGGER_CRITICAL_STRIKE=0x2		--暴击触发
-TRRIGGER_DRAW			=0x4		--抽牌触发
-TRRIGGER_HEAL			=0x8		--治愈触发
-TRRIGGER_ADVANCE		=0x10		--前列触发
-TRRIGGER_SUPER		    =0x20		--超限触发
+TRIGGER_ALL			=0x3ffffff	--All
+TRIGGER_NONE		    =0x1		--无
+TRIGGER_CRITICAL_STRIKE=0x2		--暴击触发
+TRIGGER_DRAW			=0x4		--抽牌触发
+TRIGGER_HEAL			=0x8		--治愈触发
+TRIGGER_ADVANCE		=0x10		--前列触发
+TRIGGER_SUPER		    =0x20		--超限触发
+--Category	效果分类
+CATEGORY_DEFENDER       =0x1		--守护者
 --Reason 卡片到当前位置的原因
 REASON_DESTROY		=0x1		--破坏
 REASON_RELEASE		=0x2		--解放
@@ -675,11 +677,13 @@ EVENT_DAMAGE_TRIGGER    =VgID+2 --受伤判定完毕时点
 EVENT_RIDE_START        =VgID+3 --骑升时点
 EVENT_SUPPORT           =VgID+4 --支援时点
 EVENT_TRIGGERCOUNTUP    =VgID+5 --驱动追加
+EVENT_SING              =VgID+6 --演唱时
+EVENT_OVERLAY_FILL      =VgID+7 --灵魂填充时
 
 --攻击时(EVENT_ATTACK_ANNOUNCE)
 --支援时(EVENT_CUSTOM+EVENT_SUPPORT)
 --截击|放置到G(EVENT_MOVE)
---攻击击中时(EVENT_CUSTOM+EVENT_DAMAGE|EVENT_BATTLE_DESTROYING)
+--攻击击中时(EVENT_CUSTOM+EVENT_DAMAGE_TRIGGER|EVENT_BATTLE_DESTROYING)
 --战斗结束时(EVENT_BATTLED)
 
 --Hint
@@ -720,30 +724,28 @@ OPCODE_ISATTRIBUTE		=0x40000104
 DOUBLE_DAMAGE			=-2147483648
 HALF_DAMAGE				=-2147483647
 --Hint Message	--提示消息，显示在窗口的上面
-HINTMSG_RELEASE	        =500	
+HINTMSG_LEAVEONFIELD	=500	--请选择要退场的卡
 HINTMSG_DISCARD			=501	--请选择要丢弃的手牌
-HINTMSG_DESTROY			=502	--
+HINTMSG_IMPRISON        =502    --请选择要收容的卡
 HINTMSG_REMOVE			=503	--请选择要除外的卡
-HINTMSG_TOGRAVE			=504	--
+HINTMSG_TODROP			=504	--请选择要置入弃牌区的卡
 HINTMSG_RTOHAND			=505	--请选择要返回手牌的卡
 HINTMSG_ATOHAND			=506	--请选择要加入手牌的卡
 HINTMSG_TODECK			=507	--请选择要返回卡组的卡
-HINTMSG_SUMMON			=508	--
+HINTMSG_CALL			=508	--请选择要Call到圆阵的卡
 HINTMSG_SPSUMMON		=509	--请选择要特殊召唤的卡
-HINTMSG_SET				=510	--
-HINTMSG_FMATERIAL		=511	--
-HINTMSG_SMATERIAL		=512	--
+HINTMSG_DAMAGE			=510	--请选择要消耗的费用
+HINTMSG_ATKUP		    =511	--请选择力量上升的卡
+HINTMSG_CRITICAL_STRIKE	=512	--请选择☆值上升的卡
 HINTMSG_FACEUP			=514	--请选择表侧表示的卡
 HINTMSG_FACEDOWN		=515	--请选择里侧表示的卡
 HINTMSG_ATTACK			=516	--请选择攻击表示的怪兽
 HINTMSG_DEFENSE			=517	--请选择守备表示的怪兽
 HINTMSG_EQUIP			=518	--请选择要装备的卡
-HINTMSG_REMOVEXYZ		=519	--请选择要取除的超量素材
-HINTMSG_CONTROL			=520	--请选择要改变控制权的怪兽
-HINTMSG_DESREPLACE		=521	--请选择要代替破坏的卡
-HINTMSG_FACEUPATTACK	=522	--
-HINTMSG_FACEUPDEFENSE	=523	--请选择表侧守备表示的怪兽
-HINTMSG_FACEDOWNATTACK	=524	--请选择里侧攻击表示的怪兽
+HINTMSG_TO_GZONE		=519	--请选择要CALL到防卫者圆阵的卡
+HINTMSG_VMONSTER        =522    --请选择先导者
+HINTMSG_RMONSTER        =523    --请选择后防者
+HINTMSG_MONSTER         =524    --请选择单位
 HINTMSG_FACEDOWNDEFENSE	=525	--请选择里侧守备表示的怪兽
 HINTMSG_CONFIRM			=526	--请选择给对方确认的卡
 HINTMSG_TOFIELD			=527	--请选择要放置到场上的卡
@@ -772,18 +774,11 @@ HINTMSG_RESOLVECARD		=568	--请选择要处理效果的卡
 HINTMSG_ZONE			=569	--请选择[%ls]的位置
 HINTMSG_CallZONE		=570	--请选择圆阵
 HINTMSG_TOZONE			=571	--请选择要移动到的位置
-HINTMSG_COUNTER			=572	--请选择要放置指示物的卡
+HINTMSG_TOTOP			=572	--请选择要放置到牌堆顶的卡
 HINTMSG_DISABLE			=573	--请选择要无效的卡
 HINTMSG_OPERATECARD		=574	--请选择要操作的卡
 HINTMSG_XMATERIAL		=513	--请选择要充入魂中的卡
-HINTMSG_LEAVEONFIELD	=HINTMSG_RELEASE	--请选择要退场的卡
-HINTMSG_TODROP			=HINTMSG_TOGRAVE	--请选择要置入弃牌区的卡
-HINTMSG_CALL			=HINTMSG_SUMMON	    --请选择要Call到圆阵的卡
-HINTMSG_DAMAGE			=HINTMSG_SET	    --请选择要消耗的费用
-HINTMSG_ATKUP		    =HINTMSG_FMATERIAL	--请选择力量上升的卡
-HINTMSG_CRITICAL_STRIKE	=HINTMSG_SMATERIAL	--请选择☆值上升的卡
-HINTMSG_IMPRISON        =HINTMSG_DESTROY    --请选择要收容的卡
-HINTMSG_VMONSTER        =HINTMSG_FACEUPATTACK       --请选择先导者
+
 --Select	--请选择
 SELECT_HEADS				=60	--正面
 SELECT_TAILS				=61	--反面
@@ -836,14 +831,14 @@ EFFECT_COUNT_CODE_DUEL			=0x20000000 --决斗中使用次数
 EFFECT_COUNT_CODE_CHAIN			=0x40000000 --同一连锁中使用次数
 EFFECT_COUNT_CODE_SINGLE		=0x1		--同一张卡的多个效果公共使用次数
 --特殊选项
-DUEL_TEST_MODE			=0x01		--测试模式(目前暫無)
-DUEL_ATTACK_FIRST_TURN	=0x02		--第一回合可以攻击(用于残局)
-DUEL_OLD_REPLAY			=0x04		--旧录像
-DUEL_OBSOLETE_RULING	=0x08		--使用舊規則
-DUEL_PSEUDO_SHUFFLE		=0x10		--不洗牌
-DUEL_TAG_MODE			=0x20		--双打PP
-DUEL_SIMPLE_AI			=0x40		--AI(用于残局)
-DUEL_RETURN_DECK_TOP	=0x80		--回卡组洗切的卡放到卡组最上方（不洗牌模式下曾经的默认行为）
+DUEL_TEST_MODE			=0x01	--测试模式(目前暫無)
+DUEL_ATTACK_FIRST_TURN	=0x02	--第一回合可以攻击(用于残局)
+DUEL_OLD_REPLAY			=0x04	--旧录像
+DUEL_OBSOLETE_RULING	=0x08	--使用舊規則
+DUEL_PSEUDO_SHUFFLE		=0x10	--不洗牌
+DUEL_TAG_MODE			=0x20	--双打PP
+DUEL_SIMPLE_AI			=0x40	--AI(用于残局)
+DUEL_RETURN_DECK_TOP	=0x80	--回卡组洗切的卡放到卡组最上方（不洗牌模式下曾经的默认行为）
 --Activity counter
 --global: 1-6 (binary: 5,6)
 --custom: 1-5,7 (binary: 1-5)
@@ -859,19 +854,25 @@ FLAG_ID_CHAINING		=1
 FLAG_ID_UNION			=2
 FLAG_ID_NO_NORMAL_DRAW	=3
 --Flag
-CountTriggerFlag        =VgID   --计数标识
-AttackTriggerFlag       =VgID+1 --多次攻击判定标识
-DamageTriggerFlag       =VgID+2 --多次伤害判定标识
-DefenseEntirelyFlag     =VgID+3 --完全防御标识
-ConditionFlag           =VgID+4 --处于XX状态标识
-SupportFlag             =VgID+5 --支援状态标识
-AttackAtRearFlag        =VgID+6 --后列攻击
-ImprisonFlag            =VgID+6 --被收容
+FLAG_COUNT_TRIGGER      =VgID   --计数标识
+FLAG_ATTACK_TRIGGER     =VgID+1 --多次攻击判定标识
+FLAG_DAMAGE_TRIGGER     =VgID+2 --多次伤害判定标识
+FLAG_DEFENSE_ENTIRELY   =VgID+3 --完全防御标识
+FLAG_CONDITION          =VgID+4 --处于XX状态标识
+FLAG_SUPPORT            =VgID+5 --支援状态标识
+FLAG_ATTACK_AT_REAR     =VgID+6 --后列攻击
+FLAG_IMPRISON           =VgID+7 --被收容
+FLAG_SPELL_COUNT_LIMIT  =VgID+8 --指令卡次数
+FLAG_SPELL_USED_COUNT   =VgID+9 --指令卡已使用次数
 --AffectedByEffect
 AFFECT_CODE_MIX         =VgID   --魔合成
 AFFECT_CODE_MIX_DIFFERENT_NAME  =VgID+1     --魔合成(卡名不同)
-AFFECT_CODE_SENDTOG     =VgID+2 --需要两张卡才能防御
-AFFECT_CODE_SENDTOG_MZONE       =VgID+3     --不能截击
+AFFECT_CODE_BOTH_WING   =VgID+2 --你的卡片的白翼能力和黑翼能力两方均有效
+AFFECT_CODE_NIGHT       =VgID+3 --黑夜
+AFFECT_CODE_DEEP_NIGHT  =VgID+4 --深渊黑夜
+
+
+AFFECT_CODE_OVERLAY_INSTEAD_WHEN_RIDE   =10501082   --不执行『选择手牌中的1张卡，舍弃』而是执行『灵魂爆发1』来将卡RIDE
 
 
 POS_FACEUP_DEFENCE=POS_FACEUP_DEFENSE
