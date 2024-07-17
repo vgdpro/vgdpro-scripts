@@ -28,7 +28,7 @@ function cm.operation(e,tp,eg,ep,ev,re,r,rp)
 	
 end
 function cm.condition(e,tp,eg,ep,ev,re,r,rp)
-    return vgf.VMonsterCondition(e) and Duel.IsExistingMatchingCard(vgf.IsSequence,tp,LOCATION_MZONE,0,3,nil,1,2,3)
+    return vgf.RMonsterCondition(e) and Duel.IsExistingMatchingCard(vgf.IsSequence,tp,LOCATION_MZONE,0,3,nil,1,2,3)
 end
 
 
