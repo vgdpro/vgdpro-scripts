@@ -6,7 +6,6 @@ function cm.initial_effect(c)
 	vgd.EffectTypeTrigger(c,m,LOCATION_MZONE,EFFECT_TYPE_SINGLE,EVENT_ATTACK_ANNOUNCE,cm.operation,vgf.DamageCost(1),cm.condition)
 end
 function cm.operation(e,tp,eg,ep,ev,re,r,rp)
-	--无法设置重置时点于战斗结束时
 	local c=e:GetHandler()
 	if c:IsRelateToEffect(e) then
 		local e2=vgf.AtkUp(c,c,10000)
