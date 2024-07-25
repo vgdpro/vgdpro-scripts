@@ -1,3 +1,4 @@
+-- 【自】：你的RIDE阶段中这张卡被从手牌舍弃时，你可以将这张卡CALL到R上。
 local cm,m,o=GetID()
 function cm.initial_effect(c)
 	vgf.VgCard(c)
