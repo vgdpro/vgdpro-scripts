@@ -8,7 +8,9 @@ end
 
 function cm.op(e,tp,eg,ep,ev,re,r,rp)
     local c=e:GetHandler()
-    vgf.Sendto(LOCATION_MZONE,c,0,tp,31,POS_FACEUP_ATTACK,0)
+	if c:IsRelateToEffect(e) and vgf.IsCanBeCalled(c,e,tp) then
+		vgf.Sendto(LOCATION_MZONE,c,0,tp,nil,nil,0)
+	end
 end
 
 function cm.con(e,tp,eg,ep,ev,re,r,rp)

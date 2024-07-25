@@ -5,7 +5,7 @@ function cm.initial_effect(c)
 end
 function cm.op(e,tp,eg,ep,ev,re,r,rp)
 	local c=e:GetHandler()
-	if vgf.IsCanBeCalled(c,e,tp) then
+	if c:IsRelateToEffect(e) and vgf.IsCanBeCalled(c,e,tp) then
 		vgf.Sendto(LOCATION_MZONE,c,0,tp)
 	end
 end

@@ -16,7 +16,7 @@ function cm.op(e,tp,eg,ep,ev,re,r,rp)
 	Duel.Hint(HINT_SELECTMSG,tp,HINTMSG_CALL)
 	local sg=g:FilterSelect(tp,cm.filter,0,2,nil,e,tp)
 	if #sg>0 then
-		vgf.Sendto(LOCATION_MZONE,c,0,tp,31,POS_FACEUP_ATTACK,0)
+		vgf.Sendto(LOCATION_MZONE,sg,0,tp,31,POS_FACEUP_ATTACK,0)
 	end
 	Duel.ShuffleDeck(tp)
 end

@@ -11,5 +11,5 @@ end
 function cm.operation(e,tp,eg,ep,ev,re,r,rp)
 	local c=e:GetHandler()
 	local rc=vgf.GetMatchingGroup(vgf.VMonsterFilter,tp,LOCATION_MZONE,0,nil):GetFirst()
-	vgf.Sendto(LOCATION_OVERLAY,c,rc)
+	if c:IsRelateToEffect(e) then vgf.Sendto(LOCATION_OVERLAY,c,rc) end
 end
