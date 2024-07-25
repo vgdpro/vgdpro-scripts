@@ -10,9 +10,10 @@ function cm.filter(c)
 end
 function cm.operation(e,tp,eg,ep,ev,re,r,rp)
 	local c=e:GetHandler()
-	local g=Group.FromCards(c)
+	local g=Group.CreateGroup()
+	if c:IsRelateToEffect(e) then g:AddCard(c) end
 	local sg=vgf.GetMatchingGroup(Card.IsSetCard,tp,LOCATION_MZONE,0,nil,0x201)
-	if sg then g:Merge(sg) end
+	if sg:GetCount()>0 then g:Merge(sg) end
 	vgf.AtkUp(c,g,10000)
 end
 function cm.op(e,tp,eg,ep,ev,re,r,rp)
