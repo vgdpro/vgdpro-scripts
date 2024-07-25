@@ -12,3 +12,8 @@ function cm.filter(e,tp,eg,ep,ev,re,r,rp)
 	local e1=vgf.DefUp(c,c,10000)
 	vgf.EffectReset(c,e1,EVENT_BATTLED)
 end
+function cm.op(e,tp,eg,ep,ev,re,r,rp)
+	local c=e:GetHandler()
+	local e1=vgf.DefUp(c,c,10000)
+	vgf.EffectReset(c,e1,EVENT_BATTLED)
+end
