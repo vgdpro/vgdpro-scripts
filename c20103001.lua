@@ -7,7 +7,9 @@ end
 function cm.op(e,tp,eg,ep,ev,re,r,rp)
 	local c=e:GetHandler()
 	vgf.SearchCard(LOCATION_HAND,LOCATION_DECK,cm.filter,1,0)(e,tp,eg,ep,ev,re,r,rp)
-	vgf.AtkUp(c,c,10000)
+	if c:IsRelateToEffect(e) and c:IsFaceup() then
+		vgf.AtkUp(c,c,10000)
+	end
 end
 function cm.filter(c)
 	return c:IsCode(m)

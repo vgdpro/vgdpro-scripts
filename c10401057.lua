@@ -8,6 +8,8 @@ function cm.con(e,tp,eg,ep,ev,re,r,rp)
 end
 function cm.op(e,tp,eg,ep,ev,re,r,rp)
 	local c=e:GetHandler()
-	local e1=vgf.AtkUp(c,c,5000)
-	vgf.EffectReset(c,e1,EVENT_BATTLED)
+	if c:IsRelateToEffect(e) and c:IsFaceup() then
+		local e1=vgf.AtkUp(c,c,5000)
+		vgf.EffectReset(c,e1,EVENT_BATTLED)
+	end
 end

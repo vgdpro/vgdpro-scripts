@@ -18,8 +18,10 @@ end
 function cm.operation1(e,tp,eg,ep,ev,re,r,rp)
 	local c=e:GetHandler()
 	vgf.OverlayFill(1)(e,tp,eg,ep,ev,re,r,rp,chk)
-	local e1=vgf.AtkUp(c,c,5000)
-	vgf.EffectReset(c,e1,EVENT_BATTLED)
+	if c:IsRelateToEffect(e) and c:IsFaceup() then
+		local e1=vgf.AtkUp(c,c,5000)
+		vgf.EffectReset(c,e1,EVENT_BATTLED)
+	end
 end
 function cm.condition (e,tp,eg,ep,ev,re,r,rp)
 	return vgf.GetMatchingGroupCount(vgf.RMonsterFilter,tp,0,LOCATION_MZONE,nil)<=2

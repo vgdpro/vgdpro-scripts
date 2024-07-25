@@ -15,8 +15,10 @@ function cm.condition1(e,tp,eg,ep,ev,re,r,rp)
 end
 function cm.operation1(e,tp,eg,ep,ev,re,r,rp)
 	local c=e:GetHandler()
-	local e1=vgf.AtkUp(c,c,5000,nil)
-	vgf.EffectReset(c,e1,EVENT_BATTLED)
+	if c:IsRelateToEffect(e) and c:IsFaceup() then
+		local e1=vgf.AtkUp(c,c,5000,nil)
+		vgf.EffectReset(c,e1,EVENT_BATTLED)
+	end
 end
 function cm.cfilter(c,mc)
 	return vgf.GetColumnGroup(c):IsContains(mc) and c:IsControler(mc:GetControler()) and c:GetFlagEffect(FLAG_SUPPORT)>0

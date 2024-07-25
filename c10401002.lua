@@ -17,7 +17,9 @@ function cm.op(e,tp,eg,ep,ev,re,r,rp)
 	local c=e:GetHandler()
 	local g=vgf.SelectMatchingCard(HINTMSG_LEAVEONFIELD,e,tp,vgf.VMonsterFilter,tp,0,LOCATION_MZONE,1,1,nil)
 	if g:GetCount()>0 then vgf.Sendto(LOCATION_DROP,g,REASON_EFFECT) end
-	vgf.AtkUp(c,c,10000)
+	if c:IsRelateToEffect(e) and c:IsFaceup() then
+		vgf.AtkUp(c,c,10000)
+	end
 end
 function cm.con(e,tp,eg,ep,ev,re,r,rp)
 	return Duel.GetFlagEffect(tp,m)>0

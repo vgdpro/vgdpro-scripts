@@ -19,8 +19,10 @@ function cm.con(e,tp,eg,ep,ev,re,r,rp)
 end
 function cm.op(e,tp,eg,ep,ev,re,r,rp)
 	local c=e:GetHandler()
-	vgf.AtkUp(c,c,15000)
-	if Duel.GetFlagEffect(tp,m)>0 then vgf.StarUp(c,c,1) end
+	if c:IsRelateToEffect(e) and c:IsFaceup() then
+		vgf.AtkUp(c,c,15000)
+		if Duel.GetFlagEffect(tp,m)>0 then vgf.StarUp(c,c,1) end
+	end
 end
 function cm.checkcon(e,tp,eg,ep,ev,re,r,rp)
     return eg:IsExists(Card.IsSummonType,1,nil,SUMMON_TYPE_SELFRIDE)

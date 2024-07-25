@@ -385,32 +385,36 @@ end
 ---@param val integer 要上升的攻击力（可以为负）
 ---@param reset integer|nil 指示重置的时点，默认为“回合结束时”。无论如何，都会在离场时重置。
 function VgF.AtkUp(c,g,val,reset,resetcount)
-    if not c then return end
+    if not c or not g then return end
     if not resetcount then resetcount=1 end
     if not reset then reset=RESET_PHASE+PHASE_END end
     if not val or val==0 then return end
     if VgF.GetValueType(g)=="Group" and g:GetCount()>0 then
         local e={}
         for tc in VgF.Next(g) do
+            if tc:IsLocation(LOCATION_MZONE) then
+                local e1=Effect.CreateEffect(c)
+                e1:SetType(EFFECT_TYPE_SINGLE)
+                e1:SetCode(EFFECT_UPDATE_ATTACK)
+                e1:SetValue(val)
+                e1:SetReset(RESET_EVENT+RESETS_STANDARD+reset,resetcount)
+                tc:RegisterEffect(e1)
+                table.insert(e,e1)
+            end
+        end
+        return e
+    elseif VgF.GetValueType(g)=="Card" then
+        local tc=g
+        if tc:IsLocation(LOCATION_MZONE) then
+            local tc=VgF.ReturnCard(g)
             local e1=Effect.CreateEffect(c)
             e1:SetType(EFFECT_TYPE_SINGLE)
             e1:SetCode(EFFECT_UPDATE_ATTACK)
             e1:SetValue(val)
-            e1:SetReset(RESET_EVENT+RESETS_STANDARD+reset)
             e1:SetReset(RESET_EVENT+RESETS_STANDARD+reset,resetcount)
             tc:RegisterEffect(e1)
-            table.insert(e,e1)
+            return e1
         end
-        return e
-    elseif VgF.GetValueType(g)=="Card" then
-        local tc=VgF.ReturnCard(g)
-        local e1=Effect.CreateEffect(c)
-        e1:SetType(EFFECT_TYPE_SINGLE)
-        e1:SetCode(EFFECT_UPDATE_ATTACK)
-        e1:SetValue(val)
-        e1:SetReset(RESET_EVENT+RESETS_STANDARD+reset,resetcount)
-        tc:RegisterEffect(e1)
-        return e1
     end
 end
 ---以c的名义，使g（中的每一张卡）的盾值上升val，并在reset时重置。
@@ -419,31 +423,35 @@ end
 ---@param val integer 要上升的盾值（可以为负）
 ---@param reset integer|nil 指示重置的时点，默认为“回合结束时”。无论如何，都会在离场时重置。
 function VgF.DefUp(c,g,val,reset,resetcount)
-    if not c then return end
+    if not c or not g then return end
     if not reset then reset=RESET_PHASE+PHASE_END end
     if not resetcount then resetcount=1 end
     if not val or val==0 then return end
     if VgF.GetValueType(g)=="Group" and g:GetCount()>0 then
         local e={}
         for tc in VgF.Next(g) do
+            if tc:IsLocation(LOCATION_MZONE) then
+                local e1=Effect.CreateEffect(c)
+                e1:SetType(EFFECT_TYPE_SINGLE)
+                e1:SetCode(EFFECT_UPDATE_DEFENSE)
+                e1:SetValue(val)
+                e1:SetReset(RESET_EVENT+RESETS_STANDARD+reset,resetcount)
+                tc:RegisterEffect(e1)
+                table.insert(e,e1)
+            end
+        end
+        return e
+    elseif VgF.GetValueType(g)=="Card" then
+        local tc=g
+        if tc:IsLocation(LOCATION_MZONE) then
             local e1=Effect.CreateEffect(c)
             e1:SetType(EFFECT_TYPE_SINGLE)
             e1:SetCode(EFFECT_UPDATE_DEFENSE)
             e1:SetValue(val)
             e1:SetReset(RESET_EVENT+RESETS_STANDARD+reset,resetcount)
             tc:RegisterEffect(e1)
-            table.insert(e,e1)
+            return e1
         end
-        return e
-    elseif VgF.GetValueType(g)=="Card" then
-        local tc=VgF.ReturnCard(g)
-        local e1=Effect.CreateEffect(c)
-        e1:SetType(EFFECT_TYPE_SINGLE)
-        e1:SetCode(EFFECT_UPDATE_DEFENSE)
-        e1:SetValue(val)
-        e1:SetReset(RESET_EVENT+RESETS_STANDARD+reset,resetcount)
-        tc:RegisterEffect(e1)
-        return e1
     end
 end
 ---以c的名义，使g（中的每一张卡）的☆上升val，并在reset时重置。

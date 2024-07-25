@@ -17,7 +17,7 @@ function cm.operation(e,tp,eg,ep,ev,re,r,rp)
 end
 function cm.operation2(e,tp,eg,ep,ev,re,r,rp)
 	local c=e:GetHandler()
-	if c:IsRelateToEffect(e) then
+	if c:IsRelateToEffect(e) and c:IsFaceup() then
 		local e2=vgf.AtkUp(c,c,5000)
 		vgf.EffectReset(c,e2,EVENT_BATTLED)
 		local e1=Effect.CreateEffect(c)

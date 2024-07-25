@@ -11,7 +11,9 @@ end
 function cm.operation(e,tp,eg,ep,ev,re,r,rp)
 	local c=e:GetHandler()
 	vgf.SearchCard(LOCATION_HAND,LOCATION_DECK,cm.filter)(e,tp,eg,ep,ev,re,r,rp)
-	vgf.AtkUp(c,c,10000,nil)
+	if c:IsRelateToEffect(e) and c:IsFaceup() then
+		vgf.AtkUp(c,c,10000,nil)
+	end
 end
 --返回效果一寻找卡密
 function cm.filter(c)
@@ -27,6 +29,8 @@ function cm.operation2(e,tp,eg,ep,ev,re,r,rp)
 	local c=e:GetHandler()
 	local g=vgf.SelectMatchingCard(HINTMSG_LEAVEONFIELD,e,tp,vgf.RMonsterFilter,tp,0,LOCATION_MZONE,1,1,nil)
 	vgf.Sendto(LOCATION_DROP,g,REASON_EFFECT)
-	vgf.AtkUp(c,c,5000)
-	vgf.StarUp(c,c,1)
+	if c:IsRelateToEffect(e) and c:IsFaceup() then
+		vgf.AtkUp(c,c,5000)
+		vgf.StarUp(c,c,1)
+	end
 end

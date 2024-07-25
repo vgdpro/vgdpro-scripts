@@ -8,5 +8,7 @@ function cm.initial_effect(c)
 end
 function cm.operation(e,tp,eg,ep,ev,re,r,rp)
     local c=e:GetHandler()
-    vgf.AtkUp(c,c,5000,nil)
+    if c:IsRelateToEffect(e) and c:IsFaceup() then
+        vgf.AtkUp(c,c,5000,nil)
+    end
 end

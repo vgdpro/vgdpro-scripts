@@ -11,7 +11,9 @@ function cm.con(e,tp,eg,ep,ev,re,r,rp)
 end
 function cm.op(e,tp,eg,ep,ev,re,r,rp)
 	local c=e:GetHandler()
-    vgf.AtkUp(c,c,2000)
+	if c:IsRelateToEffect(e) and c:IsFaceup() then
+        vgf.AtkUp(c,c,2000)
+    end
 end
 function cm.filter(c,tp,mc)
     local g=VgF.GetColumnGroup(mc)

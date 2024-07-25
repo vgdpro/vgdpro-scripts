@@ -5,7 +5,9 @@ function cm.initial_effect(c)
 end
 function cm.operation(e,tp,eg,ep,ev,re,r,rp)
 	local c=e:GetHandler()
-	vgf.AtkUp(c,c,10000)
+	if c:IsRelateToEffect(e) and c:IsFaceup() then
+		vgf.AtkUp(c,c,10000)
+	end
 end
 function cm.condition(e,tp,eg,ep,ev,re,r,rp)
 	local c=e:GetHandler()

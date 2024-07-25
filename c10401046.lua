@@ -24,7 +24,9 @@ function cm.op2(e,tp,eg,ep,ev,re,r,rp)
 		Duel.DisableShuffleCheck()
 		if Duel.SelectOption(tp,1195,1196)==1 then
 			Duel.MoveSequence(g:GetFirst(),1)
-			vgf.AtkUp(c,c,2000)
+			if c:IsRelateToEffect(e) and c:IsFaceup() then
+				vgf.AtkUp(c,c,2000)
+			end
 		end
 	end
 end

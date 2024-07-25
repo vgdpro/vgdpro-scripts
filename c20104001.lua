@@ -11,7 +11,9 @@ end
 function cm.operation(e,tp,eg,ep,ev,re,r,rp)
 	local c=e:GetHandler()
 	vgf.SearchCard(LOCATION_HAND,LOCATION_DECK,cm.filter)(e,tp,eg,ep,ev,re,r,rp)
-	vgf.AtkUp(c,c,10000,nil)
+	if c:IsRelateToEffect(e) and c:IsFaceup() then
+		vgf.AtkUp(c,c,10000,nil)
+	end
 end
 --返回效果一寻找目标
 function cm.filter(c)

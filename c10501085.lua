@@ -9,7 +9,9 @@ function cm.initial_effect(c)
 end
 function cm.op(e,tp,eg,ep,ev,re,r,rp)
     local c=e:GetHandler()
-    VgF.AtkUp(c,c,5000)
+	if c:IsRelateToEffect(e) and c:IsFaceup() then
+        VgF.AtkUp(c,c,5000)
+    end
 end
 function cm.filter(c)
     return c:IsCode(0xc040) and c:IsAbleToHand()

@@ -14,5 +14,7 @@ function cm.operation(e,tp,eg,ep,ev,re,r,rp)
 	if g:GetCount()>0 then
 		vgf.Sendto(LOCATION_OVERLAY,g,vgf.GetVMonster(tp))
 	end
-	vgf.AtkUp(c,c,2000,nil)
+	if c:IsRelateToEffect(e) and c:IsFaceup() then
+		vgf.AtkUp(c,c,2000,nil)
+	end
 end

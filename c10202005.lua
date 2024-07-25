@@ -7,7 +7,7 @@ function cm.initial_effect(c)
 end
 function cm.operation(e,tp,eg,ep,ev,re,r,rp)
 	local c=e:GetHandler()
-	if c:IsRelateToEffect(e) then
+	if c:IsRelateToEffect(e) and c:IsFaceup() then
 		local e2=vgf.AtkUp(c,c,10000)
 		vgf.EffectReset(c,e2,EVENT_BATTLED)
 		local e1=Effect.CreateEffect(c)
