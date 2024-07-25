@@ -842,7 +842,7 @@ end
 ---当c被卡号为code的卡Ride时触发的效果。
 ---@param c Card 被Ride的卡
 ---@param m integer 指示脚本的整数。cxxx的脚本应填入xxx。cm的脚本应填入m。
----@param code integer|nil Ride的卡
+---@param code function|number|nil Ride的卡
 ---@param op function|nil 触发的效果
 ---@param cost function|nil 效果的费用
 ---@param con function|nil 效果的条件
