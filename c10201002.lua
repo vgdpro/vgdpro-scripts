@@ -1,6 +1,3 @@
--- 【自】：这个单位被含有「莲南」的单位RIDE时，通过【费用】[灵魂爆发1]，选择你的废弃区中的1张等级1以下的卡，CALL到R上。
--- 【永】【R】：后列的你的后防者有3张以上的话，这个单位获得『支援』的技能。
-
 local cm,m,o=GetID()
 function cm.initial_effect(c)
 	vgf.VgCard(c)
@@ -19,16 +16,11 @@ function cm.filter(c)
 	return c:IsSetCard(0x74)
 end
 function cm.operation(e,tp,eg,ep,ev,re,r,rp)
-	local c=e:GetHandler()
-	
-		local g=Duel.SelectMatchingCard(tp,vgf.IsLevel,tp,LOCATION_GRAVE,0,1,1,nil,0,1)
-		if g:GetCount()>0 then
-			vgf.Call(g,0,tp)
-		end
-	
+	local g=vgf.SelectMatchingCard(HINTMSG_CALL,e,tp,vgf.IsLevel,tp,LOCATION_DROP,0,1,1,nil,0,1)
+	vgf.Call(g,0,tp)
 end
 function cm.condition(e,tp,eg,ep,ev,re,r,rp)
-    return vgf.RMonsterCondition(e) and Duel.IsExistingMatchingCard(vgf.IsSequence,tp,LOCATION_MZONE,0,3,nil,1,2,3)
+    return vgf.RMonsterCondition(e) and vgf.IsExistingMatchingCard(vgf.IsSequence,tp,LOCATION_MZONE,0,3,nil,1,2,3)
 end
 
 

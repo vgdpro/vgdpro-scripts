@@ -1,4 +1,3 @@
--- 【自】：这个单位被RIDE时，你是后攻的话，抽1张卡。
 local cm,m,o=GetID()
 function cm.initial_effect(c)
 	vgf.VgCard(c)
