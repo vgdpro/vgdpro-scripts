@@ -33,5 +33,5 @@ function cm.operation2(e,tp,eg,ep,ev,re,r,rp)
 end
 --效果二召唤等级筛选
 function cm.filter2(c)
-	return vgf.IsLevel(c,0,1,2,3)
+	return c:IsLevel(0,1,2,3)
 end

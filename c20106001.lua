@@ -32,5 +32,5 @@ function cm.operation2(e,tp,eg,ep,ev,re,r,rp)
 	vgf.AtkUp(c,g,10000)
 end
 function cm.filter2(c)
-	return vgf.IsLevel(c,1,2,3)
+	return c:IsLevel(1,2,3)
 end

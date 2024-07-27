@@ -25,7 +25,7 @@ function cm.initial_effect(c)
     c:RegisterEffect(e1)
 end
 function cm.checkfilter(c,tp)
-    return c:IsLocation(LOCATION_TRIGGER) and vgf.IsLevel(c,3) and c:IsControler(tp) and Duel.GetTurnPlayer()==tp
+    return c:IsLocation(LOCATION_TRIGGER) and c:IsLevel(3) and c:IsControler(tp) and Duel.GetTurnPlayer()==tp
 end
 function cm.checkcon(e,tp,eg,ep,ev,re,r,rp)
     return eg:IsExists(cm.checkfilter,1,nil,tp) and Duel.GetTurnPlayer()==tp and Duel.GetAttackTarget()
@@ -49,5 +49,5 @@ function cm.condition(e,tp,eg,ep,ev,re,r,rp)
     return vgf.VMonsterCondition(e) and Duel.GetFlagEffect(tp,m)>0
 end
 function cm.target(e,c)
-    return vgf.IsLevel(c,3) and Duel.GetTurnPlayer()==e:GetHandlerPlayer()
+    return c:IsLevel(3) and Duel.GetTurnPlayer()==e:GetHandlerPlayer()
 end

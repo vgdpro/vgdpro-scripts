@@ -24,5 +24,5 @@ function cm.operation(e,tp,eg,ep,ev,re,r,rp)
 	end
 end	
 function cm.filter(c)
-	return vgf.RMonsterFilter(c) and c:IsLevelAbove(3)
+	return vgf.RMonsterFilter(c) and c:IsLevelAbove(2)
 end

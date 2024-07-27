@@ -7,5 +7,5 @@ function cm.initial_effect(c)
 	vgd.EffectTypeTrigger(c,m,LOCATION_MZONE,EFFECT_TYPE_FIELD,EVENT_CUSTOM+EVENT_SUPPORT,vgf.OverlayFill(1),vgf.True,cm.condition)
 end
 function cm.condition(e,tp,eg,ep,ev,re,r,rp)
-	return Duel.GetAttacker():IsLevelAbove(3) and eg:GetFirst()==e:GetHandler()
+	return Duel.GetAttacker():IsLevelAbove(2) and eg:GetFirst()==e:GetHandler()
 end

@@ -276,7 +276,7 @@ function cm.initial_effect(c)
 	vgd.EffectTypeIgnition(c, m, LOCATION_MZONE, vgf.SearchCardSpecialSummon(LOCATION_DROP,cm.filter), vgf.DisCardCost(1), nil, nil, 1)
 end
 function cm.filter(c)
-	return vgf.IsLevel(c,0)
+	return c:IsLevel(0)
 end
 ```
 
@@ -372,12 +372,12 @@ vgf.LvCondition(e_or_c)
 用于判断`这张卡的等级`是否在`...`之中, 返回 `boolean` 值
 
 ```lua
-vgf.IsLevel(c, ...)
+c:IsLevel( ...)
 ```
 
 参数注释
 
-> **... : 要判断的等级, 可填入多个参数, 如: vgf.IsLevel(c, 1, 2)**
+> **... : 要判断的等级, 可填入多个参数, 如: c:IsLevel( 1, 2)**
 
 范例 : [天枪的骑士 勒克斯](c10103002.lua)
 

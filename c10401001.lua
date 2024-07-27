@@ -6,7 +6,7 @@ function cm.initial_effect(c)
 	vgd.EffectTypeTriggerWhenHitting(c,m,LOCATION_MZONE,EFFECT_TYPE_SINGLE,cm.op,cm.cost,cm.con)
 end
 function cm.filter(c)
-	return c:IsCode(10101009) or (c:IsLevelBelow(4) and c:GetFlagEffectLabel(FLAG_CONDITION)==201)
+	return c:IsCode(10101009) or (c:IsLevelBelow(3) and c:GetFlagEffectLabel(FLAG_CONDITION)==201)
 end
 function cm.con(e)
 	local c=e:GetHandler()

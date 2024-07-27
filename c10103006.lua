@@ -10,7 +10,7 @@ function cm.operation(e,tp,eg,ep,ev,re,r,rp)
     vgf.AtkUp(c,g,10000,nil)
 end
 function cm.filter(c)
-    return vgf.IsLevel(c,3) and vgf.RMonsterFilter(c)
+    return c:IsLevel(3) and vgf.RMonsterFilter(c)
 end
 function cm.cost(e,tp,eg,ep,ev,re,r,rp,chk)
     local c=e:GetHandler()

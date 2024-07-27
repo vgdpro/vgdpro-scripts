@@ -196,19 +196,6 @@ end
 function VgF.VMonsterCondition(e)
     return VgF.VMonsterFilter(e:GetHandler())
 end
----判断c是否是某（几）个等级（之一）。
----@param c Card 要判断的卡
----@param ... integer 等级
----@return boolean 指示是否是给定等级中的一个
-function VgF.IsLevel(c,...)
-    for i,v in ipairs{...} do
-        local lv=v+1
-        if c:IsLevel(lv) then
-            return true
-        end
-    end
-    return false
-end
 ---判断c是否在当前区域的某（几）个编号上
 ---@param c Card 要判断的卡
 ---@param ... integer 编号

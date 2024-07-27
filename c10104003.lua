@@ -20,7 +20,7 @@ function cm.operation(e,tp,eg,ep,ev,re,r,rp)
 	local g=Duel.GetDecktopGroup(tp,1)
 	local tc=vgf.ReturnCard(g)
 	Duel.DisableShuffleCheck()
-	if vgf.IsCanBeCalled(tc,e,tp) and vgf.IsLevel(tc,0,1,2) then
+	if vgf.IsCanBeCalled(tc,e,tp) and tc:IsLevel(0,1,2) then
         vgf.Sendto(LOCATION_MZONE,g,0,tp)
 	else
 		vgf.Sendto(LOCATION_OVERLAY,g,c)

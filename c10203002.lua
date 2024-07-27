@@ -8,7 +8,7 @@ function cm.filter(c)
 	return c:IsSetCard(0x202)
 end
 function cm.filter1(c)
-	return c:IsLevelAbove(3)
+	return c:IsLevelAbove(2)
 end
 function cm.condition1(e,tp,eg,ep,ev,re,r,rp)
 	return eg:IsExists(cm.cfilter,1,nil,e:GetHandler()) and Duel.GetAttacker()==e:GetHandler()

@@ -6,7 +6,7 @@ function cm.initial_effect(c)
 	vgd.EffectTypeIgnition(c,m,LOCATION_MZONE,cm.operation,vgf.DamageCost(2),cm.condition,nil,1)
 end
 function cm.condition(e,tp,eg,ep,ev,re,r,rp)
-	return vgf.RMonsterFilter(e:GetHandler()) and vgf.GetVMonster(tp):IsLevelAbove(4)
+	return vgf.RMonsterFilter(e:GetHandler()) and vgf.GetVMonster(tp):IsLevelAbove(3)
 end
 function cm.operation(e,tp,eg,ep,ev,re,r,rp)
 	Duel.Draw(tp,1,REASON_EFFECT)
