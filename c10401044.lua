@@ -5,7 +5,7 @@ function cm.initial_effect(c)
 end
 function cm.op(e,tp,eg,ep,ev,re,r,rp)
 	local c=e:GetHandler()
-	local g=vgf.GetMatchingGroup(vgf.IsLevel,tp,LOCATION_MZONE,0,nil,3)
+	local g=vgf.GetMatchingGroup(Card.IsLevel,tp,LOCATION_MZONE,0,nil,3)
 	for tc in vgf.Next(g) do
 		local e1=Effect.CreateEffect(c)
 		e1:SetType(EFFECT_TYPE_SINGLE)
@@ -18,5 +18,5 @@ function cm.op(e,tp,eg,ep,ev,re,r,rp)
 	end
 end
 function cm.con(e,tp,eg,ep,ev,re,r,rp)
-	return vgf.IsExistingMatchingCard(vgf.IsLevel,tp,LOCATION_MZONE,0,2,nil,3) and vgf.RMonsterCondition(e)
+	return vgf.IsExistingMatchingCard(Card.IsLevel,tp,LOCATION_MZONE,0,2,nil,3) and vgf.RMonsterCondition(e)
 end

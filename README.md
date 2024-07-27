@@ -397,6 +397,6 @@ function cm.initial_effect(c)
     c:RegisterEffect(e2)
 end
 function cm.condition(e,tp,eg,ep,ev,re,r,rp)
-    return vgf.VMonsterCondition(e) and vgf.IsExistingMatchingCard(vgf.IsLevel,tp,LOCATION_MZONE,0,3,nil,3)
+    return vgf.VMonsterCondition(e) and vgf.IsExistingMatchingCard(Card.IsLevel,tp,LOCATION_MZONE,0,3,nil,3)
 end
 ```

@@ -24,12 +24,12 @@ function cm.operation(e,tp,eg,ep,ev,re,r,rp)
     Duel.Draw(tp,1,REASON_EFFECT)
 end
 function cm.cost(e,tp,eg,ep,ev,re,r,rp,chk)
-    if chk==0 then return vgf.IsExistingMatchingCard(vgf.IsLevel,tp,LOCATION_HAND,0,3,nil,3) end
-    local g=vgf.SelectMatchingCard(HINTMSG_CONFIRM,e,tp,vgf.IsLevel,tp,LOCATION_HAND,0,3,3,nil,3)
+    if chk==0 then return vgf.IsExistingMatchingCard(Card.IsLevel,tp,LOCATION_HAND,0,3,nil,3) end
+    local g=vgf.SelectMatchingCard(HINTMSG_CONFIRM,e,tp,Card.IsLevel,tp,LOCATION_HAND,0,3,3,nil,3)
     Duel.ConfirmCards(1-tp,g)
     Duel.ShuffleHand(tp)
 end
 function cm.condition(e,c)
     local tp=e:GetHandlerPlayer()
-    return vgf.RMonsterCondition(e) and vgf.IsExistingMatchingCard(vgf.IsLevel,tp,LOCATION_MZONE,0,3,nil,3)
+    return vgf.RMonsterCondition(e) and vgf.IsExistingMatchingCard(Card.IsLevel,tp,LOCATION_MZONE,0,3,nil,3)
 end

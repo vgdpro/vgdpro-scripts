@@ -123,11 +123,11 @@ end
 function VgD.RideZeroCondition(e,tp,eg,ep,ev,re,r,rp)
     local rc=Duel.GetMatchingGroup(VgF.VMonsterFilter,tp,LOCATION_MZONE,0,nil):GetFirst()
     if rc then return false end
-    local ct=Duel.GetMatchingGroupCount(VgF.IsLevel,tp,LOCATION_RIDE,0,nil,0)
+    local ct=Duel.GetMatchingGroupCount(Card.IsLevel,tp,LOCATION_RIDE,0,nil,0)
     return VgF.RuleTurnCondtion(e) and ct>0 and VgF.RuleCardCondtion(e)
 end
 function VgD.RideZeroOperation(e,tp,eg,ep,ev,re,r,rp)
-    local g=Duel.GetMatchingGroup(VgF.IsLevel,tp,LOCATION_RIDE,0,nil,0)
+    local g=Duel.GetMatchingGroup(Card.IsLevel,tp,LOCATION_RIDE,0,nil,0)
     if g:GetCount()>0 then
         Duel.Hint(HINT_SELECTMSG,tp,HINTMSG_CALL)
         g=g:Select(tp,1,1,nil)

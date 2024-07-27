@@ -6,8 +6,8 @@ function cm.initial_effect(c)
     vgd.EffectTypeIgnition(c,m,LOCATION_MZONE,cm.operation2,vgf.DamageCost(1),vgf.RMonsterCondition,nil,1)
 end
 function cm.cost(e,tp,eg,ep,ev,re,r,rp,chk)
-    if chk==0 then return vgf.IsExistingMatchingCard(vgf.IsLevel,tp,LOCATION_HAND,0,2,nil,3) end
-    local g=vgf.SelectMatchingCard(HINTMSG_CONFIRM,e,tp,vgf.IsLevel,tp,LOCATION_HAND,0,2,2,nil,3)
+    if chk==0 then return vgf.IsExistingMatchingCard(Card.IsLevel,tp,LOCATION_HAND,0,2,nil,3) end
+    local g=vgf.SelectMatchingCard(HINTMSG_CONFIRM,e,tp,Card.IsLevel,tp,LOCATION_HAND,0,2,2,nil,3)
     Duel.ConfirmCards(1-tp,g)
     Duel.ShuffleHand(tp)
 end
