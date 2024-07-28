@@ -294,8 +294,8 @@ end
 ---@param g Card|Group 要Call的卡（片组）
 ---@param sumtype integer Call的方式，默认填0
 ---@param tp integer Call的玩家
----@param zone integer 指示要Call到的格子。<br>前列的R：17； 后列的R：14； 全部的R：31； V：32
----@param pos integer 表示形式
+---@param zone integer|nil 指示要Call到的格子。<br>前列的R：17； 后列的R：14； 全部的R：31； V：32
+---@param pos integer|nil 表示形式
 ---@return integer Call成功的数量
 function VgF.Call(g,sumtype,tp,zone,pos,chk)
     if (VgF.GetValueType(g)~="Card" and VgF.GetValueType(g)~="Group") or (VgF.GetValueType(g)=="Group" and g:GetCount()==0) then return 0 end
