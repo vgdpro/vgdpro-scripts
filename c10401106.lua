@@ -22,8 +22,10 @@ function cm.op(e,tp,eg,ep,ev,re,r,rp)
 	end
 end
 function cm.cost(e,tp,eg,ep,ev,re,r,rp,chk)
+	cm.cos_g=vgf.GetMatchingGroup(vgf.VMonsterFilter,tp,LOCATION_MZONE,0,nil,nil):GetFirst():GetOverlayGroup():Filter(Card.IsLevel,nil,3)
+	cm.cos_val={nil,1,1}
 	if chk==0 then
-		vgf.GetMatchingGroup(vgf.VMonsterFilter,tp,LOCATION_MZONE,0,nil,nil):GetFirst():GetOverlayGroup():Filter(Card.IsLevel,nil,3)
+		vgf.GetMatchingGroup(vgf.VMonsterFilter,tp,LOCATION_MZONE,0,nil,nil):GetFirst():GetOverlayGroup():IsExists(Card.IsLevel,1,nil,3)
 	end
 	Duel.Hint(HINT_SELECTMSG,tp,HINTMSG_REMOVEXYZ)
 	local g=vgf.GetMatchingGroup(vgf.VMonsterFilter,tp,LOCATION_MZONE,0,nil):GetFirst():GetOverlayGroup():FilterSelect(tp,Card.IsLevel,1,1,nil,3)

@@ -7,6 +7,8 @@ function cm.initial_effect(c)
 	vgd.SpellActivate(c,m,cm.operation,cm.cost)
 end
 function cm.cost(e,tp,eg,ep,ev,re,r,rp,chk)
+	cm.cos_g=Duel.GetMatchingGroup(vgf.RMonsterFilter,tp,LOCATION_MZONE,0,nil)
+	cm.cos_val={nil,2,2}
 	if chk==0 then return vgf.IsExistingMatchingCard(vgf.RMonsterFilter,tp,LOCATION_MZONE,0,2,nil) end
 	local g=vgf.SelectMatchingCard(HINTMSG_LEAVEONFIELD,e,tp,vgf.RMonsterFilter,tp,LOCATION_MZONE,0,2,2,nil)
 	vgf.Sendto(LOCATION_DROP,g,REASON_COST)

@@ -482,7 +482,7 @@ function VgD.MonsterAttackAnnounceCondition(e,c)
 end
 function VgD.MonsterAttackCondition(e,tp,eg,ep,ev,re,r,rp)
     local c=e:GetHandler()
-    if not VgF.VMonsterFilter(c) then return false end
+    if not VgF.VMonsterFilter(c) and c:GetFlagEffect(FLAG_ALSO_CAN_TRIGGER)==0 then return false end
     local a=c:GetFlagEffectLabel(FLAG_ATTACK_TRIGGER) and c:GetFlagEffectLabel(FLAG_ATTACK_TRIGGER)>0
     return a and Duel.GetAttacker()==c
 end

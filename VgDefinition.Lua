@@ -864,6 +864,7 @@ FLAG_ATTACK_AT_REAR     =VgID+6 --后列攻击
 FLAG_IMPRISON           =VgID+7 --被收容
 FLAG_SPELL_COUNT_LIMIT  =VgID+8 --指令卡次数
 FLAG_SPELL_USED_COUNT   =VgID+9 --指令卡已使用次数
+FLAG_ALSO_CAN_TRIGGER   =VgID+10--后防着也能驱动判定
 --AffectedByEffect
 AFFECT_CODE_MIX         =VgID   --魔合成
 AFFECT_CODE_MIX_DIFFERENT_NAME  =VgID+1     --魔合成(卡名不同)
