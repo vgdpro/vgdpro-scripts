@@ -8,12 +8,13 @@ function cm.initial_effect(c)
 end
 function cm.condition(e,tp,eg,ep,ev,re,r,rp)
 	local c=e:GetHandler()
-	local a=vgf.IsExistingMatchingCard(Card.IsType,tp,LOCATION_REMOVED,0,1,nil,TYPE_SPELL)
-	if a then
-		return vgf.RMonsterCondition and vgf.VMonsterFilter(Duel.GetAttackTarget())
-	end
+	return vgf.RMonsterCondition and vgf.VMonsterFilter(Duel.GetAttackTarget()) and vgf.IsExistingMatchingCard(cm.filter,tp,LOCATION_REMOVED,0,1,nil,TYPE_SPELL)
 end
 function cm.operation(e,tp,eg,ep,ev,re,r,rp)
     local c=e:GetHandler()
 	local e1=vgf.AtkUp(c,c,5000,EVENT_BATTLED)
+    vgf.EffectReset(c,e1,EVENT_BATTLED)
+end
+function cm.filter(c,typ)
+	return c:IsType(typ) and c:IsFaceup()
 end

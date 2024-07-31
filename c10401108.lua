@@ -8,5 +8,6 @@ end
 function cm.operation(e,tp,eg,ep,ev,re,r,rp)
     local c=e:GetHandler()
 	local e1=vgf.AtkUp(c,c,5000,EVENT_BATTLED)
+    vgf.EffectReset(c,e1,EVENT_BATTLED)
 end
 

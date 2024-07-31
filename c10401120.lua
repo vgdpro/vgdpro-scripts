@@ -8,8 +8,7 @@ function cm.initial_effect(c)
 end
 function cm.operation(e,tp,eg,ep,ev,re,r,rp)
 	local c=e:GetHandler()
-	local g=vgf.SelectMatchingCard(HINTMSG_CRITICAL_STRIKE,e,tp,vgf.VMonsterFilter,tp,0,LOCATION_MZONE,1,1,nil)
-	if g:GetCount()>0 then
-		local e1=vgf.StarUp(c,g,-1,EVENT_BATTLED)
-    end
+	local g=vgf.SelectMatchingCard(HINTMSG_OPPO,e,tp,vgf.VMonsterFilter,tp,0,LOCATION_MZONE,1,1,nil)
+	local e1=vgf.StarUp(c,g,-1,EVENT_BATTLED)
+	vgf.EffectReset(c,e1,EVENT_BATTLED)
 end
