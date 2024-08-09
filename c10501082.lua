@@ -26,8 +26,8 @@ function cm.initial_effect(c)
 	vgd.EffectTypeTrigger(c,m,nil,EFFECT_TYPE_SINGLE,EVENT_SPSUMMON_SUCCESS,cm.op,nil,cm.con1)
 end
 function cm.con(e,tp,eg,ep,ev,re,r,rp)
-    local a=vgf.IsExistingMatchingCard(cm.filter1,tp,LOCATION_REMOVED,0,1,nil)
-    local b=vgf.IsExistingMatchingCard(cm.filter2,tp,LOCATION_REMOVED,0,1,nil)
+    local a=vgf.IsExistingMatchingCard(cm.filter1,tp,LOCATION_LOCK,0,1,nil)
+    local b=vgf.IsExistingMatchingCard(cm.filter2,tp,LOCATION_LOCK,0,1,nil)
     -- 白翼（你的封锁区中的卡只有奇数的等级的场合才有效）
     return not a and b
 end
@@ -43,5 +43,5 @@ function cm.con1(e,tp,eg,ep,ev,re,r,rp)
 end
 function cm.op(e,tp,eg,ep,ev,re,r,rp)
 	local g=Duel.GetDecktopGroup(tp,1)
-	vgf.Sendto(LOCATION_REMOVED,g,POS_FACEUP,REASON_EFFECT)
+	vgf.Sendto(LOCATION_LOCK,g,POS_FACEUP,REASON_EFFECT)
 end

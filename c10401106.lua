@@ -2,6 +2,11 @@ local cm,m,o=GetID()
 function cm.initial_effect(c)
 	vgf.VgCard(c)
 	vgd.SpellActivate(c,m,cm.op,cm.cost)
+	cm.cos_from={LOCATION_OVERLAY}
+	cm.cos_to={LOCATION_DROP}
+	cm.cos_val={1}
+	cm.cos_val_max={1}
+	cm.cos_filter={function (tc) return tc:IsLevel(3) end}
 end
 function cm.filter(c,p)
 	return c:IsControler(p) and vgf.RMonsterFilter(c)
@@ -22,8 +27,6 @@ function cm.op(e,tp,eg,ep,ev,re,r,rp)
 	end
 end
 function cm.cost(e,tp,eg,ep,ev,re,r,rp,chk)
-	cm.cos_g=vgf.GetMatchingGroup(vgf.VMonsterFilter,tp,LOCATION_MZONE,0,nil,nil):GetFirst():GetOverlayGroup():Filter(Card.IsLevel,nil,3)
-	cm.cos_val={nil,1,1}
 	if chk==0 then
 		vgf.GetMatchingGroup(vgf.VMonsterFilter,tp,LOCATION_MZONE,0,nil,nil):GetFirst():GetOverlayGroup():IsExists(Card.IsLevel,1,nil,3)
 	end

@@ -729,7 +729,7 @@ HINTMSG_DISCARD			=501	--请选择要丢弃的手牌
 HINTMSG_IMPRISON        =502    --请选择要收容的卡
 HINTMSG_REMOVE			=503	--请选择要除外的卡
 HINTMSG_TODROP			=504	--请选择要置入弃牌区的卡
-HINTMSG_RTOHAND			=505	--请选择要返回手牌的卡
+HINTMSG_LOCK			=505	--请选择要封锁的卡
 HINTMSG_ATOHAND			=506	--请选择要加入手牌的卡
 HINTMSG_TODECK			=507	--请选择要返回卡组的卡
 HINTMSG_CALL			=508	--请选择要Call到圆阵的卡
@@ -753,7 +753,7 @@ HINTMSG_POSCHANGE		=528	--请选择要改变表示形式的怪兽
 HINTMSG_SELF			=529	--请选择自己的卡
 HINTMSG_OPPO			=530	--请选择对方的卡
 HINTMSG_TRIBUTE			=531	--请选择上级召唤用需要解放的怪兽
-HINTMSG_DEATTACHFROM	=532	--请选择要取除超量素材的怪兽
+HINTMSG_REMOVEXYZ	    =532	--请选择要拔除的卡
 HINTMSG_OVERLAY   	    =533	--请选择要重叠的卡
 HINTMSG_ATTACKTARGET	=549	--请选择攻击的对象
 HINTMSG_EFFECT			=550	--请选择要发动的效果
@@ -871,6 +871,7 @@ AFFECT_CODE_MIX_DIFFERENT_NAME  =VgID+1     --魔合成(卡名不同)
 AFFECT_CODE_BOTH_WING   =VgID+2 --你的卡片的白翼能力和黑翼能力两方均有效
 AFFECT_CODE_NIGHT       =VgID+3 --黑夜
 AFFECT_CODE_DEEP_NIGHT  =VgID+4 --深渊黑夜
+AFFECT_CODE_OVERLAY_COST_FREE_WHEN_MIX  =VgID+5 --魔合成可以不支付灵魂爆发
 
 
 AFFECT_CODE_OVERLAY_INSTEAD_WHEN_RIDE   =10501082   --不执行『选择手牌中的1张卡，舍弃』而是执行『灵魂爆发1』来将卡RIDE

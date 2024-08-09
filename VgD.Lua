@@ -22,20 +22,61 @@ function VgD.RideUp(c)
     e2:SetOperation(VgD.RideUpOperation)
 	c:RegisterEffect(e2)
 end
-function VgD.RideUpFilter1(c,e,lv,code,rc)
+function VgD.RideUpMaterialCheck(c,rc)
+    if VgF.GetValueType(c.ride_material_code_chk)=="nil" and VgF.GetValueType(c.ride_material_setcard_chk)=="nil" then return true end
+    if VgF.GetValueType(c.ride_material_code_chk)=="number" then
+        if VgF.GetValueType(rc.ride_code)=="number" and c.ride_material_code_chk==rc.ride_code then return true
+        elseif VgF.GetValueType(rc.ride_code)=="tabel" then
+            for code in ipairs(rc.ride_code) do
+                if c.ride_material_code_chk==code then return true end
+            end
+        end
+        return c.ride_material_code_chk==rc:GetCode()
+    elseif VgF.GetValueType(c.ride_material_code_chk)=="tabel" then
+        for i in ipairs(c.ride_material_code_chk) do
+            if VgF.GetValueType(rc.ride_code)=="number" and i==rc.ride_code then return true
+            elseif VgF.GetValueType(rc.ride_code)=="tabel" then
+                for code in ipairs(rc.ride_code) do
+                    if i==code then return true end
+                end
+            end
+            if rc:IsCode(i) then return true end
+        end
+    end
+    if VgF.GetValueType(c.ride_material_setcard_chk)=="number" then
+        if VgF.GetValueType(rc.ride_setcard)=="number" and c.ride_material_setcard_chk==rc.ride_setcard then return true
+        elseif VgF.GetValueType(rc.ride_setcard)=="tabel" then
+            for setcard in ipairs(rc.ride_setcard) do
+                if c.ride_material_code_chk==setcard then return true end
+            end
+        end
+        return rc:IsSetCard(c.ride_material_setcard_chk)
+    elseif VgF.GetValueType(c.ride_material_setcard_chk)=="tabel" then
+        for i in ipairs(c.ride_material_setcard_chk) do
+            if VgF.GetValueType(rc.ride_setcard)=="number" and i==rc.ride_setcard then return true
+            elseif VgF.GetValueType(rc.ride_setcard)=="tabel" then
+                for setcard in ipairs(rc.ride_setcard) do
+                    if i==setcard then return true end
+                end
+            end
+            if rc:IsSetCard(i) then return true end
+        end
+    end
+    return false
+end
+function VgD.RideUpFilter1(c,lv,code,rc)
     local tp=c:GetControler()
     if not c:IsType(TYPE_MONSTER) then return false end
     if rc:IsAttribute(SKILL_SELF_RIDE) and c:IsCode(code) then return false end
-    if (c:IsLevel(lv,lv+1) and c:IsLocation(LOCATION_HAND)) then return true end
-    if (c:IsLevel(lv+1) and c:IsLocation(LOCATION_RIDE) and (VgF.IsExistingMatchingCard(nil,tp,LOCATION_HAND,0,1,nil) or (Duel.IsPlayerAffectedByEffect(tp,AFFECT_CODE_OVERLAY_INSTEAD_WHEN_RIDE) and VgF.GetVMonster(tp):GetOverlayCount()>0))) then return true end
+    if (c:IsLevel(lv,lv+1) and c:IsLocation(LOCATION_HAND)) then return VgD.RideUpMaterialCheck(c,rc) end
+    if (c:IsLevel(lv+1) and c:IsLocation(LOCATION_RIDE) and (VgF.IsExistingMatchingCard(nil,tp,LOCATION_HAND,0,1,nil) or (Duel.IsPlayerAffectedByEffect(tp,AFFECT_CODE_OVERLAY_INSTEAD_WHEN_RIDE) and VgF.GetVMonster(tp):GetOverlayCount()>0))) then return VgD.RideUpMaterialCheck(c,rc) end
     return false
 end
 function VgD.DisCardRideUpFilter(c,e,lv,code,rc)
     local tp=c:GetControler()
-    return c:IsDiscardable() and VgF.IsExistingMatchingCard(VgD.RideUpFilter1,tp,LOCATION_HAND+LOCATION_RIDE,0,1,c,e,lv,code,rc)
+    return c:IsDiscardable() and VgF.IsExistingMatchingCard(VgD.RideUpFilter1,tp,LOCATION_HAND+LOCATION_RIDE,0,1,c,lv,code,rc)
 end
-function VgD.RideUpFilter2(c,e,lv,code,rc)
-    local tp=e:GetHandlerPlayer()
+function VgD.RideUpFilter2(c,lv,code,rc)
     return c:IsLevel(lv) and c:IsType(TYPE_MONSTER) and c:IsCode(code) and rc:IsAttribute(SKILL_SELF_RIDE)
 end
 function VgD.RideUpCondition(e,tp,eg,ep,ev,re,r,rp)
@@ -43,20 +84,20 @@ function VgD.RideUpCondition(e,tp,eg,ep,ev,re,r,rp)
     if not rc then return false end
     local lv=rc:GetLevel()
     local code=rc:GetCode()
-    local rg1=Duel.GetMatchingGroup(VgD.RideUpFilter1,tp,LOCATION_HAND+LOCATION_RIDE,0,nil,e,lv,code,rc)
-    local rg2=Duel.GetMatchingGroup(VgD.RideUpFilter2,tp,LOCATION_HAND,0,nil,e,lv,code,rc)
+    local rg1=Duel.GetMatchingGroup(VgD.RideUpFilter1,tp,LOCATION_HAND+LOCATION_RIDE,0,nil,lv,code,rc)
+    local rg2=Duel.GetMatchingGroup(VgD.RideUpFilter2,tp,LOCATION_HAND,0,nil,lv,code,rc)
     local a=rg1:GetCount()>0
     local b=rg2:GetCount()>0
     return Duel.GetTurnPlayer()==tp and VgF.RuleCardCondtion(e) and (a or b)
 end
 function VgD.RideUpOperation(e,tp,eg,ep,ev,re,r,rp)
     local c=e:GetHandler()
-    local rc=Duel.GetMatchingGroup(VgF.VMonsterFilter,tp,LOCATION_MZONE,0,nil):GetFirst()
+    local rc=VgF.GetVMonster(tp)
     if not rc then return end
     local lv=rc:GetLevel()
     local code=rc:GetCode()
-    local rg1=Duel.GetMatchingGroup(VgD.RideUpFilter1,tp,LOCATION_HAND+LOCATION_RIDE,0,nil,e,lv,code,rc)
-    local rg2=Duel.GetMatchingGroup(VgD.RideUpFilter2,tp,LOCATION_HAND,0,nil,e,lv,code,rc)
+    local rg1=Duel.GetMatchingGroup(VgD.RideUpFilter1,tp,LOCATION_HAND+LOCATION_RIDE,0,nil,lv,code,rc)
+    local rg2=Duel.GetMatchingGroup(VgD.RideUpFilter2,tp,LOCATION_HAND,0,nil,lv,code,rc)
     local a=rg1:GetCount()>0
     local b=rg2:GetCount()>0
     local off=1
@@ -764,56 +805,186 @@ end
 ---@param cost any|nil 作为指令卡的发动费用
 function VgD.SpellActivate(c,m,op,cost,con)
     local e1=Effect.CreateEffect(c)
-    if m then e1:SetDescription(VgF.Stringid(m, 0)) end
+    e1:SetDescription(VgF.Stringid(m, 0))
     e1:SetType(EFFECT_TYPE_ACTIVATE)
     e1:SetCode(EVENT_FREE_CHAIN)
-    e1:SetCountLimit(1,VgID+EFFECT_COUNT_CODE_OATH)
     e1:SetCost(VgD.MixCost(cost))
     e1:SetCondition(VgD.SpellCondtion(con))
-    e1:Settarget(VgD.SpellTarget)
+    e1:SetTarget(VgD.SpellTarget)
     e1:SetOperation(VgD.SpellOperation(op))
     c:RegisterEffect(e1)
-end
-function VgF.MixFilter(mg, cf, cval, bf, bmin, bmax, bval)
-	return function(g)
-		if cf and not cf(g, table.unpack(cval)) then return false end
-		return not bf or (mg - g):CheckSubGroup(bf, bmin, bmax, table.unpack(bval))
-	end
 end
 function VgD.MixCostFilter(c,e,tp,eg,ep,ev,re,r,rp,mc)
 if Duel.IsPlayerAffectedByEffect(tp,AFFECT_CODE_MIX_DIFFERENT_NAME) and c:IsCode(mc:GetCode()) then return false end
     local ce = c:GetActivateEffect()
-    if not ce or (ce:GetCost() and not ce:GetCost()(e,tp,eg,ep,ev,re,r,rp,chk)) then return false end
-    local cg, cval = mc.cos_g, mc.cos_val
-    local bg, bval = c.cos_g, c.cos_val
-    if not (cg and bg and cval and bval) then return 1 end
-    local mg = cg + bg
-    local cf = table.remove(cval, 1)
-    local min = table.remove(cval, 1)
-    local max = table.remove(cval, 1)
-    local bf = table.remove(bval, 1)
-    local bmin = table.remove(bval, 1)
-    local bmax = table.remove(bval, 1)
-    local mix_f = VgF.MixFilter(mg, cf, cval, bf, bmin, bmax, bval)
-    return mg:CheckSubGroup(mix_f, min, max) and VgF.LvCondition(c)
+    if not ce or (ce:GetCost() and not ce:GetCost()(e,tp,eg,ep,ev,re,r,rp,0)) then return false end
+    --c.cos_from, c.cos_to, c.cos_filter, c.cos_val
+    local cfrom, cval, cfilter=c.cos_from, c.cos_val, c.cos_filter
+    local mcfrom, mcval, mcfilter=mc.cos_from, mc.cos_val, mc.cos_filter
+    if #cfrom>0 and #mcfrom>0 then
+        for c_cost_from,cv in ipairs(cfrom) do
+            local pos=0
+            for mc_cost_from,mcv in ipairs(mcfrom) do
+                if mc_cost_from==c_cost_from then
+                    pos=mcv
+                    local mc_cos_val=mcval[mcv]
+                    local c_cos_val=cval[cv]
+                    if mc_cost_from==LOCATION_OVERLAY and Duel.IsPlayerAffectedByEffect(tp,AFFECT_CODE_OVERLAY_COST_FREE_WHEN_MIX) then mc_cos_val,c_cos_val=0,0 end
+                    local mcg=VgF.GetMatchingGroup(mcfilter[mcv],tp,mc_cost_from,0,c,e,tp)
+                    local cg=VgF.GetMatchingGroup(cfilter[cv],tp,c_cost_from,0,mc,e,tp)
+                    if mcg:GetCount()<mc_cos_val or cg:GetCount()<c_cos_val then return false end
+                    mcg:Merge(cg)
+                    if mcg:GetCount()<mc_cos_val+c_cos_val then return false end
+                end
+            end
+            if pos>0 then
+                table.remove(mcfrom,pos)
+                table.remove(mcval,pos)
+                table.remove(mcfilter,pos)
+            else
+                local c_cos_val=cval[cv]
+                if c_cost_from==LOCATION_OVERLAY and Duel.IsPlayerAffectedByEffect(tp,AFFECT_CODE_OVERLAY_COST_FREE_WHEN_MIX) then c_cos_val=0 end
+                local cg=VgF.GetMatchingGroup(cfilter[cv],tp,c_cost_from,0,mc,e,tp)
+                if cg:GetCount()<c_cos_val then return false end
+            end
+        end
+        if #mcfrom>0 then
+            for mc_cost_from,mcv in ipairs(mcfrom) do
+                local mc_cos_val=mcval[mcv]
+                if mc_cost_from==LOCATION_OVERLAY and Duel.IsPlayerAffectedByEffect(tp,AFFECT_CODE_OVERLAY_COST_FREE_WHEN_MIX) then mc_cos_val=0 end
+                local mcg=VgF.GetMatchingGroup(mcfilter[mcv],tp,mc_cost_from,0,c,e,tp)
+                if mcg:GetCount()<mc_cos_val then return false end
+            end
+        end
+    end
+    return true--VgF.LvCondition(c)
 end
 function VgD.MixCost(cost)
-	return function(e,tp,eg,ep,ev,re,r,rp,chk,bool)
+	return function(e,tp,eg,ep,ev,re,r,rp,chk)
 		local c=e:GetHandler()
 		if chk==0 then return VgF.GetValueType(cost)~="function" or cost(e,tp,eg,ep,ev,re,r,rp,chk) end
-		if not bool and (Duel.IsPlayerAffectedByEffect(tp,AFFECT_CODE_MIX) and VgF.IsExistingMatchingCard(VgD.MixCostFilter,tp,LOCATION_DROP,0,1,nil,e,tp,eg,ep,ev,re,r,rp,c) and Duel.SelectYesNo(tp,VgF.Stringid(VgID,6))) then
+		if --[[Duel.IsPlayerAffectedByEffect(tp,AFFECT_CODE_MIX) and]] VgF.IsExistingMatchingCard(VgD.MixCostFilter,tp,LOCATION_DROP,0,1,nil,e,tp,eg,ep,ev,re,r,rp,c) and Duel.SelectYesNo(tp,VgF.Stringid(VgID,6)) then
 			local bc=Duel.SelectMatchingCard(tp,VgD.MixCostFilter,tp,LOCATION_DROP,0,1,1,nil,e,tp,eg,ep,ev,re,r,rp,c):GetFirst()
-            if cost then cost(e,tp,eg,ep,ev,re,r,rp) end
+            --if VgF.GetValueType(cost)=="function" then cost(e,tp,eg,ep,ev,re,r,rp) end
             if bc then
-                VgF.Sendto(LOCATION_REMOVED,bc,POS_FACEUP,REASON_COST)
+                VgF.Sendto(LOCATION_LOCK,bc,POS_FACEUP,REASON_COST)
                 e:SetLabelObject(bc)
-                local bce = bc:GetActivateEffect()
-                if bce and bce:GetCost() then bce:GetCost()(e,tp,eg,ep,ev,re,r,rp,chk,true) end
+                --[[local bce = bc:GetActivateEffect()
+                if bce and bce:GetCost() then bce:GetCost()(e,tp,eg,ep,ev,re,r,rp,chk,true) end]]
+                VgD.MixCostOperation(c,bc,e,tp)
             end
         else
-            if cost then cost(e,tp,eg,ep,ev,re,r,rp) end
+            if VgF.GetValueType(cost)=="function" then cost(e,tp,eg,ep,ev,re,r,rp) end
 		end
 	end
+end
+function VgD.MixCostOperation(c,bc,e,tp)
+    local cfrom, cto, cval, cval_max, cfilter=c.cos_from, c.cos_to, c.cos_val, c.cos_val_max, c.cos_filter
+    local bcfrom, bcto, bcval, bcval_max, bcfilter=bc.cos_from, bc.cos_to, bc.cos_val, bc.cos_val_max, bc.cos_filter
+    local g={}
+    local g_from={}
+    local g_to={}
+    local g_filter_c={}
+    local g_filter_bc={}
+    local g_val_c={}
+    local g_val_bc={}
+    local g_val_c_max={}
+    local g_val_bc_max={}
+    local except_group=Group.FromCards(c,bc)
+    for bc_cost_from,bcv in ipairs(bcfrom) do
+        local pos=0
+        for c_cost_from,cv in ipairs(cfrom) do
+            if bc_cost_from==c_cost_from and cto[cv]==bcto[bcv] then
+                pos=bcv
+                local sg=Duel.GetMatchingGroup(nil,tp,bc_cost_from,0,except_group)
+                table.insert(g,sg)
+                table.insert(g_from,c_cost_from)
+                table.insert(g_to,cto[cv])
+                table.insert(g_filter_c,cfilter[cv])
+                table.insert(g_filter_bc,bcfilter[bcv])
+                table.insert(g_val_c,cval[cv])
+                table.insert(g_val_bc,bcval[bcv])
+                table.insert(g_val_c_max,cval_max[cv])
+                table.insert(g_val_bc_max,bcval_max[bcv])
+            end
+        end
+        if pos>0 then
+            table.remove(bcfrom,pos)
+            table.remove(bcto,pos)
+            table.remove(bcval,pos)
+            table.remove(bcval_max,pos)
+            table.remove(bcfilter,pos)
+        else
+            local sg=Duel.GetMatchingGroup(nil,tp,bc_cost_from,0,except_group)
+            table.insert(g,sg)
+            table.insert(g_from,bc_cost_from)
+            table.insert(g_to,bcto[bcv])
+            table.insert(g_filter_c,nil)
+            table.insert(g_filter_bc,bcfilter[bcv])
+            table.insert(g_val_c,0)
+            table.insert(g_val_bc,bcval[bcv])
+            table.insert(g_val_c_max,0)
+            table.insert(g_val_bc_max,bcval_max[bcv])
+        end
+    end
+    if #cfrom>0 then
+        for c_cost_from,cv in ipairs(cfrom) do
+            local sg=Duel.GetMatchingGroup(nil,tp,c_cost_from,0,except_group)
+            table.insert(g,sg)
+            table.insert(g_to,cto[cv])
+            table.insert(g_filter_c,cfilter[cv])
+            table.insert(g_filter_bc,nil)
+            table.insert(g_val_c,cval[cv])
+            table.insert(g_val_bc,0)
+            table.insert(g_val_c_max,cval_max[cv])
+            table.insert(g_val_bc_max,0)
+        end
+    end
+    for i=1,#g do
+        local tg=g[i]
+        if tg:GetCount()==0 then goto continue end
+        local tg_from=g_from[i]
+        local tg_to=g_to[i]
+        local tg_filter_c=g_filter_c[i]
+        local tg_filter_bc=g_filter_bc[i]
+        local tg_val_c=g_val_c[i]
+        local tg_val_bc=g_val_bc[i]
+        local tg_val_c_max=g_val_c_max[i]
+        local tg_val_bc_max=g_val_bc_max[i]
+        local hintmsg=HINTMSG_SELECT
+        local ext_params={}
+        if VgF.GetValueType(tg_to)=="number" then
+            if tg_to==LOCATION_DROP then
+                if tg_from==LOCATION_MZONE then
+                    hintmsg=HINTMSG_LEAVEONFIELD
+                elseif tg_from==LOCATION_OVERLAY then hintmsg=HINTMSG_REMOVEXYZ
+                else hintmsg=HINTMSG_TODROP end
+                ext_params={REASON_COST}
+            elseif bit.band(tg_to,LOCATION_LOCK)>0 then
+                hintmsg=HINTMSG_LOCK
+                if bit.band(tg_to,POS_FACEUP)>0 then ext_params={POS_FACEUP,REASON_COST} end
+                if bit.band(tg_to,POS_FACEDOWN)>0 then ext_params={POS_FACEDOWN,REASON_COST} end
+            elseif bit.band(tg_to,LOCATION_EXILE)>0 then
+                hintmsg=HINTMSG_REMOVE
+                if bit.band(tg_to,POS_FACEUP)>0 then ext_params={tp,POS_FACEUP,REASON_COST} end
+                if bit.band(tg_to,POS_FACEDOWN)>0 then ext_params={tp,POS_FACEDOWN,REASON_COST} end
+            elseif tg_to==LOCATION_DECK then
+                hintmsg=HINTMSG_TODECK
+                ext_params={tp,SEQ_DECKSHUFFLE,REASON_COST}
+            elseif tg_to==LOCATION_HAND then
+                hintmsg=HINTMSG_ATOHAND
+                ext_params={nil,REASON_COST}
+            elseif tg_to==LOCATION_OVERLAY then
+                hintmsg=HINTMSG_XMATERIAL
+                ext_params={VgF.GetVMonster(tp)}
+            end
+        elseif VgF.GetValueType(tg_to)=="string" then hintmsg=HINTMSG_POSCHANGE
+        end
+        Duel.Hint(HINT_SELECTMSG,tp,hintmsg)
+        local sg=tg:SelectDoubleSubGroup(tp,tg_filter_c,tg_val_c,tg_val_c_max,tg_filter_bc,tg_val_bc,tg_val_bc_max,Group.FromCards(c,bc))
+        VgF.Sendto(tg_to,sg,ext_params)
+        ::continue::
+    end
 end
 function VgD.SpellCondtion(con)
     return function (e,tp,eg,ep,ev,re,r,rp)

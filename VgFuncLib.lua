@@ -110,14 +110,14 @@ function VgF.ReturnCard(g)
     end
     return tc
 end
----返回g的前num张卡。
+---返回g的前val张卡。
 ---@param g Group 要操作的卡片组
----@param num integer 要获取的卡片数量
-function VgF.GetCardsFromGroup(g,num)
+---@param val integer 要获取的卡片数量
+function VgF.GetCardsFromGroup(g,val)
     if VgF.GetValueType(g)=="Group" then
         local sg=Group.CreateGroup()
         for tc in VgF.Next(g) do
-            if sg:GetCount()>=num then break end
+            if sg:GetCount()>=val then break end
             sg:AddCard(tc)
         end
         return sg
@@ -497,122 +497,137 @@ function VgF.IsAbleToGZone(c,loc)
     end
     return false
 end
----用于效果的Operation。它返回一个执行“[计数回充num]”的函数。
----@param num integer 计数回充的数量
+---用于效果的Operation。它返回一个执行“[计数回充val]”的函数。
+---@param val integer 计数回充的数量
 ---@return function 效果的Operation函数
-function VgF.DamageFill(num)
+function VgF.DamageFill(val)
     return function (e,tp,eg,ep,ev,re,r,rp)
         local c=e:GetHandler()
         Duel.Hint(HINT_SELECTMSG,tp,HINTMSG_POSCHANGE)
-        local g=Duel.SelectMatchingCard(tp,Card.IsFaceup,tp,LOCATION_DAMAGE,0,num,num,nil)
+        local g=Duel.SelectMatchingCard(tp,Card.IsFaceup,tp,LOCATION_DAMAGE,0,val,val,nil)
         Duel.ChangePosition(g,POS_FACEUP_ATTACK)
         return Duel.GetOperatedGroup():GetCount()
     end
 end
----用于效果的Cost。它返回一个执行“【费用】[将手牌中的num张卡舍弃]”的函数。
----@param num integer 要舍弃的卡的数量
+---用于效果的Cost。它返回一个执行“【费用】[将手牌中的val张卡舍弃]”的函数。
+---@param val integer 要舍弃的卡的数量
 ---@return function 效果的Cost函数
-function VgF.DisCardCost(num)
+function VgF.DisCardCost(val)
     return function (e,tp,eg,ep,ev,re,r,rp,chk)
-        if VgF.GetValueType(num)~="number" then return 0 end
+        if VgF.GetValueType(val)~="number" then return 0 end
         local c=e:GetHandler()
         local m=c:GetOriginalCode()
         local cm=_G["c"..m]
         if chk==0 then
             if e:IsHasType(EFFECT_TYPE_ACTIVATE) then
-                cm.cos_g=Duel.GetMatchingGroup(nil,tp,LOCATION_HAND,0,nil)
-                cm.cos_val={nil,num,num}
+                cm.cos_from={LOCATION_HAND}
+                cm.cos_to={LOCATION_HAND}
+                cm.cos_val={val}
+                cm.cos_val_max={val}
+                cm.cos_filter={nil}
             end
-            return VgF.IsExistingMatchingCard(nil,tp,LOCATION_HAND,0,num,nil)
+            return VgF.IsExistingMatchingCard(nil,tp,LOCATION_HAND,0,val,nil)
         end
         Duel.Hint(HINT_SELECTMSG,tp,HINTMSG_DISCARD)
-        local g=Duel.SelectMatchingCard(tp,nil,tp,LOCATION_HAND,0,num,num,nil)
+        local g=Duel.SelectMatchingCard(tp,nil,tp,LOCATION_HAND,0,val,val,nil)
         return VgF.Sendto(LOCATION_DROP,g,REASON_COST+REASON_DISCARD)
     end
 end
----用于效果的Cost。它返回一个执行“【费用】[能量爆发num]”的函数。
----@param num integer 能量爆发的数量
+---用于效果的Cost。它返回一个执行“【费用】[能量爆发val]”的函数。
+---@param val integer 能量爆发的数量
 ---@return function 效果的Cost函数
-function VgF.EnergyCost(num)
+function VgF.EnergyCost(val)
     return function (e,tp,eg,ep,ev,re,r,rp,chk)
-        if VgF.GetValueType(num)~="number" then return 0 end
+        if VgF.GetValueType(val)~="number" then return 0 end
         local c=e:GetHandler()
         local m=c:GetOriginalCode()
         local cm=_G["c"..m]
         if chk==0 then
             if e:IsHasType(EFFECT_TYPE_ACTIVATE) then
-                cm.cos_g=Duel.GetMatchingGroup(Card.IsCode,tp,LOCATION_EMBLEM,0,nil,10800730)
-                cm.cos_val={nil,num,num}
+                cm.cos_from={LOCATION_EMBLEM}
+                cm.cos_to={"POSCHANGE"}
+                cm.cos_val={val}
+                cm.cos_val_max={val}
+                cm.cos_filter={function(tc) tc:IsCode(10800730) end}
             end
-            return VgF.IsExistingMatchingCard(Card.IsCode,tp,LOCATION_EMBLEM,0,num,nil,10800730)
+            return VgF.IsExistingMatchingCard(Card.IsCode,tp,LOCATION_EMBLEM,0,val,nil,10800730)
         end
         local sg=Duel.GetMatchingGroup(Card.IsCode,tp,LOCATION_EMBLEM,0,nil,10800730)
-        local g=VgF.GetCardsFromGroup(sg,num)
+        local g=VgF.GetCardsFromGroup(sg,val)
         return VgF.Sendto(0,g,tp,POS_FACEUP,REASON_COST)
     end
 end
----用于效果的Cost。它返回一个执行“【费用】[灵魂爆发num]”的函数。
----@param num integer 灵魂爆发的数量
+---用于效果的Cost。它返回一个执行“【费用】[灵魂爆发val]”的函数。
+---@param val integer 灵魂爆发的数量
 ---@return function 效果的Cost函数
-function VgF.OverlayCost(num)
+function VgF.OverlayCost(val)
     return function (e,tp,eg,ep,ev,re,r,rp,chk)
-        if VgF.GetValueType(num)~="number" then return 0 end
+        if VgF.GetValueType(val)~="number" then return 0 end
         local c=e:GetHandler()
         local m=c:GetOriginalCode()
         local cm=_G["c"..m]
         if chk==0 then
             if e:IsHasType(EFFECT_TYPE_ACTIVATE) then
-                cm.cos_g=Duel.GetMatchingGroup(VgF.VMonsterFilter,tp,LOCATION_MZONE,0,nil,nil):GetFirst():GetOverlayGroup()
-                cm.cos_val={nil,num,num}
+                cm.cos_from={LOCATION_OVERLAY}
+                cm.cos_to={LOCATION_DROP}
+                cm.cos_val={val}
+                cm.cos_val_max={val}
+                cm.cos_filter={nil}
             end
-            return Duel.GetMatchingGroup(VgF.VMonsterFilter,tp,LOCATION_MZONE,0,nil,nil):GetFirst():GetOverlayCount()>=num
+            return Duel.GetMatchingGroup(VgF.VMonsterFilter,tp,LOCATION_MZONE,0,nil,nil):GetFirst():GetOverlayCount()>=val
         end
         Duel.Hint(HINT_SELECTMSG,tp,HINTMSG_REMOVEXYZ)
-        local g=Duel.GetMatchingGroup(VgF.VMonsterFilter,tp,LOCATION_MZONE,0,nil):GetFirst():GetOverlayGroup():Select(tp,nil,num,num,nil)
+        local g=Duel.GetMatchingGroup(VgF.VMonsterFilter,tp,LOCATION_MZONE,0,nil):GetFirst():GetOverlayGroup():Select(tp,nil,val,val,nil)
         return VgF.Sendto(LOCATION_DROP,g,REASON_COST)
     end
 end
----用于效果的Cost或Operation。它返回一个执行“【费用】[灵魂填充num]”的函数。
----@param num integer 灵魂填充的数量
+---用于效果的Cost或Operation。它返回一个执行“【费用】[灵魂填充val]”的函数。
+---@param val integer 灵魂填充的数量
 ---@return function 效果的Cost或Operation函数
-function VgF.OverlayFill(num)
+function VgF.OverlayFill(val)
     return function (e,tp,eg,ep,ev,re,r,rp,chk)
-        if VgF.GetValueType(num)~="number" then return 0 end
+        if VgF.GetValueType(val)~="number" then return 0 end
         local c=e:GetHandler()
         local m=c:GetOriginalCode()
         local cm=_G["c"..m]
         if chk==0 then
             if e:IsHasType(EFFECT_TYPE_ACTIVATE) then
-                cm.cos_g=Duel.GetFieldGroup(tp,LOCATION_DECK,0)
-                cm.cos_val={nil,num,num}
+                cm.cos_from={LOCATION_DECK}
+                cm.cos_to={LOCATION_OVERLAY}
+                cm.cos_val={val}
+                cm.cos_val_max={val}
+                cm.cos_filter={nil}
             end
-            return Duel.GetFieldGroupCount(tp,LOCATION_DECK,0)>=num
+            return Duel.GetFieldGroupCount(tp,LOCATION_DECK,0)>=val
         end
         local rc=Duel.GetMatchingGroup(VgF.VMonsterFilter,tp,LOCATION_MZONE,0,nil):GetFirst()
-        local g=Duel.GetDecktopGroup(tp,num)
+        local g=Duel.GetDecktopGroup(tp,val)
         Duel.DisableShuffleCheck()
-        Duel.RaiseEvent(g,EVENT_CUSTOM+EVENT_OVERLAY_FILL,e,0,tp,tp,num)
+        Duel.RaiseEvent(g,EVENT_CUSTOM+EVENT_OVERLAY_FILL,e,0,tp,tp,val)
         return VgF.Sendto(LOCATION_OVERLAY,g,rc)
     end
 end
----用于效果的Cost。它返回一个执行“【费用】[计数爆发num]”的函数。
----@param num integer 计数爆发的数量
+---用于效果的Cost。它返回一个执行“【费用】[计数爆发val]”的函数。
+---@param val integer 计数爆发的数量
 ---@return function 效果的Cost函数
-function VgF.DamageCost(num)
+function VgF.DamageCost(val)
     return function (e,tp,eg,ep,ev,re,r,rp,chk)
-        if VgF.GetValueType(num)~="number" then return 0 end
+        if VgF.GetValueType(val)~="number" then return 0 end
         local c=e:GetHandler()
         local m=c:GetOriginalCode()
         local cm=_G["c"..m]
         if chk==0 then
             if e:IsHasType(EFFECT_TYPE_ACTIVATE) then
-                cm.cos_g=Duel.GetMatchingGroup(Card.IsFaceup,tp,LOCATION_DAMAGE,0,nil)
-                cm.cos_val={nil,num,num}
+                cm.cos_from={LOCATION_DAMAGE}
+                cm.cos_to={LOCATION_DROP}
+                cm.cos_val={val}
+                cm.cos_val_max={val}
+                cm.cos_filter={Card.IsFaceup}
             end
-            return VgF.IsExistingMatchingCard(Card.IsFaceup,tp,LOCATION_DAMAGE,0,num,nil)
+            return VgF.IsExistingMatchingCard(Card.IsFaceup,tp,LOCATION_DAMAGE,0,val,nil)
         end
         Duel.Hint(HINT_SELECTMSG,tp,HINTMSG_DAMAGE)
-        local g=Duel.SelectMatchingCard(tp,Card.IsFaceup,tp,LOCATION_DAMAGE,0,num,num,nil)
+        local g=Duel.SelectMatchingCard(tp,Card.IsFaceup,tp,LOCATION_DAMAGE,0,val,val,nil)
         Duel.ChangePosition(g,POS_FACEDOWN_ATTACK)
         return Duel.GetOperatedGroup():GetCount()
     end
@@ -714,6 +729,97 @@ function VgF.CheckGroupRecursiveCapture(c,sg,bg,f,min,max,ext_params)
 	end
 	sg=sg-c
 	return res
+end
+function Group.SelectSubGroup(g,tp,f,cancelable,min,max,...)
+	VgF.SubGroupCaptured=Group.CreateGroup()
+	min=min or 1
+	max=max or #g
+	local ext_params={...}
+	local sg=Group.CreateGroup()
+	local fg=Duel.GrabSelectedCard()
+	if #fg>max or min>max or #(g+fg)<min then return nil end
+	for tc in VgF.Next(fg) do
+		fg:SelectUnselect(sg,tp,false,false,min,max)
+	end
+	sg:Merge(fg)
+	local finish=(#sg>=min and #sg<=max and f(sg,...))
+	while #sg<max do
+		local cg=Group.CreateGroup()
+		local eg=g:Clone()
+		for c in VgF.Next(g-sg) do
+			if not cg:IsContains(c) then
+				if VgF.CheckGroupRecursiveCapture(c,sg,eg,f,min,max,ext_params) then
+					cg:Merge(VgF.SubGroupCaptured)
+				else
+					eg:RemoveCard(c)
+				end
+			end
+		end
+		cg:Sub(sg)
+		finish=(#sg>=min and #sg<=max and f(sg,...))
+		if #cg==0 then break end
+		local cancel=not finish and cancelable
+		local tc=cg:SelectUnselect(sg,tp,finish,cancel,min,max)
+		if not tc then break end
+		if not fg:IsContains(tc) then
+			if not sg:IsContains(tc) then
+				sg:AddCard(tc)
+				if #sg==max then finish=true end
+			else
+				sg:RemoveCard(tc)
+			end
+		elseif cancelable then
+			return nil
+		end
+	end
+	if finish then
+		return sg
+	else
+		return nil
+	end
+end
+function Group.SelectDoubleSubGroup(g,p,f1,int_min1,int_max1,f2,int_min2,int_max2,except_g,...)
+    if VgF.GetValueType(f1)~="function" then f1=VgF.True end
+    if VgF.GetValueType(f2)~="function" then f2=VgF.True end
+    local result=Group.CreateGroup()
+    local g1=g:Filter(f1,except_g,...)
+    local g2=g:Filter(f2,except_g,...)
+    local g3=Group.__band(g1,g2)
+    if g:GetCount()<int_min1+int_min2 or g1:GetCount()<int_min1 or g2:GetCount()<int_min2 then return result end
+	if g1:GetCount()<int_max1 then int_max1=g1:GetCount() end
+	if g2:GetCount()<int_max2 then int_max2=g2:GetCount() end
+    if g3:GetCount()==g2:GetCount() and g3:GetCount()==g1:GetCount() then
+        local min=int_min1+int_min2
+        local max=int_max1+int_max2
+        return g3:SelectSubGroup(p,vgf.True,false,min,max)
+    end
+    local result1=Group.CreateGroup()
+    local result2=Group.CreateGroup()
+    while result1:GetCount()<int_max1 do
+        local sg=Group.__sub(g1,result1)
+        local check_group=Group.__sub(g2,result1)
+        for tc in VgF.Next(Group.__sub(g1,result1)) do
+            if g3:IsContains(tc) and not check_group:IsExists(VgF.True,int_min2,tc) then sg:RemoveCard(tc) end
+        end
+		local btok=false
+		if result1:GetCount()>=int_min1 then btok=true end
+        local tc=sg:SelectUnselect(result1,p,btok,false,int_min1,int_max1)
+        if not tc then break
+        elseif result1:IsContains(tc) then result1:RemoveCard(tc)
+        else result1:AddCard(tc) end
+    end
+    g2:Sub(result1)
+    while result2:GetCount()<int_max2 do
+        local sg=Group.__sub(g2,result2)
+		local btok=false
+		if result2:GetCount()>=int_min2 then btok=true end
+        local tc=sg:SelectUnselect(result2,p,btok,false,int_min2,int_max2)
+        if not tc then break
+        elseif result2:IsContains(tc) and not result1:IsContains(tc) then result2:RemoveCard(tc)
+        else result2:AddCard(tc) end
+    end
+    result=Group.__add(result1,result2)
+    return result
 end
 ---返回p场上的先导者。
 ---@param p integer 要获取先导者的玩家。不合法则返回nil。
@@ -819,7 +925,7 @@ function VgF.EffectResetOperation(e,tp,eg,ep,ev,re,r,rp)
     e:Reset()
 end
 function VgF.IsExistingMatchingCard(f,tp,loc_self,loc_op,int,except_g,...)
-    return VgF.GetMatchingGroupCount(f,tp,loc_self,loc_op,except_g,...)>int
+    return VgF.GetMatchingGroupCount(f,tp,loc_self,loc_op,except_g,...)>=int
 end
 function VgF.SelectMatchingCard(hintmsg,e,select_tp,f,tp,loc_self,loc_op,int_min,int_max,except_g,...)
     local a=false
@@ -1035,4 +1141,21 @@ function VgF.DarkWing(e)
         return c:GetLevel()%2==0
     end,tp,LOCATION_REMOVED,0,1,nil)
     return (a and not b) or Duel.IsPlayerAffectedByEffect(tp,AFFECT_CODE_BOTH_WING)
+end
+
+function VgF.AddRideMaterialSetCardCheck(c,m,...)
+    local cm=_G["c"..m]
+    cm.ride_material_setcard_chk={...}
+end
+function VgF.AddRideMaterialCodeCheck(c,m,...)
+    local cm=_G["c"..m]
+    cm.ride_material_code_chk={...}
+end
+function VgF.AddRideMaterialSetCard(c,m,...)
+    local cm=_G["c"..m]
+    cm.ride_setcard={...}
+end
+function VgF.AddRideMaterialCode(c,m,...)
+    local cm=_G["c"..m]
+    cm.ride_code={...}
 end

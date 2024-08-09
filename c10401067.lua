@@ -5,14 +5,15 @@ function cm.initial_effect(c)
 --通过【费用】[使用1张以上的你希望的张数的卡进行计数爆发]施放！
 --由于这个费用支付的计数爆发1每有1张，选择对手的1张后防者，退场。
 	vgd.SpellActivate(c,m,cm.op,cm.cost)
+	cm.cos_from={LOCATION_DAMAGE}
+	cm.cos_to={"POSCHANGE"}
+	cm.cos_val={1}
+	cm.cos_val_max={100}
+	cm.cos_filter={Card.IsFaceup}
 end
 function cm.cost(e,tp,eg,ep,ev,re,r,rp,chk)
 	local ct=vgf.GetMatchingGroupCount(Card.IsFaceup,tp,LOCATION_DAMAGE,0,nil)
 	if chk==0 then
-		if e:IsHasType(EFFECT_TYPE_ACTIVATE) then
-			cm.cos_g=Duel.GetMatchingGroup(Card.IsFaceup,tp,LOCATION_DAMAGE,0,nil)
-			cm.cos_val={nil,1,ct}
-		end
 		return vgf.IsExistingMatchingCard(Card.IsFaceup,tp,LOCATION_DAMAGE,0,1,nil)
 	end
 	local g=vgf.SelectMatchingCard(HINTMSG_DAMAGE,e,tp,Card.IsFaceup,tp,LOCATION_DAMAGE,0,1,ct,nil)
