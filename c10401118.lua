@@ -4,12 +4,13 @@ local cm,m,o=GetID()
 --抽1张卡，将这张卡放置到灵魂里，计数回充1。
 function cm.initial_effect(c)
 	vgf.VgCard(c)
-	vgd.SpellActivate(c,m,cm.operation,cm.cost)
-	cm.cos_from={LOCATION_MZONE}
-	cm.cos_to={LOCATION_DROP}
-	cm.cos_val={2}
-	cm.cos_val_max={2}
-	cm.cos_filter={vgf.RMonsterFilter}
+	vgd.SpellActivate(c,m,cm.op,cm.cost)
+	VgF.AddMixCostGroupFrom(c,m,"LOCATION_MZONE")
+	VgF.AddMixCostGroupTo(c,m,"LOCATION_DROP")
+	VgF.AddMixCostGroupFilter(c,m,vgf.RMonsterFilter)
+	VgF.AddMixCostGroupCountMin(c,m,2)
+	VgF.AddMixCostGroupCountMax(c,m,2)
+	
 end
 function cm.cost(e,tp,eg,ep,ev,re,r,rp,chk)
 	if chk==0 then return vgf.IsExistingMatchingCard(vgf.RMonsterFilter,tp,LOCATION_MZONE,0,2,nil) end

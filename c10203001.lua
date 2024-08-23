@@ -2,6 +2,8 @@ local cm,m,o=GetID()
 function cm.initial_effect(c)
 	vgf.VgCard(c)
 	--【永】：这张卡将要被RIDE之际，这张卡也当做「朱斯贝克 “破天黎骑”」使用。
+	vgf.AddRideMaterialCode(c,m,10406010)
+	vgf.AddRideMaterialSetCard(c,m,0x300d,0x77,0x8a,0x202)
 	--【反抗舞装】
 	vgd.EffectTypeTrigger(c,m,LOCATION_MZONE,EFFECT_TYPE_SINGLE,EVENT_BATTLED,cm.operation,nil,cm.condition)
 	--【永】【R】：这个回合中曾有你的等级3以上的先导者登场过的话，这个单位的力量+5000。

@@ -317,6 +317,11 @@ function VgF.Call(g,sumtype,tp,zone,pos,chk)
             szone=z
         end
         if szone==0x20 and Duel.GetMatchingGroupCount(VgF.VMonsterFilter,tp,LOCATION_MZONE,0,nil)>0 then
+            if VgF.VMonsterFilter(sc:GetOverlayTarget()) then
+                VgF.Sendto(0,sc,tp,POS_FACEUP,REASON_EFFECT)
+                local _,code=c:GetOriginalCode()
+                sc=Duel.CreateToken(tp,code)
+            end
             local tc=Duel.GetMatchingGroup(VgF.VMonsterFilter,tp,LOCATION_MZONE,0,nil):GetFirst()
             local mg=tc:GetOverlayGroup()
             if mg:GetCount()~=0 then
@@ -517,14 +522,13 @@ function VgF.DisCardCost(val)
         if VgF.GetValueType(val)~="number" then return 0 end
         local c=e:GetHandler()
         local m=c:GetOriginalCode()
-        local cm=_G["c"..m]
         if chk==0 then
             if e:IsHasType(EFFECT_TYPE_ACTIVATE) then
-                cm.cos_from={LOCATION_HAND}
-                cm.cos_to={LOCATION_HAND}
-                cm.cos_val={val}
-                cm.cos_val_max={val}
-                cm.cos_filter={nil}
+                VgF.AddMixCostGroupFrom(c,m,"LOCATION_HAND")
+                VgF.AddMixCostGroupTo(c,m,"LOCATION_DROP")
+                VgF.AddMixCostGroupFilter(c,m,nil)
+                VgF.AddMixCostGroupCountMin(c,m,val)
+                VgF.AddMixCostGroupCountMax(c,m,val)
             end
             return VgF.IsExistingMatchingCard(nil,tp,LOCATION_HAND,0,val,nil)
         end
@@ -541,14 +545,13 @@ function VgF.EnergyCost(val)
         if VgF.GetValueType(val)~="number" then return 0 end
         local c=e:GetHandler()
         local m=c:GetOriginalCode()
-        local cm=_G["c"..m]
         if chk==0 then
             if e:IsHasType(EFFECT_TYPE_ACTIVATE) then
-                cm.cos_from={LOCATION_EMBLEM}
-                cm.cos_to={"POSCHANGE"}
-                cm.cos_val={val}
-                cm.cos_val_max={val}
-                cm.cos_filter={function(tc) tc:IsCode(10800730) end}
+                VgF.AddMixCostGroupFrom(c,m,"LOCATION_EMBLEM")
+                VgF.AddMixCostGroupTo(c,m,"0")
+                VgF.AddMixCostGroupFilter(c,m,function(tc) tc:IsCode(10800730) end)
+                VgF.AddMixCostGroupCountMin(c,m,val)
+                VgF.AddMixCostGroupCountMax(c,m,val)
             end
             return VgF.IsExistingMatchingCard(Card.IsCode,tp,LOCATION_EMBLEM,0,val,nil,10800730)
         end
@@ -565,14 +568,13 @@ function VgF.OverlayCost(val)
         if VgF.GetValueType(val)~="number" then return 0 end
         local c=e:GetHandler()
         local m=c:GetOriginalCode()
-        local cm=_G["c"..m]
         if chk==0 then
             if e:IsHasType(EFFECT_TYPE_ACTIVATE) then
-                cm.cos_from={LOCATION_OVERLAY}
-                cm.cos_to={LOCATION_DROP}
-                cm.cos_val={val}
-                cm.cos_val_max={val}
-                cm.cos_filter={nil}
+                VgF.AddMixCostGroupFrom(c,m,"LOCATION_OVERLAY")
+                VgF.AddMixCostGroupTo(c,m,"LOCATION_DROP")
+                VgF.AddMixCostGroupFilter(c,m,nil)
+                VgF.AddMixCostGroupCountMin(c,m,val)
+                VgF.AddMixCostGroupCountMax(c,m,val)
             end
             return Duel.GetMatchingGroup(VgF.VMonsterFilter,tp,LOCATION_MZONE,0,nil,nil):GetFirst():GetOverlayCount()>=val
         end
@@ -589,14 +591,13 @@ function VgF.OverlayFill(val)
         if VgF.GetValueType(val)~="number" then return 0 end
         local c=e:GetHandler()
         local m=c:GetOriginalCode()
-        local cm=_G["c"..m]
         if chk==0 then
             if e:IsHasType(EFFECT_TYPE_ACTIVATE) then
-                cm.cos_from={LOCATION_DECK}
-                cm.cos_to={LOCATION_OVERLAY}
-                cm.cos_val={val}
-                cm.cos_val_max={val}
-                cm.cos_filter={nil}
+                VgF.AddMixCostGroupFrom(c,m,"LOCATION_DECK")
+                VgF.AddMixCostGroupTo(c,m,"LOCATION_OVERLAY")
+                VgF.AddMixCostGroupFilter(c,m,nil)
+                VgF.AddMixCostGroupCountMin(c,m,val)
+                VgF.AddMixCostGroupCountMax(c,m,val)
             end
             return Duel.GetFieldGroupCount(tp,LOCATION_DECK,0)>=val
         end
@@ -615,14 +616,13 @@ function VgF.DamageCost(val)
         if VgF.GetValueType(val)~="number" then return 0 end
         local c=e:GetHandler()
         local m=c:GetOriginalCode()
-        local cm=_G["c"..m]
         if chk==0 then
             if e:IsHasType(EFFECT_TYPE_ACTIVATE) then
-                cm.cos_from={LOCATION_DAMAGE}
-                cm.cos_to={LOCATION_DROP}
-                cm.cos_val={val}
-                cm.cos_val_max={val}
-                cm.cos_filter={Card.IsFaceup}
+                VgF.AddMixCostGroupFrom(c,m,"LOCATION_DAMAGE")
+                VgF.AddMixCostGroupTo(c,m,"POSCHANGE")
+                VgF.AddMixCostGroupFilter(c,m,Card.IsFaceup)
+                VgF.AddMixCostGroupCountMin(c,m,val)
+                VgF.AddMixCostGroupCountMax(c,m,val)
             end
             return VgF.IsExistingMatchingCard(Card.IsFaceup,tp,LOCATION_DAMAGE,0,val,nil)
         end
@@ -636,6 +636,10 @@ function VgF.IsCanBeCalled(c,e,tp,sumtype,pos,zone)
     if VgF.GetValueType(zone)~="number" then zone=VgF.GetAvailableLocation(tp) end
     if VgF.GetValueType(sumtype)~="number" then sumtype=0 end
     if VgF.GetValueType(pos)~="number" then pos=POS_FACEUP_ATTACK end
+    if zone==0x20 and VgF.VMonsterFilter(c:GetOverlayTarget()) then
+        local _,code=c:GetOriginalCode()
+        return Duel.IsPlayerCanSpecialSummonMonster(tp,code,nil,TYPE_MONSTER+TYPE_EFFECT,c:GetBaseAttack(),c:GetBaseDefense(),c:GetOriginalLevel(),c:GetOriginalRace(),c:GetOriginalAttribute())
+    end
     return zone>0 and c:IsCanBeSpecialSummoned(e,sumtype,tp,false,false,pos,tp,zone)
 end
 ---用于效果的Operation。执行“从loc_from中选取最少int_min，最多int_max张满足f的卡，送去loc_to。”。
@@ -998,11 +1002,12 @@ end
 ---@param sg integer 要操作的卡|卡片组。
 ---@return number 具体操作的卡的数量
 function VgF.Sendto(loc,sg,...)
-    local function AddOverlayGroup(g)
+    local ext_params={...}
+    local function AddOverlayGroup(g,o_loc)
         for tc in VgF.Next(g) do
             if tc:GetOverlayCount()>0 then
                 local mg=tc:GetOverlayGroup()
-                g:Merge(mg)
+                VgF.Sendto(o_loc,mg,table.unpack(ext_params))
             end
         end
     end
@@ -1014,7 +1019,7 @@ function VgF.Sendto(loc,sg,...)
     else return 0
     end
     if loc==LOCATION_DROP then
-        AddOverlayGroup(g)
+        AddOverlayGroup(g,LOCATION_DROP)
         local function repfilter(c,tp)
             return c:IsControler(tp) and (c:IsLocation(LOCATION_GZONE) or VgF.RMonsterFilter(c)) and c:IsType(TYPE_MONSTER) and c:GetLevel()%2==1
         end
@@ -1048,23 +1053,21 @@ function VgF.Sendto(loc,sg,...)
         end
         return ct
     elseif loc==LOCATION_REMOVED then
-        AddOverlayGroup(g)
+        AddOverlayGroup(g,LOCATION_REMOVED)
         return Duel.Remove(g,...)
     elseif loc==LOCATION_EXILE then
-        AddOverlayGroup(g)
+        AddOverlayGroup(g,LOCATION_EXILE)
         return Duel.Exile(g,...)
     elseif loc==LOCATION_OVERLAY then
-        AddOverlayGroup(g)
-        local list={...}
-        local c=nil
+        AddOverlayGroup(g,LOCATION_OVERLAY)
         local ct=0
-        if #list>0 then
-            c=list[1]
+        if #ext_params>0 then
+            local c=ext_params[1]
             Duel.Overlay(c,g)
             ct=Duel.GetOperatedGroup():GetCount()
         else
             for tp=0,1 do
-                c=VgF.GetVMonster(tp)
+                local c=VgF.GetVMonster(tp)
                 local og=g:Filter(Card.IsControler,nil,tp)
                 if og:GetCount()>0 then
                     Duel.Overlay(c,og)
@@ -1074,47 +1077,16 @@ function VgF.Sendto(loc,sg,...)
         end
         return ct
     elseif loc==LOCATION_TRIGGER then
-        AddOverlayGroup(g)
-        local list={...}
-        local move_tp=list[1]
-        local target_tp=list[2]
-        local pos=list[3]
-        local enable=list[4]
         local ct=0
         for tc in VgF.Next(g) do
-            if Duel.MoveToField(tc,move_tp,target_tp,loc,pos,enable) then ct=ct+1 end
+            if Duel.MoveToField(tc,table.unpack(ext_params)) then ct=ct+1 end
         end
         return ct
     elseif loc==LOCATION_MZONE then
-        local list={...}
-        local sumtype=list[1]
-        local tp=list[2]
-        local zone=nil
-        if #list>2 then
-            zone=list[3]
-        end
-        local pos=nil
-        if #list>3 then
-            pos=list[4]
-        end
-        local chk=1
-        if #list>4 then
-            chk=list[5]
-        end
-        return VgF.Call(g,sumtype,tp,zone,pos,chk)
-    elseif bit.band(loc,0xf800)>0 then
-        AddOverlayGroup(g)
-        local list={...}
-        local tp=list[1]
-        local pos=list[2]
-        local reason=list[3]
-        if #list>=4 then
-            local seq=list[4]
-            Duel.Sendto(g,tp,loc,pos,reason,seq)
-            local return_group=Duel.GetOperatedGroup()
-            return return_group:GetCount()
-        end
-        Duel.Sendto(g,tp,loc,pos,reason)
+        return VgF.Call(g,table.unpack(ext_params))
+    elseif bit.band(loc,0xf800)>0 or loc==0 then
+        AddOverlayGroup(g,loc)
+        Duel.Sendto(g,table.unpack(ext_params))
         local return_group=Duel.GetOperatedGroup()
         return return_group:GetCount()
     end
@@ -1158,4 +1130,43 @@ end
 function VgF.AddRideMaterialCode(c,m,...)
     local cm=_G["c"..m]
     cm.ride_code={...}
+end
+function VgF.AddMixCostGroupFrom(c,m,...)
+    local cm=_G["c"..m]
+    cm.cos_from={...}
+end
+function VgF.AddMixCostGroupTo(c,m,...)
+    local cm=_G["c"..m]
+    cm.cos_to={...}
+end
+function VgF.AddMixCostGroupCountMin(c,m,...)
+    local cm=_G["c"..m]
+    cm.cos_val={...}
+end
+function VgF.AddMixCostGroupCountMax(c,m,...)
+    local cm=_G["c"..m]
+    cm.cos_val_max={...}
+end
+function VgF.AddMixCostGroupFilter(c,m,...)
+    local cm=_G["c"..m]
+    cm.cos_filter={...}
+end
+function VgF.ShiftLocationFromString(str)
+    local loc=0
+    if str=="POSCHANGE" then return str end
+    for i=1,13 do
+        if str==LOCATION_LIST_STRING[i] then
+            loc=LOCATION_LIST[i]
+            break
+        end
+    end
+    return loc
+end
+
+function table.copy(copy,original)
+    copy={}
+    if VgF.GetValueType(original)~="table" then return end
+    for i = 1, #original do
+        table.insert(copy, original[i])
+    end
 end
