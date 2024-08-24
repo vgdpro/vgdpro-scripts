@@ -92,11 +92,13 @@ SKILL_DEBRIS	    =0x40		--结晶碎片
 --触发类型          --种族
 TRIGGER_ALL			=0x3ffffff	--All
 TRIGGER_NONE		    =0x1		--无
-TRIGGER_CRITICAL_STRIKE=0x2		--暴击触发
+TRIGGER_CRITICAL_STRIKE =0x2		--暴击触发
 TRIGGER_DRAW			=0x4		--抽牌触发
 TRIGGER_HEAL			=0x8		--治愈触发
-TRIGGER_ADVANCE		=0x10		--前列触发
+TRIGGER_ADVANCE		    =0x10		--前列触发
 TRIGGER_SUPER		    =0x20		--超限触发
+--组合类型
+TRIGGER_CARDS           =0x3e       --触发单位卡
 --Category	效果分类
 CATEGORY_DEFENDER       =0x1		--守护者
 --Reason 卡片到当前位置的原因

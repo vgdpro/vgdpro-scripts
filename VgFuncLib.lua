@@ -1151,6 +1151,11 @@ function VgF.AddMixCostGroupFilter(c,m,...)
     local cm=_G["c"..m]
     cm.cos_filter={...}
 end
+function VgF.AddEffectWhenTrigger(c,m,op,cost,con,tg)
+    local cm=_G["c"..m]
+    cm.effect_when_trigger={op,cost,con,tg}
+end
+
 function VgF.ShiftLocationFromString(str)
     local loc=0
     if str=="POSCHANGE" then return str end

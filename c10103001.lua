@@ -3,7 +3,7 @@ local cm,m,o=GetID()
 function cm.initial_effect(c)
     vgf.VgCard(c)
     --【自】【V】【1回合1次】：你的攻击判定将等级3的卡判出的战斗结束时，通过【费用】[将手牌中的1张卡舍弃]，选择你的1张后防者，重置，这个回合中，那个单位的力量+10000。
-    vgd.EffectTypeTrigger(c,m,LOCATION_MZONE,EFFECT_TYPE_FIELD,EVENT_BATTLED,cm.operation,vgf.DisCardCost(1),cm.condition,nil,1,EFFECT_FLAG_DAMAGE_STEP)
+    vgd.EffectTypeTrigger(c,m,LOCATION_MZONE,EFFECT_TYPE_FIELD,EVENT_BATTLED,cm.operation,vgf.DisCardCost(1),cm.condition,nil,1)
     if not cm.global_check then
         cm.global_check=true
         local ge1=Effect.CreateEffect(c)
@@ -25,7 +25,7 @@ function cm.initial_effect(c)
     c:RegisterEffect(e1)
 end
 function cm.checkfilter(c,tp)
-    return c:IsLocation(LOCATION_TRIGGER) and c:IsLevel(3) and c:IsControler(tp) and Duel.GetTurnPlayer()==tp
+    return c:IsLocation(LOCATION_TRIGGER) and c:IsLevel(3) and c:IsControler(tp)
 end
 function cm.checkcon(e,tp,eg,ep,ev,re,r,rp)
     return eg:IsExists(cm.checkfilter,1,nil,tp) and Duel.GetTurnPlayer()==tp and Duel.GetAttackTarget()
