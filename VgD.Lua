@@ -811,8 +811,8 @@ function VgD.SpellActivate(c,m,op,cost,con)
     e1:SetType(EFFECT_TYPE_ACTIVATE)
     e1:SetCode(EVENT_FREE_CHAIN)
     e1:SetCost(VgD.MixCost(cost))
-    --e1:SetCondition(VgD.SpellCondtion(con))
-    --e1:SetTarget(VgD.SpellTarget)
+    e1:SetCondition(VgD.SpellCondtion(con))
+    e1:SetTarget(VgD.SpellTarget)
     e1:SetOperation(VgD.SpellOperation(op))
     c:RegisterEffect(e1)
 end
@@ -820,8 +820,7 @@ function VgD.MixCostFilter(c,e,tp,eg,ep,ev,re,r,rp,mc,chk)
     if Duel.IsPlayerAffectedByEffect(tp,AFFECT_CODE_MIX_DIFFERENT_NAME) and c:IsCode(mc:GetCode()) then return false end
     local ce = c:GetActivateEffect()
     if not ce or (ce:GetCost() and not ce:GetCost()(e,tp,eg,ep,ev,re,r,rp,0)) then return false end
-    --c.cos_from, c.cos_to, c.cos_filter, c.cos_val
-    local cfrom, cval, cfilter, mcfrom, mcval, mcfilter={}, {}, {}, {}, {}, {}
+    local cfrom, cval, cfilter, mcfrom, mcval, mcfilter
     table.copy(cfrom,c.cos_from)
     table.copy(cval,c.cos_val)
     table.copy(cfilter,c.cos_filter)
@@ -862,16 +861,15 @@ function VgD.MixCostFilter(c,e,tp,eg,ep,ev,re,r,rp,mc,chk)
         end
     elseif #mcfrom>0 and not chk then return false
     end
-    return true--VgF.LvCondition(c)
+    return VgF.LvCondition(c)
 end
 function VgD.MixCost(cost)
 	return function(e,tp,eg,ep,ev,re,r,rp,chk)
 		local c=e:GetHandler()
         local chk_return=VgF.GetValueType(cost)~="function" or cost(e,tp,eg,ep,ev,re,r,rp,0)
 		if chk==0 then return chk_return end
-		if --[[Duel.IsPlayerAffectedByEffect(tp,AFFECT_CODE_MIX) and]] VgF.IsExistingMatchingCard(VgD.MixCostFilter,tp,LOCATION_DROP,0,1,nil,e,tp,eg,ep,ev,re,r,rp,c,chk_return) and Duel.SelectYesNo(tp,VgF.Stringid(VgID,6)) then
+		if Duel.IsPlayerAffectedByEffect(tp,AFFECT_CODE_MIX) and VgF.IsExistingMatchingCard(VgD.MixCostFilter,tp,LOCATION_DROP,0,1,nil,e,tp,eg,ep,ev,re,r,rp,c,chk_return) and Duel.SelectYesNo(tp,VgF.Stringid(VgID,6)) then
 			local bc=Duel.SelectMatchingCard(tp,VgD.MixCostFilter,tp,LOCATION_DROP,0,1,1,nil,e,tp,eg,ep,ev,re,r,rp,c,chk_return):GetFirst()
-            --if VgF.GetValueType(cost)=="function" then cost(e,tp,eg,ep,ev,re,r,rp) end
             if bc then
                 VgF.Sendto(LOCATION_LOCK,bc,POS_FACEUP,REASON_COST)
                 e:SetLabelObject(bc)
