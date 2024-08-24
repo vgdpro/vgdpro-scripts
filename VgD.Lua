@@ -1071,10 +1071,10 @@ function VgD.EffectTypeTrigger(c,m,loc,typ,code,op,cost,con,tg,count,property,st
     if VgF.GetValueType(cost)=="function" then type2=EFFECT_TYPE_TRIGGER_O end
     if not typ then typ=EFFECT_TYPE_SINGLE end
     if not loc then loc=LOCATION_MZONE end
-    if not stringid then stringid=0 end
+    if not stringid then stringid=1 end
     if not property then property=0 end
     local e1=Effect.CreateEffect(c)
-    e1:SetDescription(VgF.Stringid(m,stringid))
+    e1:SetDescription(VgF.Stringid(VgID+1,stringid))
     e1:SetType(typ+type2)
     if VgF.GetValueType(loc)=="number" then e1:SetRange(loc) end
     e1:SetCode(code)
@@ -1100,7 +1100,7 @@ function VgD.EffectTypeIgnition(c,m,loc,op,cost,con,tg,count,property,stringid)
     if not loc then loc=LOCATION_MZONE end
     if not stringid then stringid=1 end
     local e1=Effect.CreateEffect(c)
-    e1:SetDescription(VgF.Stringid(m,stringid))
+    e1:SetDescription(VgF.Stringid(VgID+2,stringid))
     e1:SetType(EFFECT_TYPE_IGNITION)
     e1:SetRange(loc)
     if property and property>0 then e1:SetProperty(property) end
