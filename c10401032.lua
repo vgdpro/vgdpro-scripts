@@ -9,7 +9,7 @@ vgd.EffectTypeIgnition(c,m,LOCATION_MZONE,cm.operation,vgf.DamageCost(2),cm.cond
 end
 function cm.condition(e,tp,eg,ep,ev,re,r,rp)
 	local c=e:GetHandler()
-	return not(c:IsSummonType(SUMMON_TYPE_RIDE) or c:IsSummonType(SUMMON_TYPE_SELFRIDE)) and vgf.GetVMonster(tp):IsCode(10401003)
+	return vgf.RMonsterCondition(e) and vgf.GetVMonster(tp):IsCode(10401003)
 end
 function cm.condition1(e,tp,eg,ep,ev,re,r,rp)
 	local c=e:GetHandler()

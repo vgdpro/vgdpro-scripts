@@ -5,7 +5,7 @@ function cm.initial_effect(c)
 end
 function cm.con(e,tp,eg,ep,ev,re,r,rp)
     local c=e:GetHandler()
-    return not c:IsPreviousLocation(LOCATION_HAND) and not (c:IsSummonType(SUMMON_TYPE_RIDE) or c:IsSummonType(SUMMON_TYPE_SELFRIDE))
+    return not c:IsPreviousLocation(LOCATION_HAND) and vgf.RSummonCondition(e)
 end
 --对手要从手牌将卡CALL到G上之际，不将2张以上同时CALL的话则不能CALL出场。
 function cm.op(e,tp,eg,ep,ev,re,r,rp)

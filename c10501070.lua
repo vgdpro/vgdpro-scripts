@@ -8,13 +8,8 @@ end
 function cm.con(e,tp,eg,ep,ev,re,r,rp)
     local c = e:GetHandler()
     local ph = Duel.GetCurrentPhase() 
-    return not cm.condition(e,tp,eg,ep,ev,re,r,rp) and (ph>=PHASE_BATTLE_START and ph<=PHASE_BATTLE) and Duel.GetTurnPlayer() == tp
+    return vgf.RSummonCondition(e) and (ph>=PHASE_BATTLE_START and ph<=PHASE_BATTLE) and Duel.GetTurnPlayer() == tp
 end
-function cm.condition(e,tp,eg,ep,ev,re,r,rp)
-    local c=e:GetHandler()
-    return c:IsSummonType(SUMMON_TYPE_RIDE) or c:IsSummonType(SUMMON_TYPE_SELFRIDE)
-end
-
 function cm.op(e,tp,eg,ep,ev,re,r,rp)
     Duel.Draw(tp,1,REASON_EFFECT)
 end

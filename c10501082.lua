@@ -23,7 +23,7 @@ function cm.initial_effect(c)
 		return tc:IsLevelBelow(1) and vgf.RMonsterFilter(tc)
 	end)
     c:RegisterEffect(e2)
-	vgd.EffectTypeTrigger(c,m,nil,EFFECT_TYPE_SINGLE,EVENT_SPSUMMON_SUCCESS,cm.op,nil,cm.con1)
+	vgd.EffectTypeTrigger(c,m,nil,EFFECT_TYPE_SINGLE,EVENT_SPSUMMON_SUCCESS,cm.op,nil,vgf.VSummonCondition)
 end
 function cm.con(e,tp,eg,ep,ev,re,r,rp)
     local a=vgf.IsExistingMatchingCard(cm.filter1,tp,LOCATION_LOCK,0,1,nil)
@@ -36,10 +36,6 @@ function cm.filter1(c)
 end
 function cm.filter2(c)
     return c:GetLevel()%2==0
-end
-function cm.con1(e,tp,eg,ep,ev,re,r,rp)
-	local c=e:GetHandler()
-	return c:IsSummonType(SUMMON_TYPE_RIDE) or c:IsSummonType(SUMMON_TYPE_SELFRIDE)
 end
 function cm.op(e,tp,eg,ep,ev,re,r,rp)
 	local g=Duel.GetDecktopGroup(tp,1)

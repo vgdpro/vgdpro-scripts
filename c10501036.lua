@@ -15,7 +15,7 @@ end
 function cm.con2(e)
     local c=e:GetHandler()
     local g=c:GetMaterial()
-	return (c:IsSummonType(SUMMON_TYPE_RIDE) or c:IsSummonType(SUMMON_TYPE_SELFRIDE)) and g:IsExists(Card.IsCode,1,nil,10501090)
+	return vgf.VSummonCondition(e) and g:IsExists(Card.IsCode,1,nil,10501090)
 end
 function cm.operation(e,tp,eg,ep,ev,re,r,rp)
     local g=Duel.GetDecktopGroup(tp,7)

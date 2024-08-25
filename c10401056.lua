@@ -5,7 +5,7 @@ function cm.initial_effect(c)
 end
 function cm.con(e,tp,eg,ep,ev,re,r,rp)
 	local c=e:GetHandler()
-	return not(c:IsSummonType(SUMMON_TYPE_RIDE) or c:IsSummonType(SUMMON_TYPE_SELFRIDE))
+	return vgf.RSummonCondition(e)
 		and vgf.IsExistingMatchingCard(cm.filter,tp,LOCATION_MZONE,0,1,nil)
 end
 function cm.op(e,tp,eg,ep,ev,re,r,rp)

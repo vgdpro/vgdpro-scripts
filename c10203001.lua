@@ -29,7 +29,7 @@ function cm.filter(c,e,tp)
 	return c:IsSetCard(0x76) and vgf.IsCanBeCalled(c,e,tp)
 end
 function cm.checkfilter(c)
-	return (c:IsSummonType(SUMMON_TYPE_SELFRIDE) or c:IsSummonType(SUMMON_TYPE_RIDE)) and c:IsLevelAbove(3)
+	return vgf.IsSummonTypeV(c) and c:IsLevelAbove(3)
 end
 function cm.checkcon(e,tp,eg,ep,ev,re,r,rp)
     return eg:IsExists(cm.checkfilter,1,nil)

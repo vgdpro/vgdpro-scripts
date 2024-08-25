@@ -825,7 +825,7 @@ end
 ---@param m integer 指示脚本的整数。cxxx的脚本应填入xxx。cm的脚本应填入m。
 ---@param op function|nil 作为指令卡的效果
 ---@param con function|nil 作为指令卡的发动条件
----@param cost any|nil 作为指令卡的发动费用
+---@param cost function|nil 作为指令卡的发动费用
 function VgD.SpellActivate(c,m,op,cost,con)
     local e1=Effect.CreateEffect(c)
     e1:SetDescription(VgF.Stringid(m, 0))
@@ -953,8 +953,7 @@ function VgD.MixCostOperation(c,bc,e,tp)
     for i=1,#g_from do
         local tg_from=VgF.ShiftLocationFromString(g_from[i])
         local tg_to=VgF.ShiftLocationFromString(g_to[i])
-        local tg=Duel.GetMatchingGroup(nil,tp,tg_from,0,except_group)
-        if tg:GetCount()==0 then goto continue end
+        local tg=VgF.GetMatchingGroup(nil,tp,tg_from,0,except_group)
         local tg_filter_c=g_filter_c[i]
         local tg_filter_bc=g_filter_bc[i]
         local tg_val_c=g_val_c[i]
@@ -963,6 +962,8 @@ function VgD.MixCostOperation(c,bc,e,tp)
         local tg_val_bc_max=g_val_bc_max[i]
         local hintmsg=HINTMSG_SELECT
         local ext_params={}
+        if tg_from==LOCATION_OVERLAY and Duel.IsPlayerAffectedByEffect(tp,AFFECT_CODE_OVERLAY_COST_FREE_WHEN_MIX) and Duel.SelectYesNo(tp,VgF.Stringid(10401023,1)) then tg_val_c,tg_val_bc=0,0 end
+        if tg:GetCount()<tg_val_c+tg_val_bc then goto continue end
         if VgF.GetValueType(tg_to)=="number" then
             if tg_to==LOCATION_DROP then
                 if tg_from==LOCATION_MZONE then

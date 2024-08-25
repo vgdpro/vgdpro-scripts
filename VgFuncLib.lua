@@ -196,6 +196,23 @@ end
 function VgF.VMonsterCondition(e)
     return VgF.VMonsterFilter(e:GetHandler())
 end
+
+function VgF.VSummonCondition(e)
+    local c=e:GetHandler()
+    return VgF.IsSummonTypeV(c)
+end
+
+function VgF.RSummonCondition(e)
+    return not VgF.VSummonCondition(e)
+end
+
+function VgF.IsSummonTypeV(c)
+    return c:IsSummonType(SUMMON_TYPE_RIDE) or c:IsSummonType(SUMMON_TYPE_SELFRIDE)
+end
+
+function VgF.IsSummonTypeR(c)
+    return not VgF.IsSummonTypeV(c)
+end
 ---判断c是否在当前区域的某（几）个编号上
 ---@param c Card 要判断的卡
 ---@param ... integer 编号
@@ -954,6 +971,16 @@ function VgF.SelectMatchingCard(hintmsg,e,select_tp,f,tp,loc_self,loc_op,int_min
         loc_op=loc_op-LOCATION_MZONE
         if g1:GetCount()>0 then g:Merge(g1) end
     end
+    if bit.band(loc_self,LOCATION_OVERLAY)>0 then
+        local g1=VgF.GetVMonster(tp):GetOverlayGroup()
+        loc_self=loc_self-LOCATION_OVERLAY
+        if g1:GetCount()>0 then g:Merge(g1) end
+    end
+    if bit.band(loc_op,LOCATION_OVERLAY)>0 then
+        local g1=VgF.GetVMonster(1-tp):GetOverlayGroup()
+        loc_op=loc_op-LOCATION_OVERLAY
+        if g1:GetCount()>0 then g:Merge(g1) end
+    end
     if loc_self>0 or loc_op>0 then
         local g1=Duel.GetMatchingGroup(nil,tp,loc_self,loc_op,nil)
         if g1:GetCount()>0 then g:Merge(g1) end
@@ -986,6 +1013,16 @@ function VgF.GetMatchingGroup(f,tp,loc_self,loc_op,except_g,...)
     if bit.band(loc_op,LOCATION_MZONE)>0 then
         local g1=Duel.GetMatchingGroup(Card.IsFaceup,tp,0,LOCATION_MZONE,nil)
         loc_op=loc_op-LOCATION_MZONE
+        if g1:GetCount()>0 then g:Merge(g1) end
+    end
+    if bit.band(loc_self,LOCATION_OVERLAY)>0 then
+        local g1=VgF.GetVMonster(tp):GetOverlayGroup()
+        loc_self=loc_self-LOCATION_OVERLAY
+        if g1:GetCount()>0 then g:Merge(g1) end
+    end
+    if bit.band(loc_op,LOCATION_OVERLAY)>0 then
+        local g1=VgF.GetVMonster(1-tp):GetOverlayGroup()
+        loc_op=loc_op-LOCATION_OVERLAY
         if g1:GetCount()>0 then g:Merge(g1) end
     end
     if loc_self>0 or loc_op>0 then

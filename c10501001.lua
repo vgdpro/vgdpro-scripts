@@ -9,7 +9,7 @@ end
 function cm.con2(e)
     local c=e:GetHandler()
     local g=c:GetMaterial()
-    return (c:IsSummonType(SUMMON_TYPE_RIDE) or c:IsSummonType(SUMMON_TYPE_SELFRIDE)) and g:IsExists(Card.IsCode,1,nil,10501036)
+    return vgf.VSummonCondition(e) and g:IsExists(Card.IsCode,1,nil,10501036)
 end
 function cm.filter(c)
     return c:IsCode(10501021)
