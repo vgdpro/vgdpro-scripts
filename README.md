@@ -441,9 +441,9 @@ vgf.SearchCard(loc_to, loc_from, f[, int_max, int_min])
 > 
 > **f : 过滤函数 `即：找什么样的卡`**
 > 
-> **int_max : 找至多几张卡 `填nil|不填则为1张`**
+> **int_max : 找至多几张卡 `填nil | 不填则为1张`**
 > 
-> **int_min : 找至少几张卡 `一般用于“探寻至多x张”的字样，此时填0，填nil|不填则等同于int_max`**
+> **int_min : 找至少几张卡 `一般用于“探寻至多x张”的字样，此时填0，填nil | 不填则等同于int_max`**
 
 ## 3.用于行为的封装函数：力量上升
 
@@ -462,7 +462,7 @@ vgf.AtkUp(c, g, val[, reset, resetcount])
 > 
 > **reset : 力量上升重置时点 `因为客户端底层缺陷，部分重置时点需其他函数辅助，详情见下文4`**
 > 
-> **resetcount : 每经过一次reset时点，resetcount数值减少1，为0便重置 `填nil|不填则为1`**
+> **resetcount : 每经过一次reset时点，resetcount数值减少1，为0便重置 `填nil | 不填则为1`**
 
 与vgf.AtkUp相似函数的函数
 
@@ -507,9 +507,9 @@ vgf.SelectMatchingCard(hintmsg,e,select_tp,f,tp,loc_self,loc_op,int_min,int_max,
 > 
 > **f : 过滤函数 `即：选择什么样的卡`**
 > 
-> **tp|loc_self|loc_op : 以tp的视角来看，tp的loc_self区域和，tp对手的loc_op区域**
+> **tp | loc_self | loc_op : 以tp的视角来看，tp的loc_self区域和，tp对手的loc_op区域**
 > 
-> **int_min|int_max : 选最少int_min张最多int_max张卡**
+> **int_min | int_max : 选最少int_min张最多int_max张卡**
 > 
 > **except_g : 选择except_g以外的卡**
 > 
@@ -550,13 +550,13 @@ vgf..Sendto(loc,sg,...)
 > 
 > **LOCATION_DECK : tp,seq,reason `seq可选SEQ_DECKTOP/SEQ_DECKBOTTOM/SEQ_DECKSHUFFLE`**
 > 
-> **LOCATION_HAND : p|nil,reason `p为送去的玩家，送去原本持有者则填nil`**
+> **LOCATION_HAND : p | nil,reason `p为送去的玩家，送去原本持有者则填nil`**
 > 
 > **LOCATION_REMOVED : pos,reason**
 > 
 > **LOCATION_EXILE : reason**
 > 
-> **LOCATION_OVERLAY : c `c为叠放的卡，不填|填nil则为先导者`**
+> **LOCATION_OVERLAY : c `c为叠放的卡，填nil | 不填则为先导者`**
 > 
 > **LOCATION_TRIGGER : tp,tp,LOCATION_FZONE,POS_FACEUP,true**
 > 
