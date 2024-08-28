@@ -431,7 +431,7 @@ end
 function VgD.TriggerCard(e,tp,eg,ep,ev,re,r,rp)
     local tg=Duel.GetDecktopGroup(tp,1)
     Duel.DisableShuffleCheck()
-    VgF.Sendto(LOCATION_TRIGGER,tg:GetFirst(),tp,tp,POS_FACEUP,true)
+    VgF.Sendto(LOCATION_TRIGGER,tg:GetFirst())
 end
 function VgD.MonsterPosDefenseOperation(e,tp,eg,ep,ev,re,r,rp)
     local c=e:GetHandler()
@@ -707,10 +707,10 @@ function VgD.CardTriggerOperation(chkop,f)
                     end)
                 end
                 if VgD.OperationWhenCardTrigger(e,tp,eg,ep,ev,re,r,rp,c,0) then
-                    table.insert(ops,VgF.Stringid(VgID+5,5))
+                    table.insert(ops,VgF.Stringid(VgID+5,6))
                     table.insert(sel,function ()
-                        VgD.OperationWhenCardTrigger(e,tp,eg,ep,ev,re,r,rp,c,1)
-                    end)
+                    return VgD.OperationWhenCardTrigger(e,tp,eg,ep,ev,re,r,rp,c,1)
+                end)
                 end
                 while #ops>0 do
                     local i=Duel.SelectOption(tp,table.unpack(ops))+1
@@ -738,8 +738,7 @@ function VgD.CardTriggerOperation(chkop,f)
 end
 
 function VgD.OperationWhenCardTrigger(e,tp,eg,ep,ev,re,r,rp,c,chk)
-    local effect_when_trigger
-    tabel.copy(effect_when_trigger,c.effect_when_trigger)
+    local effect_when_trigger=c.effect_when_trigger
     local cost,con,tg=true,true,true
     if #effect_when_trigger==0 then return end
     if (VgF.GetValueType(effect_when_trigger[5])=="boolean" and not effect_when_trigger[5]) or (VgF.GetValueType(effect_when_trigger[5])~="boolean" and Duel.GetTurnPlayer()~=c:GetControler()) then return false end
@@ -747,7 +746,7 @@ function VgD.OperationWhenCardTrigger(e,tp,eg,ep,ev,re,r,rp,c,chk)
     if VgF.GetValueType(effect_when_trigger[3])=="function" then con=effect_when_trigger[3](e,tp,eg,ep,ev,re,r,rp) end
     if VgF.GetValueType(effect_when_trigger[4])=="function" then tg=effect_when_trigger[4](e,tp,eg,ep,ev,re,r,rp,0) end
     if VgF.GetValueType(effect_when_trigger[1])=="function" and cost and con and tg then
-        if chk==0 then return true else return false end
+        if chk==0 then return true end
         local activate_chk=true
         if VgF.GetValueType(effect_when_trigger[2])=="function" then activate_chk=Duel.SelectYesNo(tp,VgF.Stringid(VgID,15)) end
         if activate_chk then
@@ -759,6 +758,7 @@ function VgD.OperationWhenCardTrigger(e,tp,eg,ep,ev,re,r,rp,c,chk)
             effect_when_trigger[1](e,tp,eg,ep,ev,re,r,rp)
         end
     end
+    return false
 end
 
 --vg规则

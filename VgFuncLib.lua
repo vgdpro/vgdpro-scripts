@@ -1,5 +1,6 @@
 VgF={}
 vgf=VgF
+bit={}
 
 ---@class Card
 ---@class Group
@@ -121,12 +122,19 @@ function VgF.GetCardsFromGroup(g,val)
         return sg
     end
 end
-bit={}
 function bit.ReturnCount(n)
     if n==0 then
         return 0
     end
     return 1+bit.ReturnCount(n&(n-1))
+end
+
+function table.copy(copy,original)
+    copy={}
+    if VgF.GetValueType(original)~="table" then return end
+    for i = 1, #original do
+        table.insert(copy, original[i])
+    end
 end
 
 ---返回对a和b进行按位与运算的结果。
@@ -1127,14 +1135,15 @@ function VgF.Sendto(loc,sg,...)
     elseif loc==LOCATION_TRIGGER then
         local ct=0
         for tc in VgF.Next(g) do
-            if Duel.MoveToField(tc,table.unpack(ext_params)) then ct=ct+1 end
+            local tp=tc:GetControler()
+            if Duel.MoveToField(tc,tp,tp,loc,POS_FACEUP,true) then ct=ct+1 end
         end
         return ct
     elseif loc==LOCATION_MZONE then
         return VgF.Call(g,table.unpack(ext_params))
     elseif bit.band(loc,0xf800)>0 or loc==0 then
         AddOverlayGroup(g,loc)
-        Duel.Sendto(g,table.unpack(ext_params))
+        Duel.Sendto(g,loc,...)
         local return_group=Duel.GetOperatedGroup()
         return return_group:GetCount()
     end
@@ -1215,14 +1224,6 @@ function VgF.ShiftLocationFromString(str)
         end
     end
     return loc
-end
-
-function table.copy(copy,original)
-    copy={}
-    if VgF.GetValueType(original)~="table" then return end
-    for i = 1, #original do
-        table.insert(copy, original[i])
-    end
 end
 
 function VgF.PlayerEffect(e,tp,eg,ep,ev,re,r,rp)
