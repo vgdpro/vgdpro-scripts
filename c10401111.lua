@@ -7,7 +7,7 @@ function cm.initial_effect(c)
 	vgd.EffectTypeIgnition(c,m,LOCATION_MZONE,cm.operation,vgf.OverlayCost(1),vgf.VMonsterCondition,nil,1)
 	--【永】【R】：这个回合中你施放过指令卡的话，这个单位的力量+2000。
 	vgd.EffectTypeContinuousChangeAttack(c,EFFECT_TYPE_SINGLE,2000,cm.con)
-	vgd.GlobalCheckEffect(c,m,EFFECT_TYPE_FIELD+EFFECT_TYPE_CONTINUOUS,EVENT_CHAINING,cm.checkcon,cm.checkop)
+	vgd.GlobalCheckEffect(c,m,EFFECT_TYPE_FIELD+EFFECT_TYPE_CONTINUOUS,EVENT_CHAINING,cm.checkcon)
 end
 function cm.operation(e,tp,eg,ep,ev,re,r,rp)
     local c=e:GetHandler()
@@ -21,9 +21,6 @@ function cm.filter(c)
 end
 function cm.checkcon(e,tp,eg,ep,ev,re,r,rp)
 	return re:IsHasType(EFFECT_TYPE_ACTIVATE) and rp==tp
-end
-function cm.checkop(e,tp,eg,ep,ev,re,r,rp)
-    Duel.RegisterFlagEffect(tp,m,RESET_PHASE+PHASE_END,0,1)
 end
 function cm.con(e,tp,eg,ep,ev,re,r,rp)
 	return Duel.GetFlagEffect(tp,m)>0 and vgf.RMonsterCondition(e)

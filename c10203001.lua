@@ -8,7 +8,7 @@ function cm.initial_effect(c)
 	vgd.EffectTypeTrigger(c,m,LOCATION_MZONE,EFFECT_TYPE_SINGLE,EVENT_BATTLED,cm.operation,nil,cm.condition)
 	--【永】【R】：这个回合中曾有你的等级3以上的先导者登场过的话，这个单位的力量+5000。
 	vgd.EffectTypeContinuousChangeAttack(c,EFFECT_TYPE_SINGLE,5000,cm.con)
-	vgd.GlobalCheckEffect(c,m,EFFECT_TYPE_FIELD+EFFECT_TYPE_CONTINUOUS,EVENT_SPSUMMON_SUCCESS,cm.checkcon,cm.checkop)
+	vgd.GlobalCheckEffect(c,m,EFFECT_TYPE_FIELD+EFFECT_TYPE_CONTINUOUS,EVENT_SPSUMMON_SUCCESS,cm.checkcon)
 end
 function cm.con(e,tp,eg,ep,ev,re,r,rp)
 	return Duel.GetFlagEffect(tp,m)>0
@@ -33,7 +33,4 @@ function cm.checkfilter(c)
 end
 function cm.checkcon(e,tp,eg,ep,ev,re,r,rp)
     return eg:IsExists(cm.checkfilter,1,nil)
-end
-function cm.checkop(e,tp,eg,ep,ev,re,r,rp)
-    Duel.RegisterFlagEffect(tp,m,RESET_PHASE+PHASE_END,0,1)
 end

@@ -4,7 +4,7 @@ function cm.initial_effect(c)--这个函数下面用于注册效果
     vgf.VgCard(c)
     -- 这个回合中你的先导者被攻击击中过的话，选择1个被攻击的单位，这次战斗中，力量+30000。
     vgd.QuickSpell(c,cm.op,nil,cm.con)
-    vgd.GlobalCheckEffect(c,m,EFFECT_TYPE_FIELD+EFFECT_TYPE_CONTINUOUS,EVENT_CUSTOM+EVENT_DAMAGE_TRIGGER,cm.checkcon,cm.checkop)
+    vgd.GlobalCheckEffect(c,m,EFFECT_TYPE_FIELD+EFFECT_TYPE_CONTINUOUS,EVENT_CUSTOM+EVENT_DAMAGE_TRIGGER,cm.checkcon)
 end
 function cm.op(e,tp,eg,ep,ev,re,r,rp)
     local c=e:GetHandler()
@@ -22,7 +22,4 @@ end
 function cm.checkcon(e,tp,eg,ep,ev,re,r,rp)
     local rc=vgf.GetVMonster(tp)
     return eg:IsContains(rc)
-end
-function cm.checkop(e,tp,eg,ep,ev,re,r,rp)
-    Duel.RegisterFlagEffect(tp,m,RESET_PHASE+PHASE_END,0,1)
 end

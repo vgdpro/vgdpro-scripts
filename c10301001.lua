@@ -3,13 +3,10 @@ function cm.initial_effect(c)
 	vgf.VgCard(c)
 	vgd.EffectTypeTrigger(c,m,LOCATION_MZONE,EFFECT_TYPE_SINGLE,EVENT_ATTACK_ANNOUNCE,cm.operation,vgf.OverlayCost(1),cm.condition)
 	vgd.EffectTypeTrigger(c,m,LOCATION_MZONE,EFFECT_TYPE_SINGLE,EVENT_BATTLED,cm.operation1,nil,cm.condition1)
-	vgd.GlobalCheckEffect(c,m,EFFECT_TYPE_FIELD+EFFECT_TYPE_CONTINUOUS,EVENT_SPSUMMON_SUCCESS,cm.checkcon,cm.checkop)
+	vgd.GlobalCheckEffect(c,m,EFFECT_TYPE_FIELD+EFFECT_TYPE_CONTINUOUS,EVENT_SPSUMMON_SUCCESS,cm.checkcon)
 end
 function cm.checkcon(e,tp,eg,ep,ev,re,r,rp)
     return eg:IsExists(Card.IsSummonType,1,nil,SUMMON_TYPE_SELFRIDE)
-end
-function cm.checkop(e,tp,eg,ep,ev,re,r,rp)
-    Duel.RegisterFlagEffect(tp,m,RESET_PHASE+PHASE_END,0,1)
 end
 function cm.condition(e,tp,eg,ep,ev,re,r,rp)
 	local c=e:GetHandler()
