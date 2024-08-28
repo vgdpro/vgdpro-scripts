@@ -429,7 +429,7 @@ vgf.VgCard(c)
 ## 2.用于行为的封装函数（仅用于operation函数）：从X1处寻找卡送去X2处
 
 ```lua
-vgf.SearchCard(loc_to, loc_from, f[, int_max, int_min])
+vgf.SearchCard(loc_to, loc_from, f[, int_max, int_min, ...])
 ```
 返回值：int 【具体操作的数量】
 
@@ -444,6 +444,8 @@ vgf.SearchCard(loc_to, loc_from, f[, int_max, int_min])
 > **int_max : 找至多几张卡 `填nil | 不填则为1张`**
 > 
 > **int_min : 找至少几张卡 `一般用于“探寻至多x张”的字样，此时填0，填nil | 不填则等同于int_max`**
+> 
+> **... : 额外参数 `如过滤函数内容为cm.filter(c,e,tp)，c为内核对函数传递的参数（即遍历到的每张卡），e,tp则需从额外参数传入`**
 
 ## 3.用于行为的封装函数：力量上升
 

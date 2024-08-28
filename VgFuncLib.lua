@@ -288,15 +288,7 @@ function VgF.GetColumnGroup(c)
     end
     return g
 end
----用于【永】效果的Value属性。判断是否是对方发动的效果。<br>
----仅有特定的Code对此函数有效，其他Code的结果未知。
----@param e Effect 要注册的效果
----@param re Effect 引发该效果的效果
----@param rp integer 发动引发该效果的效果的玩家
----@return boolean 指示是否是对方发动的效果
-function VgF.tgoval(e,re,rp)
-	return rp==1-e:GetHandlerPlayer()
-end
+
 function VgF.GetAvailableLocation(tp,zone)
     local z
     if zone then z=zone else z=0x1f end
@@ -391,17 +383,20 @@ end
 ---以c的名义，使g（中的每一张卡）的攻击力上升val，并在reset时重置。
 ---@param c Card 要使卡上升攻击力的卡
 ---@param g Card|Group 要被上升攻击力的卡
----@param val integer 要上升的攻击力（可以为负）
+---@param val integer|string 要上升的攻击力（可以为负）
 ---@param reset integer|nil 指示重置的时点，默认为“回合结束时”。无论如何，都会在离场时重置。
 function VgF.AtkUp(c,g,val,reset,resetcount)
     if not c or not g then return end
     if not resetcount then resetcount=1 end
     if not reset then reset=RESET_PHASE+PHASE_END end
-    if not val or val==0 then return end
+    if not val or (VgF.GetValueType(val)=="number" and val==0) then return end
     if VgF.GetValueType(g)=="Group" and g:GetCount()>0 then
         local e={}
         for tc in VgF.Next(g) do
             if tc:IsLocation(LOCATION_MZONE) then
+                if VgF.GetValueType(val)=="string" and val=="DOUBLE" then
+                    val=tc:GetLeftScale()
+                end
                 local e1=Effect.CreateEffect(c)
                 e1:SetType(EFFECT_TYPE_SINGLE)
                 e1:SetCode(EFFECT_UPDATE_ATTACK)
@@ -416,6 +411,9 @@ function VgF.AtkUp(c,g,val,reset,resetcount)
         local tc=g
         if tc:IsLocation(LOCATION_MZONE) then
             local tc=VgF.ReturnCard(g)
+            if VgF.GetValueType(val)=="string" and val=="DOUBLE" then
+                val=tc:GetLeftScale()
+            end
             local e1=Effect.CreateEffect(c)
             e1:SetType(EFFECT_TYPE_SINGLE)
             e1:SetCode(EFFECT_UPDATE_ATTACK)
@@ -429,17 +427,20 @@ end
 ---以c的名义，使g（中的每一张卡）的盾值上升val，并在reset时重置。
 ---@param c Card 要使卡上升盾值的卡
 ---@param g Card|Group 要被上升盾值的卡
----@param val integer 要上升的盾值（可以为负）
+---@param val integer|string 要上升的盾值（可以为负）
 ---@param reset integer|nil 指示重置的时点，默认为“回合结束时”。无论如何，都会在离场时重置。
 function VgF.DefUp(c,g,val,reset,resetcount)
     if not c or not g then return end
     if not reset then reset=RESET_PHASE+PHASE_END end
     if not resetcount then resetcount=1 end
-    if not val or val==0 then return end
+    if not val or (VgF.GetValueType(val)=="number" and val==0) then return end
     if VgF.GetValueType(g)=="Group" and g:GetCount()>0 then
         local e={}
         for tc in VgF.Next(g) do
             if tc:IsLocation(LOCATION_MZONE) then
+                if VgF.GetValueType(val)=="string" and val=="DOUBLE" then
+                    val=tc:GetLeftScale()
+                end
                 local e1=Effect.CreateEffect(c)
                 e1:SetType(EFFECT_TYPE_SINGLE)
                 e1:SetCode(EFFECT_UPDATE_DEFENSE)
@@ -453,6 +454,9 @@ function VgF.DefUp(c,g,val,reset,resetcount)
     elseif VgF.GetValueType(g)=="Card" then
         local tc=g
         if tc:IsLocation(LOCATION_MZONE) then
+            if VgF.GetValueType(val)=="string" and val=="DOUBLE" then
+                val=tc:GetLeftScale()
+            end
             local e1=Effect.CreateEffect(c)
             e1:SetType(EFFECT_TYPE_SINGLE)
             e1:SetCode(EFFECT_UPDATE_DEFENSE)
@@ -466,17 +470,43 @@ end
 ---以c的名义，使g（中的每一张卡）的☆上升val，并在reset时重置。
 ---@param c Card 要使卡上升☆的卡
 ---@param g Card|Group 要被上升☆的卡
----@param val integer 要上升的☆（可以为负）
+---@param val integer|string 要上升的☆（可以为负）
 ---@param reset integer|nil 指示重置的时点，默认为“回合结束时”。无论如何，都会在离场时重置。
 function VgF.StarUp(c,g,val,reset,resetcount)
     if not c or not g then return end
     if not reset then reset=RESET_PHASE+PHASE_END end
     if not resetcount then resetcount=1 end
-    if not val or val==0 then return end
+    if not val or (VgF.GetValueType(val)=="number" and val==0) then return end
     if VgF.GetValueType(g)=="Group" and g:GetCount()>0 then
         local t1={}
         local t2={}
         for tc in VgF.Next(g) do
+            if tc:IsLocation(LOCATION_MZONE) then
+                if VgF.GetValueType(val)=="string" and val=="DOUBLE" then
+                    val=tc:GetLeftScale()
+                end
+                local e1=Effect.CreateEffect(c)
+                e1:SetType(EFFECT_TYPE_SINGLE)
+                e1:SetCode(EFFECT_UPDATE_LSCALE)
+                e1:SetProperty(EFFECT_FLAG_SINGLE_RANGE)
+                e1:SetRange(LOCATION_MZONE)
+                e1:SetValue(val)
+                e1:SetReset(RESET_EVENT+RESETS_STANDARD+reset,resetcount)
+                tc:RegisterEffect(e1)
+                local e2=e1:Clone()
+                e2:SetCode(EFFECT_UPDATE_RSCALE)
+                tc:RegisterEffect(e2)
+                table.insert(t1,e1)
+                table.insert(t2,e2)
+            end
+        end
+        return t1,t2
+    elseif VgF.GetValueType(g)=="Card" then
+        local tc=VgF.ReturnCard(g)
+        if tc:IsLocation(LOCATION_MZONE) then
+            if VgF.GetValueType(val)=="string" and val=="DOUBLE" then
+                val=tc:GetLeftScale()
+            end
             local e1=Effect.CreateEffect(c)
             e1:SetType(EFFECT_TYPE_SINGLE)
             e1:SetCode(EFFECT_UPDATE_LSCALE)
@@ -488,24 +518,8 @@ function VgF.StarUp(c,g,val,reset,resetcount)
             local e2=e1:Clone()
             e2:SetCode(EFFECT_UPDATE_RSCALE)
             tc:RegisterEffect(e2)
-            table.insert(t1,e1)
-            table.insert(t2,e2)
+            return e1,e2
         end
-        return t1,t2
-    elseif VgF.GetValueType(g)=="Card" then
-        local tc=VgF.ReturnCard(g)
-        local e1=Effect.CreateEffect(c)
-        e1:SetType(EFFECT_TYPE_SINGLE)
-        e1:SetCode(EFFECT_UPDATE_LSCALE)
-        e1:SetProperty(EFFECT_FLAG_SINGLE_RANGE)
-        e1:SetRange(LOCATION_MZONE)
-        e1:SetValue(val)
-        e1:SetReset(RESET_EVENT+RESETS_STANDARD+reset,resetcount)
-        tc:RegisterEffect(e1)
-        local e2=e1:Clone()
-        e2:SetCode(EFFECT_UPDATE_RSCALE)
-        tc:RegisterEffect(e2)
-        return e1,e2
     end
 end
 ---判断c是否可以以规则的手段到G区域。
@@ -663,14 +677,15 @@ end
 ---@param loc_to integer 要送去的区域。不填则返回0。
 ---@param loc_from integer 要选取的区域。不填则返回0。
 ---@param f function 卡片过滤的条件
-function VgF.SearchCard(loc_to,loc_from,f,int_max,int_min)
+function VgF.SearchCard(loc_to,loc_from,f,int_max,int_min,...)
+    local ext_params={...}
     return function (e,tp,eg,ep,ev,re,r,rp)
         if not loc_to or not loc_from then return 0 end
         if VgF.GetValueType(int_max)~="number" then int_max=1 end
         if VgF.GetValueType(int_min)~="number" then int_min=int_max end
         if loc_to==LOCATION_HAND then
             local g=VgF.SelectMatchingCard(HINTMSG_ATOHAND,e,tp,function (c)
-                return VgF.GetValueType(f)~="function" or f(c)
+                return VgF.GetValueType(f)~="function" or f(c,table.unpack(ext_params))
             end,tp,loc_from,0,int_min,int_max,nil)
             if g:GetCount()>0 then
                 return VgF.Sendto(loc_to,g,nil,REASON_EFFECT)
@@ -678,35 +693,35 @@ function VgF.SearchCard(loc_to,loc_from,f,int_max,int_min)
         elseif loc_to==LOCATION_MZONE then
             local g=VgF.SelectMatchingCard(HINTMSG_CALL,e,tp,function (c)
                 if not VgF.IsCanBeCalled(c,e,tp) then return false end
-                return VgF.GetValueType(f)~="function" or f(c)
+                return VgF.GetValueType(f)~="function" or f(c,table.unpack(ext_params))
             end,tp,loc_from,0,int_min,int_max,nil)
             if g:GetCount()>0 then
                 return VgF.Sendto(loc_to,g,0,tp)
             end
         elseif loc_to==LOCATION_DROP then
             local g=VgF.SelectMatchingCard(HINTMSG_CALL,e,tp,function (c)
-                return VgF.GetValueType(f)~="function" or f(c)
+                return VgF.GetValueType(f)~="function" or f(c,table.unpack(ext_params))
             end,tp,loc_from,0,int_min,int_max,nil)
             if g:GetCount()>0 then
                 return VgF.Sendto(loc_to,g,REASON_EFFECT)
             end
         elseif loc_to==LOCATION_REMOVED then
             local g=VgF.SelectMatchingCard(HINTMSG_CALL,e,tp,function (c)
-                return VgF.GetValueType(f)~="function" or f(c)
+                return VgF.GetValueType(f)~="function" or f(c,table.unpack(ext_params))
             end,tp,loc_from,0,int_min,int_max,nil)
             if g:GetCount()>0 then
                 return VgF.Sendto(loc_to,g,POS_FACEUP,REASON_EFFECT)
             end
         elseif loc_to==LOCATION_EXILE then
             local g=VgF.SelectMatchingCard(HINTMSG_CALL,e,tp,function (c)
-                return VgF.GetValueType(f)~="function" or f(c)
+                return VgF.GetValueType(f)~="function" or f(c,table.unpack(ext_params))
             end,tp,loc_from,0,int_min,int_max,nil)
             if g:GetCount()>0 then
                 return VgF.Sendto(loc_to,g,REASON_EFFECT)
             end
         elseif loc_to==LOCATION_OVERLAY then
             local g=VgF.SelectMatchingCard(HINTMSG_CALL,e,tp,function (c)
-                return VgF.GetValueType(f)~="function" or f(c)
+                return VgF.GetValueType(f)~="function" or f(c,table.unpack(ext_params))
             end,tp,loc_from,0,int_min,int_max,nil)
             if g:GetCount()>0 then
                 local rc=VgF.GetVMonster(tp)
@@ -714,7 +729,7 @@ function VgF.SearchCard(loc_to,loc_from,f,int_max,int_min)
             end
         elseif bit.band(loc_to,0xf800)>0 then
             local g=VgF.SelectMatchingCard(HINTMSG_CALL,e,tp,function (c)
-                return VgF.GetValueType(f)~="function" or f(c)
+                return VgF.GetValueType(f)~="function" or f(c,table.unpack(ext_params))
             end,tp,loc_from,0,int_min,int_max,nil)
             if g:GetCount()>0 then
                 return VgF.Sendto(loc_to,g,tp,POS_FACEUP_ATTACK,REASON_EFFECT)
@@ -1210,4 +1225,8 @@ function table.copy(copy,original)
     for i = 1, #original do
         table.insert(copy, original[i])
     end
+end
+
+function VgF.PlayerEffect(e,tp,eg,ep,ev,re,r,rp)
+    return true
 end

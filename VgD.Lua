@@ -1251,3 +1251,19 @@ function VgD.GlobalCheckEffect(c,m,typ,code,con,op)
         Duel.RegisterEffect(ge1,0)
     end
 end
+
+function VgD.CannotBeTarget(c,con,val,loc)
+    if not loc then loc=LOCATION_MZONE end
+	local e1=Effect.CreateEffect(c)
+    e1:SetType(EFFECT_TYPE_SINGLE)
+    e1:SetProperty(EFFECT_FLAG_SINGLE_RANGE)
+    e1:SetRange(loc)
+    e1:SetCode(EFFECT_CANNOT_BE_EFFECT_TARGET)
+	if VgF.GetValueType(con)=="function" then e1:SetCondition(con) end
+	if VgF.GetValueType(val)=="function" then e1:SetValue(val) else
+        e1:SetValue(function (e,re,rp)
+            return rp==1-e:GetHandlerPlayer()
+        end)
+    end
+    c:RegisterEffect(e1)
+end

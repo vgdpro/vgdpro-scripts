@@ -13,8 +13,10 @@ function cm.filter(c)
 	return c:GetFlagEffect(FLAG_IMPRISON)>0
 end
 function cm.op(e,tp,eg,ep,ev,re,r,rp)
-	local g=vgf.SelectMatchingCard(HINTMSG_OPPO,e,tp,cm.filter1,tp,0,LOCATION_MZONE,1,1,nil)
-	vgf.SendtoPrison(g,tp)
+	if vgf.CheckPrison(tp) then
+		local g=vgf.SelectMatchingCard(HINTMSG_OPPO,e,tp,cm.filter1,tp,0,LOCATION_MZONE,1,1,nil)
+		vgf.SendtoPrison(g,tp)
+	end
 end
 function cm.filter1(c)
 	return vgf.RMonsterFilter(c) and vgf.FrontFilter(c)
