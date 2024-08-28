@@ -853,15 +853,13 @@ end
 ---@param c Card 要判断的卡
 ---@return boolean 指示c是否是前列的单位
 function VgF.FrontFilter(c)
-    local seq=c:GetSequence()
-    return (seq==0 or seq==4 or seq==5) and c:IsType(TYPE_MONSTER)
+    return vgf.IsSequence(c,0,4,5) and c:IsLocation(LOCATION_MZONE)
 end
 ---判断c是否在后列。
 ---@param c Card 要判断的卡
 ---@return boolean 指示c是否是后列的单位
 function VgF.BackFilter(c)
-    local seq=c:GetSequence()
-    return (seq==1 or seq==2 or seq==3) and c:IsType(TYPE_MONSTER)
+    return vgf.IsSequence(c,1,2,3) and c:IsLocation(LOCATION_MZONE)
 end
 function VgF.PrisonFilter(c,ct)
     return c:GetSequence() == ct-1
@@ -1129,6 +1127,7 @@ function VgF.Sendto(loc,sg,...)
     end
     return 0
 end
+
 -- 白翼能力在你的封锁区中的卡只有奇数的等级的场合有效
 function VgF.WhiteWing(e)
     local tp=e:GetHandlerPlayer()

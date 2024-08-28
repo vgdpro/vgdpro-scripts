@@ -1243,7 +1243,11 @@ function VgD.GlobalCheckEffect(c,m,typ,code,con,op)
         ge1:SetType(typ)
         ge1:SetCode(code)
         if VgF.GetValueType(con)=="function" then ge1:SetCondition(con) end
-        ge1:SetOperation(op)
+        if VgF.GetValueType(op)=="function" then ge1:SetOperation(op) else
+            ge1:SetOperation(function (e,tp,eg,ep,ev,re,r,rp)
+                Duel.RegisterFlagEffect(tp,m,RESET_PHASE+PHASE_END,0,1)
+            end)
+        end
         Duel.RegisterEffect(ge1,0)
     end
 end
