@@ -11,12 +11,10 @@ function VgF.VgCard(c)
     VgD.Rule(c)
     VgF.DefineArguments()
     VgD.RideUp(c)
+    VgD.CardTrigger(c)
     if c:IsType(TYPE_MONSTER) then
         VgD.CallToR(c)
         VgD.MonsterBattle(c)
-    end
-    if not c:IsRace(TRIGGER_SUPER) then
-	    VgD.CardTrigger(c,nil)
     end
 end
 ---获取脚本基本信息
@@ -1202,9 +1200,9 @@ function VgF.AddMixCostGroupFilter(c,m,...)
     local cm=_G["c"..m]
     cm.cos_filter={...}
 end
-function VgF.AddEffectWhenTrigger(c,m,op,cost,con,tg)
+function VgF.AddEffectWhenTrigger(c,m,op,cost,con,tg,chk)
     local cm=_G["c"..m]
-    cm.effect_when_trigger={op,cost,con,tg}
+    cm.effect_when_trigger={op,cost,con,tg,chk}
 end
 
 function VgF.ShiftLocationFromString(str)

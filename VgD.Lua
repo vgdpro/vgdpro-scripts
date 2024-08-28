@@ -578,17 +578,17 @@ function VgD.CardToGOperation(e,tp,eg,ep,ev,re,r,rp)
 end
 
 --判定
-function VgD.CardTrigger(c,f)
+function VgD.CardTrigger(c)
     local e1=Effect.CreateEffect(c)
     e1:SetType(EFFECT_TYPE_SINGLE+EFFECT_TYPE_TRIGGER_F)
     e1:SetProperty(EFFECT_FLAG_DELAY+EFFECT_CANNOT_DISABLE+EFFECT_FLAG_DAMAGE_STEP)
     e1:SetCode(EVENT_MOVE)
     e1:SetCondition(VgD.CardTriggerCondtion(0))
-    e1:SetOperation(VgD.CardTriggerOperation(0,f))
+    e1:SetOperation(VgD.CardTriggerOperation(0))
     c:RegisterEffect(e1)
     local e2=e1:Clone()
     e2:SetCondition(VgD.CardTriggerCondtion(1))
-    e2:SetOperation(VgD.CardTriggerOperation(1,f))
+    e2:SetOperation(VgD.CardTriggerOperation(1))
     c:RegisterEffect(e2)
 end
 function VgD.CardTriggerCondtion(chkcon)
@@ -605,24 +605,16 @@ function VgD.CardTriggerOperation(chkop,f)
     return function (e,tp,eg,ep,ev,re,r,rp)
         local c=e:GetHandler()
         if c:IsRace(TRIGGER_CRITICAL_STRIKE) then
-            Duel.Hint(HINT_SELECTMSG,tp,HINTMSG_CRITICAL_STRIKE)
-            local g1=Duel.SelectMatchingCard(tp,nil,tp,LOCATION_MZONE,0,1,1,nil)
-            Duel.HintSelection(g1)
+            local g1=VgF.SelectMatchingCard(HINTMSG_CRITICAL_STRIKE,e,tp,nil,tp,LOCATION_MZONE,0,1,1,nil)
             VgF.StarUp(c,g1,1,nil)
-            Duel.Hint(HINT_SELECTMSG,tp,HINTMSG_ATKUP)
-            local g2=Duel.SelectMatchingCard(tp,nil,tp,LOCATION_MZONE,0,1,1,nil)
-            Duel.HintSelection(g2)
+            local g2=VgF.SelectMatchingCard(HINTMSG_ATKUP,e,tp,nil,tp,LOCATION_MZONE,0,1,1,nil)
             VgF.AtkUp(c,g2,10000,nil)
         elseif c:IsRace(TRIGGER_DRAW) then
-            Duel.Hint(HINT_SELECTMSG,tp,HINTMSG_ATKUP)
-            local g=Duel.SelectMatchingCard(tp,nil,tp,LOCATION_MZONE,0,1,1,nil)
-            Duel.HintSelection(g)
+            local g=VgF.SelectMatchingCard(HINTMSG_ATKUP,e,tp,nil,tp,LOCATION_MZONE,0,1,1,nil)
             VgF.AtkUp(c,g,10000,nil)
             Duel.Draw(tp,1,REASON_TRIGGER)
         elseif c:IsRace(TRIGGER_HEAL) then
-            Duel.Hint(HINT_SELECTMSG,tp,HINTMSG_ATKUP)
-            local g=Duel.SelectMatchingCard(tp,nil,tp,LOCATION_MZONE,0,1,1,nil)
-            Duel.HintSelection(g)
+            local g=VgF.SelectMatchingCard(HINTMSG_ATKUP,e,tp,nil,tp,LOCATION_MZONE,0,1,1,nil)
             VgF.AtkUp(c,g,10000,nil)
             if Duel.GetMatchingGroupCount(nil,tp,LOCATION_DAMAGE,0,nil)>=Duel.GetMatchingGroupCount(nil,tp,0,LOCATION_DAMAGE,nil) then
                 Duel.Hint(HINT_SELECTMSG,tp,HINTMSG_TODROP)
@@ -638,19 +630,47 @@ function VgD.CardTriggerOperation(chkop,f)
         end
         if chkop==0 then
             if c:IsRace(TRIGGER_SUPER) then
-                Duel.Hint(HINT_SELECTMSG,tp,HINTMSG_ATKUP)
-                local g=Duel.SelectMatchingCard(tp,nil,tp,LOCATION_MZONE,0,1,1,nil)
-                Duel.HintSelection(g)
-                VgF.AtkUp(c,g,100000000,nil)
-                Duel.Draw(tp,1,REASON_TRIGGER)
-                if c:IsRelateToEffect(e) then VgF.Sendto(LOCATION_EXILE,c,REASON_TRIGGER) end
+                local ops={}
+                local sel={}
+                if c:IsRelateToEffect(e) then
+                    table.insert(ops,VgF.Stringid(VgID+5,3))
+                    table.insert(sel,function ()
+                        VgF.Sendto(LOCATION_EXILE,c,REASON_TRIGGER)
+                    end)
+                end
+                if true then
+                    table.insert(ops,VgF.Stringid(VgID+5,4))
+                    table.insert(sel,function ()
+                        Duel.Draw(tp,1,REASON_TRIGGER)
+                    end)
+                end
+                if VgF.IsExistingMatchingCard(nil,tp,LOCATION_MZONE,0,1,nil) then
+                    table.insert(ops,VgF.Stringid(VgID+5,5))
+                    table.insert(sel,function ()
+                        local g=VgF.SelectMatchingCard(HINTMSG_ATKUP,e,tp,nil,tp,LOCATION_MZONE,0,1,1,nil)
+                        VgF.AtkUp(c,g,100000000,nil)
+                    end)
+                end
+                if VgD.OperationWhenCardTrigger(e,tp,eg,ep,ev,re,r,rp,c,0) then
+                    table.insert(ops,VgF.Stringid(VgID+5,5))
+                    table.insert(sel,function ()
+                        VgD.OperationWhenCardTrigger(e,tp,eg,ep,ev,re,r,rp,c,1)
+                    end)
+                end
+                while #ops>0 do
+                    local i=Duel.SelectOption(tp,table.unpack(ops))+1
+                    sel[i]()
+                    table.remove(ops,i)
+                    table.remove(sel,i)
+                end
             else
+                if VgD.OperationWhenCardTrigger(e,tp,eg,ep,ev,re,r,rp,c,0) then VgD.OperationWhenCardTrigger(e,tp,eg,ep,ev,re,r,rp,c,1) end
                 if c:IsRelateToEffect(e) then
                     VgF.Sendto(LOCATION_DAMAGE,c,tp,POS_FACEUP_ATTACK,REASON_EFFECT)
                     Duel.Damage(tp,1,REASON_TRIGGER)
                 end
             end
-            local rc=Duel.GetMatchingGroup(VgF.VMonsterFilter,tp,LOCATION_MZONE,0,nil):GetFirst()
+            local rc=VgF.GetVMonster(tp)
             local bc=rc:GetBattleTarget()
             local label=bc:GetFlagEffectLabel(FLAG_DAMAGE_TRIGGER)
             if not label then return end
@@ -664,19 +684,45 @@ function VgD.CardTriggerOperation(chkop,f)
                 Duel.RaiseEvent(rc,EVENT_CUSTOM+EVENT_DAMAGE_TRIGGER,e,0,tp,tp,0)
             end
         else
-            VgD.OperationWhenCardTrigger(e,tp,eg,ep,ev,re,r,rp,c)
             if c:IsRace(TRIGGER_SUPER) then
-                Duel.Hint(HINT_SELECTMSG,tp,HINTMSG_ATKUP)
-                local g=Duel.SelectMatchingCard(tp,nil,tp,LOCATION_MZONE,0,1,1,nil)
-                Duel.HintSelection(g)
-                VgF.AtkUp(c,g,100000000,nil)
-                if f then f(e,tp,eg,ep,ev,re,r,rp) end
-                Duel.Draw(tp,1,REASON_TRIGGER)
-                if c:IsRelateToEffect(e) then VgF.Sendto(LOCATION_EXILE,c,REASON_TRIGGER) end
+                local ops={}
+                local sel={}
+                if c:IsRelateToEffect(e) then
+                    table.insert(ops,VgF.Stringid(VgID+5,3))
+                    table.insert(sel,function ()
+                        VgF.Sendto(LOCATION_EXILE,c,REASON_TRIGGER)
+                    end)
+                end
+                if true then
+                    table.insert(ops,VgF.Stringid(VgID+5,4))
+                    table.insert(sel,function ()
+                        Duel.Draw(tp,1,REASON_TRIGGER)
+                    end)
+                end
+                if VgF.IsExistingMatchingCard(nil,tp,LOCATION_MZONE,0,1,nil) then
+                    table.insert(ops,VgF.Stringid(VgID+5,5))
+                    table.insert(sel,function ()
+                        local g=VgF.SelectMatchingCard(HINTMSG_ATKUP,e,tp,nil,tp,LOCATION_MZONE,0,1,1,nil)
+                        VgF.AtkUp(c,g,100000000,nil)
+                    end)
+                end
+                if VgD.OperationWhenCardTrigger(e,tp,eg,ep,ev,re,r,rp,c,0) then
+                    table.insert(ops,VgF.Stringid(VgID+5,5))
+                    table.insert(sel,function ()
+                        VgD.OperationWhenCardTrigger(e,tp,eg,ep,ev,re,r,rp,c,1)
+                    end)
+                end
+                while #ops>0 do
+                    local i=Duel.SelectOption(tp,table.unpack(ops))+1
+                    sel[i]()
+                    table.remove(ops,i)
+                    table.remove(sel,i)
+                end
             else
+                if VgD.OperationWhenCardTrigger(e,tp,eg,ep,ev,re,r,rp,c,0) then VgD.OperationWhenCardTrigger(e,tp,eg,ep,ev,re,r,rp,c,1) end
                 if c:IsRelateToEffect(e) then VgF.Sendto(LOCATION_HAND,c,nil,REASON_TRIGGER) end
             end
-            local rc=Duel.GetMatchingGroup(VgF.VMonsterFilter,tp,LOCATION_MZONE,0,nil):GetFirst()
+            local rc=VgF.GetVMonster(tp)
             local label=rc:GetFlagEffectLabel(FLAG_ATTACK_TRIGGER)
             if not label then return end
             if label>1 then
@@ -691,21 +737,27 @@ function VgD.CardTriggerOperation(chkop,f)
     end
 end
 
-function VgD.OperationWhenCardTrigger(e,tp,eg,ep,ev,re,r,rp,c)
+function VgD.OperationWhenCardTrigger(e,tp,eg,ep,ev,re,r,rp,c,chk)
     local effect_when_trigger
     tabel.copy(effect_when_trigger,c.effect_when_trigger)
     local cost,con,tg=true,true,true
     if #effect_when_trigger==0 then return end
+    if (VgF.GetValueType(effect_when_trigger[5])=="boolean" and not effect_when_trigger[5]) or (VgF.GetValueType(effect_when_trigger[5])~="boolean" and Duel.GetTurnPlayer()~=c:GetControler()) then return false end
     if VgF.GetValueType(effect_when_trigger[2])=="function" then cost=effect_when_trigger[2](e,tp,eg,ep,ev,re,r,rp,0) end
     if VgF.GetValueType(effect_when_trigger[3])=="function" then con=effect_when_trigger[3](e,tp,eg,ep,ev,re,r,rp) end
     if VgF.GetValueType(effect_when_trigger[4])=="function" then tg=effect_when_trigger[4](e,tp,eg,ep,ev,re,r,rp,0) end
-    if VgF.GetValueType(effect_when_trigger[1])=="function" and cost and con and tg and Duel.SelectYesNo(tp,VgF.Stringid(VgID,15)) then
-        Duel.HintSelection(Group.FromCards(c))
-        local _,m=c:GetOriginalCode()
-        Duel.Hint(HINT_CARD,0,m)
-        if VgF.GetValueType(effect_when_trigger[2])=="function" then effect_when_trigger[2](e,tp,eg,ep,ev,re,r,rp,1) end
-        if VgF.GetValueType(effect_when_trigger[4])=="function" then effect_when_trigger[4](e,tp,eg,ep,ev,re,r,rp,1) end
-        effect_when_trigger[1](e,tp,eg,ep,ev,re,r,rp)
+    if VgF.GetValueType(effect_when_trigger[1])=="function" and cost and con and tg then
+        if chk==0 then return true else return false end
+        local activate_chk=true
+        if VgF.GetValueType(effect_when_trigger[2])=="function" then activate_chk=Duel.SelectYesNo(tp,VgF.Stringid(VgID,15)) end
+        if activate_chk then
+            Duel.HintSelection(Group.FromCards(c))
+            local _,m=c:GetOriginalCode()
+            Duel.Hint(HINT_CARD,0,m)
+            if VgF.GetValueType(effect_when_trigger[2])=="function" then effect_when_trigger[2](e,tp,eg,ep,ev,re,r,rp,1) end
+            if VgF.GetValueType(effect_when_trigger[4])=="function" then effect_when_trigger[4](e,tp,eg,ep,ev,re,r,rp,1) end
+            effect_when_trigger[1](e,tp,eg,ep,ev,re,r,rp)
+        end
     end
 end
 
