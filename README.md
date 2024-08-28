@@ -530,7 +530,7 @@ vgf.GetMatchingGroup(f,tp,loc_self,loc_op,except_g,...)--得到所有符合的�
 vgf.GetMatchingGroupCount(f,tp,loc_self,loc_op,except_g,...)--得到所有符合的卡的数量
 ```
 
-## 5.用于行为的封装函数：将卡送去某处
+## 6.用于行为的封装函数：将卡送去某处
 
 ```lua
 vgf..Sendto(loc,sg,...)
@@ -547,11 +547,19 @@ vgf..Sendto(loc,sg,...)
 > **... : 额外参数，根据loc的不同而不同**
 > 
 > **LOCATION_DROP : reason**
+> 
 > **LOCATION_DECK : tp,seq,reason `seq可选SEQ_DECKTOP/SEQ_DECKBOTTOM/SEQ_DECKSHUFFLE`**
+> 
 > **LOCATION_HAND : p|nil,reason `p为送去的玩家，送去原本持有者则填nil`**
+> 
 > **LOCATION_REMOVED : pos,reason**
+> 
 > **LOCATION_EXILE : reason**
+> 
 > **LOCATION_OVERLAY : c `c为叠放的卡，不填|填nil则为先导者`**
+> 
 > **LOCATION_TRIGGER : tp,tp,LOCATION_FZONE,POS_FACEUP,true**
+> 
 > **LOCATION_MZONE : sumtype,tp,zone,pos,chk `chk为0则Call到不存在单位的圆阵`**
+> 
 > **其他区域 : c,tp,pos,reason**
