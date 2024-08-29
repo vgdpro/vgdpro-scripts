@@ -1319,3 +1319,32 @@ function VgD.CannotBeTarget(c,con,val,loc)
     end
     c:RegisterEffect(e1)
 end
+function VgD.NightEffect(c)
+	local e1=Effect.CreateEffect(c)
+    e1:SetType(EFFECT_TYPE_FIELD)
+    e1:SetProperty(EFFECT_FLAG_PLAYER_TARGET)
+    e1:SetCode(AFFECT_CODE_NIGHT)
+    e1:SetRange(LOCATION_ORDER)
+    e1:SetTargetRange(1,0)
+	e1:SetCondition(function (e)
+        local tp=e:GetHandlerPlayer()
+        return not vgf.IsExistingMatchingCard(VgD.NightFilter,tp,LOCATION_ORDER,0,1,nil) and vgf.GetMatchingGroupCount(nil,tp,LOCATION_ORDER,0,nil)==1
+    end)
+    c:RegisterEffect(e1)
+end
+function VgD.DeepNightEffect(c)
+	local e1=Effect.CreateEffect(c)
+    e1:SetType(EFFECT_TYPE_FIELD)
+    e1:SetProperty(EFFECT_FLAG_PLAYER_TARGET)
+    e1:SetCode(AFFECT_CODE_DEEP_NIGHT)
+    e1:SetRange(LOCATION_ORDER)
+    e1:SetTargetRange(1,0)
+	e1:SetCondition(function (e)
+        local tp=e:GetHandlerPlayer()
+        return not vgf.IsExistingMatchingCard(VgD.NightFilter,tp,LOCATION_ORDER,0,1,nil) and vgf.GetMatchingGroupCount(nil,tp,LOCATION_ORDER,0,nil)>=2
+    end)
+    c:RegisterEffect(e1)
+end
+function VgD.NightFilter(c)
+    return not c:IsSetCard(0x5040) and c:IsType(TYPE_CONTINUOUS)
+end
