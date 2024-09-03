@@ -366,8 +366,6 @@ VgD..GlobalCheckEffect(c, m, typ, code, con[, op])
 
 参数注释
 
-> **typ : t一般情况下需填写EFFECT_TYPE_FIELD+EFFECT_TYPE_CONTINUOUS**
-> 
 > **op : 给自身注册一个标记，非特殊情况函數内容不需填写**
 > 
 > **con : 触发注册标记的具体情况**
@@ -382,7 +380,7 @@ VgD..GlobalCheckEffect(c, m, typ, code, con[, op])
 local cm,m,o=GetID()
 function cm.initial_effect(c)
 	vgf.VgCard(c)
-	vgd.GlobalCheckEffect(c,m,EFFECT_TYPE_FIELD+EFFECT_TYPE_CONTINUOUS,EVENT_SPSUMMON_SUCCESS,cm.checkcon)
+	vgd.GlobalCheckEffect(c,m,EVENT_SPSUMMON_SUCCESS,cm.checkcon)
 end
 function cm.checkcon(e,tp,eg,ep,ev,re,r,rp)
     return eg:IsExists(Card.IsSummonType,1,nil,SUMMON_TYPE_SELFRIDE)

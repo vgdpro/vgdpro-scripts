@@ -18,7 +18,7 @@ function cm.op(e,tp,eg,ep,ev,re,r,rp)
 	end
 end
 function cm.con(e,tp,eg,ep,ev,re,r,rp)
-	return vgf.RMonsterCondition(e) and vgf.IsExistingMatchingCard(Card.IsLevel,tp,LOCATION_MZONE,0,3,nil,3)
+	return vgf.RMonsterCondition(e) and vgf.IsExistingMatchingCard(Card.IsLevel,tp,LOCATION_MZONE+LOCATION_GZONE,0,3,nil,3)
 end
 function cm.op1(e,tp,eg,ep,ev,re,r,rp)
 	local c=e:GetHandler()

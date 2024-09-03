@@ -5,7 +5,7 @@ function cm.initial_effect(c)
 end
 function cm.condition(e,tp,eg,ep,ev,re,r,rp)
 	local c=e:GetHandler()
-	return vgf.RMonsterFilter(c) and vgf.VMonsterFilter(Duel.GetAttackTarget()) and vgf.IsExistingMatchingCard(nil,tp,LOCATION_MZONE,0,4,nil)
+	return vgf.RMonsterFilter(c) and vgf.VMonsterFilter(Duel.GetAttackTarget()) and vgf.IsExistingMatchingCard(nil,tp,LOCATION_MZONE+LOCATION_GRAVE,0,4,nil)
 end
 function cm.cost(e,tp,eg,ep,ev,re,r,rp,chk)
 	if chk==0 then return vgf.GetMatchingGroup(vgf.VMonsterFilter,tp,LOCATION_MZONE,0,nil,nil):GetFirst():GetOverlayCount()>=1 end

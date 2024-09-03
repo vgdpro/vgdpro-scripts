@@ -1,7 +1,7 @@
 local cm,m,o=GetID()
 function cm.initial_effect(c)
 	vgf.VgCard(c)
-	vgd.GlobalCheckEffect(c,m,EFFECT_TYPE_FIELD+EFFECT_TYPE_CONTINUOUS,EVENT_CHANGE_POS,cm.checkcon)
+	vgd.GlobalCheckEffect(c,m,EVENT_CHANGE_POS,cm.checkcon)
 	vgd.EffectTypeContinuousChangeAttack(c,EFFECT_TYPE_SINGLE,5000,cm.con)
 	vgd.EffectTypeContinuousChangeAttack(c,EFFECT_TYPE_SINGLE,1,cm.con1,nil,nil,EFFECT_UPDATE_LSCALE)
 	vgd.EffectTypeContinuousChangeAttack(c,EFFECT_TYPE_SINGLE,1,cm.con1,nil,nil,EFFECT_UPDATE_RSCALE)

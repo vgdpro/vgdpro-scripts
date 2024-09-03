@@ -5,6 +5,14 @@ function cm.initial_effect(c)
 	vgd.EffectTypeTrigger(c,m,loc,EFFECT_TYPE_SINGLE,EVENT_MOVE,vgf.OverlayFill(3),cost,cm.con)
 	vgd.EffectTypeTrigger(c,m,LOCATION_ORDER,EFFECT_TYPE_FIELD,EVENT_SPSUMMON_SUCCESS,cm.op1,cm.cost1,cm.con1,tg,count,EFFECT_FLAG_BOTH_SIDE)
 end
+function cm.cost(e,tp,eg,ep,ev,re,r,rp,chk)
+	if chk==0 then return vgf.IsExistingMatchingCard(cm.cfilter,tp,LOCATION_MZONE,0,1,nil) end
+	local g=vgf.SelectMatchingCard(HINTMSG_POSCHANGE,e,tp,cm.cfilter,tp,LOCATION_MZONE,0,1,nil)
+	Duel.ChangePosition(g,POS_FACEUP_DEFENCE)
+end
+function cm.cfilter(c)
+	return c:IsPosition(POS_FACEUP_ATTACK) and c:IsCanChangePosition()
+end
 function cm.con(e,tp,eg,ep,ev,re,r,rp)
 	return e:GetHandler():IsLocation(LOCATION_ORDER)
 end

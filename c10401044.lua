@@ -18,5 +18,5 @@ function cm.op(e,tp,eg,ep,ev,re,r,rp)
 	end
 end
 function cm.con(e,tp,eg,ep,ev,re,r,rp)
-	return vgf.IsExistingMatchingCard(Card.IsLevel,tp,LOCATION_MZONE,0,2,nil,3) and vgf.RMonsterCondition(e)
+	return vgf.IsExistingMatchingCard(Card.IsLevel,tp,LOCATION_MZONE+LOCATION_GZONE,0,3,nil,3) and vgf.RMonsterCondition(e)
 end

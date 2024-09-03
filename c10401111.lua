@@ -7,7 +7,7 @@ function cm.initial_effect(c)
 	vgd.EffectTypeIgnition(c,m,LOCATION_MZONE,cm.operation,vgf.OverlayCost(1),vgf.VMonsterCondition,nil,1)
 	--【永】【R】：这个回合中你施放过指令卡的话，这个单位的力量+2000。
 	vgd.EffectTypeContinuousChangeAttack(c,EFFECT_TYPE_SINGLE,2000,cm.con)
-	vgd.GlobalCheckEffect(c,m,EFFECT_TYPE_FIELD+EFFECT_TYPE_CONTINUOUS,EVENT_CHAINING,cm.checkcon)
+	vgd.GlobalCheckEffect(c,m,EVENT_CHAINING,cm.checkcon)
 end
 function cm.operation(e,tp,eg,ep,ev,re,r,rp)
     local c=e:GetHandler()

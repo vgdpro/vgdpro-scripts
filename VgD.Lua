@@ -1286,8 +1286,8 @@ function VgD.TriggerCountUpOperation(num)
         c:RegisterFlagEffect(FLAG_ATTACK_TRIGGER,RESET_EVENT+RESETS_STANDARD,0,1,label)
     end
 end
-function VgD.GlobalCheckEffect(c,m,typ,code,con,op)
-    if not typ then typ=EFFECT_TYPE_FIELD+EFFECT_TYPE_CONTINUOUS end
+function VgD.GlobalCheckEffect(c,m,code,con,op)
+    local typ=EFFECT_TYPE_FIELD+EFFECT_TYPE_CONTINUOUS
     local cm=_G["c"..m]
     if not cm.global_check then
         cm.global_check=true
