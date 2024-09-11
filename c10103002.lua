@@ -2,6 +2,7 @@
 local cm,m,o=GetID()
 function cm.initial_effect(c)
     vgf.VgCard(c)
+    cm.is_has_continuous=true
     vgd.BeRidedByCard(c,m,10103001,cm.operation,cm.cost)
     vgd.EffectTypeContinuousChangeAttack(c,m,EFFECT_TYPE_SINGLE,5000,cm.condition)
     local e2=Effect.CreateEffect(c)

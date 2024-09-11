@@ -543,6 +543,8 @@ end
 
 --送去g区
 function VgD.CardToG(c,cost,op)
+    local cm=_G["c"..m]
+    if not cm.is_has_trigger then cm.is_has_trigger=true end
     local type=EFFECT_TYPE_TRIGGER_F
     if VgF.GetValueType(cost)=="function" then type=EFFECT_TYPE_TRIGGER_O end
     local e1=Effect.CreateEffect(c)
@@ -1085,6 +1087,8 @@ end
 ---@param con function|nil 效果的条件
 ---@param tg function|nil 
 function VgD.BeRidedByCard(c,m,code,op,cost,con,tg)
+    local cm=_G["c"..m]
+    if not cm.is_has_trigger then cm.is_has_trigger=true end
     local e1=Effect.CreateEffect(c)
     e1:SetType(EFFECT_TYPE_SINGLE+EFFECT_TYPE_CONTINUOUS)
     e1:SetCode(EVENT_BE_MATERIAL)
@@ -1141,6 +1145,8 @@ end
 ---@param count integer|nil 指示效果在同一回合内最多发动的次数
 ---@param property integer|nil 指示效果的特殊属性。如确有必要填，请咨询群主。
 function VgD.EffectTypeTrigger(c,m,loc,typ,code,op,cost,con,tg,count,property,stringid)
+    local cm=_G["c"..m]
+    if not cm.is_has_trigger then cm.is_has_trigger=true end
     local type2=EFFECT_TYPE_TRIGGER_F
     if VgF.GetValueType(cost)=="function" then type2=EFFECT_TYPE_TRIGGER_O end
     if not typ then typ=EFFECT_TYPE_SINGLE end
@@ -1171,6 +1177,8 @@ end
 ---@param count integer|nil 指示效果在同一回合内最多发动的次数
 ---@param property integer|nil 指示效果的特殊属性。如确有必要填，请咨询群主。
 function VgD.EffectTypeIgnition(c,m,loc,op,cost,con,tg,count,property,stringid)
+    local cm=_G["c"..m]
+    if not cm.is_has_ignition then cm.is_has_ignition=true end
     if not loc then loc=LOCATION_MZONE end
     if not stringid then stringid=1 end
     local e1=Effect.CreateEffect(c)
@@ -1243,6 +1251,8 @@ function VgD.ContinuousSpellOperation(e,tp,eg,ep,ev,re,r,rp)
     VgF.Sendto(LOCATION_ORDER,c,tp,POS_FACEUP_ATTACK,REASON_RULE)
 end
 function VgD.EffectTypeContinuousChangeAttack(c,m,typ,val,con,tg,loc_self,loc_op,reset,mc)
+    local cm=_G["c"..m]
+    if not cm.is_has_continuous and not reset then cm.is_has_continuous=true end
     if VgF.GetValueType(mc)~="Card" then mc=c end
     if not typ then typ=EFFECT_TYPE_SINGLE end
     if not loc_self then loc_self=0 end
@@ -1259,6 +1269,8 @@ function VgD.EffectTypeContinuousChangeAttack(c,m,typ,val,con,tg,loc_self,loc_op
     mc:RegisterEffect(e1)
 end
 function VgD.EffectTypeContinuousChangeDefense(c,m,typ,val,con,tg,loc_self,loc_op,reset,mc)
+    local cm=_G["c"..m]
+    if not cm.is_has_continuous and not reset then cm.is_has_continuous=true end
     if VgF.GetValueType(mc)~="Card" then mc=c end
     if not typ then typ=EFFECT_TYPE_SINGLE end
     if not loc_self then loc_self=0 end
@@ -1275,6 +1287,8 @@ function VgD.EffectTypeContinuousChangeDefense(c,m,typ,val,con,tg,loc_self,loc_o
     mc:RegisterEffect(e1)
 end
 function VgD.EffectTypeContinuousChangeStar(c,m,typ,val,con,tg,loc_self,loc_op,reset,mc)
+    local cm=_G["c"..m]
+    if not cm.is_has_continuous and not reset then cm.is_has_continuous=true end
     if VgF.GetValueType(mc)~="Card" then mc=c end
     if not typ then typ=EFFECT_TYPE_SINGLE end
     if not loc_self then loc_self=0 end
@@ -1293,7 +1307,9 @@ function VgD.EffectTypeContinuousChangeStar(c,m,typ,val,con,tg,loc_self,loc_op,r
     e2:SetCode(EFFECT_UPDATE_RSCALE)
     mc:RegisterEffect(e2)
 end
-function VgD.TriggerCountUp(c,num,reset,tc)
+function VgD.TriggerCountUp(c,m,num,reset,tc)
+    local cm=_G["c"..m]
+    if not cm.is_has_continuous and not reset then cm.is_has_continuous=true end
     if not reset then reset=0 end
     if tc then tc=VgF.ReturnCard(tc) else tc=c end
     local e1=Effect.CreateEffect(c)
@@ -1337,7 +1353,9 @@ function VgD.GlobalCheckEffect(c,m,code,con,op)
     end
 end
 
-function VgD.CannotBeTarget(c,con,val,loc)
+function VgD.CannotBeTarget(c,m,con,val,loc)
+    local cm=_G["c"..m]
+    if not cm.is_has_continuous then cm.is_has_continuous=true end
     if not loc then loc=LOCATION_MZONE end
 	local e1=Effect.CreateEffect(c)
     e1:SetType(EFFECT_TYPE_SINGLE)
@@ -1352,7 +1370,9 @@ function VgD.CannotBeTarget(c,con,val,loc)
     end
     c:RegisterEffect(e1)
 end
-function VgD.NightEffect(c)
+function VgD.NightEffect(c,m)
+    local cm=_G["c"..m]
+    if not cm.is_has_continuous and not reset then cm.is_has_continuous=true end
 	local e1=Effect.CreateEffect(c)
     e1:SetType(EFFECT_TYPE_FIELD)
     e1:SetProperty(EFFECT_FLAG_PLAYER_TARGET)
@@ -1365,7 +1385,9 @@ function VgD.NightEffect(c)
     end)
     c:RegisterEffect(e1)
 end
-function VgD.DeepNightEffect(c)
+function VgD.DeepNightEffect(c,m)
+    local cm=_G["c"..m]
+    if not cm.is_has_continuous and not reset then cm.is_has_continuous=true end
 	local e1=Effect.CreateEffect(c)
     e1:SetType(EFFECT_TYPE_FIELD)
     e1:SetProperty(EFFECT_FLAG_PLAYER_TARGET)

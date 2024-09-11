@@ -4,6 +4,7 @@ function cm.initial_effect(c)
     vgf.VgCard(c)
     -- 【永】【后列的R】：这个单位的获得『支援』的技能，力量-2000。
     -- 支援
+    cm.is_has_continuous=true
     local e2=Effect.CreateEffect(c)
     e2:SetType(EFFECT_TYPE_SINGLE)
     e2:SetProperty(EFFECT_FLAG_SINGLE_RANGE)
