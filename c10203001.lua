@@ -7,7 +7,7 @@ function cm.initial_effect(c)
 	--【反抗舞装】
 	vgd.EffectTypeTrigger(c,m,LOCATION_MZONE,EFFECT_TYPE_SINGLE,EVENT_BATTLED,cm.operation,nil,cm.condition)
 	--【永】【R】：这个回合中曾有你的等级3以上的先导者登场过的话，这个单位的力量+5000。
-	vgd.EffectTypeContinuousChangeAttack(c,EFFECT_TYPE_SINGLE,5000,cm.con)
+	vgd.EffectTypeContinuousChangeAttack(c,m,EFFECT_TYPE_SINGLE,5000,cm.con)
 	vgd.GlobalCheckEffect(c,m,EVENT_SPSUMMON_SUCCESS,cm.checkcon)
 end
 function cm.con(e,tp,eg,ep,ev,re,r,rp)

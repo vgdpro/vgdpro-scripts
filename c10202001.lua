@@ -8,7 +8,7 @@ function cm.initial_effect(c)
 	--【自】【V】：这个单位攻击先导者时，通过【费用】[使用等级均不同的卡进行灵魂爆发4]，选择对手的1张先导者，这个回合中，力量增减至1，对手有等级3以上的先导者的话，这个单位的☆+1。（仅将那个时点的力量增减至1，这之后那个单位的力量仍然能通过其他方式增减。）
 	vgd.EffectTypeTrigger(c,m,LOCATION_MZONE,EFFECT_TYPE_SINGLE,EVENT_ATTACK_ANNOUNCE,cm.operation,cm.cost,cm.condition)
 	--【永】【R】：这个回合中由于你的卡片的能力的费用同时使用4张以上的卡进行了灵魂爆发的话，这个单位的力量+5000。
-	vgd.EffectTypeContinuousChangeAttack(c,EFFECT_TYPE_SINGLE,5000,cm.con)
+	vgd.EffectTypeContinuousChangeAttack(c,m,EFFECT_TYPE_SINGLE,5000,cm.con)
     if not cm.global_check then
         cm.global_check=true
         local ge1=Effect.CreateEffect(c)

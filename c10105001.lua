@@ -2,7 +2,7 @@ local cm,m,o=GetID()
 function cm.initial_effect(c)
 	vgf.VgCard(c)
 	vgd.EffectTypeIgnition(c,m,LOCATION_MZONE,cm.op1,vgf.DamageCost(1),nil,nil,1)
-	vgd.EffectTypeContinuousChangeAttack(c,EFFECT_TYPE_SINGLE,10000,cm.con)
+	vgd.EffectTypeContinuousChangeAttack(c,m,EFFECT_TYPE_SINGLE,10000,cm.con)
 	vgd.TriggerCountUp(c,1)
 end
 function cm.con(e,c)

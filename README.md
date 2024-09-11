@@ -316,24 +316,18 @@ end
 ## 6.特别用于“力量上升”的【永】能力注册范例
 
 ```lua
-VgD.EffectTypeContinuousChangeAttack(c, typ, val[, con, tg, mc, code, reset, loc, loc_self, loc_op])
+vgd.EffectTypeContinuousChangeAttack(c,m, typ, val[, con, tg, loc_self, loc_op, reset, mc])
 ```
 
 参数注释
 
-> **loc : 发动的区域（vg的描述中会在效果类型后描述这个效果在哪些区域适用） `填 nil 则默认为 LOCATION_MZONE`**
-> 
 > **typ : 自身力量上升/场上的卡力量上升 `填 nil 则填默认为 EFFECT_TYPE_SINGLE`**
 > 
 > **val : 力量上升的具体数值**
 >
-> **code : 效果的内容 `若需要改为盾护上升则需填EFFECT_UPDATE_DEFENSE`**
+> **loc_self/loc_op : 效果的影响范围 使其他单位力量上升时需要填写**
 >
-> **loc : 在哪个区域上升力量（vg的描述中会在效果类型后描述这个效果在哪些区域适用） `填 nil 则默认为 LOCATION_MZONE`**
->
-> **mc/reset : 效果的拥有着/重置时间`使其他单位获得此能力时需要填写`**
->
-> **loc_self/loc_op : 效果的影响范围 `使其他单位力量上升时需要填写`**
+> **reset/mc : 效果的拥有着/重置时间 使其他单位获得此能力时需要填写**
 
 范例 : [极光战姬 阿嘉拉·胭脂](c10401006.lua)
 
@@ -343,8 +337,8 @@ VgD.EffectTypeContinuousChangeAttack(c, typ, val[, con, tg, mc, code, reset, loc
 local cm,m,o=GetID()
 function cm.initial_effect(c)
 	vgf.VgCard(c)
-	vgd.EffectTypeContinuousChangeAttack(c,EFFECT_TYPE_SINGLE,5000,function(e) return vgf.RMonsterCondition(e) and cm.con(e) end)--力量上升
-	vgd.EffectTypeContinuousChangeAttack(c,EFFECT_TYPE_SINGLE,5000,cm.con,nil,nil,EFFECT_UPDATE_DEFENSE,nil,LOCATION_GZONE)--盾护上升
+	vgd.EffectTypeContinuousChangeAttack(c,m,EFFECT_TYPE_SINGLE,5000,function(e) return vgf.RMonsterCondition(e) and cm.con(e) end)
+	vgd.EffectTypeContinuousChangeDefense(c,m,EFFECT_TYPE_SINGLE,5000,cm.con)
 end
 function cm.con(e)
 	local tp=e:GetHandler()
@@ -352,9 +346,6 @@ function cm.con(e)
 end
 function cm.filter(c)
 	return c:GetFlagEffect(FLAG_IMPRISON)>0
-end
-function cm.filter1(c)
-	return vgf.RMonsterFilter(c) and vgf.FrontFilter(c)
 end
 ```
 

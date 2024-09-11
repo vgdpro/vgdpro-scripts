@@ -3,7 +3,7 @@ local cm,m,o=GetID()
 function cm.initial_effect(c)
     vgf.VgCard(c)
     -- 【永】【R】：你其他的后防者有3张以上的话，这个单位的力量+5000。
-	vgd.EffectTypeContinuousChangeAttack(c,EFFECT_TYPE_SINGLE,5000,cm.con1)
+	vgd.EffectTypeContinuousChangeAttack(c,m,EFFECT_TYPE_SINGLE,5000,cm.con1)
 end
 function cm.con1(e)
     local c= e:GetHandler()

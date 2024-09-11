@@ -1242,23 +1242,56 @@ function VgD.ContinuousSpellOperation(e,tp,eg,ep,ev,re,r,rp)
     local c=e:GetHandler()
     VgF.Sendto(LOCATION_ORDER,c,tp,POS_FACEUP_ATTACK,REASON_RULE)
 end
-function VgD.EffectTypeContinuousChangeAttack(c,typ,val,con,tg,mc,code,reset,loc,loc_self,loc_op)
+function vgd.EffectTypeContinuousChangeAttack(c,m,typ,val,con,tg,loc_self,loc_op,reset,mc)
     if VgF.GetValueType(mc)~="Card" then mc=c end
     if not typ then typ=EFFECT_TYPE_SINGLE end
-    if not code then code=EFFECT_UPDATE_ATTACK end
-    if not loc then loc=LOCATION_MZONE end
     if not loc_self then loc_self=0 end
     if not loc_op then loc_op=0 end
     local e1=Effect.CreateEffect(c)
     e1:SetType(typ)
-    e1:SetCode(code)
-    e1:SetRange(loc)
-    if reset and reset>0 then e1:SetReset(reset) end
+    e1:SetCode(EFFECT_UPDATE_ATTACK)
+    e1:SetRange(LOCATION_MZONE)
+    if VgF.GetValueType(reset)=="number" then e1:SetReset(reset) end
     if typ==EFFECT_TYPE_FIELD then e1:SetTargetRange(loc_self,loc_op) end
     if VgF.GetValueType(con)=="function" then e1:SetCondition(con) end
     if VgF.GetValueType(tg)=="function" then e1:SetTarget(tg) end
     e1:SetValue(val)
     mc:RegisterEffect(e1)
+end
+function VgD.EffectTypeContinuousChangeDefense(c,m,typ,val,con,tg,loc_self,loc_op,reset,mc)
+    if VgF.GetValueType(mc)~="Card" then mc=c end
+    if not typ then typ=EFFECT_TYPE_SINGLE end
+    if not loc_self then loc_self=0 end
+    if not loc_op then loc_op=0 end
+    local e1=Effect.CreateEffect(c)
+    e1:SetType(typ)
+    e1:SetCode(EFFECT_UPDATE_DEFENSE)
+    e1:SetRange(LOCATION_GZONE)
+    if VgF.GetValueType(reset)=="number" then e1:SetReset(reset) end
+    if typ==EFFECT_TYPE_FIELD then e1:SetTargetRange(loc_self,loc_op) end
+    if VgF.GetValueType(con)=="function" then e1:SetCondition(con) end
+    if VgF.GetValueType(tg)=="function" then e1:SetTarget(tg) end
+    e1:SetValue(val)
+    mc:RegisterEffect(e1)
+end
+function VgD.EffectTypeContinuousChangeStar(c,m,typ,val,con,tg,loc_self,loc_op,reset,mc)
+    if VgF.GetValueType(mc)~="Card" then mc=c end
+    if not typ then typ=EFFECT_TYPE_SINGLE end
+    if not loc_self then loc_self=0 end
+    if not loc_op then loc_op=0 end
+    local e1=Effect.CreateEffect(c)
+    e1:SetType(typ)
+    e1:SetCode(EFFECT_UPDATE_LSCALE)
+    e1:SetRange(LOCATION_MZONE)
+    if VgF.GetValueType(reset)=="number" then e1:SetReset(reset) end
+    if typ==EFFECT_TYPE_FIELD then e1:SetTargetRange(loc_self,loc_op) end
+    if VgF.GetValueType(con)=="function" then e1:SetCondition(con) end
+    if VgF.GetValueType(tg)=="function" then e1:SetTarget(tg) end
+    e1:SetValue(val)
+    mc:RegisterEffect(e1)
+    local e2=e1:Clone()
+    e2:SetCode(EFFECT_UPDATE_RSCALE)
+    mc:RegisterEffect(e2)
 end
 function VgD.TriggerCountUp(c,num,reset,tc)
     if not reset then reset=0 end

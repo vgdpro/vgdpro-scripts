@@ -1,7 +1,7 @@
 local cm,m,o=GetID()
 function cm.initial_effect(c)
 	vgf.VgCard(c)
-	vgd.EffectTypeContinuousChangeAttack(c,EFFECT_TYPE_SINGLE,cm.val,cm.con,nil,nil,EFFECT_UPDATE_DEFENSE,nil,LOCATION_GRAVE)
+	vgd.EffectTypeContinuousChangeDefense(c,m,EFFECT_TYPE_SINGLE,cm.val,cm.con)
 end
 function cm.val(e)
 	local tp=e:GetHandlerPlayer()

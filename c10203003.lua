@@ -2,7 +2,7 @@ local cm,m,o=GetID()
 function cm.initial_effect(c)
 	vgf.VgCard(c)
 	vgd.BeRidedByCard(c,m,10203002,cm.operation,vgf.OverlayCost(1))
-	vgd.EffectTypeContinuousChangeAttack(c,EFFECT_TYPE_SINGLE,2000,cm.con)
+	vgd.EffectTypeContinuousChangeAttack(c,m,EFFECT_TYPE_SINGLE,2000,cm.con)
 end
 function cm.con(e)
 	return Duel.GetAttacker()==e:GetHandler()

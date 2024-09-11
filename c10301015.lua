@@ -7,7 +7,7 @@ end
 function cm.operation(e,tp,eg,ep,ev,re,r,rp)
 	local c=e:GetHandler()
 	local g=vgf.SelectMatchingCard(HINTMSG_VMONSTER,e,tp,vgf.VMonsterFilter,tp,LOCATION_MZONE,0,1,1,nil)
-	vgd.EffectTypeContinuousChangeAttack(c,EFFECT_TYPE_FIELD,5000,nil,cm.tg,g:GetFirst(),EFFECT_UPDATE_ATTACK,RESET_EVENT+RESETS_STANDARD+RESET_PHASE+PHASE_END,LOCATION_MZONE,LOCATION_MZONE)
+	vgd.EffectTypeContinuousChangeAttack(c,m,EFFECT_TYPE_FIELD,5000,nil,cm.tg,LOCATION_MZONE,0,RESET_EVENT+RESETS_STANDARD+RESET_PHASE+PHASE_END,g:GetFirst())
 end
 function cm.tg(e,c)
 	return vgf.RMonsterFilter(c)
