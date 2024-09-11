@@ -1242,7 +1242,7 @@ function VgD.ContinuousSpellOperation(e,tp,eg,ep,ev,re,r,rp)
     local c=e:GetHandler()
     VgF.Sendto(LOCATION_ORDER,c,tp,POS_FACEUP_ATTACK,REASON_RULE)
 end
-function vgd.EffectTypeContinuousChangeAttack(c,m,typ,val,con,tg,loc_self,loc_op,reset,mc)
+function VgD.EffectTypeContinuousChangeAttack(c,m,typ,val,con,tg,loc_self,loc_op,reset,mc)
     if VgF.GetValueType(mc)~="Card" then mc=c end
     if not typ then typ=EFFECT_TYPE_SINGLE end
     if not loc_self then loc_self=0 end

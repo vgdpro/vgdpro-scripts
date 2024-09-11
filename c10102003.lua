@@ -2,16 +2,9 @@ local cm,m,o=GetID()
 function cm.initial_effect(c)
 	vgf.VgCard(c)
 	vgd.EffectTypeTrigger(c,m,LOCATION_MZONE,EFFECT_TYPE_SINGLE,EVENT_SPSUMMON_SUCCESS,cm.op,nil,vgf.VSummonCondition)
-	local e1=Effect.CreateEffect(c)
-    e1:SetType(EFFECT_TYPE_SINGLE)
-    e1:SetProperty(EFFECT_FLAG_SINGLE_RANGE)
-    e1:SetCode(EFFECT_UPDATE_ATTACK)
-    e1:SetRange(LOCATION_MZONE)
-	e1:SetCondition(cm.con2)
-    e1:SetValue(5000)
-    c:RegisterEffect(e1)
+    vgd.EffectTypeContinuousChangeAttack(c,m,EFFECT_TYPE_SINGLE,5000,cm.con)
 end
-function cm.con2(e,tp,eg,ep,ev,re,r,rp)
+function cm.con(e,tp,eg,ep,ev,re,r,rp)
 	local ct=Duel.GetFlagEffectLabel(tp,FLAG_CONDITION)
 	return VgF.GetValueType(ct)=="number" and ct==10102001
 end
