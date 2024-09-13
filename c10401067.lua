@@ -25,7 +25,7 @@ function cm.op(e,tp,eg,ep,ev,re,r,rp)
 	local ct1=vgf.GetMatchingGroupCount(nil,tp,0,LOCATION_MZONE,nil)
 	if ct>ct1 then ct=ct1 end
 	if ct==0 then return end
-	local g=vgf.SelectMatchingCard(HINTMSG_LEAVEONFIELD,e,tp,nil,tp,0,LOCATION_MZONE,1,ct,nil)
+	local g=vgf.SelectMatchingCard(HINTMSG_LEAVEFIELD,e,tp,nil,tp,0,LOCATION_MZONE,1,ct,nil)
 	if g:GetCount()>0 then
 		vgf.Sendto(LOCATION_DROP,g,REASON_EFFECT)
 	end

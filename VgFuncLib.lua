@@ -312,13 +312,12 @@ end
 ---@param zone integer|nil 指示要Call到的格子。<br>前列的R：17； 后列的R：14； 全部的R：31； V：32
 ---@param pos integer|nil 表示形式
 ---@return integer Call成功的数量
-function VgF.Call(g,sumtype,tp,zone,pos,chk)
+function VgF.Call(g,sumtype,tp,zone,pos)
     if (VgF.GetValueType(g)~="Card" and VgF.GetValueType(g)~="Group") or (VgF.GetValueType(g)=="Group" and g:GetCount()==0) then return 0 end
     if VgF.GetValueType(pos)~="number" then pos=POS_FACEUP_ATTACK end
-    if chk==0 then
+    if VgF.GetValueType(zone)=="string" and zone=="NoMonster" then
         return Duel.SpecialSummon(g,sumtype,tp,tp,false,false,pos)
-    end
-    if zone and zone>0 then
+    elseif VgF.GetValueType(zone)=="number" and zone>0 then
         local sc=VgF.ReturnCard(g)
         local z=VgF.GetAvailableLocation(tp,zone)
         local ct=bit.ReturnCount(z)
@@ -334,7 +333,7 @@ function VgF.Call(g,sumtype,tp,zone,pos,chk)
         if szone==0x20 and Duel.GetMatchingGroupCount(VgF.VMonsterFilter,tp,LOCATION_MZONE,0,nil)>0 then
             if VgF.VMonsterFilter(sc:GetOverlayTarget()) then
                 VgF.Sendto(0,sc,tp,POS_FACEUP,REASON_EFFECT)
-                local _,code=c:GetOriginalCode()
+                local _,code=sc:GetOriginalCode()
                 sc=Duel.CreateToken(tp,code)
             end
             local tc=Duel.GetMatchingGroup(VgF.VMonsterFilter,tp,LOCATION_MZONE,0,nil):GetFirst()
@@ -346,7 +345,9 @@ function VgF.Call(g,sumtype,tp,zone,pos,chk)
             VgF.Sendto(LOCATION_OVERLAY,Group.FromCards(tc),sc)
         elseif VgF.IsExistingMatchingCard(VgD.CallFilter,tp,LOCATION_MZONE,0,1,nil,tp,szone) then
             local tc=Duel.GetMatchingGroup(VgD.CallFilter,tp,LOCATION_MZONE,0,nil,tp,szone):GetFirst()
-            VgF.Sendto(LOCATION_DROP,tc,REASON_COST)
+            if bit.band(sumtype,SUMMON_VALUE_OverDress)>0 then VgF.Sendto(LOCATION_OVERLAY,Group.FromCards(tc),sc)
+            else VgF.Sendto(LOCATION_DROP,tc,REASON_COST)
+            end
         end
 	    return Duel.SpecialSummon(sc,sumtype,tp,tp,false,false,pos,szone)
     else
@@ -667,6 +668,37 @@ function VgF.DamageCost(val)
         local g=Duel.SelectMatchingCard(tp,Card.IsFaceup,tp,LOCATION_DAMAGE,0,val,val,nil)
         Duel.ChangePosition(g,POS_FACEDOWN_ATTACK)
         return Duel.GetOperatedGroup():GetCount()
+    end
+end
+function VgF.LeaveFieldCost(card_or_code_or_func,val_max,val_min,...)
+    local ext_params={...}
+    if VgF.GetValueType(val_max)~="number" then val_max=1 end
+    if VgF.GetValueType(val_min)~="number" or val_min>val_max then val_min=val_max end
+    return function (e,tp,eg,ep,ev,re,r,rp,chk)
+        local filter=VgF.True
+        if VgF.GetValueType(card_or_code_or_func)=="function" then filter=card_or_code_or_func
+        elseif VgF.GetValueType(card_or_code_or_func)=="number" then
+            filter=function (tc)
+                return tc:IsCode(card_or_code_or_func)
+            end
+        elseif VgF.GetValueType(card_or_code_or_func)=="Card" then
+            if chk==0 then return card_or_code_or_func:IsAbleToGraveAsCost() end
+            VgF.Sendto(LOCATION_DROP,card_or_code_or_func,REASON_COST)
+        elseif VgF.GetValueType(card_or_code_or_func)=="Group" then
+            if chk==0 then return not card_or_code_or_func:IsExists(function (tc)
+                return not tc:IsAbleToGraveAsCost()
+            end,1,nil) end
+            VgF.Sendto(LOCATION_DROP,card_or_code_or_func,REASON_COST)
+        end
+        if chk==0 then
+            return VgF.IsExistingMatchingCard(function (tc)
+                return filter(tc,table.unpack(ext_params)) and tc:IsAbleToGraveAsCost()
+            end,tp,LOCATION_MZONE,0,val_min,nil)
+        end
+        local g=vgf.SelectMatchingCard(HINTMSG_LEAVEFIELD,e,tp,function (tc)
+            return filter(tc,table.unpack(ext_params)) and tc:IsAbleToGraveAsCost()
+        end,tp,LOCATION_MZONE,0,val_min,val_max,nil)
+        VgF.Sendto(LOCATION_DROP,g,REASON_COST)
     end
 end
 function VgF.IsCanBeCalled(c,e,tp,sumtype,pos,zone)

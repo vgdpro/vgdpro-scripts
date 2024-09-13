@@ -14,7 +14,7 @@ function cm.initial_effect(c)
 end
 function cm.cost(e,tp,eg,ep,ev,re,r,rp,chk)
 	if chk==0 then return vgf.IsExistingMatchingCard(vgf.RMonsterFilter,tp,LOCATION_MZONE,0,2,nil) end
-	local g=vgf.SelectMatchingCard(HINTMSG_LEAVEONFIELD,e,tp,vgf.RMonsterFilter,tp,LOCATION_MZONE,0,2,2,nil)
+	local g=vgf.SelectMatchingCard(HINTMSG_LEAVEFIELD,e,tp,vgf.RMonsterFilter,tp,LOCATION_MZONE,0,2,2,nil)
 	vgf.Sendto(LOCATION_DROP,g,REASON_COST)
 end
 function cm.op(e,tp,eg,ep,ev,re,r,rp)

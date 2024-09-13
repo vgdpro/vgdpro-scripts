@@ -153,6 +153,7 @@ SUMMON_TYPE_LINK		=0x4c000000 --连接召唤
 --Summon Value --特定的召唤方式
 SUMMON_VALUE_CALL					=0x1	--通常CALL出场
 SUMMON_VALUE_REVOLT		            =0x2	--反抗舞装
+SUMMON_VALUE_OverDress		        =0x4	--超限舞装
 SUMMON_VALUE_DARK_SANCTUARY			=0x12	--暗黑圣域
 SUMMON_VALUE_MONSTER_REBORN			=0x13	--死者苏生（千年的启示）
 SUMMON_VALUE_MASK_CHANGE			=0x14	--
@@ -729,7 +730,7 @@ OPCODE_ISATTRIBUTE		=0x40000104
 DOUBLE_DAMAGE			=-2147483648
 HALF_DAMAGE				=-2147483647
 --Hint Message	--提示消息，显示在窗口的上面
-HINTMSG_LEAVEONFIELD	=500	--请选择要退场的卡
+HINTMSG_LEAVEFIELD	=500	--请选择要退场的卡
 HINTMSG_DISCARD			=501	--请选择要丢弃的手牌
 HINTMSG_IMPRISON        =502    --请选择要收容的卡
 HINTMSG_REMOVE			=503	--请选择要除外的卡

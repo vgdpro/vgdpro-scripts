@@ -279,7 +279,7 @@ function VgD.OverDressOperation(f)
             Duel.Hint(HINT_SELECTMSG,tp,HINTMSG_CallZONE)
             szone=Duel.SelectField(tp,1,LOCATION_MZONE,0,zone)
         end
-        e:SetValue(function () return SUMMON_VALUE_CALL,szone end)
+        e:SetValue(function () return SUMMON_VALUE_CALL+SUMMON_VALUE_OverDress,szone end)
         local tc=Duel.GetMatchingGroup(VgD.OverDressFilter,tp,LOCATION_MZONE,0,nil,f,szone):GetFirst()
         if not tc then return end
         local mg=tc:GetOverlayGroup()
@@ -542,7 +542,7 @@ function VgD.MonsterCannotBeAttackedCondition(e,c)
 end
 
 --送去g区
-function VgD.CardToG(c,cost,op)
+function VgD.CardToG(c,m,cost,op)
     local cm=_G["c"..m]
     if not cm.is_has_trigger then cm.is_has_trigger=true end
     local type=EFFECT_TYPE_TRIGGER_F
@@ -742,7 +742,7 @@ end
 function VgD.OperationWhenCardTrigger(e,tp,eg,ep,ev,re,r,rp,c,chk)
     local effect_when_trigger=c.effect_when_trigger
     local cost,con,tg=true,true,true
-    if #effect_when_trigger==0 then return end
+    if not effect_when_trigger or #effect_when_trigger==0 then return end
     if (VgF.GetValueType(effect_when_trigger[5])=="boolean" and not effect_when_trigger[5]) or (VgF.GetValueType(effect_when_trigger[5])~="boolean" and Duel.GetTurnPlayer()~=c:GetControler()) then return false end
     if VgF.GetValueType(effect_when_trigger[2])=="function" then cost=effect_when_trigger[2](e,tp,eg,ep,ev,re,r,rp,0) end
     if VgF.GetValueType(effect_when_trigger[3])=="function" then con=effect_when_trigger[3](e,tp,eg,ep,ev,re,r,rp) end
@@ -1021,7 +1021,7 @@ function VgD.MixCostOperation(c,bc,e,tp)
         if VgF.GetValueType(tg_to)=="number" then
             if tg_to==LOCATION_DROP then
                 if tg_from==LOCATION_MZONE then
-                    hintmsg=HINTMSG_LEAVEONFIELD
+                    hintmsg=HINTMSG_LEAVEFIELD
                 elseif tg_from==LOCATION_OVERLAY then hintmsg=HINTMSG_REMOVEXYZ
                 else hintmsg=HINTMSG_TODROP end
                 ext_params={REASON_COST}
@@ -1261,7 +1261,7 @@ function VgD.EffectTypeContinuousChangeAttack(c,m,typ,val,con,tg,loc_self,loc_op
     e1:SetType(typ)
     e1:SetCode(EFFECT_UPDATE_ATTACK)
     e1:SetRange(LOCATION_MZONE)
-    if VgF.GetValueType(reset)=="number" then e1:SetReset(reset) end
+    if VgF.GetValueType(reset)=="number" then e1:SetReset(RESET_EVENT+RESETS_STANDARD+reset) end
     if typ==EFFECT_TYPE_FIELD then e1:SetTargetRange(loc_self,loc_op) end
     if VgF.GetValueType(con)=="function" then e1:SetCondition(con) end
     if VgF.GetValueType(tg)=="function" then e1:SetTarget(tg) end
@@ -1279,7 +1279,7 @@ function VgD.EffectTypeContinuousChangeDefense(c,m,typ,val,con,tg,loc_self,loc_o
     e1:SetType(typ)
     e1:SetCode(EFFECT_UPDATE_DEFENSE)
     e1:SetRange(LOCATION_GZONE)
-    if VgF.GetValueType(reset)=="number" then e1:SetReset(reset) end
+    if VgF.GetValueType(reset)=="number" then e1:SetReset(RESET_EVENT+RESETS_STANDARD+reset) end
     if typ==EFFECT_TYPE_FIELD then e1:SetTargetRange(loc_self,loc_op) end
     if VgF.GetValueType(con)=="function" then e1:SetCondition(con) end
     if VgF.GetValueType(tg)=="function" then e1:SetTarget(tg) end
@@ -1297,7 +1297,7 @@ function VgD.EffectTypeContinuousChangeStar(c,m,typ,val,con,tg,loc_self,loc_op,r
     e1:SetType(typ)
     e1:SetCode(EFFECT_UPDATE_LSCALE)
     e1:SetRange(LOCATION_MZONE)
-    if VgF.GetValueType(reset)=="number" then e1:SetReset(reset) end
+    if VgF.GetValueType(reset)=="number" then e1:SetReset(RESET_EVENT+RESETS_STANDARD+reset) end
     if typ==EFFECT_TYPE_FIELD then e1:SetTargetRange(loc_self,loc_op) end
     if VgF.GetValueType(con)=="function" then e1:SetCondition(con) end
     if VgF.GetValueType(tg)=="function" then e1:SetTarget(tg) end
@@ -1310,7 +1310,6 @@ end
 function VgD.TriggerCountUp(c,m,num,reset,tc)
     local cm=_G["c"..m]
     if not cm.is_has_continuous and not reset then cm.is_has_continuous=true end
-    if not reset then reset=0 end
     if tc then tc=VgF.ReturnCard(tc) else tc=c end
     local e1=Effect.CreateEffect(c)
     e1:SetType(EFFECT_TYPE_FIELD+EFFECT_TYPE_CONTINUOUS)
@@ -1320,7 +1319,7 @@ function VgD.TriggerCountUp(c,m,num,reset,tc)
     e1:SetCondition(function (e,tp,eg,ep,ev,re,r,rp)
         return VgF.ReturnCard(eg)==e:GetHandler()
     end)
-    e1:SetReset(RESET_EVENT+RESETS_STANDARD+reset)
+    if VgF.GetValueType(reset)=="number" then e1:SetReset(RESET_EVENT+RESETS_STANDARD+reset) end
     e1:SetOperation(VgD.TriggerCountUpOperation(num))
     tc:RegisterEffect(e1)
 end
@@ -1372,7 +1371,7 @@ function VgD.CannotBeTarget(c,m,con,val,loc)
 end
 function VgD.NightEffect(c,m)
     local cm=_G["c"..m]
-    if not cm.is_has_continuous and not reset then cm.is_has_continuous=true end
+    if not cm.is_has_continuous then cm.is_has_continuous=true end
 	local e1=Effect.CreateEffect(c)
     e1:SetType(EFFECT_TYPE_FIELD)
     e1:SetProperty(EFFECT_FLAG_PLAYER_TARGET)
@@ -1387,7 +1386,7 @@ function VgD.NightEffect(c,m)
 end
 function VgD.DeepNightEffect(c,m)
     local cm=_G["c"..m]
-    if not cm.is_has_continuous and not reset then cm.is_has_continuous=true end
+    if not cm.is_has_continuous then cm.is_has_continuous=true end
 	local e1=Effect.CreateEffect(c)
     e1:SetType(EFFECT_TYPE_FIELD)
     e1:SetProperty(EFFECT_FLAG_PLAYER_TARGET)
@@ -1402,4 +1401,64 @@ function VgD.DeepNightEffect(c,m)
 end
 function VgD.NightFilter(c)
     return not c:IsSetCard(0x5040) and c:IsType(TYPE_CONTINUOUS)
+end
+function VgD.CallInPrison(c,m)
+    local cm=_G["c"..m]
+    if not cm.is_has_continuous then cm.is_has_continuous=true end
+	local e1=Effect.CreateEffect(c)
+	e1:SetDescription(VgF.Stringid(VgID,11))
+	e1:SetType(EFFECT_TYPE_FIELD)
+	e1:SetCode(EFFECT_SPSUMMON_PROC_G)
+	e1:SetProperty(EFFECT_FLAG_CANNOT_DISABLE+EFFECT_FLAG_UNCOPYABLE+EFFECT_FLAG_BOTH_SIDE)
+	e1:SetRange(LOCATION_ORDER)
+	e1:SetCondition(VgD.CallInPrisonCondition(1))
+	e1:SetOperation(VgD.CallInPrisonOperation(1))
+	c:RegisterEffect(e1)
+    local e2=e1:Clone()
+	e2:SetDescription(VgF.Stringid(VgID,12))
+    e2:SetCondition(VgD.CallInPrisonCondition(2))
+	e2:SetOperation(VgD.CallInPrisonOperation(2))
+	c:RegisterEffect(e2)
+end
+function VgD.CallInPrisonCondition(val)
+    return function (e,c,og)
+        local tp=1-e:GetHandlerPlayer()
+        local eg,ep,ev,re,r,rp
+        if Duel.GetTurnPlayer()==e:GetHandlerPlayer() then return false end
+        if val==1 then
+            return (VgF.OverlayCost(1)(e,tp,eg,ep,ev,re,r,rp,0) and VgF.IsExistingMatchingCard(VgD.CallInPrisonFilter,tp,LOCATION_HAND,0,1,nil,e,tp))
+        elseif val==2 then
+            return (VgF.DamageCost(1)(e,tp,eg,ep,ev,re,r,rp,0) and VgF.IsExistingMatchingCard(VgD.CallInPrisonFilter,tp,LOCATION_HAND,0,2,nil,e,tp))
+        end
+    end
+end
+function VgD.CallInPrisonOperation(val)
+    return function(e,p,eg,ep,ev,re,r,rp,c,sg,og)
+        local tp=1-p
+        if val==1 then
+            VgF.OverlayCost(1)(e,tp,eg,ep,ev,re,r,rp,1)
+            local g=VgF.SelectMatchingCard(HINTMSG_CALL,e,tp,VgD.CallInPrisonFilter,tp,0,LOCATION_ORDER,1,1,nil,e,tp)
+            if g:GetFirst():IsType(TYPE_MONSTER) then
+                VgF.Sendto(LOCATION_MZONE,g,0,tp)
+            else
+                VgF.Sendto(LOCATION_DROP,g,REASON_EFFECT)
+            end
+            sg=Group.CreateGroup()
+        elseif val==2 then
+            VgF.DamageCost(1)(e,tp,eg,ep,ev,re,r,rp,1)
+            local tg=VgF.SelectMatchingCard(HINTMSG_CALL,e,tp,VgD.CallInPrisonFilter,tp,0,LOCATION_ORDER,2,2,nil,e,tp)
+            local g=tg:Filter(Card.IsType,nil,TYPE_MONSTER)
+            if g:GetCount()>0 then
+                VgF.Sendto(LOCATION_MZONE,g,0,tp)
+                tg:Sub(g)
+            end
+            if tg:GetCount()>0 then
+                VgF.Sendto(LOCATION_DROP,tg,REASON_EFFECT)
+            end
+            sg=Group.CreateGroup()
+        end
+    end
+end
+function VgD.CallInPrisonFilter(c,e,tp)
+	return c:GetFlagEffect(FLAG_IMPRISON)>0 and (vgf.IsCanBeCalled(c,e,tp) or not c:IsType(TYPE_MONSTER))
 end

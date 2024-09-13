@@ -9,7 +9,7 @@ end
 function cm.op(e,tp,eg,ep,ev,re,r,rp)
     local c=e:GetHandler()
 	if c:IsRelateToEffect(e) and vgf.IsCanBeCalled(c,e,tp) then
-		vgf.Sendto(LOCATION_MZONE,c,0,tp,nil,nil,0)
+		vgf.Sendto(LOCATION_MZONE,c,0,tp,"NoMonster")
 	end
 end
 
