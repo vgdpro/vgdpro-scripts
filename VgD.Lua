@@ -522,7 +522,7 @@ function VgD.MonsterCannotBeAttackedCondition(e,c)
 end
 
 --送去g区
-function VgD.CardToG(c,m,cost,op)
+function vgd.CardToG(c,m,cost,op)
     local cm=_G["c"..m]
     if not cm.is_has_trigger then cm.is_has_trigger=true end
     local type=EFFECT_TYPE_TRIGGER_F
