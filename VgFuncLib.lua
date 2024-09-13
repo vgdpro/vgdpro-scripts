@@ -56,7 +56,7 @@ function VgF.SequenceToGlobal(p,loc,seq)
 	end
 	if loc==LOCATION_MZONE then
 		if seq<=6 then
-			return 0x0001<<(16*p+seq)
+			return 0x0001<<(seq)
 		else
 			return 0
 		end

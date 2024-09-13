@@ -200,9 +200,9 @@ end
 function VgD.CallOperation(e,tp,eg,ep,ev,re,r,rp)
     local c=e:GetHandler()
     local z=bit.bnot(VgF.GetAvailableLocation(tp))
-    local rg=Duel.GetMatchingGroup(Card.IsPosition,sp,LOCATION_MZONE,0,nil,POS_FACEDOWN_ATTACK)
+    local rg=Duel.GetMatchingGroup(Card.IsPosition,tp,LOCATION_MZONE,0,nil,POS_FACEDOWN_ATTACK)
     for tc in VgF.Next(rg) do
-        local szone=VgF.SequenceToGlobal(sp,tc:GetLocation(),tc:GetSequence())
+        local szone=VgF.SequenceToGlobal(tp,tc:GetLocation(),tc:GetSequence())
         z=bit.bor(z,szone)
     end
     Duel.Hint(HINT_SELECTMSG,tp,HINTMSG_CallZONE)
@@ -240,47 +240,27 @@ function VgD.OverDressCondition(f)
         return VgF.LvCondition(e) and VgF.IsExistingMatchingCard(VgD.OverDressFilter,tp,LOCATION_MZONE,0,1,nil,f)
     end
 end
-function VgD.OverDressFilter(c,f,zone)
-    local seq
+function VgD.OverDressFilter(c,f,tp,zone)
     if zone and zone>0 then
-        if zone==0x1 then seq=0 end
-        if zone==0x2 then seq=1 end
-        if zone==0x4 then seq=2 end
-        if zone==0x8 then seq=3 end
-        if zone==0x10 then seq=4 end
-        if not VgF.IsSequence(c,seq) then return false end
+        if zone~=VgF.SequenceToGlobal(tp,c:GetLocation(),c:GetSequence()) then return false end
     end
-    return (VgF.GetValueType(f)=="function" and f(c)) or (VgF.GetValueType(f)=="number" and c:IsCode(f)) and c:IsFaceup()
+    return ((VgF.GetValueType(f)=="function" and f(c)) or (VgF.GetValueType(f)=="number" and c:IsCode(f))) and c:IsFaceup()
 end
 function VgD.OverDressOperation(f)
     return function(e,tp,eg,ep,ev,re,r,rp)
         local c=e:GetHandler()
-        local g=Duel.GetMatchingGroup(VgD.OverDressFilter,tp,LOCATION_MZONE,0,nil,f,code)
+        local g=Duel.GetMatchingGroup(VgD.OverDressFilter,tp,LOCATION_MZONE,0,nil,f,tp)
         local szone
-        if Duel.GetTurnPlayer()==tp and tp==1 then
-            local zone=0xff
-            for tc in VgF.Next(g) do
-                if VgF.IsSequence(tc,0) then zone=zone-0x1 end
-                if VgF.IsSequence(tc,1) then zone=zone-0x2 end
-                if VgF.IsSequence(tc,2) then zone=zone-0x4 end
-                if VgF.IsSequence(tc,3) then zone=zone-0x8 end
-                if VgF.IsSequence(tc,4) then zone=zone-0x10 end
-            end
-            if zone==0xff then return end
-            Duel.Hint(HINT_SELECTMSG,tp,HINTMSG_CallZONE)
-            szone=Duel.SelectField(tp,1,LOCATION_MZONE,0,zone)
-        elseif Duel.GetTurnPlayer()==tp and tp==0 then
-            local zone=0x00
-            for tc in VgF.Next(g) do
-                zone=bit.bor(zone,VgF.SequenceToGlobal(tp,tc:GetLocation(),tc:GetSequence()))
-            end
-            if zone==0x00 then return end
-            zone=bit.bnot(zone)
-            Duel.Hint(HINT_SELECTMSG,tp,HINTMSG_CallZONE)
-            szone=Duel.SelectField(tp,1,LOCATION_MZONE,0,zone)
+        local zone=0x00
+        for tc in VgF.Next(g) do
+            zone=bit.bor(zone,VgF.SequenceToGlobal(tp,tc:GetLocation(),tc:GetSequence()))
         end
+        if zone==0x00 then return end
+        zone=bit.bnot(zone)
+        Duel.Hint(HINT_SELECTMSG,tp,HINTMSG_CallZONE)
+        szone=Duel.SelectField(tp,1,LOCATION_MZONE,0,zone)
         e:SetValue(function () return SUMMON_VALUE_CALL+SUMMON_VALUE_OverDress,szone end)
-        local tc=Duel.GetMatchingGroup(VgD.OverDressFilter,tp,LOCATION_MZONE,0,nil,f,szone):GetFirst()
+        local tc=Duel.GetMatchingGroup(VgD.OverDressFilter,tp,LOCATION_MZONE,0,nil,f,tp,szone):GetFirst()
         if not tc then return end
         local mg=tc:GetOverlayGroup()
         if mg:GetCount()~=0 then
@@ -1433,20 +1413,18 @@ function VgD.CallInPrisonCondition(val)
     end
 end
 function VgD.CallInPrisonOperation(val)
-    return function(e,p,eg,ep,ev,re,r,rp,c,sg,og)
-        local tp=1-p
+    return function(e,tp,eg,ep,ev,re,r,rp,c,sg,og)
         if val==1 then
             VgF.OverlayCost(1)(e,tp,eg,ep,ev,re,r,rp,1)
-            local g=VgF.SelectMatchingCard(HINTMSG_CALL,e,tp,VgD.CallInPrisonFilter,tp,0,LOCATION_ORDER,1,1,nil,e,tp)
+            local g=VgF.SelectMatchingCard(HINTMSG_CALL,e,tp,VgD.CallInPrisonFilter,tp,LOCATION_ORDER,0,1,1,nil,e,tp)
             if g:GetFirst():IsType(TYPE_MONSTER) then
                 VgF.Sendto(LOCATION_MZONE,g,0,tp)
             else
                 VgF.Sendto(LOCATION_DROP,g,REASON_EFFECT)
             end
-            sg=Group.CreateGroup()
         elseif val==2 then
             VgF.DamageCost(1)(e,tp,eg,ep,ev,re,r,rp,1)
-            local tg=VgF.SelectMatchingCard(HINTMSG_CALL,e,tp,VgD.CallInPrisonFilter,tp,0,LOCATION_ORDER,2,2,nil,e,tp)
+            local tg=VgF.SelectMatchingCard(HINTMSG_CALL,e,tp,VgD.CallInPrisonFilter,tp,LOCATION_ORDER,0,2,2,nil,e,tp)
             local g=tg:Filter(Card.IsType,nil,TYPE_MONSTER)
             if g:GetCount()>0 then
                 VgF.Sendto(LOCATION_MZONE,g,0,tp)
@@ -1455,8 +1433,8 @@ function VgD.CallInPrisonOperation(val)
             if tg:GetCount()>0 then
                 VgF.Sendto(LOCATION_DROP,tg,REASON_EFFECT)
             end
-            sg=Group.CreateGroup()
         end
+        sg=Group.CreateGroup()
     end
 end
 function VgD.CallInPrisonFilter(c,e,tp)
