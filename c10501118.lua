@@ -10,7 +10,7 @@ function cm.con(e,tp,eg,ep,ev,re,r,rp)
     return VgF.GetVMonster(tp):IsCode(10501002)
 end
 function cm.filter(c)
-    return c:GetLevel()%2==0
+    return c:GetLevel()%2==1
 end
 function cm.op(e,tp,eg,ep,ev,re,r,rp)
     local c=e:GetHandler()

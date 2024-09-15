@@ -1173,7 +1173,7 @@ function VgF.WhiteWing(e)
     local b=vgf.IsExistingMatchingCard(function (c)
         return c:GetLevel()%2==0
     end,tp,LOCATION_REMOVED,0,1,nil)
-    return (not a and b) or Duel.IsPlayerAffectedByEffect(tp,AFFECT_CODE_BOTH_WING)
+    return (a and not b) or Duel.IsPlayerAffectedByEffect(tp,AFFECT_CODE_BOTH_WING)
 end
 -- 黑翼能力在你的封锁区中的卡只有偶数的等级的场合有效
 function VgF.DarkWing(e)
@@ -1184,7 +1184,7 @@ function VgF.DarkWing(e)
     local b=vgf.IsExistingMatchingCard(function (c)
         return c:GetLevel()%2==0
     end,tp,LOCATION_REMOVED,0,1,nil)
-    return (a and not b) or Duel.IsPlayerAffectedByEffect(tp,AFFECT_CODE_BOTH_WING)
+    return (not a and b) or Duel.IsPlayerAffectedByEffect(tp,AFFECT_CODE_BOTH_WING)
 end
 
 function VgF.AddRideMaterialSetCardCheck(c,m,...)

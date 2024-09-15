@@ -7,18 +7,5 @@ function cm.initial_effect(c)
     vgd.EffectTypeContinuousChangeAttack(c,m,EFFECT_TYPE_SINGLE,10000,cm.con)
 end
  function cm.con(e,tp,eg,ep,ev,re,r,rp)
-    return cm.con1(e,tp,eg,ep,ev,re,r,rp) and Duel.GetTurnPlayer()==tp and vgf.RMonsterCondition(e)
-end
-
-function cm.con1(e,tp,eg,ep,ev,re,r,rp)
-    local a=vgf.IsExistingMatchingCard(cm.filter1,tp,LOCATION_LOCK,0,1,nil)
-    local b=vgf.IsExistingMatchingCard(cm.filter2,tp,LOCATION_LOCK,0,1,nil)
-    -- 白翼（你的封锁区中的卡只有奇数的等级的场合才有效）
-    return not a and b
-end
-function cm.filter1(c)
-    return c:GetLevel()%2==1
-end
-function cm.filter2(c)
-    return c:GetLevel()%2==0
+    return vgf.WhiteWing(e) and Duel.GetTurnPlayer()==tp and vgf.RMonsterCondition(e)
 end
