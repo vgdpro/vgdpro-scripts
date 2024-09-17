@@ -874,21 +874,27 @@ end
 function VgD.MixCost(cost)
 	return function(e,tp,eg,ep,ev,re,r,rp,chk)
 		local c=e:GetHandler()
-        local chk_return=VgF.GetValueType(cost)~="function" or cost(e,tp,eg,ep,ev,re,r,rp,0)
-		if chk==0 then return chk_return end
-		if Duel.IsPlayerAffectedByEffect(tp,AFFECT_CODE_MIX) and VgF.IsExistingMatchingCard(VgD.MixCostFilter,tp,LOCATION_DROP,0,1,nil,e,tp,eg,ep,ev,re,r,rp,c,chk_return) and Duel.SelectYesNo(tp,VgF.Stringid(VgID,6)) then
-			local bc=Duel.SelectMatchingCard(tp,VgD.MixCostFilter,tp,LOCATION_DROP,0,1,1,nil,e,tp,eg,ep,ev,re,r,rp,c,chk_return):GetFirst()
-            if bc then
-                VgF.Sendto(LOCATION_LOCK,bc,POS_FACEUP,REASON_COST)
-                e:SetLabelObject(bc)
-                VgD.MixCostOperation(c,bc,tp)
+		if chk==0 then
+            return VgF.GetValueType(cost)~="function" or cost(e,tp,eg,ep,ev,re,r,rp,0) or (Duel.IsPlayerAffectedByEffect(tp,AFFECT_CODE_MIX) and VgF.IsExistingMatchingCard(VgD.MixCostFilter,tp,LOCATION_DROP,0,1,nil,e,tp,eg,ep,ev,re,r,rp,c))
+        end
+		if Duel.IsPlayerAffectedByEffect(tp,AFFECT_CODE_MIX) and VgF.IsExistingMatchingCard(VgD.MixCostFilter,tp,LOCATION_DROP,0,1,nil,e,tp,eg,ep,ev,re,r,rp,c) then
+            local a=false
+            if VgF.GetValueType(cost)=="function" and not cost(e,tp,eg,ep,ev,re,r,rp,0) then a=true end
+            if not a then a=Duel.SelectYesNo(tp,VgF.Stringid(VgID,6)) end
+            if a then
+                local bc=Duel.SelectMatchingCard(tp,VgD.MixCostFilter,tp,LOCATION_DROP,0,1,1,nil,e,tp,eg,ep,ev,re,r,rp,c):GetFirst()
+                if bc then
+                    VgF.Sendto(LOCATION_LOCK,bc,POS_FACEUP,REASON_COST)
+                    e:SetLabelObject(bc)
+                    VgD.MixCostOperation(c,bc,tp)
+                end
             end
         else
-            if VgF.GetValueType(cost)=="function" then cost(e,tp,eg,ep,ev,re,r,rp) end
+            if VgF.GetValueType(cost)=="function" then cost(e,tp,eg,ep,ev,re,r,rp,1) end
 		end
 	end
 end
-function VgD.MixCostFilter(c,e,tp,eg,ep,ev,re,r,rp,mc,chk)
+function VgD.MixCostFilter(c,e,tp,eg,ep,ev,re,r,rp,mc)
     if Duel.IsPlayerAffectedByEffect(tp,AFFECT_CODE_MIX_DIFFERENT_NAME) and c:IsCode(mc:GetCode()) then return false end
     --得到需要支付的费用（从哪来，几张卡，什么卡）
     local cfrom, cval, cfilter, mcfrom, mcval, mcfilter
@@ -965,9 +971,41 @@ function VgD.MixCostFilter(c,e,tp,eg,ep,ev,re,r,rp,mc,chk)
         end
     --如果本体需要支付而合成的卡不需要支付
     elseif #mcfrom>0 then
-
-    --/如果本体不需要支付而合成的卡需要支付/都不需要支付
-    --均可返回true
+        for mcv=1,#mcfrom do
+            local mc_cost_from=VgF.ShiftLocationFromString(mcfrom[mcv])
+            local mc_cos_val=mcval[mcv]
+            if VgF.GetValueType(mc_cos_val)~="number" then mc_cos_val=0 end
+            --判断其他减少费用的效果
+            if mc_cost_from==LOCATION_OVERLAY and Duel.GetFlagEffect(tp,AFFECT_CODE_OVERLAY_COST_FREE_WHEN_MIX)>0 then mc_cos_val=0 end
+            local mcg=VgF.GetMatchingGroup(mcfilter[mcv],tp,mc_cost_from,0,c,e,tp)
+            if mc_cost_from==LOCATION_DAMAGE and Duel.GetFlagEffect(tp,10402010)>0 then
+                local c_10402010=Duel.GetFlagEffectLabel(tp,10402010)
+                if mc_cos_val>c_10402010 then mc_cos_val=mc_cos_val-c_10402010
+                else mc_cos_val=0
+                end
+            end
+            --判断是否足够支付费用
+            if mcg:GetCount()<mc_cos_val then return false end
+        end
+    --如果本体不需要支付而合成的卡需要支付
+    elseif #cfrom>0 then
+        for cv=1,#cfrom do
+            local c_cost_from=VgF.ShiftLocationFromString(cfrom[cv])
+            local c_cos_val=mcval[cv]
+            if VgF.GetValueType(c_cos_val)~="number" then c_cos_val=0 end
+            --判断其他减少费用的效果
+            if c_cost_from==LOCATION_OVERLAY and Duel.GetFlagEffect(tp,AFFECT_CODE_OVERLAY_COST_FREE_WHEN_MIX)>0 then c_cos_val=0 end
+            local cg=VgF.GetMatchingGroup(cfilter[cv],tp,c_cost_from,0,c,e,tp)
+            if c_cost_from==LOCATION_DAMAGE and Duel.GetFlagEffect(tp,10402010)>0 then
+                local c_10402010=Duel.GetFlagEffectLabel(tp,10402010)
+                if c_cos_val>c_10402010 then c_cos_val=c_cos_val-c_10402010
+                else c_cos_val=0
+                end
+            end
+            --判断是否足够支付费用
+            if cg:GetCount()<c_cos_val then return false end
+        end
+    --都不需要支付
     else return true
     end
     return VgF.LvCondition(c)
