@@ -871,6 +871,26 @@ function VgD.SpellActivate(c,m,op,cost,con)
     e1:SetOperation(VgD.SpellOperation(op))
     c:RegisterEffect(e1)
 end
+function VgD.MixCost(cost)
+	return function(e,tp,eg,ep,ev,re,r,rp,chk)
+		local c=e:GetHandler()
+        local chk_return=VgF.GetValueType(cost)~="function" or cost(e,tp,eg,ep,ev,re,r,rp,0)
+		if chk==0 then return chk_return end
+		if Duel.IsPlayerAffectedByEffect(tp,AFFECT_CODE_MIX) and VgF.IsExistingMatchingCard(VgD.MixCostFilter,tp,LOCATION_DROP,0,1,nil,e,tp,eg,ep,ev,re,r,rp,c,chk_return) and Duel.SelectYesNo(tp,VgF.Stringid(VgID,6)) then
+			local bc=Duel.SelectMatchingCard(tp,VgD.MixCostFilter,tp,LOCATION_DROP,0,1,1,nil,e,tp,eg,ep,ev,re,r,rp,c,chk_return):GetFirst()
+            if bc then
+                VgF.Sendto(LOCATION_LOCK,bc,POS_FACEUP,REASON_COST)
+                e:SetLabelObject(bc)
+                local bce = bc:GetActivateEffect()
+                if VgF.GetValueType(cost)=="function" and bce and bce:GetCost() then VgD.MixCostOperation(c,bc,e,tp)
+                elseif VgF.GetValueType(cost)=="function" then cost(e,tp,eg,ep,ev,re,r,rp)
+                elseif bce and bce:GetCost() then bce:GetCost()(e,tp,eg,ep,ev,re,r,rp,chk) end
+            end
+        else
+            if VgF.GetValueType(cost)=="function" then cost(e,tp,eg,ep,ev,re,r,rp) end
+		end
+	end
+end
 function VgD.MixCostFilter(c,e,tp,eg,ep,ev,re,r,rp,mc,chk)
     if Duel.IsPlayerAffectedByEffect(tp,AFFECT_CODE_MIX_DIFFERENT_NAME) and c:IsCode(mc:GetCode()) then return false end
     local ce = c:GetActivateEffect()
@@ -917,26 +937,6 @@ function VgD.MixCostFilter(c,e,tp,eg,ep,ev,re,r,rp,mc,chk)
     elseif #mcfrom>0 and not chk then return false
     end
     return VgF.LvCondition(c)
-end
-function VgD.MixCost(cost)
-	return function(e,tp,eg,ep,ev,re,r,rp,chk)
-		local c=e:GetHandler()
-        local chk_return=VgF.GetValueType(cost)~="function" or cost(e,tp,eg,ep,ev,re,r,rp,0)
-		if chk==0 then return chk_return end
-		if Duel.IsPlayerAffectedByEffect(tp,AFFECT_CODE_MIX) and VgF.IsExistingMatchingCard(VgD.MixCostFilter,tp,LOCATION_DROP,0,1,nil,e,tp,eg,ep,ev,re,r,rp,c,chk_return) and Duel.SelectYesNo(tp,VgF.Stringid(VgID,6)) then
-			local bc=Duel.SelectMatchingCard(tp,VgD.MixCostFilter,tp,LOCATION_DROP,0,1,1,nil,e,tp,eg,ep,ev,re,r,rp,c,chk_return):GetFirst()
-            if bc then
-                VgF.Sendto(LOCATION_LOCK,bc,POS_FACEUP,REASON_COST)
-                e:SetLabelObject(bc)
-                local bce = bc:GetActivateEffect()
-                if VgF.GetValueType(cost)=="function" and bce and bce:GetCost() then VgD.MixCostOperation(c,bc,e,tp)
-                elseif VgF.GetValueType(cost)=="function" then cost(e,tp,eg,ep,ev,re,r,rp)
-                elseif bce and bce:GetCost() then bce:GetCost()(e,tp,eg,ep,ev,re,r,rp,chk) end
-            end
-        else
-            if VgF.GetValueType(cost)=="function" then cost(e,tp,eg,ep,ev,re,r,rp) end
-		end
-	end
 end
 function VgD.MixCostOperation(c,bc,e,tp)
     local cfrom, cto, cval, cval_max, cfilter, bcfrom, bcto, bcval, bcval_max, bcfilter
