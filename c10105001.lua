@@ -6,7 +6,7 @@ function cm.initial_effect(c)
 	vgd.TriggerCountUp(c,m,1)
 end
 function cm.con(e,c)
-	local tp=e:GetHandler()
+	local tp=e:GetHandlerPlayer()
 	return Duel.GetTurnPlayer()==tp and vgf.VMonsterCondition(e) and vgf.IsExistingMatchingCard(cm.filter,tp,LOCATION_ORDER,0,1,nil)
 end
 function cm.filter(c)

@@ -8,7 +8,7 @@ function cm.filter(c)
 	return c:IsSetCard(0x5040)
 end
 function cm.con(e)
-	local tp=e:GetHandler()
+	local tp=e:GetHandlerPlayer()
 	local c=e:GetHandler()
 	return (Duel.IsPlayerAffectedByEffect(tp,AFFECT_CODE_NIGHT) or Duel.IsPlayerAffectedByEffect(tp,AFFECT_CODE_DEEP_NIGHT))
 		and (Duel.GetAttacker()==e:GetHandler() or c:GetFlagEffect(FLAG_SUPPORT)>0)

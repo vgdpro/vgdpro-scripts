@@ -6,7 +6,7 @@ function cm.initial_effect(c)
 	vgd.EffectTypeTrigger(c,m,nil,EFFECT_TYPE_SINGLE,EVENT_SPSUMMON_SUCCESS,cm.op,vgf.OverlayCost(1),vgf.RSummonCondition)
 end
 function cm.con(e)
-	local tp=e:GetHandler()
+	local tp=e:GetHandlerPlayer()
 	return vgf.IsExistingMatchingCard(cm.filter,tp,LOCATION_ORDER,0,2,nil)
 end
 function cm.filter(c)

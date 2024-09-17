@@ -1050,7 +1050,10 @@ function VgF.SelectMatchingCard(hintmsg,e,select_tp,f,tp,loc_self,loc_op,int_min
     local cg=g:Filter(function (tc)
         return not tc:IsLocation(LOCATION_DECK+LOCATION_HAND+LOCATION_EXTRA)
     end,nil)
-    if cg:GetCount()>0 then Duel.HintSelection(cg) end
+    if cg:GetCount()>0 then
+        Duel.HintSelection(cg)
+        Duel.SetTargetCard(cg)
+    end
     if a then Duel.ShuffleDeck(select_tp) end
     return g
 end

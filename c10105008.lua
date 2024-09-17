@@ -5,7 +5,7 @@ function cm.initial_effect(c)
 	vgd.EffectTypeContinuousChangeDefense(c,m,EFFECT_TYPE_SINGLE,5000,con)
 end
 function cm.con(e,c)
-	local tp=e:GetHandler()
+	local tp=e:GetHandlerPlayer()
 	return vgf.IsExistingMatchingCard(cm.filter,tp,LOCATION_ORDER,0,1,nil)
 end
 function cm.filter(c)
