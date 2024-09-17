@@ -75,6 +75,11 @@ end
 function VgF.True()
     return true
 end
+---一个总是返回false的函数。
+---@return false
+function VgF.False()
+    return false
+end
 ---返回g中的“下一张卡”。第一次调用会返回第一张卡。没有下一张卡会返回nil。
 ---@param g Group 要遍历的卡片组
 ---@return function 指示返回的卡的函数

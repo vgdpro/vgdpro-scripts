@@ -881,10 +881,7 @@ function VgD.MixCost(cost)
             if bc then
                 VgF.Sendto(LOCATION_LOCK,bc,POS_FACEUP,REASON_COST)
                 e:SetLabelObject(bc)
-                local bce = bc:GetActivateEffect()
-                if VgF.GetValueType(cost)=="function" and bce and bce:GetCost() then VgD.MixCostOperation(c,bc,e,tp)
-                elseif VgF.GetValueType(cost)=="function" then cost(e,tp,eg,ep,ev,re,r,rp)
-                elseif bce and bce:GetCost() then bce:GetCost()(e,tp,eg,ep,ev,re,r,rp,chk) end
+                VgD.MixCostOperation(c,bc,tp)
             end
         else
             if VgF.GetValueType(cost)=="function" then cost(e,tp,eg,ep,ev,re,r,rp) end
@@ -893,8 +890,7 @@ function VgD.MixCost(cost)
 end
 function VgD.MixCostFilter(c,e,tp,eg,ep,ev,re,r,rp,mc,chk)
     if Duel.IsPlayerAffectedByEffect(tp,AFFECT_CODE_MIX_DIFFERENT_NAME) and c:IsCode(mc:GetCode()) then return false end
-    local ce = c:GetActivateEffect()
-    if not ce or (ce:GetCost() and not ce:GetCost()(e,tp,eg,ep,ev,re,r,rp,0)) then return false end
+    --得到需要支付的费用（从哪来，几张卡，什么卡）
     local cfrom, cval, cfilter, mcfrom, mcval, mcfilter
     table.copy(cfrom,c.cos_from)
     table.copy(cval,c.cos_val)
@@ -902,6 +898,7 @@ function VgD.MixCostFilter(c,e,tp,eg,ep,ev,re,r,rp,mc,chk)
     table.copy(mcfrom,mc.cos_from)
     table.copy(mcval,mc.cos_val)
     table.copy(mcfilter,mc.cos_filter)
+    --如果都有费用要付，则合成费用
     if #cfrom>0 and #mcfrom>0 then
         for cv=1,#cfrom do
             local c_cost_from=VgF.ShiftLocationFromString(cfrom[cv])
@@ -913,32 +910,70 @@ function VgD.MixCostFilter(c,e,tp,eg,ep,ev,re,r,rp,mc,chk)
                     local c_cos_val=cval[cv]
                     if VgF.GetValueType(mc_cos_val)~="number" then mc_cos_val=0 end
                     if VgF.GetValueType(c_cos_val)~="number" then c_cos_val=0 end
-                    if mc_cost_from==LOCATION_OVERLAY and Duel.IsPlayerAffectedByEffect(tp,AFFECT_CODE_OVERLAY_COST_FREE_WHEN_MIX) then mc_cos_val,c_cos_val=0,0 end
+                    local both_cos_val=mc_cos_val+c_cos_val
+                    --判断其他减少费用的效果
+                    if mc_cost_from==LOCATION_OVERLAY and Duel.GetFlagEffect(tp,AFFECT_CODE_OVERLAY_COST_FREE_WHEN_MIX)>0 then mc_cos_val,c_cos_val,both_cos_val=0,0,0 end
                     local mcg=VgF.GetMatchingGroup(mcfilter[mcv],tp,mc_cost_from,0,c,e,tp)
                     local cg=VgF.GetMatchingGroup(cfilter[cv],tp,c_cost_from,0,mc,e,tp)
-                    if mcg:GetCount()<mc_cos_val or cg:GetCount()<c_cos_val then return false end
+                    local a=mcg:GetCount()<mc_cos_val
+                    local b=cg:GetCount()<c_cos_val
+                    if mc_cost_from==LOCATION_DAMAGE and Duel.GetFlagEffect(tp,10402010)>0 then
+                        local c_10402010=Duel.GetFlagEffectLabel(tp,10402010)
+                        if both_cos_val>c_10402010 then both_cos_val=both_cos_val-c_10402010
+                        else both_cos_val=0
+                        end
+                        if a then
+                            if mc_cos_val-mcg:GetCount()<=c_10402010 then
+                                a=false
+                                c_10402010=c_10402010-(mc_cos_val-mcg:GetCount())
+                            end
+                        end
+                        if b then
+                            if c_cos_val-cg:GetCount()<=c_10402010 then
+                                b=false
+                                c_10402010=c_10402010-(c_cos_val-cg:GetCount())
+                            end
+                        end
+                    end
+                    --判断是否足够支付费用
+                    if a or b then return false end
                     mcg:Merge(cg)
-                    if mcg:GetCount()<mc_cos_val+c_cos_val then return false end
+                    if mcg:GetCount()<both_cos_val then return false end
                     pos=mcv
                 end
             end
+            --如果合成了，则删去已合成的内容
             if pos>0 then
                 table.remove(mcfrom,pos)
                 table.remove(mcval,pos)
                 table.remove(mcfilter,pos)
+            --如果没有合成，则在原费用上操作
             else
                 local c_cos_val=cval[cv]
-                    if VgF.GetValueType(c_cos_val)~="number" then c_cos_val=0 end
-                    if c_cost_from==LOCATION_OVERLAY and Duel.IsPlayerAffectedByEffect(tp,AFFECT_CODE_OVERLAY_COST_FREE_WHEN_MIX) then c_cos_val=0 end
+                if VgF.GetValueType(c_cos_val)~="number" then c_cos_val=0 end
+                --判断其他减少费用的效果
+                if c_cost_from==LOCATION_OVERLAY and Duel.GetFlagEffect(tp,AFFECT_CODE_OVERLAY_COST_FREE_WHEN_MIX)>0 then c_cos_val=0 end
+                if c_cost_from==LOCATION_DAMAGE and Duel.GetFlagEffect(tp,10402010)>0 then
+                    local c_10402010=Duel.GetFlagEffectLabel(tp,10402010)
+                    if c_cos_val>c_10402010 then c_cos_val=c_cos_val-c_10402010
+                    else c_cos_val=0
+                    end
+                end
                 local cg=VgF.GetMatchingGroup(cfilter[cv],tp,c_cost_from,0,mc,e,tp)
                 if cg:GetCount()<c_cos_val then return false end
             end
         end
-    elseif #mcfrom>0 and not chk then return false
+    --如果本体需要支付而合成的卡不需要支付
+    elseif #mcfrom>0 then
+
+    --/如果本体不需要支付而合成的卡需要支付/都不需要支付
+    --均可返回true
+    else return true
     end
     return VgF.LvCondition(c)
 end
-function VgD.MixCostOperation(c,bc,e,tp)
+function VgD.MixCostOperation(c,bc,tp)
+    --得到需要支付的费用（从哪来，到哪去，最少几张卡，最多几张卡，什么卡）
     local cfrom, cto, cval, cval_max, cfilter, bcfrom, bcto, bcval, bcval_max, bcfilter
     table.copy(cfrom,c.cos_from)
     table.copy(cto,c.cos_to)
@@ -959,31 +994,66 @@ function VgD.MixCostOperation(c,bc,e,tp)
     local g_val_c_max={}
     local g_val_bc_max={}
     local except_group=Group.FromCards(c,bc)
-    for bcv=1,#bcfrom do
-        local bc_cost_from=VgF.ShiftLocationFromString(bcfrom[bcv])
-        local pos=0
-        for cv=1,#cfrom do
-            local c_cost_from=VgF.ShiftLocationFromString(cfrom[cv])
-            if bc_cost_from==c_cost_from and VgF.ShiftLocationFromString(cto[cv])==VgF.ShiftLocationFromString(bcto[bcv]) then
-                pos=bcv
-                table.insert(g_from,cfrom[cv])
-                table.insert(g_to,cto[cv])
-                table.insert(g_filter_c,cfilter[cv])
+    --在这里合成
+    if #bcfrom>0 and #cfrom>0 then
+        for bcv=1,#bcfrom do
+            local bc_cost_from=VgF.ShiftLocationFromString(bcfrom[bcv])
+            local pos=0
+            for cv=1,#cfrom do
+                local c_cost_from=VgF.ShiftLocationFromString(cfrom[cv])
+                if bc_cost_from==c_cost_from and VgF.ShiftLocationFromString(cto[cv])==VgF.ShiftLocationFromString(bcto[bcv]) then
+                    pos=bcv
+                    table.insert(g_from,cfrom[cv])
+                    table.insert(g_to,cto[cv])
+                    table.insert(g_filter_c,cfilter[cv])
+                    table.insert(g_filter_bc,bcfilter[bcv])
+                    if VgF.GetValueType(cval[cv])=="number" then table.insert(g_val_c,cval[cv]) else table.insert(g_val_c,0) end
+                    if VgF.GetValueType(bcval[bcv])=="number" then table.insert(g_val_bc,bcval[bcv]) else table.insert(g_val_bc,0) end
+                    if VgF.GetValueType(cval_max[cv])=="number" then table.insert(g_val_c_max,cval_max[cv]) else table.insert(g_val_c_max,0) end
+                    if VgF.GetValueType(bcval_max[bcv])=="number" then table.insert(g_val_bc_max,bcval_max[bcv]) else table.insert(g_val_bc_max,0) end
+                end
+            end
+            if pos>0 then
+                table.remove(bcfrom,pos)
+                table.remove(bcto,pos)
+                table.remove(bcval,pos)
+                table.remove(bcval_max,pos)
+                table.remove(bcfilter,pos)
+            else
+                table.insert(g_from,bcfrom[bcv])
+                table.insert(g_to,bcto[bcv])
+                table.insert(g_filter_c,VgF.False())
                 table.insert(g_filter_bc,bcfilter[bcv])
-                table.insert(g_val_c,cval[cv])
-                table.insert(g_val_bc,bcval[bcv])
-                table.insert(g_val_c_max,cval_max[cv])
-                table.insert(g_val_bc_max,bcval_max[bcv])
+                table.insert(g_val_c,0)
+                if VgF.GetValueType(bcval[bcv])=="number" then table.insert(g_val_bc,bcval[bcv]) else table.insert(g_val_bc,0) end
+                table.insert(g_val_c_max,0)
+                if VgF.GetValueType(bcval_max[bcv])=="number" then table.insert(g_val_bc_max,bcval_max[bcv]) else table.insert(g_val_bc_max,0) end
             end
         end
-        if pos>0 then
-            table.remove(bcfrom,pos)
-            table.remove(bcto,pos)
-            table.remove(bcval,pos)
-            table.remove(bcval_max,pos)
-            table.remove(bcfilter,pos)
+    elseif #bcfrom>0 then
+        for bcv=1,#bcfrom do
+            table.insert(g_from,bcfrom[bcv])
+            table.insert(g_to,bcto[bcv])
+            table.insert(g_filter_c,VgF.False())
+            table.insert(g_filter_bc,bcfilter[bcv])
+            table.insert(g_val_c,0)
+            if VgF.GetValueType(bcval[bcv])=="number" then table.insert(g_val_bc,bcval[bcv]) else table.insert(g_val_bc,0) end
+            table.insert(g_val_c_max,0)
+            if VgF.GetValueType(bcval_max[bcv])=="number" then table.insert(g_val_bc_max,bcval_max[bcv]) else table.insert(g_val_bc_max,0) end
+        end
+    elseif #cfrom>0 then
+        for cv=1,#cfrom do
+            table.insert(g_from,cfrom[cv])
+            table.insert(g_to,cto[cv])
+            table.insert(g_filter_c,cfilter[cv])
+            table.insert(g_filter_bc,VgF.False())
+            if VgF.GetValueType(cval[cv])=="number" then table.insert(g_val_c,cval[cv]) else table.insert(g_val_c,0) end
+            table.insert(g_val_bc,0)
+            if VgF.GetValueType(cval_max[cv])=="number" then table.insert(g_val_c_max,cval_max[cv]) else table.insert(g_val_c_max,0) end
+            table.insert(g_val_bc_max,0)
         end
     end
+    --开始支付合成完的费用
     for i=1,#g_from do
         local tg_from=VgF.ShiftLocationFromString(g_from[i])
         local tg_to=VgF.ShiftLocationFromString(g_to[i])
@@ -996,7 +1066,38 @@ function VgD.MixCostOperation(c,bc,e,tp)
         local tg_val_bc_max=g_val_bc_max[i]
         local hintmsg=HINTMSG_SELECT
         local ext_params={}
-        if tg_from==LOCATION_OVERLAY and Duel.IsPlayerAffectedByEffect(tp,AFFECT_CODE_OVERLAY_COST_FREE_WHEN_MIX) and Duel.SelectYesNo(tp,VgF.Stringid(10401023,1)) then tg_val_c,tg_val_bc=0,0 end
+        if tg_val_c_max<tg_val_c then tg_val_c_max=tg_val_c end
+        if tg_val_bc_max<tg_val_bc then tg_val_bc_max=tg_val_bc end
+        --判断其他减少费用的效果
+        --继承的少女 亨德莉娜
+        if tg_from==LOCATION_OVERLAY and Duel.GetFlagEffect(tp,AFFECT_CODE_OVERLAY_COST_FREE_WHEN_MIX)>0 then
+            if tg:GetCount()<tg_val_c+tg_val_bc or tg:FilterCount(tg_filter_c,nil)<tg_val_c or tg:FilterCount(tg_filter_bc,nil)<tg_val_bc then
+                Duel.ResetFlagEffect(tp,AFFECT_CODE_OVERLAY_COST_FREE_WHEN_MIX)
+                goto continue
+            elseif Duel.SelectYesNo(tp,VgF.Stringid(10401023,1)) then
+                Duel.ResetFlagEffect(tp,AFFECT_CODE_OVERLAY_COST_FREE_WHEN_MIX)
+                goto continue
+            end
+        end
+        --鬼首狩灵
+        if tg_from==LOCATION_DAMAGE and Duel.GetFlagEffect(tp,10402010)>0 then
+            local c_10402010=Duel.GetFlagEffectLabel(tp,10402010)
+            local filter_count_c=tg:FilterCount(tg_filter_c,nil)
+            local filter_count_bc=tg:FilterCount(tg_filter_bc,nil)
+            if filter_count_c<tg_val_c and tg_val_c-filter_count_c<=c_10402010 then
+                c_10402010=c_10402010-(tg_val_c-filter_count_c)
+                tg_val_c=filter_count_c
+            end
+            if filter_count_bc<tg_val_bc and tg_val_bc-filter_count_bc<=c_10402010 then
+                c_10402010=c_10402010-(tg_val_bc-filter_count_bc)
+                tg_val_bc=filter_count_bc
+            end
+            if filter_count_c<tg_val_c or filter_count_bc<tg_val_bc then
+                Debug.Message("There is a value error in mixing costs")
+                goto continue
+            else Duel.ResetFlagEffect(tp,10402010)
+            end
+        end
         if tg:GetCount()<tg_val_c+tg_val_bc then goto continue end
         if VgF.GetValueType(tg_to)=="number" then
             if tg_to==LOCATION_DROP then
