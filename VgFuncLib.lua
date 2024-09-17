@@ -101,7 +101,7 @@ end
 ---@param g any 要操作的变量
 ---@return Card
 function VgF.ReturnCard(g)
-    local tc
+    local tc=nil
     if VgF.GetValueType(g)=="Group" then
         tc=g:GetFirst()
     elseif VgF.GetValueType(g)=="Card" then
@@ -966,7 +966,8 @@ function VgF.CheckPrison(p)
 	return og:IsExists(Card.IsSetCard,1,nil,0x3040)
 end
 --重置Effect
-function VgF.EffectReset(c,e,code,con)
+function VgF.EffectReset(c,e,code,con,...)
+    local label={...}
     if VgF.GetValueType(e)=="Effect" then
         local e1=Effect.CreateEffect(c)
         e1:SetType(EFFECT_TYPE_FIELD+EFFECT_TYPE_CONTINUOUS)
@@ -974,6 +975,7 @@ function VgF.EffectReset(c,e,code,con)
         e1:SetProperty(EFFECT_FLAG_CANNOT_DISABLE)
         e1:SetRange(LOCATION_ALL)
         e1:SetLabelObject(e)
+        if VgF.GetValueType(label)=="table" then e1:SetLabel(table.unpack(label)) end
         if VgF.GetValueType(con)=="function" then e1:SetCondition(con) end
         e1:SetOperation(VgF.EffectResetOperation)
         c:RegisterEffect(e1)
@@ -985,6 +987,7 @@ function VgF.EffectReset(c,e,code,con)
             e1:SetProperty(EFFECT_FLAG_CANNOT_DISABLE)
             e1:SetRange(LOCATION_ALL)
             e1:SetLabelObject(v)
+            if VgF.GetValueType(label)=="table" then e1:SetLabel(table.unpack(label)) end
             if VgF.GetValueType(con)=="function" then e1:SetCondition(con) end
             e1:SetOperation(VgF.EffectResetOperation)
             c:RegisterEffect(e1)
