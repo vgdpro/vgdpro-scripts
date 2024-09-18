@@ -438,7 +438,9 @@ function VgD.MonsterBattleDamageCondition(e,tp,eg,ep,ev,re,r,rp)
     if not bc or not bc:IsRelateToBattle() then return false end
     local atk=bc:GetAttack()
     local def=c:GetAttack()
-    return VgF.VMonsterFilter(c) and c==Duel.GetAttackTarget() and atk>=def and bc:GetLeftScale()>0 and Duel.GetAttackTarget():GetFlagEffect(FLAG_DEFENSE_ENTIRELY)==0
+    if Duel.GetAttackTarget():GetFlagEffect(FLAG_DEFENSE_ENTIRELY)>0 and Duel.GetAttackTarget():GetFlagEffectLabel(FLAG_DEFENSE_ENTIRELY)==10402017 and bc:IsLevelBelow(2) then return false end
+    if Duel.GetAttackTarget():GetFlagEffect(FLAG_DEFENSE_ENTIRELY)>0 and Duel.GetAttackTarget():GetFlagEffectLabel(FLAG_DEFENSE_ENTIRELY)==0 then return false end
+    return VgF.VMonsterFilter(c) and c==Duel.GetAttackTarget() and atk>=def and bc:GetLeftScale()>0
 end
 function VgD.MonsterBattleDamageOperation(e,tp,eg,ep,ev,re,r,rp)
     local c=e:GetHandler()
@@ -522,7 +524,7 @@ function VgD.MonsterCannotBeAttackedCondition(e,c)
 end
 
 --送去g区
-function vgd.CardToG(c,m,cost,op)
+function vgd.CardToG(c,m,cost,op,con)
     local cm=_G["c"..m]
     if not cm.is_has_trigger then cm.is_has_trigger=true end
     local type=EFFECT_TYPE_TRIGGER_F
@@ -532,6 +534,7 @@ function vgd.CardToG(c,m,cost,op)
     e1:SetType(EFFECT_TYPE_SINGLE+type)
     e1:SetProperty(EFFECT_FLAG_DELAY+EFFECT_FLAG_DAMAGE_STEP)
     e1:SetCode(EVENT_MOVE)
+    if VgF.GetValueType(con)=="function" then e1:SetCondition(con) end
     if VgF.GetValueType(cost)=="function" then e1:SetCost(cost) end
     e1:SetCondition(VgD.CardToGCondition)
     if VgF.GetValueType(op)~="function" then e1:SetOperation(VgD.CardToGOperation) else  e1:SetOperation(op) end

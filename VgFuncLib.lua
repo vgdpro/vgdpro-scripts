@@ -262,40 +262,40 @@ function VgF.GetColumnGroup(c)
     local tp=c:GetControler()
     local g=Group.CreateGroup()
      if c:GetSequence()==0 then
-        local sg1=Duel.GetMatchingGroup(VgF.IsSequence,tp,LOCATION_MZONE,0,nil,1)
-        local sg2=Duel.GetMatchingGroup(VgF.IsSequence,tp,0,LOCATION_MZONE,nil,3,4)
-        if sg1 then g:Merge(sg1) end
-        if sg2 then g:Merge(sg2) end
+        local sg1=VgF.GetMatchingGroup(VgF.IsSequence,tp,LOCATION_MZONE,0,nil,1)
+        local sg2=VgF.GetMatchingGroup(VgF.IsSequence,tp,0,LOCATION_MZONE,nil,3,4)
+        if sg1:GetCount()>0 then g:Merge(sg1) end
+        if sg2:GetCount()>0 then g:Merge(sg2) end
     end
     if c:GetSequence()==1 then
-        local sg1=Duel.GetMatchingGroup(VgF.IsSequence,tp,LOCATION_MZONE,0,nil,0)
-        local sg2=Duel.GetMatchingGroup(VgF.IsSequence,tp,0,LOCATION_MZONE,nil,3,4)
-        if sg1 then g:Merge(sg1) end
-        if sg2 then g:Merge(sg2) end
+        local sg1=VgF.GetMatchingGroup(VgF.IsSequence,tp,LOCATION_MZONE,0,nil,0)
+        local sg2=VgF.GetMatchingGroup(VgF.IsSequence,tp,0,LOCATION_MZONE,nil,3,4)
+        if sg1:GetCount()>0 then g:Merge(sg1) end
+        if sg2:GetCount()>0 then g:Merge(sg2) end
     end
     if c:GetSequence()==2 then
-        local sg1=Duel.GetMatchingGroup(VgF.IsSequence,tp,LOCATION_MZONE,0,nil,5)
-        local sg2=Duel.GetMatchingGroup(VgF.IsSequence,tp,0,LOCATION_MZONE,nil,2,5)
-        if sg1 then g:Merge(sg1) end
-        if sg2 then g:Merge(sg2) end
+        local sg1=VgF.GetMatchingGroup(VgF.IsSequence,tp,LOCATION_MZONE,0,nil,5)
+        local sg2=VgF.GetMatchingGroup(VgF.IsSequence,tp,0,LOCATION_MZONE,nil,2,5)
+        if sg1:GetCount()>0 then g:Merge(sg1) end
+        if sg2:GetCount()>0 then g:Merge(sg2) end
     end
     if c:GetSequence()==3 then
-        local sg1=Duel.GetMatchingGroup(VgF.IsSequence,tp,LOCATION_MZONE,0,nil,4)
-        local sg2=Duel.GetMatchingGroup(VgF.IsSequence,tp,0,LOCATION_MZONE,nil,0,1)
-        if sg1 then g:Merge(sg1) end
-        if sg2 then g:Merge(sg2) end
+        local sg1=VgF.GetMatchingGroup(VgF.IsSequence,tp,LOCATION_MZONE,0,nil,4)
+        local sg2=VgF.GetMatchingGroup(VgF.IsSequence,tp,0,LOCATION_MZONE,nil,0,1)
+        if sg1:GetCount()>0 then g:Merge(sg1) end
+        if sg2:GetCount()>0 then g:Merge(sg2) end
     end
     if c:GetSequence()==4 then
-        local sg1=Duel.GetMatchingGroup(VgF.IsSequence,tp,LOCATION_MZONE,0,nil,3)
-        local sg2=Duel.GetMatchingGroup(VgF.IsSequence,tp,0,LOCATION_MZONE,nil,0,1)
-        if sg1 then g:Merge(sg1) end
-        if sg2 then g:Merge(sg2) end
+        local sg1=VgF.GetMatchingGroup(VgF.IsSequence,tp,LOCATION_MZONE,0,nil,3)
+        local sg2=VgF.GetMatchingGroup(VgF.IsSequence,tp,0,LOCATION_MZONE,nil,0,1)
+        if sg1:GetCount()>0 then g:Merge(sg1) end
+        if sg2:GetCount()>0 then g:Merge(sg2) end
     end
     if c:GetSequence()==5 then
-        local sg1=Duel.GetMatchingGroup(VgF.IsSequence,tp,LOCATION_MZONE,0,nil,2)
-        local sg2=Duel.GetMatchingGroup(VgF.IsSequence,tp,0,LOCATION_MZONE,nil,2,5)
-        if sg1 then g:Merge(sg1) end
-        if sg2 then g:Merge(sg2) end
+        local sg1=VgF.GetMatchingGroup(VgF.IsSequence,tp,LOCATION_MZONE,0,nil,2)
+        local sg2=VgF.GetMatchingGroup(VgF.IsSequence,tp,0,LOCATION_MZONE,nil,2,5)
+        if sg1:GetCount()>0 then g:Merge(sg1) end
+        if sg2:GetCount()>0 then g:Merge(sg2) end
     end
     return g
 end
@@ -577,7 +577,7 @@ function VgF.DisCardCost(val)
         end
         Duel.Hint(HINT_SELECTMSG,tp,HINTMSG_DISCARD)
         local g=Duel.SelectMatchingCard(tp,nil,tp,LOCATION_HAND,0,val,val,nil)
-        return VgF.Sendto(LOCATION_DROP,g,REASON_COST+REASON_DISCARD)
+        return VgF.Sendto(LOCATION_DROP,g,REASON_COST)
     end
 end
 ---用于效果的Cost。它返回一个执行“【费用】[能量爆发val]”的函数。
@@ -1119,7 +1119,17 @@ function VgF.Sendto(loc,sg,...)
     end
     if loc==LOCATION_DROP then
         AddOverlayGroup(g,LOCATION_DROP)
-        return Duel.SendtoGrave(g,...)
+        local return_val=0
+        if g:IsExists(Card.IsLocation,1,nil,LOCATION_HAND) then
+            local g2=g:Filter(Card.IsLocation,nil,LOCATION_HAND)
+            local reason=ext_params[1]
+            if VgF.GetValueType(reason)~="number" then reason=0 end
+            if bit.band(reason,REASON_DISCARD)==0 then reason=reason+REASON_DISCARD end
+            return_val=return_val+Duel.SendtoGrave(g2,reason)
+            g:Sub(g2)
+        end
+        return_val=return_val+Duel.SendtoGrave(g,...)
+        return return_val
     elseif loc==LOCATION_DECK then
         return Duel.SendtoDeck(g,...)
     elseif loc==LOCATION_HAND then
