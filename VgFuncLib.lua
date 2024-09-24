@@ -707,14 +707,17 @@ function VgF.LeaveFieldCost(card_or_code_or_func,val_max,val_min,...)
     end
 end
 function VgF.IsCanBeCalled(c,e,tp,sumtype,pos,zone)
-    if VgF.GetValueType(zone)~="number" then zone=VgF.GetAvailableLocation(tp) end
+    local z=0
+    if VgF.GetValueType(zone)=="number" then z=VgF.GetAvailableLocation(tp,zone)
+    elseif VgF.GetValueType(zone)=="string" and zone=="NoMonster" then z=Duel.GetLocationCount(tp,LOCATION_MZONE) zone=0xff
+    else z=VgF.GetAvailableLocation(tp) zone=0xff end
     if VgF.GetValueType(sumtype)~="number" then sumtype=0 end
     if VgF.GetValueType(pos)~="number" then pos=POS_FACEUP_ATTACK end
     if zone==0x20 and VgF.VMonsterFilter(c:GetOverlayTarget()) then
         local _,code=c:GetOriginalCode()
         return Duel.IsPlayerCanSpecialSummonMonster(tp,code,nil,TYPE_MONSTER+TYPE_EFFECT,c:GetBaseAttack(),c:GetBaseDefense(),c:GetOriginalLevel(),c:GetOriginalRace(),c:GetOriginalAttribute())
     end
-    return zone>0 and c:IsCanBeSpecialSummoned(e,sumtype,tp,false,false,pos,tp,zone)
+    return z>0 and c:IsCanBeSpecialSummoned(e,sumtype,tp,false,false,pos,tp,zone)
 end
 ---用于效果的Operation。执行“从loc_from中选取最少int_min，最多int_max张满足f的卡，送去loc_to。”。
 ---@param loc_to integer 要送去的区域。不填则返回0。
