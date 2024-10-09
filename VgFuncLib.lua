@@ -114,6 +114,17 @@ function VgF.ReturnCard(g)
     end
     return tc
 end
+
+function VgF.ReturnGroup(tc)
+    local g=Group.CreateGroup()
+    if VgF.GetValueType(tc)=="Group" then
+        return tc
+    elseif VgF.GetValueType(g)=="Card" then
+        g.AddCard(tc)
+    end
+    return g
+end
+
 ---返回g的前val张卡。
 ---@param g Group 要操作的卡片组
 ---@param val integer 要获取的卡片数量
@@ -322,6 +333,13 @@ function VgF.Call(g,sumtype,tp,zone,pos)
     if VgF.GetValueType(pos)~="number" then pos=POS_FACEUP_ATTACK end
     if VgF.GetValueType(zone)=="string" and zone=="NoMonster" then
         return Duel.SpecialSummon(g,sumtype,tp,tp,false,false,pos)
+    elseif VgF.GetValueType(zone)=="string" and zone=="FromOverlayToV" then
+        local tc=VgF.ReturnCard(g)
+        if not VgF.IsCanBeCalled(tc,nil,tp,sumtype,pos,"FromOverlayToV") then return 0 end
+        VgF.Sendto(0,tc,tp,POS_FACEUP,REASON_EFFECT)
+        local _,code=tc:GetOriginalCode()
+        local c=Duel.CreateToken(tp,code)
+        return VgF.Call(c,sumtype,tp,0x20,pos)
     elseif VgF.GetValueType(zone)=="number" and zone>0 then
         local sc=VgF.ReturnCard(g)
         local z=VgF.GetAvailableLocation(tp,zone)
@@ -335,19 +353,16 @@ function VgF.Call(g,sumtype,tp,zone,pos)
         else
             szone=z
         end
-        if szone==0x20 and Duel.GetMatchingGroupCount(VgF.VMonsterFilter,tp,LOCATION_MZONE,0,nil)>0 then
-            if VgF.VMonsterFilter(sc:GetOverlayTarget()) then
-                VgF.Sendto(0,sc,tp,POS_FACEUP,REASON_EFFECT)
-                local _,code=sc:GetOriginalCode()
-                sc=Duel.CreateToken(tp,code)
+        if szone==0x20 then
+            if VgF.GetVMonster(tp) then
+                local tc=VgF.GetVMonster(tp)
+                local mg=tc:GetOverlayGroup()
+                if mg:GetCount()~=0 then
+                    VgF.Sendto(LOCATION_OVERLAY,mg,sc)
+                end
+                sc:SetMaterial(Group.FromCards(tc))
+                VgF.Sendto(LOCATION_OVERLAY,Group.FromCards(tc),sc)
             end
-            local tc=Duel.GetMatchingGroup(VgF.VMonsterFilter,tp,LOCATION_MZONE,0,nil):GetFirst()
-            local mg=tc:GetOverlayGroup()
-            if mg:GetCount()~=0 then
-                VgF.Sendto(LOCATION_OVERLAY,mg,sc)
-            end
-            sc:SetMaterial(Group.FromCards(tc))
-            VgF.Sendto(LOCATION_OVERLAY,Group.FromCards(tc),sc)
         elseif VgF.IsExistingMatchingCard(VgD.CallFilter,tp,LOCATION_MZONE,0,1,nil,tp,szone) then
             local tc=Duel.GetMatchingGroup(VgD.CallFilter,tp,LOCATION_MZONE,0,nil,tp,szone):GetFirst()
             if bit.band(sumtype,SUMMON_VALUE_OverDress)>0 then VgF.Sendto(LOCATION_OVERLAY,Group.FromCards(tc),sc)
@@ -713,7 +728,7 @@ function VgF.IsCanBeCalled(c,e,tp,sumtype,pos,zone)
     else z=VgF.GetAvailableLocation(tp) zone=0xff end
     if VgF.GetValueType(sumtype)~="number" then sumtype=0 end
     if VgF.GetValueType(pos)~="number" then pos=POS_FACEUP_ATTACK end
-    if zone==0x20 and VgF.VMonsterFilter(c:GetOverlayTarget()) then
+    if VgF.GetValueType(zone)=="string" and zone=="FromOverlayToV" then
         local _,code=c:GetOriginalCode()
         return Duel.IsPlayerCanSpecialSummonMonster(tp,code,nil,TYPE_MONSTER+TYPE_EFFECT,c:GetBaseAttack(),c:GetBaseDefense(),c:GetOriginalLevel(),c:GetOriginalRace(),c:GetOriginalAttribute())
     end
@@ -1101,7 +1116,7 @@ function VgF.GetMatchingGroup(f,tp,loc_self,loc_op,except_g,...)
 end
 ---用于效果的Operation。执行“把卡sg，送去loc,第三个参数开始为额外参数，内容与原函数相同。”。
 ---@param loc integer 要送去的区域。不填则返回0。
----@param sg integer 要操作的卡|卡片组。
+---@param sg Card|Group 要操作的卡|卡片组。
 ---@return number 具体操作的卡的数量
 function VgF.Sendto(loc,sg,...)
     local ext_params={...}
