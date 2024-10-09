@@ -587,6 +587,22 @@ function VgF.CostAnd(f1,f2,c1,c2)
     end
 end
 
+function VgF.ChangePosAttack(c)
+    return function (e,tp,eg,ep,ev,re,r,rp,chk)
+        if VgF.GetValueType(c)~="Card" then c=e:GetHandler() end
+        if chk==0 then return c:IsCanChangePosition() and c:IsPosition(POS_FACEUP_DEFENCE) end
+        Duel.ChangePosition(c,POS_FACEUP_ATTACK)
+    end
+end
+
+function VgF.ChangePosDefence(c)
+    return function (e,tp,eg,ep,ev,re,r,rp,chk)
+        if VgF.GetValueType(c)~="Card" then c=e:GetHandler() end
+        if chk==0 then return c:IsCanChangePosition() and c:IsPosition(POS_FACEUP_ATTACK) end
+        Duel.ChangePosition(c,POS_FACEUP_DEFENCE)
+    end
+end
+
 ---用于效果的Cost。它返回一个执行“【费用】[将手牌中的val张卡舍弃]”的函数。
 ---@param val integer 要舍弃的卡的数量
 ---@return function 效果的Cost函数
