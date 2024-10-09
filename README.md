@@ -551,6 +551,6 @@ vgf..Sendto(loc,sg,...)
 > 
 > **LOCATION_TRIGGER : tp,tp,LOCATION_FZONE,POS_FACEUP,true**
 > 
-> **LOCATION_MZONE : sumtype,tp,zone,pos,chk `chk为0则Call到不存在单位的圆阵`**
+> **LOCATION_MZONE : sumtype,tp,zone,pos**
 > 
 > **其他区域 : c,tp,pos,reason**

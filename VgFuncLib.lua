@@ -572,6 +572,21 @@ function VgF.DamageFill(val)
         return Duel.GetOperatedGroup():GetCount()
     end
 end
+
+function VgF.CostAnd(f1,f2,c1,c2)
+    return function (e,tp,eg,ep,ev,re,r,rp,chk)
+        if chk==0 then
+            local a=false
+            local b=false
+            if VgF.GetValueType(c1)~="nil" then a=f1(c1)(e,tp,eg,ep,ev,re,r,rp,chk) else a=f1(e,tp,eg,ep,ev,re,r,rp,chk) end
+            if VgF.GetValueType(c2)~="nil" then b=f2(c2)(e,tp,eg,ep,ev,re,r,rp,chk) else b=f2(e,tp,eg,ep,ev,re,r,rp,chk) end
+            return a and b
+        end
+        if VgF.GetValueType(c1)~="nil" then f1(c1)(e,tp,eg,ep,ev,re,r,rp,chk) else f1(e,tp,eg,ep,ev,re,r,rp,chk) end
+        if VgF.GetValueType(c2)~="nil" then f2(c2)(e,tp,eg,ep,ev,re,r,rp,chk) else f2(e,tp,eg,ep,ev,re,r,rp,chk) end
+    end
+end
+
 ---用于效果的Cost。它返回一个执行“【费用】[将手牌中的val张卡舍弃]”的函数。
 ---@param val integer 要舍弃的卡的数量
 ---@return function 效果的Cost函数

@@ -1474,22 +1474,42 @@ function VgD.GlobalCheckEffect(c,m,code,con,op)
     end
 end
 
-function VgD.CannotBeTarget(c,m,con,val,loc)
+function VgD.CannotBeTarget(c,m,con,val,loc,tg,range)
     local cm=_G["c"..m]
     if not cm.is_has_continuous then cm.is_has_continuous=true end
     if not loc then loc=LOCATION_MZONE end
-	local e1=Effect.CreateEffect(c)
-    e1:SetType(EFFECT_TYPE_SINGLE)
-    e1:SetProperty(EFFECT_FLAG_SINGLE_RANGE)
-    e1:SetRange(loc)
-    e1:SetCode(EFFECT_CANNOT_BE_EFFECT_TARGET)
-	if VgF.GetValueType(con)=="function" then e1:SetCondition(con) end
-	if VgF.GetValueType(val)=="function" then e1:SetValue(val) else
-        e1:SetValue(function (e,re,rp)
-            return rp==1-e:GetHandlerPlayer()
-        end)
+    if VgF.GetValueType(tg)=="function" or VgF.GetValueType(tg)=="number" then
+        if VgF.GetValueType(range)~="tabel" then range={} end
+        if #range==0 then range={LOCATION_MZONE,0}
+        elseif #range==1 then table.insert(range,0)
+        end
+        local e1=Effect.CreateEffect(c)
+        e1:SetType(EFFECT_TYPE_FIELD)
+        e1:SetRange(loc)
+        e1:SetTargetRange(range[1],range[2])
+        e1:SetCode(EFFECT_CANNOT_BE_EFFECT_TARGET)
+        if VgF.GetValueType(con)=="function" then e1:SetCondition(con) end
+        if VgF.GetValueType(val)=="function" then e1:SetValue(val) else
+            e1:SetValue(function (e,re,rp)
+                return rp==1-e:GetHandlerPlayer()
+            end)
+        end
+        if VgF.GetValueType(tg)=="function" then e1:SetTarget(tg) end
+        c:RegisterEffect(e1)
+    else
+        local e1=Effect.CreateEffect(c)
+        e1:SetType(EFFECT_TYPE_SINGLE)
+        e1:SetProperty(EFFECT_FLAG_SINGLE_RANGE)
+        e1:SetRange(loc)
+        e1:SetCode(EFFECT_CANNOT_BE_EFFECT_TARGET)
+        if VgF.GetValueType(con)=="function" then e1:SetCondition(con) end
+        if VgF.GetValueType(val)=="function" then e1:SetValue(val) else
+            e1:SetValue(function (e,re,rp)
+                return rp==1-e:GetHandlerPlayer()
+            end)
+        end
+        c:RegisterEffect(e1)
     end
-    c:RegisterEffect(e1)
 end
 function VgD.NightEffect(c,m)
     local cm=_G["c"..m]
