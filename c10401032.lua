@@ -17,6 +17,6 @@ function cm.condition1(e,tp,eg,ep,ev,re,r,rp)
 end
 function cm.operation(e,tp,eg,ep,ev,re,r,rp)
 	local c=e:GetHandler()
-	local g2=vgf.GetMatchingGroup(vgf.IsSequence,tp,LOCATION_MZONE,0,nil,0,4,5)
-    vgf.AtkUp(c,g2,10000,nil)
+	local g=vgf.GetMatchingGroup(vgf.FrontFilter,tp,LOCATION_MZONE,0,nil)
+    vgf.AtkUp(c,g,5000,nil)
 end

@@ -4,7 +4,7 @@ function cm.initial_effect(c)
 	vgf.VgCard(c)
     -- 【永】【V】：【永】【V】：你的回合中，你的指令区中有正面表示的歌曲卡的话，这个单位的力量+5000。
 
-    vgd.EffectTypeContinuousChangeAttack(c,m,EFFECT_TYPE_SINGLE,5000,cm.con1)
+    vgd.EffectTypeContinuousChangeAttack(c,m,LOCATION_MZONE,EFFECT_TYPE_SINGLE,5000,cm.con1)
     -- 【自】：这个单位被RIDE时，选择你的牌堆或手牌中的至多1张等级2的歌曲卡，公开后放置到指令区，从牌堆探寻了的话，牌堆洗切。从手牌放置了的话，抽卡1张。
     vgd.BeRidedByCard(c,m,nil,cm.operation)
 end

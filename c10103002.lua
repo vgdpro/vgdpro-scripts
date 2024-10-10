@@ -4,7 +4,7 @@ function cm.initial_effect(c)
     vgf.VgCard(c)
     cm.is_has_continuous=true
     vgd.BeRidedByCard(c,m,10103001,cm.operation,cm.cost)
-    vgd.EffectTypeContinuousChangeAttack(c,m,EFFECT_TYPE_SINGLE,5000,cm.condition)
+    vgd.EffectTypeContinuousChangeAttack(c,m,LOCATION_MZONE,EFFECT_TYPE_SINGLE,5000,cm.condition)
     local e2=Effect.CreateEffect(c)
     e2:SetType(EFFECT_TYPE_SINGLE)
     e2:SetProperty(EFFECT_FLAG_SINGLE_RANGE)

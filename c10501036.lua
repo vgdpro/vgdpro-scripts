@@ -3,7 +3,7 @@ local cm,m,o=GetID()
 function cm.initial_effect(c)
 	vgf.VgCard(c)
     -- 【永】【V】：你的回合中，你没有后防者的话，这个单位的力量+5000。
-	vgd.EffectTypeContinuousChangeAttack(c,m,EFFECT_TYPE_SINGLE,5000,cm.con1)
+	vgd.EffectTypeContinuousChangeAttack(c,m,LOCATION_MZONE,EFFECT_TYPE_SINGLE,5000,cm.con1)
     --【自】：通过在「认真的挑战者 克拉莉萨」上RIDE的方式将这个单位登场到V时，通过【费用】[灵魂爆发1]，查看你的牌堆顶的7张卡，选择至多1张等级2以下的含有「诚意真心」的卡，公开后加入手牌，将其余的卡洗切后放置到牌堆底。
     vgd.EffectTypeTrigger(c,m,LOCATION_MZONE,EFFECT_TYPE_SINGLE,EVENT_SPSUMMON_SUCCESS,cm.operation,vgf.OverlayCost(1),cm.con2)
 end

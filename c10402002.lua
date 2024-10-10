@@ -3,7 +3,7 @@ function cm.initial_effect(c)
 	vgf.VgCard(c)
 	vgd.OverDress(c,10101009)
 	vgd.EffectTypeTrigger(c,m,LOCATION_HAND,EFFECT_TYPE_FIELD,EVENT_BATTLED,cm.op,vgf.OverlayCost(2),cm.con)
-	vgd.EffectTypeContinuousChangeAttack(c,m,EFFECT_TYPE_SINGLE,10000,cm.con2)
+	vgd.EffectTypeContinuousChangeAttack(c,m,LOCATION_MZONE,EFFECT_TYPE_SINGLE,10000,cm.con2)
 	vgd.EffectTypeContinuousChangeDefense(c,m,EFFECT_TYPE_SINGLE,10000,cm.con2)
 end
 function cm.op(e,tp,eg,ep,ev,re,r,rp)

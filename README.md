@@ -316,7 +316,7 @@ end
 ## 6.特别用于“力量上升”的【永】能力注册范例
 
 ```lua
-vgd.EffectTypeContinuousChangeAttack(c,m, typ, val[, con, tg, loc_self, loc_op, reset, mc])
+vgd.EffectTypeContinuousChangeAttack(c,m,LOCATION_MZONE, typ, val[, con, tg, loc_self, loc_op, reset, mc])
 ```
 
 参数注释
@@ -337,7 +337,7 @@ vgd.EffectTypeContinuousChangeAttack(c,m, typ, val[, con, tg, loc_self, loc_op, 
 local cm,m,o=GetID()
 function cm.initial_effect(c)
 	vgf.VgCard(c)
-	vgd.EffectTypeContinuousChangeAttack(c,m,EFFECT_TYPE_SINGLE,5000,function(e) return vgf.RMonsterCondition(e) and cm.con(e) end)
+	vgd.EffectTypeContinuousChangeAttack(c,m,LOCATION_MZONE,EFFECT_TYPE_SINGLE,5000,function(e) return vgf.RMonsterCondition(e) and cm.con(e) end)
 	vgd.EffectTypeContinuousChangeDefense(c,m,EFFECT_TYPE_SINGLE,5000,cm.con)
 end
 function cm.con(e)

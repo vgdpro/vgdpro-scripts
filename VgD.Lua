@@ -1268,11 +1268,14 @@ end
 ---@param property integer|nil 指示效果的特殊属性。如确有必要填，请咨询群主。
 function VgD.EffectTypeTrigger(c,m,loc,typ,code,op,cost,con,tg,count,property,stringid)
     local cm=_G["c"..m]
+    local f=VgF.True
     if not cm.is_has_trigger then cm.is_has_trigger=true end
     local type2=EFFECT_TYPE_TRIGGER_F
     if VgF.GetValueType(cost)=="function" then type2=EFFECT_TYPE_TRIGGER_O end
     if not typ then typ=EFFECT_TYPE_SINGLE end
     if not loc then loc=LOCATION_MZONE end
+    if loc==LOCATION_RZONE then loc=LOCATION_MZONE f=VgF.RMonsterCondition end
+    if loc==LOCATION_VZONE then loc=LOCATION_MZONE f=VgF.VMonsterCondition end
     if not stringid then stringid=1 end
     if not property then property=0 end
     local e1=Effect.CreateEffect(c)
@@ -1282,7 +1285,7 @@ function VgD.EffectTypeTrigger(c,m,loc,typ,code,op,cost,con,tg,count,property,st
     e1:SetCode(code)
     e1:SetProperty(property+EFFECT_FLAG_DAMAGE_STEP+EFFECT_FLAG_DELAY)
     if count and count>0 then e1:SetCountLimit(count) end
-    if VgF.GetValueType(con)=="function" then e1:SetCondition(con) end
+    e1:SetCondition(function (e,tp,eg,ep,ev,re,r,rp) return (VgF.GetValueType(con)~="function" or con(e,tp,eg,ep,ev,re,r,rp)) and f(e) end)
     if VgF.GetValueType(cost)=="function" then e1:SetCost(cost) end
     if VgF.GetValueType(tg)=="function" then e1:SetTarget(tg) end
     if VgF.GetValueType(op)=="function" then e1:SetOperation(op) end
@@ -1300,8 +1303,11 @@ end
 ---@param property integer|nil 指示效果的特殊属性。如确有必要填，请咨询群主。
 function VgD.EffectTypeIgnition(c,m,loc,op,cost,con,tg,count,property,stringid)
     local cm=_G["c"..m]
+    local f=VgF.True
     if not cm.is_has_ignition then cm.is_has_ignition=true end
     if not loc then loc=LOCATION_MZONE end
+    if loc==LOCATION_RZONE then loc=LOCATION_MZONE f=VgF.RMonsterCondition end
+    if loc==LOCATION_VZONE then loc=LOCATION_MZONE f=VgF.VMonsterCondition end
     if not stringid then stringid=1 end
     local e1=Effect.CreateEffect(c)
     e1:SetDescription(VgF.Stringid(VgID+2,stringid))
@@ -1309,7 +1315,7 @@ function VgD.EffectTypeIgnition(c,m,loc,op,cost,con,tg,count,property,stringid)
     e1:SetRange(loc)
     if property and property>0 then e1:SetProperty(property) end
     if count and count>0 then e1:SetCountLimit(count) end
-    if VgF.GetValueType(con)=="function" then e1:SetCondition(con) end
+    e1:SetCondition(function (e,tp,eg,ep,ev,re,r,rp) return (VgF.GetValueType(con)~="function" or con(e,tp,eg,ep,ev,re,r,rp)) and f(e) end)
     if VgF.GetValueType(cost)=="function" then e1:SetCost(cost) end
     if VgF.GetValueType(tg)=="function" then e1:SetTarget(VgD.EffectTypeIgnitionTarget(tg)) end
     if VgF.GetValueType(op)=="function" then e1:SetOperation(op) end
@@ -1372,20 +1378,23 @@ function VgD.ContinuousSpellOperation(e,tp,eg,ep,ev,re,r,rp)
     local c=e:GetHandler()
     VgF.Sendto(LOCATION_ORDER,c,tp,POS_FACEUP_ATTACK,REASON_RULE)
 end
-function VgD.EffectTypeContinuousChangeAttack(c,m,typ,val,con,tg,loc_self,loc_op,reset,mc)
+function vgd.EffectTypeContinuousChangeAttack(c,m,LOCATION_MZONE,loc,typ,val,con,tg,loc_self,loc_op,reset,mc)
     local cm=_G["c"..m]
+    local f=VgF.True
     if not cm.is_has_continuous and not reset then cm.is_has_continuous=true end
     if VgF.GetValueType(mc)~="Card" then mc=c end
     if not typ then typ=EFFECT_TYPE_SINGLE end
     if not loc_self then loc_self=0 end
     if not loc_op then loc_op=0 end
+    if loc==LOCATION_RZONE then loc=LOCATION_MZONE f=VgF.RMonsterCondition end
+    if loc==LOCATION_VZONE then loc=LOCATION_MZONE f=VgF.VMonsterCondition end
     local e1=Effect.CreateEffect(c)
     e1:SetType(typ)
     e1:SetCode(EFFECT_UPDATE_ATTACK)
     e1:SetRange(LOCATION_MZONE)
     if VgF.GetValueType(reset)=="number" then e1:SetReset(RESET_EVENT+RESETS_STANDARD+reset) end
     if typ==EFFECT_TYPE_FIELD then e1:SetTargetRange(loc_self,loc_op) end
-    if VgF.GetValueType(con)=="function" then e1:SetCondition(con) end
+    e1:SetCondition(function (e,tp,eg,ep,ev,re,r,rp) return (VgF.GetValueType(con)~="function" or con(e,tp,eg,ep,ev,re,r,rp)) and f(e) end)
     if VgF.GetValueType(tg)=="function" then e1:SetTarget(tg) end
     e1:SetValue(val)
     mc:RegisterEffect(e1)
@@ -1476,8 +1485,11 @@ end
 
 function VgD.CannotBeTarget(c,m,con,val,loc,tg,range)
     local cm=_G["c"..m]
+    local f=VgF.True
     if not cm.is_has_continuous then cm.is_has_continuous=true end
     if not loc then loc=LOCATION_MZONE end
+    if loc==LOCATION_RZONE then loc=LOCATION_MZONE f=VgF.RMonsterCondition end
+    if loc==LOCATION_VZONE then loc=LOCATION_MZONE f=VgF.VMonsterCondition end
     if VgF.GetValueType(tg)=="function" or VgF.GetValueType(tg)=="number" then
         if VgF.GetValueType(range)~="tabel" then range={} end
         if #range==0 then range={LOCATION_MZONE,0}
@@ -1488,7 +1500,7 @@ function VgD.CannotBeTarget(c,m,con,val,loc,tg,range)
         e1:SetRange(loc)
         e1:SetTargetRange(range[1],range[2])
         e1:SetCode(EFFECT_CANNOT_BE_EFFECT_TARGET)
-        if VgF.GetValueType(con)=="function" then e1:SetCondition(con) end
+        e1:SetCondition(function (e,tp,eg,ep,ev,re,r,rp) return (VgF.GetValueType(con)~="function" or con(e,tp,eg,ep,ev,re,r,rp)) and f(e) end)
         if VgF.GetValueType(val)=="function" then e1:SetValue(val) else
             e1:SetValue(function (e,re,rp)
                 return rp==1-e:GetHandlerPlayer()

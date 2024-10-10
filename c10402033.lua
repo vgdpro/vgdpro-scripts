@@ -1,7 +1,7 @@
 local cm,m,o=GetID()
 function cm.initial_effect(c)
 	vgf.VgCard(c)
-	vgd.EffectTypeIgnition(c,m,LOCATION_MZONE,cm.op,vgf.OverlayCost(1))
+	vgd.EffectTypeIgnition(c,m,LOCATION_MZONE,cm.op,vgf.OverlayCost(1),vgf.RMonsterCondition)
 end
 function cm.op(e,tp,eg,ep,ev,re,r,rp)
 	local c=e:GetHandler()

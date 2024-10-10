@@ -573,17 +573,13 @@ function VgF.DamageFill(val)
     end
 end
 
-function VgF.CostAnd(f1,f2,c1,c2)
+function VgF.CostAnd(f1,f2)
     return function (e,tp,eg,ep,ev,re,r,rp,chk)
         if chk==0 then
-            local a=false
-            local b=false
-            if VgF.GetValueType(c1)~="nil" then a=f1(c1)(e,tp,eg,ep,ev,re,r,rp,chk) else a=f1(e,tp,eg,ep,ev,re,r,rp,chk) end
-            if VgF.GetValueType(c2)~="nil" then b=f2(c2)(e,tp,eg,ep,ev,re,r,rp,chk) else b=f2(e,tp,eg,ep,ev,re,r,rp,chk) end
-            return a and b
+            return f1(e,tp,eg,ep,ev,re,r,rp,chk) and f2(e,tp,eg,ep,ev,re,r,rp,chk)
         end
-        if VgF.GetValueType(c1)~="nil" then f1(c1)(e,tp,eg,ep,ev,re,r,rp,chk) else f1(e,tp,eg,ep,ev,re,r,rp,chk) end
-        if VgF.GetValueType(c2)~="nil" then f2(c2)(e,tp,eg,ep,ev,re,r,rp,chk) else f2(e,tp,eg,ep,ev,re,r,rp,chk) end
+        f1(e,tp,eg,ep,ev,re,r,rp,chk)
+        f2(e,tp,eg,ep,ev,re,r,rp,chk)
     end
 end
 
@@ -721,7 +717,7 @@ function VgF.DamageCost(val)
         return Duel.GetOperatedGroup():GetCount()
     end
 end
-function VgF.LeaveFieldCost(card_or_code_or_func,val_max,val_min,...)
+function VgF.LeaveFieldCost(card_or_code_or_func,val_max,val_min,except,...)
     local ext_params={...}
     if VgF.GetValueType(val_max)~="number" then val_max=1 end
     if VgF.GetValueType(val_min)~="number" or val_min>val_max then val_min=val_max end
@@ -744,11 +740,11 @@ function VgF.LeaveFieldCost(card_or_code_or_func,val_max,val_min,...)
         if chk==0 then
             return VgF.IsExistingMatchingCard(function (tc)
                 return filter(tc,table.unpack(ext_params)) and tc:IsAbleToGraveAsCost()
-            end,tp,LOCATION_MZONE,0,val_min,nil)
+            end,tp,LOCATION_MZONE,0,val_min,except)
         end
         local g=vgf.SelectMatchingCard(HINTMSG_LEAVEFIELD,e,tp,function (tc)
             return filter(tc,table.unpack(ext_params)) and tc:IsAbleToGraveAsCost()
-        end,tp,LOCATION_MZONE,0,val_min,val_max,nil)
+        end,tp,LOCATION_MZONE,0,val_min,val_max,except)
         VgF.Sendto(LOCATION_DROP,g,REASON_COST)
     end
 end
@@ -768,7 +764,7 @@ end
 ---用于效果的Operation。执行“从loc_from中选取最少int_min，最多int_max张满足f的卡，送去loc_to。”。
 ---@param loc_to integer 要送去的区域。不填则返回0。
 ---@param loc_from integer 要选取的区域。不填则返回0。
----@param f function 卡片过滤的条件
+---@param f function|nil 卡片过滤的条件
 function VgF.SearchCard(loc_to,loc_from,f,int_max,int_min,...)
     local ext_params={...}
     return function (e,tp,eg,ep,ev,re,r,rp)
@@ -1065,16 +1061,54 @@ function VgF.SelectMatchingCard(hintmsg,e,select_tp,f,tp,loc_self,loc_op,int_min
         a=true
     end
     local g=Group.CreateGroup()
+    local loc_self_f=VgF.True
+    local loc_op_f=VgF.True
+    if bit.band(loc_self,LOCATION_VZONE)>0 and bit.band(loc_self,LOCATION_RZONE)>0 then
+        loc_self=loc_self-LOCATION_VZONE-LOCATION_RZONE
+        if bit.band(loc_self,LOCATION_MZONE)==0 then
+            loc_self=loc_self+LOCATION_MZONE
+        end
+    elseif bit.band(loc_self,LOCATION_VZONE)>0 then
+        loc_self=loc_self-LOCATION_VZONE
+        loc_self_f=VgF.VMonsterFilter
+        if bit.band(loc_self,LOCATION_MZONE)==0 then
+            loc_self=loc_self+LOCATION_MZONE
+        end
+    elseif bit.band(loc_self,LOCATION_RZONE)>0 then
+        loc_self=loc_self-LOCATION_RZONE
+        loc_self_f=VgF.RMonsterFilter
+        if bit.band(loc_self,LOCATION_MZONE)==0 then
+            loc_self=loc_self+LOCATION_MZONE
+        end
+    end
+    if bit.band(loc_op,LOCATION_VZONE)>0 and bit.band(loc_op,LOCATION_RZONE)>0 then
+        loc_op=loc_op-LOCATION_VZONE-LOCATION_RZONE
+        if bit.band(loc_op,LOCATION_MZONE)==0 then
+            loc_op=loc_op+LOCATION_MZONE
+        end
+    elseif bit.band(loc_op,LOCATION_VZONE)>0 then
+        loc_op=loc_op-LOCATION_VZONE
+        loc_op_f=VgF.VMonsterFilter
+        if bit.band(loc_op,LOCATION_MZONE)==0 then
+            loc_op=loc_op+LOCATION_MZONE
+        end
+    elseif bit.band(loc_op,LOCATION_RZONE)>0 then
+        loc_op=loc_op-LOCATION_RZONE
+        loc_op_f=VgF.RMonsterFilter
+        if bit.band(loc_op,LOCATION_MZONE)==0 then
+            loc_op=loc_op+LOCATION_MZONE
+        end
+    end
     if bit.band(loc_self,LOCATION_MZONE)>0 then
         local g1=Duel.GetMatchingGroup(function (c)
-            return c:IsCanBeEffectTarget(e) and c:IsFaceup()
+            return c:IsCanBeEffectTarget(e) and c:IsFaceup() and loc_self_f(c)
         end,tp,LOCATION_MZONE,0,nil)
         loc_self=loc_self-LOCATION_MZONE
         if g1:GetCount()>0 then g:Merge(g1) end
     end
     if bit.band(loc_op,LOCATION_MZONE)>0 then
         local g1=Duel.GetMatchingGroup(function (c)
-            return c:IsCanBeEffectTarget(e) and c:IsFaceup()
+            return c:IsCanBeEffectTarget(e) and c:IsFaceup() and loc_op_f(c)
         end,tp,0,LOCATION_MZONE,nil)
         loc_op=loc_op-LOCATION_MZONE
         if g1:GetCount()>0 then g:Merge(g1) end
@@ -1115,14 +1149,56 @@ function VgF.GetMatchingGroupCount(f,tp,loc_self,loc_op,except_g,...)
     return VgF.GetMatchingGroup(f,tp,loc_self,loc_op,except_g,...):GetCount()
 end
 function VgF.GetMatchingGroup(f,tp,loc_self,loc_op,except_g,...)
+    local loc_self_f=VgF.True
+    local loc_op_f=VgF.True
+    if bit.band(loc_self,LOCATION_VZONE)>0 and bit.band(loc_self,LOCATION_RZONE)>0 then
+        loc_self=loc_self-LOCATION_VZONE-LOCATION_RZONE
+        if bit.band(loc_self,LOCATION_MZONE)==0 then
+            loc_self=loc_self+LOCATION_MZONE
+        end
+    elseif bit.band(loc_self,LOCATION_VZONE)>0 then
+        loc_self=loc_self-LOCATION_VZONE
+        loc_self_f=VgF.VMonsterFilter
+        if bit.band(loc_self,LOCATION_MZONE)==0 then
+            loc_self=loc_self+LOCATION_MZONE
+        end
+    elseif bit.band(loc_self,LOCATION_RZONE)>0 then
+        loc_self=loc_self-LOCATION_RZONE
+        loc_self_f=VgF.RMonsterFilter
+        if bit.band(loc_self,LOCATION_MZONE)==0 then
+            loc_self=loc_self+LOCATION_MZONE
+        end
+    end
+    if bit.band(loc_op,LOCATION_VZONE)>0 and bit.band(loc_op,LOCATION_RZONE)>0 then
+        loc_op=loc_op-LOCATION_VZONE-LOCATION_RZONE
+        if bit.band(loc_op,LOCATION_MZONE)==0 then
+            loc_op=loc_op+LOCATION_MZONE
+        end
+    elseif bit.band(loc_op,LOCATION_VZONE)>0 then
+        loc_op=loc_op-LOCATION_VZONE
+        loc_op_f=VgF.VMonsterFilter
+        if bit.band(loc_op,LOCATION_MZONE)==0 then
+            loc_op=loc_op+LOCATION_MZONE
+        end
+    elseif bit.band(loc_op,LOCATION_RZONE)>0 then
+        loc_op=loc_op-LOCATION_RZONE
+        loc_op_f=VgF.RMonsterFilter
+        if bit.band(loc_op,LOCATION_MZONE)==0 then
+            loc_op=loc_op+LOCATION_MZONE
+        end
+    end
     local g=Group.CreateGroup()
     if bit.band(loc_self,LOCATION_MZONE)>0 then
-        local g1=Duel.GetMatchingGroup(Card.IsFaceup,tp,LOCATION_MZONE,0,nil)
+        local g1=Duel.GetMatchingGroup(function (c)
+            return c:IsFaceup() and loc_self_f(c)
+        end,tp,LOCATION_MZONE,0,nil)
         loc_self=loc_self-LOCATION_MZONE
         if g1:GetCount()>0 then g:Merge(g1) end
     end
     if bit.band(loc_op,LOCATION_MZONE)>0 then
-        local g1=Duel.GetMatchingGroup(Card.IsFaceup,tp,0,LOCATION_MZONE,nil)
+        local g1=Duel.GetMatchingGroup(function (c)
+            return c:IsFaceup() and loc_op_f(c)
+        end,tp,0,LOCATION_MZONE,nil)
         loc_op=loc_op-LOCATION_MZONE
         if g1:GetCount()>0 then g:Merge(g1) end
     end
