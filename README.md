@@ -316,11 +316,13 @@ end
 ## 6.特别用于“力量上升”的【永】能力注册范例
 
 ```lua
-vgd.EffectTypeContinuousChangeAttack(c,m,LOCATION_MZONE, typ, val[, con, tg, loc_self, loc_op, reset, mc])
+vgd.EffectTypeContinuousChangeAttack(c,m, loc, typ, val[, con, tg, loc_self, loc_op, reset, mc])
 ```
 
 参数注释
 
+> **loc : 发动的区域（vg的描述中会在效果类型后描述这个效果在哪些区域适用） `填 nil 则默认为 LOCATION_MZONE`**
+> 
 > **typ : 自身力量上升/场上的卡力量上升 `填 nil 则填默认为 EFFECT_TYPE_SINGLE`**
 > 
 > **val : 力量上升的具体数值**

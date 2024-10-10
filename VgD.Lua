@@ -1378,7 +1378,7 @@ function VgD.ContinuousSpellOperation(e,tp,eg,ep,ev,re,r,rp)
     local c=e:GetHandler()
     VgF.Sendto(LOCATION_ORDER,c,tp,POS_FACEUP_ATTACK,REASON_RULE)
 end
-function vgd.EffectTypeContinuousChangeAttack(c,m,LOCATION_MZONE,loc,typ,val,con,tg,loc_self,loc_op,reset,mc)
+function VgD.EffectTypeContinuousChangeAttack(c,m,loc,typ,val,con,tg,loc_self,loc_op,reset,mc)
     local cm=_G["c"..m]
     local f=VgF.True
     if not cm.is_has_continuous and not reset then cm.is_has_continuous=true end
