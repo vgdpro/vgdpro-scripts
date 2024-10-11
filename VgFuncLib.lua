@@ -1303,7 +1303,7 @@ function VgF.Sendto(loc,sg,...)
         return VgF.Call(g,table.unpack(ext_params))
     elseif bit.band(loc,0xf800)>0 or loc==0 then
         AddOverlayGroup(g,loc)
-        Duel.Sendto(g,loc,...)
+        Duel.Sendto(g,ext_params[1],loc,ext_params[2],ext_params[3],ext_params[4])
         local return_group=Duel.GetOperatedGroup()
         return return_group:GetCount()
     end
