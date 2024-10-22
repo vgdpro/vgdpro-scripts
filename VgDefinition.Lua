@@ -87,8 +87,8 @@ SKILL_ALL		    =0x7f		--All
 SKILL_NONE		    =0x01		--无
 SKILL_SUPPORT	    =0x02		--支援
 SKILL_BLOCK		    =0x04		--截击
-SKILL_TWICE_TRIGGER =0x08       --双判
-SKILL_THRICE_TRIGGER=0x10       --三判
+SKILL_THRICE_TRIGGER=0x08       --三判
+SKILL_TWICE_TRIGGER =0x10       --双判
 SKILL_SELF_RIDE		=0x20		--人格骑升
 SKILL_DEBRIS	    =0x40		--结晶碎片
 --触发类型          --种族
