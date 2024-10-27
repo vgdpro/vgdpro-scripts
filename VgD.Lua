@@ -1609,6 +1609,7 @@ function VgD.CallInPrisonOperation(val)
             end
         end
         sg=Group.CreateGroup()
+        Duel.AdjustAll()
     end
 end
 function VgD.CallInPrisonFilter(c,e,tp)

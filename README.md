@@ -551,8 +551,8 @@ vgf..Sendto(loc,sg,...)
 > 
 > **LOCATION_OVERLAY : c `c为叠放的卡，填nil | 不填则为先导者`**
 > 
-> **LOCATION_TRIGGER : tp,tp,LOCATION_FZONE,POS_FACEUP,true**
+> **LOCATION_TRIGGER : tp**
 > 
 > **LOCATION_MZONE : sumtype,tp,zone,pos**
 > 
-> **其他区域 : c,tp,pos,reason**
+> **其他区域 : tp,pos,reason**
