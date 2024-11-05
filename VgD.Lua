@@ -1254,7 +1254,52 @@ function VgD.BeRidedByCardOpCondtion(e,tp,eg,ep,ev,re,r,rp)
 	return eg:GetFirst()==e:GetHandler() and e:GetHandler():GetOverlayGroup():IsContains(c)
 end
 
----当c在loc时，code时点被触发时执行的效果。
+---当c在loc时，可以发动的【起】效果。
+---@param c Card 要触发效果的卡 
+---@param m integer 指示脚本的整数。cxxx的脚本应填入xxx。cm的脚本应填入m。
+---@param loc integer 发动时所处的位置
+---@param op function|nil 触发的效果
+---@param cost function|nil 效果的费用
+---@param con function|nil 效果触发的条件
+---@param tg function|nil 
+---@param count integer|nil 指示效果在同一回合内最多发动的次数
+---@param property integer|nil 指示效果的特殊属性。如确有必要填，请咨询群主。
+function VgD.EffectTypeIgnition(c,m,loc,op,cost,con,tg,count,property,stringid)
+	-- check func
+	local cm=_G["c"..m]
+	if not VgD.FunctionLegal(cm..".lua : VgD.EffectTypeTrigger param op", op) then return end
+	if not VgD.FunctionLegal(cm..".lua : VgD.EffectTypeTrigger param cost", cost) then return end
+	if not VgD.FunctionLegal(cm..".lua : VgD.EffectTypeTrigger param con", con) then return end
+	if not VgD.FunctionLegal(cm..".lua : VgD.EffectTypeTrigger param tg", tg) then return end
+	-- set param
+	cm.is_has_ignition = true
+	local con_exf = VgF.True
+	loc = loc or LOCATION_MZONE 
+	if loc == LOCATION_RZONE then 
+		loc, con_exf = LOCATION_MZONE, VgF.RMonsterCondition
+	elseif loc == LOCATION_VZONE then 
+		loc, con_exf = LOCATION_MZONE, VgF.VMonsterCondition
+	end
+	-- set effect
+	local e=Effect.CreateEffect(c)
+	e:SetDescription(VgF.Stringid(VgID+2,stringid or 1))
+	e:SetType(EFFECT_TYPE_IGNITION)
+	e:SetRange(loc)
+	if property then e1:SetProperty(property) end
+	if count then e:SetCountLimit(count) end
+	e:SetCondition(function(e,tp,eg,ep,ev,re,r,rp)
+		return (not con or con(e,tp,eg,ep,ev,re,r,rp)) and con_exf(e) 
+	end)
+	if cost then e:SetCost(cost) end
+	e:SetTarget(function(e,tp,eg,ep,ev,re,r,rp,chk)
+		if chk==0 then return not tg or tg(e,tp,eg,ep,ev,re,r,rp,0) end
+		Duel.SetTargetCard(e:GetLabelObject())
+		tg(e,tp,eg,ep,ev,re,r,rp)
+	end)
+	if op then e:SetOperation(op) end
+	c:RegisterEffect(e)
+end
+---当c在loc时，code时点被触发时执行的效果。【自】效果模板
 ---@param c Card 要触发效果的卡 
 ---@param m integer 指示脚本的整数。cxxx的脚本应填入xxx。cm的脚本应填入m。
 ---@param loc integer 发动时所处的位置
@@ -1279,80 +1324,36 @@ function VgD.EffectTypeTrigger(c,m,loc,typ,code,op,cost,con,tg,count,property,st
 	local con_exf = VgF.True
 	loc = loc or LOCATION_MZONE 
 	if loc == LOCATION_RZONE then 
-		loc = LOCATION_MZONE 
-		con_exf = VgF.RMonsterCondition
+		loc, con_exf = LOCATION_MZONE, VgF.RMonsterCondition
 	elseif loc == LOCATION_VZONE then 
-		loc = LOCATION_MZONE
-		con_exf = VgF.VMonsterCondition 
+		loc, con_exf = LOCATION_MZONE, VgF.VMonsterCondition
 	end
 	-- set effect
 	local e=Effect.CreateEffect(c)
 	e:SetDescription(VgF.Stringid(VgID+1,stringid or 1))
 	e:SetType(typ)
-	e:SetRange(loc)
 	e:SetCode(code)
+	e:SetRange(loc)
 	e:SetProperty((property or 1)+EFFECT_FLAG_DAMAGE_STEP+EFFECT_FLAG_DELAY)
 	if count then e:SetCountLimit(count) end
 	e:SetCondition(function(e,tp,eg,ep,ev,re,r,rp)
-		return (not con or con(e,tp,eg,ep,ev,re,r,rp)) and con_exf(e) 
+		return (not con or con(e,tp,eg,ep,ev,re,r,rp)) and con_exf(e)
 	end)
 	if cost then e:SetCost(cost) end
 	if tg then e:SetTarget(tg) end
 	if op then e:SetOperation(op) end
 	c:RegisterEffect(e)
 end
----当c在loc时，可以发动的【起】效果。
----@param c Card 要触发效果的卡 
----@param m integer 指示脚本的整数。cxxx的脚本应填入xxx。cm的脚本应填入m。
----@param loc integer 发动时所处的位置
----@param op function|nil 触发的效果
----@param cost function|nil 效果的费用
----@param con function|nil 效果触发的条件
----@param tg function|nil 
----@param count integer|nil 指示效果在同一回合内最多发动的次数
----@param property integer|nil 指示效果的特殊属性。如确有必要填，请咨询群主。
-function VgD.EffectTypeIgnition(c,m,loc,op,cost,con,tg,count,property,stringid)
-	local cm=_G["c"..m]
-	local f=VgF.True
-	if not cm.is_has_ignition then cm.is_has_ignition=true end
-	if not loc then loc=LOCATION_MZONE end
-	if loc==LOCATION_RZONE then loc=LOCATION_MZONE f=VgF.RMonsterCondition end
-	if loc==LOCATION_VZONE then loc=LOCATION_MZONE f=VgF.VMonsterCondition end
-	if not stringid then stringid=1 end
-	local e1=Effect.CreateEffect(c)
-	e1:SetDescription(VgF.Stringid(VgID+2,stringid))
-	e1:SetType(EFFECT_TYPE_IGNITION)
-	e1:SetRange(loc)
-	if property and property>0 then e1:SetProperty(property) end
-	if count and count>0 then e1:SetCountLimit(count) end
-	e1:SetCondition(function (e,tp,eg,ep,ev,re,r,rp) return (VgF.GetValueType(con)~="function" or con(e,tp,eg,ep,ev,re,r,rp)) and f(e) end)
-	if VgF.GetValueType(cost)=="function" then e1:SetCost(cost) end
-	if VgF.GetValueType(tg)=="function" then e1:SetTarget(VgD.EffectTypeIgnitionTarget(tg)) end
-	if VgF.GetValueType(op)=="function" then e1:SetOperation(op) end
-	c:RegisterEffect(e1)
-end
-function VgD.EffectTypeIgnitionTarget(tg)
-	return function (e,tp,eg,ep,ev,re,r,rp,chk)
-		if chk==0 then
-			return VgF.GetValueType(tg)~="function" or tg(e,tp,eg,ep,ev,re,r,rp,chk)
-		end
-		local c=e:GetLabelObject()
-		Duel.SetTargetCard(c)
-		tg(e,tp,eg,ep,ev,re,r,rp,chk)
-	end
-end
 function VgD.EffectTypeTriggerWhenHitting(c,m,loc,typ,op,cost,con,tg,count,p,property,stringid)
-	if not typ or typ==0 then typ=EFFECT_TYPE_SINGLE end
-	if not p then p=c:GetControler() end
-	VgD.EffectTypeTrigger(c,m,loc,EFFECT_TYPE_FIELD,EVENT_CUSTOM+EVENT_DAMAGE_TRIGGER,op,cost,VgD.EffectTypeTriggerWhenHittingCon(typ,con,p),tg,count,property,stringid)
+	typ = typ or EFFECT_TYPE_SINGLE 
 	VgD.EffectTypeTrigger(c,m,loc,typ,EVENT_BATTLE_DESTROYING,op,cost,con,tg,count,property,stringid)
+	p = p or c:GetControler()
+	VgD.EffectTypeTrigger(c,m,loc,EFFECT_TYPE_FIELD,EVENT_CUSTOM+EVENT_DAMAGE_TRIGGER,op,cost,VgD.EffectTypeTriggerWhenHittingCon(typ,con,p),tg,count,property,stringid)
 end
 function VgD.EffectTypeTriggerWhenHittingCon(typ,con,p)
 	return function (e,tp,eg,ep,ev,re,r,rp)
-		if eg:GetFirst():GetControler()==p and (VgF.GetValueType(con)=="function" and not con(e,tp,eg,ep,ev,re,r,rp)) then return false end
-		if typ==EFFECT_TYPE_SINGLE then
-			return Duel.GetAttacker()==e:GetHandler()
-		end
+		if eg:GetFirst():GetControler()==p and (con and not con(e,tp,eg,ep,ev,re,r,rp)) then return false end
+		if typ==EFFECT_TYPE_SINGLE then return Duel.GetAttacker()==e:GetHandler() end
 		return true
 	end
 end
@@ -1388,65 +1389,56 @@ function VgD.ContinuousSpellOperation(e,tp,eg,ep,ev,re,r,rp)
 	local c=e:GetHandler()
 	VgF.Sendto(LOCATION_ORDER,c,tp,POS_FACEUP_ATTACK,REASON_RULE)
 end
-function VgD.EffectTypeContinuousChangeAttack(c,m,loc,typ,val,con,tg,loc_self,loc_op,reset,mc)
+---【永】效果模板
+---@param c Card 效果的创建者
+---@param m integer 指示脚本的整数。cxxx的脚本应填入xxx。cm的脚本应填入m。
+---@param loc integer 发动时所处的位置
+---@param typ integer 只影响自己，则填EFFECT_TYPE_SINGLE；<br>影响场上，则填EFFECT_TYPE_FIELD。
+---@param code integer 触发的效果
+---@param val integer 触发的效果的数值
+---@param con function|nil 效果触发的条件
+---@param loc_self integer|nil 效果的影响的自己区域
+---@param loc_op integer|nil 效果的影响的对方区域
+---@param reset integer|nil 效果的重置条件
+---@param mc Card|nil 效果的拥有者, 没有则为 c
+function VgD.EffectTypeContinuous(c,m,loc,typ,code,val,con,tg,loc_self,loc_op,reset,mc)
+	-- check func
 	local cm=_G["c"..m]
-	local f=VgF.True
-	if not cm.is_has_continuous and not reset then cm.is_has_continuous=true end
-	if VgF.GetValueType(mc)~="Card" then mc=c end
-	if not typ then typ=EFFECT_TYPE_SINGLE end
-	if not loc_self then loc_self=0 end
-	if not loc_op then loc_op=0 end
-	if loc==LOCATION_RZONE then loc=LOCATION_MZONE f=VgF.RMonsterCondition end
-	if loc==LOCATION_VZONE then loc=LOCATION_MZONE f=VgF.VMonsterCondition end
-	local e1=Effect.CreateEffect(c)
-	e1:SetType(typ)
-	e1:SetCode(EFFECT_UPDATE_ATTACK)
-	e1:SetRange(LOCATION_MZONE)
-	if VgF.GetValueType(reset)=="number" then e1:SetReset(RESET_EVENT+RESETS_STANDARD+reset) end
-	if typ==EFFECT_TYPE_FIELD then e1:SetTargetRange(loc_self,loc_op) end
-	e1:SetCondition(function (e,tp,eg,ep,ev,re,r,rp) return (VgF.GetValueType(con)~="function" or con(e,tp,eg,ep,ev,re,r,rp)) and f(e) end)
-	if VgF.GetValueType(tg)=="function" then e1:SetTarget(tg) end
-	e1:SetValue(val)
-	mc:RegisterEffect(e1)
+	if not VgD.FunctionLegal(cm..".lua : VgD.EffectTypeContinuous param con", con) then return end
+	if not VgD.FunctionLegal(cm..".lua : VgD.EffectTypeContinuous param tg", tg) then return end
+	if not VgD.CardLegal(cm..".lua : VgD.EffectTypeContinuous param mc", mc) then return end
+	-- set param
+	cm.is_has_continuous = cm.is_has_continuous or not reset
+	local con_exf = VgF.True
+	loc = loc or LOCATION_MZONE 
+	if loc == LOCATION_RZONE then 
+		loc, con_exf = LOCATION_MZONE, VgF.RMonsterCondition
+	elseif loc == LOCATION_VZONE then 
+		loc, con_exf = LOCATION_MZONE, VgF.VMonsterCondition
+	end
+	-- set effect
+	local e=Effect.CreateEffect(c)
+	e:SetType(typ or EFFECT_TYPE_SINGLE)
+	e:SetCode(code)
+	e:SetRange(loc)
+	if typ==EFFECT_TYPE_FIELD then e:SetTargetRange(loc_self or 0,loc_op or 0) end
+	e:SetCondition(function(e,tp,eg,ep,ev,re,r,rp)
+		return (not con or con(e,tp,eg,ep,ev,re,r,rp)) and con_exf(e)
+	end)
+	e:SetValue(val)
+	if tg then e:SetTarget(tg) end
+	if reset then e:SetReset(RESET_EVENT+RESETS_STANDARD+reset) end
+	(mc or c):RegisterEffect(e)
+end
+function VgD.EffectTypeContinuousChangeAttack(c,m,loc,typ,val,con,tg,loc_self,loc_op,reset,mc)
+	VgD.EffectTypeContinuous(c,m,loc,typ,EFFECT_UPDATE_ATTACK,val,con,tg,loc_self,loc_op,reset,mc)
 end
 function VgD.EffectTypeContinuousChangeDefense(c,m,typ,val,con,tg,loc_self,loc_op,reset,mc)
-	local cm=_G["c"..m]
-	if not cm.is_has_continuous and not reset then cm.is_has_continuous=true end
-	if VgF.GetValueType(mc)~="Card" then mc=c end
-	if not typ then typ=EFFECT_TYPE_SINGLE end
-	if not loc_self then loc_self=0 end
-	if not loc_op then loc_op=0 end
-	local e1=Effect.CreateEffect(c)
-	e1:SetType(typ)
-	e1:SetCode(EFFECT_UPDATE_DEFENSE)
-	e1:SetRange(LOCATION_GZONE)
-	if VgF.GetValueType(reset)=="number" then e1:SetReset(RESET_EVENT+RESETS_STANDARD+reset) end
-	if typ==EFFECT_TYPE_FIELD then e1:SetTargetRange(loc_self,loc_op) end
-	if VgF.GetValueType(con)=="function" then e1:SetCondition(con) end
-	if VgF.GetValueType(tg)=="function" then e1:SetTarget(tg) end
-	e1:SetValue(val)
-	mc:RegisterEffect(e1)
+	VgD.EffectTypeContinuous(c,m,LOCATION_GZONE,typ,EFFECT_UPDATE_DEFENSE,val,con,tg,loc_self,loc_op,reset,mc)
 end
 function VgD.EffectTypeContinuousChangeStar(c,m,typ,val,con,tg,loc_self,loc_op,reset,mc)
-	local cm=_G["c"..m]
-	if not cm.is_has_continuous and not reset then cm.is_has_continuous=true end
-	if VgF.GetValueType(mc)~="Card" then mc=c end
-	if not typ then typ=EFFECT_TYPE_SINGLE end
-	if not loc_self then loc_self=0 end
-	if not loc_op then loc_op=0 end
-	local e1=Effect.CreateEffect(c)
-	e1:SetType(typ)
-	e1:SetCode(EFFECT_UPDATE_LSCALE)
-	e1:SetRange(LOCATION_MZONE)
-	if VgF.GetValueType(reset)=="number" then e1:SetReset(RESET_EVENT+RESETS_STANDARD+reset) end
-	if typ==EFFECT_TYPE_FIELD then e1:SetTargetRange(loc_self,loc_op) end
-	if VgF.GetValueType(con)=="function" then e1:SetCondition(con) end
-	if VgF.GetValueType(tg)=="function" then e1:SetTarget(tg) end
-	e1:SetValue(val)
-	mc:RegisterEffect(e1)
-	local e2=e1:Clone()
-	e2:SetCode(EFFECT_UPDATE_RSCALE)
-	mc:RegisterEffect(e2)
+	VgD.EffectTypeContinuous(c,m,LOCATION_MZONE,typ,EFFECT_UPDATE_LSCALE,val,con,tg,loc_self,loc_op,reset,mc)
+	VgD.EffectTypeContinuous(c,m,LOCATION_MZONE,typ,EFFECT_UPDATE_RSCALE,val,con,tg,loc_self,loc_op,reset,mc)
 end
 function VgD.TriggerCountUp(c,m,num,reset,tc)
 	local cm=_G["c"..m]
@@ -1628,6 +1620,13 @@ end
 ---检查func是否为nil或函数
 function VgD.FunctionLegal(from, func)
 	if not func or type(func)=="function" then return true end
-	Debug.Message(from.." is not type function") 
+	Debug.Message(from.." is not function") 
 	return false
 end
+---检查card是否为nil或卡片
+function VgD.CardLegal(from, card)
+	if not card or type(card)=="Card" then return true end
+	Debug.Message(from.." is not card") 
+	return false
+end
+
