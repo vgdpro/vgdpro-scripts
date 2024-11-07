@@ -639,13 +639,13 @@ function VgF.EnergyCost(val)
             if e:IsHasType(EFFECT_TYPE_ACTIVATE) then
                 VgF.AddMixCostGroupFrom(c,m,"LOCATION_EMBLEM")
                 VgF.AddMixCostGroupTo(c,m,"0")
-                VgF.AddMixCostGroupFilter(c,m,function(tc) tc:IsCode(10800730) end)
+                VgF.AddMixCostGroupFilter(c,m,function(tc) tc:IsCode(CARD_ENERGY) end)
                 VgF.AddMixCostGroupCountMin(c,m,val)
                 VgF.AddMixCostGroupCountMax(c,m,val)
             end
-            return VgF.IsExistingMatchingCard(Card.IsCode,tp,LOCATION_EMBLEM,0,val,nil,10800730)
+            return VgF.IsExistingMatchingCard(Card.IsCode,tp,LOCATION_EMBLEM,0,val,nil,CARD_ENERGY)
         end
-        local sg=Duel.GetMatchingGroup(Card.IsCode,tp,LOCATION_EMBLEM,0,nil,10800730)
+        local sg=Duel.GetMatchingGroup(Card.IsCode,tp,LOCATION_EMBLEM,0,nil,CARD_ENERGY)
         local g=VgF.GetCardsFromGroup(sg,val)
         return VgF.Sendto(0,g,tp,POS_FACEUP,REASON_COST)
     end

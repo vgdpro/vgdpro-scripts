@@ -32,9 +32,9 @@ function cm.con1(e,tp,eg,ep,ev,re,r,rp)
 end
 function cm.op1(e,tp,eg,ep,ev,re,r,rp)
     local c=e:GetHandler()
-    local code=10800730
+    local code=CARD_ENERGY
     local selfcode1,selfcode2=c:GetOriginalCode()
-    if selfcode2==10800855 then code=code+1 end
+    if selfcode2~=CARD_ENERGY_EMBLEM then code=code+1 end
     local token1=Duel.CreateToken(tp,code)
     local token2=Duel.CreateToken(tp,code)
     local token3=Duel.CreateToken(tp,code)
@@ -46,9 +46,9 @@ function cm.con2(e,tp,eg,ep,ev,re,r,rp)
 end
 function cm.op2(e,tp,eg,ep,ev,re,r,rp)
     local c=e:GetHandler()
-    local code=10800730
+    local code=CARD_ENERGY
     local selfcode1,selfcode2=c:GetOriginalCode()
-    if selfcode2==10800855 then code=code+1 end
+    if selfcode2~=CARD_ENERGY_EMBLEM then code=code+1 end
     if vgf.GetMatchingGroupCount(Card.IsCode,tp,LOCATION_EMBLEM,0,nil,code)>=10 then return end
     local ct=10-vgf.GetMatchingGroupCount(Card.IsCode,tp,LOCATION_EMBLEM,0,nil,code)
     local token1=Duel.CreateToken(tp,code)

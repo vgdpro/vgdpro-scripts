@@ -1,5 +1,7 @@
 VgDefinition={}
 VgID=10000001
+CARD_ENERGY=10800730
+CARD_ENERGY_EMBLEM=10800851
 --min/max value
 MIN_ID		=1000		--4 digits, by DataManager::GetDesc()
 MAX_ID		=268435455	--28 bits, by DataManager::GetDesc()
