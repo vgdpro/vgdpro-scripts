@@ -575,17 +575,16 @@ end
 
 ---用于多Cost。例如 VgF.CostAnd(vgf.DamageCost(1), vgf.DisCardCost(1))。
 function VgF.CostAnd(...)
-    funcs = {...}
+    local funcs = {...}
     return function (e,tp,eg,ep,ev,re,r,rp,chk)
-        if chk==0 then
-            for _, func in ipairs(funcs) do
+        for _,func in ipairs(funcs) do
+            if chk==0 then
                 chk = chk and func(e,tp,eg,ep,ev,re,r,rp,chk)
+            else
+                func(e,tp,eg,ep,ev,re,r,rp,chk)
             end
-            return chk
         end
-        for _, func in ipairs(funcs) do
-            func(e,tp,eg,ep,ev,re,r,rp)
-        end
+        return chk
     end
 end
 
