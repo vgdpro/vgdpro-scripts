@@ -282,6 +282,7 @@ end
 
 ---舞装加身-「code」（在游戏中，也当做与指定的卡同名的卡使用。）
 function VgD.DressUp(c,code)
+    c.is_has_dressup = true
     local e=Effect.CreateEffect(c)
     e:SetType(EFFECT_TYPE_SINGLE)
     e:SetCode(EFFECT_ADD_CODE)
