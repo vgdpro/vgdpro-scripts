@@ -573,13 +573,19 @@ function VgF.DamageFill(val)
     end
 end
 
-function VgF.CostAnd(f1,f2)
+---用于多Cost。例如 VgF.CostAnd(vgf.DamageCost(1), vgf.DisCardCost(1))。
+function VgF.CostAnd(...)
+    funcs = {...}
     return function (e,tp,eg,ep,ev,re,r,rp,chk)
         if chk==0 then
-            return f1(e,tp,eg,ep,ev,re,r,rp,chk) and f2(e,tp,eg,ep,ev,re,r,rp,chk)
+            for _, func in ipairs(funcs) do
+                chk = chk and func(e,tp,eg,ep,ev,re,r,rp,chk)
+            end
+            return chk
         end
-        f1(e,tp,eg,ep,ev,re,r,rp,chk)
-        f2(e,tp,eg,ep,ev,re,r,rp,chk)
+        for _, func in ipairs(funcs) do
+            func(e,tp,eg,ep,ev,re,r,rp)
+        end
     end
 end
 
