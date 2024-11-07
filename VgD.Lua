@@ -275,6 +275,21 @@ function VgD.OverDressSum(e,tp,eg,ep,ev,re,r,rp)
 	c:RegisterFlagEffect(FLAG_CONDITION,RESET_EVENT+RESETS_STANDARD,EFFECT_FLAG_CLIENT_HINT,1,201,VgF.Stringid(10101006,0))
 end
 
+--交织超限舞装
+function VgD.XOverDress(c,f)
+
+end
+
+---舞装加身-「code」（在游戏中，也当做与指定的卡同名的卡使用。）
+function VgD.DressUp(c,code)
+    local e=Effect.CreateEffect(c)
+    e:SetType(EFFECT_TYPE_SINGLE)
+    e:SetCode(EFFECT_ADD_CODE)
+    e:SetProperty(EFFECT_FLAG_CANNOT_DISABLE+EFFECT_FLAG_UNCOPYABLE)
+    e:SetValue(code)
+    c:RegisterEffect(e)
+end
+
 --战斗阶段
 function VgD.MonsterBattle(c)
 	--攻击转守备
