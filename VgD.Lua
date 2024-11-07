@@ -275,6 +275,11 @@ function VgD.OverDressSum(e,tp,eg,ep,ev,re,r,rp)
 	c:RegisterFlagEffect(FLAG_CONDITION,RESET_EVENT+RESETS_STANDARD,EFFECT_FLAG_CLIENT_HINT,1,201,VgF.Stringid(10101006,0))
 end
 
+--交织超限舞装
+function VgD.XOverDress(c,f)
+
+end
+
 --战斗阶段
 function VgD.MonsterBattle(c)
 	--攻击转守备
