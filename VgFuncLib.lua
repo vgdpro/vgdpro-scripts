@@ -723,34 +723,41 @@ function VgF.DamageCost(val)
         return Duel.GetOperatedGroup():GetCount()
     end
 end
-function VgF.LeaveFieldCost(card_or_code_or_func,val_max,val_min,except,...)
-    local ext_params={...}
-    if VgF.GetValueType(val_max)~="number" then val_max=1 end
-    if VgF.GetValueType(val_min)~="number" or val_min>val_max then val_min=val_max end
+---用于效果的Cost。它返回一个执行“【费用】[将xxx退场]”的函数。
+---@param card_code_func Card|integer|function 退场的卡的条件
+---@param val_max integer 退场的卡的最大数量
+---@param val_min integer 退场的卡的最小数量
+---@param except Card 
+---@param ... any 
+---@return function 效果的Cost函数
+function VgF.LeaveFieldCost(card_code_func, val_max, val_min, except, ...)
+    if not card_code_func then 
+        return VgF.LeaveFieldCostGroup()
+    elseif VgF.GetValueType(card_code_func) == "Card" then
+        return VgF.LeaveFieldCostGroup(Group.FromCards(card_code_func))
+    elseif VgF.GetValueType(card_code_func)=="Group" then
+        return VgF.LeaveFieldCostGroup(card_code_func)
+    end
+    local ex_params = {...}
+    val_min, val_max = val_min or 1, val_max or 1
+    if val_min > val_max then val_min = val_max end
+    local leave_filter = VgF.True
+    if type(card_code_func) == "function" then 
+        leave_filter = card_code_func
+    elseif type(card_code_func)=="number" then
+        leave_filter = function(c) return c:IsCode(card_code_func) end
+    end
+    return function(e,tp,eg,ep,ev,re,r,rp,chk)
+        leave_filter = function(c) return leave_filter(c, table.unpack(ex_params)) and c:IsAbleToGraveAsCost() end
+        if chk==0 then return VgF.IsExistingMatchingCard(leave_filter,tp,LOCATION_MZONE,0,val_min,except) end
+        local g = vgf.SelectMatchingCard(HINTMSG_LEAVEFIELD,e,tp,leave_filter,tp,LOCATION_MZONE,0,val_min,val_max,except)
+        VgF.Sendto(LOCATION_DROP,g,REASON_COST)
+    end
+end
+function VgF.LeaveFieldCostGroup(g)
     return function (e,tp,eg,ep,ev,re,r,rp,chk)
-        local filter=VgF.True
-        if VgF.GetValueType(card_or_code_or_func)=="function" then filter=card_or_code_or_func
-        elseif VgF.GetValueType(card_or_code_or_func)=="number" then
-            filter=function (tc)
-                return tc:IsCode(card_or_code_or_func)
-            end
-        elseif VgF.GetValueType(card_or_code_or_func)=="Card" then
-            if chk==0 then return card_or_code_or_func:IsAbleToGraveAsCost() end
-            VgF.Sendto(LOCATION_DROP,card_or_code_or_func,REASON_COST)
-        elseif VgF.GetValueType(card_or_code_or_func)=="Group" then
-            if chk==0 then return not card_or_code_or_func:IsExists(function (tc)
-                return not tc:IsAbleToGraveAsCost()
-            end,1,nil) end
-            VgF.Sendto(LOCATION_DROP,card_or_code_or_func,REASON_COST)
-        end
-        if chk==0 then
-            return VgF.IsExistingMatchingCard(function (tc)
-                return filter(tc,table.unpack(ext_params)) and tc:IsAbleToGraveAsCost()
-            end,tp,LOCATION_MZONE,0,val_min,except)
-        end
-        local g=vgf.SelectMatchingCard(HINTMSG_LEAVEFIELD,e,tp,function (tc)
-            return filter(tc,table.unpack(ext_params)) and tc:IsAbleToGraveAsCost()
-        end,tp,LOCATION_MZONE,0,val_min,val_max,except)
+        g = g or Group.FromCards(e:GetHandler())
+        if chk==0 then return not g:IsExists(VgF.NOT(Card.IsAbleToGraveAsCost),1,nil) end
         VgF.Sendto(LOCATION_DROP,g,REASON_COST)
     end
 end
