@@ -1398,3 +1398,19 @@ end
 function VgF.PlayerEffect(e,tp,eg,ep,ev,re,r,rp)
     return true
 end
+---检查func是否为nil或函数
+function VgF.FunctionLegal(func,from,name)
+	if VgF.GetValueType(func)=="nil" or VgF.GetValueType(func)=="function" then return true end
+	if VgF.GetValueType(name)=="string" and (VgF.GetValueType(from)=="string" or VgF.GetValueType(from)=="number") then
+        Debug.Message("c"..from..".lua : VgD.EffectTypeTrigger param"..name.." is not function|nil")
+    end
+	return false
+end
+---检查card是否为卡片
+function VgF.CardLegal(card,from,name)
+	if VgF.GetValueType(card)=="Card" then return true end
+    if VgF.GetValueType(name)=="string" and (VgF.GetValueType(from)=="string" or VgF.GetValueType(from)=="number") then
+        Debug.Message("c"..from..".lua : VgD.EffectTypeTrigger param"..name.." is not card")
+    end
+	return false
+end

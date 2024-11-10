@@ -1278,14 +1278,14 @@ end
 ---@param con function|nil 效果触发的条件
 ---@param tg function|nil 
 ---@param count integer|nil 指示效果在同一回合内最多发动的次数
----@param property integer|nil 指示效果的特殊属性。如确有必要填，请咨询群主。
+---@param property integer|nil 指示效果的特殊属性。
 function VgD.EffectTypeIgnition(c,m,loc,op,cost,con,tg,count,property,stringid)
 	-- check func
 	local cm=_G["c"..m]
-	if not VgD.FunctionLegal(cm..".lua : VgD.EffectTypeTrigger param op", op) then return end
-	if not VgD.FunctionLegal(cm..".lua : VgD.EffectTypeTrigger param cost", cost) then return end
-	if not VgD.FunctionLegal(cm..".lua : VgD.EffectTypeTrigger param con", con) then return end
-	if not VgD.FunctionLegal(cm..".lua : VgD.EffectTypeTrigger param tg", tg) then return end
+	if not VgF.FunctionLegal(op,m,"op") then return end
+	if not VgF.FunctionLegal(cost,m,"cost") then return end
+	if not VgF.FunctionLegal(con,m,"con") then return end
+	if not VgF.FunctionLegal(tg,m,"tg") then return end
 	-- set param
 	cm.is_has_ignition = true
 	local con_exf = VgF.True
@@ -1296,23 +1296,23 @@ function VgD.EffectTypeIgnition(c,m,loc,op,cost,con,tg,count,property,stringid)
 		loc, con_exf = LOCATION_MZONE, VgF.VMonsterCondition
 	end
 	-- set effect
-	local e=Effect.CreateEffect(c)
-	e:SetDescription(VgF.Stringid(VgID+2,stringid or 1))
-	e:SetType(EFFECT_TYPE_IGNITION)
-	e:SetRange(loc)
+	local e1=Effect.CreateEffect(c)
+	e1:SetDescription(VgF.Stringid(VgID+2,stringid or 1))
+	e1:SetType(EFFECT_TYPE_IGNITION)
+	e1:SetRange(loc)
 	if property then e1:SetProperty(property) end
-	if count then e:SetCountLimit(count) end
-	e:SetCondition(function(e,tp,eg,ep,ev,re,r,rp)
+	if count then e1:SetCountLimit(count) end
+	e1:SetCondition(function(e,tp,eg,ep,ev,re,r,rp)
 		return (not con or con(e,tp,eg,ep,ev,re,r,rp)) and con_exf(e) 
 	end)
-	if cost then e:SetCost(cost) end
-	e:SetTarget(function(e,tp,eg,ep,ev,re,r,rp,chk)
+	if cost then e1:SetCost(cost) end
+	e1:SetTarget(function(e,tp,eg,ep,ev,re,r,rp,chk)
 		if chk==0 then return not tg or tg(e,tp,eg,ep,ev,re,r,rp,0) end
 		Duel.SetTargetCard(e:GetLabelObject())
 		tg(e,tp,eg,ep,ev,re,r,rp)
 	end)
-	if op then e:SetOperation(op) end
-	c:RegisterEffect(e)
+	if op then e1:SetOperation(op) end
+	c:RegisterEffect(e1)
 end
 ---当c在loc时，code时点被触发时执行的效果。【自】效果模板
 ---@param c Card 要触发效果的卡 
@@ -1325,14 +1325,14 @@ end
 ---@param con function|nil 效果触发的条件
 ---@param tg function|nil 
 ---@param count integer|nil 指示效果在同一回合内最多发动的次数
----@param property integer|nil 指示效果的特殊属性。如确有必要填，请咨询群主。
+---@param property integer|nil 指示效果的特殊属性。
 function VgD.EffectTypeTrigger(c,m,loc,typ,code,op,cost,con,tg,count,property,stringid)
 	-- check func
 	local cm=_G["c"..m]
-	if not VgD.FunctionLegal(cm..".lua : VgD.EffectTypeTrigger param op", op) then return end
-	if not VgD.FunctionLegal(cm..".lua : VgD.EffectTypeTrigger param cost", cost) then return end
-	if not VgD.FunctionLegal(cm..".lua : VgD.EffectTypeTrigger param con", con) then return end
-	if not VgD.FunctionLegal(cm..".lua : VgD.EffectTypeTrigger param tg", tg) then return end
+	if not VgF.FunctionLegal(op,m,"op") then return end
+	if not VgF.FunctionLegal(cost,m,"cost") then return end
+	if not VgF.FunctionLegal(con,m,"con") then return end
+	if not VgF.FunctionLegal(tg,m,"tg") then return end
 	-- set param
 	cm.is_has_trigger = true
 	typ = (typ or EFFECT_TYPE_SINGLE) + (cost and EFFECT_TYPE_TRIGGER_O or EFFECT_TYPE_TRIGGER_F)
@@ -1412,6 +1412,7 @@ end
 ---@param code integer 触发的效果
 ---@param val integer 触发的效果的数值
 ---@param con function|nil 效果触发的条件
+---@param tg function|nil 效果的适用对象过滤
 ---@param loc_self integer|nil 效果的影响的自己区域
 ---@param loc_op integer|nil 效果的影响的对方区域
 ---@param reset integer|nil 效果的重置条件
@@ -1419,31 +1420,31 @@ end
 function VgD.EffectTypeContinuous(c,m,loc,typ,code,val,con,tg,loc_self,loc_op,reset,mc)
 	-- check func
 	local cm=_G["c"..m]
-	if not VgD.FunctionLegal(cm..".lua : VgD.EffectTypeContinuous param con", con) then return end
-	if not VgD.FunctionLegal(cm..".lua : VgD.EffectTypeContinuous param tg", tg) then return end
-	if not VgD.CardLegal(cm..".lua : VgD.EffectTypeContinuous param mc", mc) then return end
+	if not VgF.FunctionLegal(con,m,"con") then return end
+	if not VgF.FunctionLegal(tg,m,"tg") then return end
+	if not VgF.CardLegal(c,m,"c") then return end
 	-- set param
-	cm.is_has_continuous = cm.is_has_continuous or not reset
-	local con_exf = VgF.True
-	loc = loc or LOCATION_MZONE 
-	if loc == LOCATION_RZONE then 
-		loc, con_exf = LOCATION_MZONE, VgF.RMonsterCondition
-	elseif loc == LOCATION_VZONE then 
-		loc, con_exf = LOCATION_MZONE, VgF.VMonsterCondition
+	if not cm.is_has_continuous and not reset then cm.is_has_continuous=true end
+	local con_exf=VgF.True
+	loc=loc or LOCATION_MZONE
+	if loc==LOCATION_RZONE then
+		loc, con_exf=LOCATION_MZONE, VgF.RMonsterCondition
+	elseif loc==LOCATION_VZONE then
+		loc, con_exf=LOCATION_MZONE, VgF.VMonsterCondition
 	end
 	-- set effect
-	local e=Effect.CreateEffect(c)
-	e:SetType(typ or EFFECT_TYPE_SINGLE)
-	e:SetCode(code)
-	e:SetRange(loc)
-	if typ==EFFECT_TYPE_FIELD then e:SetTargetRange(loc_self or 0,loc_op or 0) end
-	e:SetCondition(function(e,tp,eg,ep,ev,re,r,rp)
+	local e1=Effect.CreateEffect(c)
+	e1:SetType(typ or EFFECT_TYPE_SINGLE)
+	e1:SetCode(code)
+	e1:SetRange(loc)
+	if typ==EFFECT_TYPE_FIELD then e1:SetTargetRange(loc_self or 0,loc_op or 0) end
+	e1:SetCondition(function(e,tp,eg,ep,ev,re,r,rp)
 		return (not con or con(e,tp,eg,ep,ev,re,r,rp)) and con_exf(e)
 	end)
-	e:SetValue(val)
-	if tg then e:SetTarget(tg) end
-	if reset then e:SetReset(RESET_EVENT+RESETS_STANDARD+reset) end
-	(mc or c):RegisterEffect(e)
+	e1:SetValue(val)
+	if tg then e1:SetTarget(tg) end
+	if reset then e1:SetReset(RESET_EVENT+RESETS_STANDARD+reset) end
+	(mc or c):RegisterEffect(e1)
 end
 function VgD.EffectTypeContinuousChangeAttack(c,m,loc,typ,val,con,tg,loc_self,loc_op,reset,mc)
 	VgD.EffectTypeContinuous(c,m,loc,typ,EFFECT_UPDATE_ATTACK,val,con,tg,loc_self,loc_op,reset,mc)
@@ -1631,17 +1632,5 @@ function VgD.CallInPrisonOperation(val)
 end
 function VgD.CallInPrisonFilter(c,e,tp)
 	return c:GetFlagEffect(FLAG_IMPRISON)>0 and (vgf.IsCanBeCalled(c,e,tp) or not c:IsType(TYPE_MONSTER))
-end
----检查func是否为nil或函数
-function VgD.FunctionLegal(from, func)
-	if not func or type(func)=="function" then return true end
-	Debug.Message(from.." is not function") 
-	return false
-end
----检查card是否为nil或卡片
-function VgD.CardLegal(from, card)
-	if not card or type(card)=="Card" then return true end
-	Debug.Message(from.." is not card") 
-	return false
 end
 
