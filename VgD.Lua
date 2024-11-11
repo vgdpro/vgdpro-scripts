@@ -1313,6 +1313,7 @@ function VgD.EffectTypeIgnition(c,m,loc,op,cost,con,tg,count,property,stringid)
 	end)
 	if op then e1:SetOperation(op) end
 	c:RegisterEffect(e1)
+	return e1
 end
 ---当c在loc时，code时点被触发时执行的效果。【自】效果模板
 ---@param c Card 要触发效果的卡 
@@ -1344,26 +1345,28 @@ function VgD.EffectTypeTrigger(c,m,loc,typ,code,op,cost,con,tg,count,property,st
 		loc, con_exf = LOCATION_MZONE, VgF.VMonsterCondition
 	end
 	-- set effect
-	local e=Effect.CreateEffect(c)
-	e:SetDescription(VgF.Stringid(VgID+1,stringid or 1))
-	e:SetType(typ)
-	e:SetCode(code)
-	e:SetRange(loc)
-	e:SetProperty((property or 1)+EFFECT_FLAG_DAMAGE_STEP+EFFECT_FLAG_DELAY)
-	if count then e:SetCountLimit(count) end
-	e:SetCondition(function(e,tp,eg,ep,ev,re,r,rp)
+	local e1=Effect.CreateEffect(c)
+	e1:SetDescription(VgF.Stringid(VgID+1,stringid or 1))
+	e1:SetType(typ)
+	e1:SetCode(code)
+	e1:SetRange(loc)
+	e1:SetProperty((property or 1)+EFFECT_FLAG_DAMAGE_STEP+EFFECT_FLAG_DELAY)
+	if count then e1:SetCountLimit(count) end
+	e1:SetCondition(function(e,tp,eg,ep,ev,re,r,rp)
 		return (not con or con(e,tp,eg,ep,ev,re,r,rp)) and con_exf(e)
 	end)
-	if cost then e:SetCost(cost) end
-	if tg then e:SetTarget(tg) end
-	if op then e:SetOperation(op) end
-	c:RegisterEffect(e)
+	if cost then e1:SetCost(cost) end
+	if tg then e1:SetTarget(tg) end
+	if op then e1:SetOperation(op) end
+	c:RegisterEffect(e1)
+	return e1
 end
 function VgD.EffectTypeTriggerWhenHitting(c,m,loc,typ,op,cost,con,tg,count,p,property,stringid)
-	typ = typ or EFFECT_TYPE_SINGLE 
-	VgD.EffectTypeTrigger(c,m,loc,typ,EVENT_BATTLE_DESTROYING,op,cost,con,tg,count,property,stringid)
+	typ = typ or EFFECT_TYPE_SINGLE
+	local e1 = VgD.EffectTypeTrigger(c,m,loc,typ,EVENT_BATTLE_DESTROYING,op,cost,con,tg,count,property,stringid)
 	p = p or c:GetControler()
-	VgD.EffectTypeTrigger(c,m,loc,EFFECT_TYPE_FIELD,EVENT_CUSTOM+EVENT_DAMAGE_TRIGGER,op,cost,VgD.EffectTypeTriggerWhenHittingCon(typ,con,p),tg,count,property,stringid)
+	local e2 = VgD.EffectTypeTrigger(c,m,loc,EFFECT_TYPE_FIELD,EVENT_CUSTOM+EVENT_DAMAGE_TRIGGER,op,cost,VgD.EffectTypeTriggerWhenHittingCon(typ,con,p),tg,count,property,stringid)
+	return {e1,e2}
 end
 function VgD.EffectTypeTriggerWhenHittingCon(typ,con,p)
 	return function (e,tp,eg,ep,ev,re,r,rp)
@@ -1385,6 +1388,7 @@ function VgD.QuickSpell(c,op,cost,con,tg)
 	if VgF.GetValueType(tg)=="function" then e1:SetTarget(tg) end
 	if VgF.GetValueType(op)=="function" then e1:SetOperation(op) end
 	c:RegisterEffect(e1)
+	return e1
 end
 function VgD.ContinuousSpell(c,cost,con,tg)
 	local e1=Effect.CreateEffect(c)
@@ -1399,6 +1403,7 @@ function VgD.ContinuousSpell(c,cost,con,tg)
 	if VgF.GetValueType(tg)=="function" then e1:SetTarget(tg) end
 	e1:SetOperation(VgD.ContinuousSpellOperation)
 	c:RegisterEffect(e1)
+	return e1
 end
 function VgD.ContinuousSpellOperation(e,tp,eg,ep,ev,re,r,rp)
 	local c=e:GetHandler()
@@ -1445,16 +1450,18 @@ function VgD.EffectTypeContinuous(c,m,loc,typ,code,val,con,tg,loc_self,loc_op,re
 	if tg then e1:SetTarget(tg) end
 	if reset then e1:SetReset(RESET_EVENT+RESETS_STANDARD+reset) end
 	(mc or c):RegisterEffect(e1)
+	return e1
 end
 function VgD.EffectTypeContinuousChangeAttack(c,m,loc,typ,val,con,tg,loc_self,loc_op,reset,mc)
-	VgD.EffectTypeContinuous(c,m,loc,typ,EFFECT_UPDATE_ATTACK,val,con,tg,loc_self,loc_op,reset,mc)
+	return VgD.EffectTypeContinuous(c,m,loc,typ,EFFECT_UPDATE_ATTACK,val,con,tg,loc_self,loc_op,reset,mc)
 end
 function VgD.EffectTypeContinuousChangeDefense(c,m,typ,val,con,tg,loc_self,loc_op,reset,mc)
-	VgD.EffectTypeContinuous(c,m,LOCATION_GZONE,typ,EFFECT_UPDATE_DEFENSE,val,con,tg,loc_self,loc_op,reset,mc)
+	return VgD.EffectTypeContinuous(c,m,LOCATION_GZONE,typ,EFFECT_UPDATE_DEFENSE,val,con,tg,loc_self,loc_op,reset,mc)
 end
 function VgD.EffectTypeContinuousChangeStar(c,m,typ,val,con,tg,loc_self,loc_op,reset,mc)
-	VgD.EffectTypeContinuous(c,m,LOCATION_MZONE,typ,EFFECT_UPDATE_LSCALE,val,con,tg,loc_self,loc_op,reset,mc)
-	VgD.EffectTypeContinuous(c,m,LOCATION_MZONE,typ,EFFECT_UPDATE_RSCALE,val,con,tg,loc_self,loc_op,reset,mc)
+	local e1 = VgD.EffectTypeContinuous(c,m,LOCATION_MZONE,typ,EFFECT_UPDATE_LSCALE,val,con,tg,loc_self,loc_op,reset,mc)
+	local e2 = VgD.EffectTypeContinuous(c,m,LOCATION_MZONE,typ,EFFECT_UPDATE_RSCALE,val,con,tg,loc_self,loc_op,reset,mc)
+	return {e1, e2}
 end
 function VgD.TriggerCountUp(c,m,num,reset,tc)
 	local cm=_G["c"..m]
@@ -1471,6 +1478,7 @@ function VgD.TriggerCountUp(c,m,num,reset,tc)
 	if VgF.GetValueType(reset)=="number" then e1:SetReset(RESET_EVENT+RESETS_STANDARD+reset) end
 	e1:SetOperation(VgD.TriggerCountUpOperation(num))
 	tc:RegisterEffect(e1)
+	return e1
 end
 function VgD.TriggerCountUpOperation(num)
 	return function (e,tp,eg,ep,ev,re,r,rp)
@@ -1526,6 +1534,7 @@ function VgD.CannotBeTarget(c,m,con,val,loc,tg,range)
 		end
 		if VgF.GetValueType(tg)=="function" then e1:SetTarget(tg) end
 		c:RegisterEffect(e1)
+		return e1
 	else
 		local e1=Effect.CreateEffect(c)
 		e1:SetType(EFFECT_TYPE_SINGLE)
@@ -1539,6 +1548,7 @@ function VgD.CannotBeTarget(c,m,con,val,loc,tg,range)
 			end)
 		end
 		c:RegisterEffect(e1)
+		return e1
 	end
 end
 function VgD.NightEffect(c,m)
@@ -1555,6 +1565,7 @@ function VgD.NightEffect(c,m)
 		return not vgf.IsExistingMatchingCard(VgD.NightFilter,tp,LOCATION_ORDER,0,1,nil) and vgf.GetMatchingGroupCount(nil,tp,LOCATION_ORDER,0,nil)==1
 	end)
 	c:RegisterEffect(e1)
+	return e1
 end
 function VgD.DeepNightEffect(c,m)
 	local cm=_G["c"..m]
@@ -1570,6 +1581,7 @@ function VgD.DeepNightEffect(c,m)
 		return not vgf.IsExistingMatchingCard(VgD.NightFilter,tp,LOCATION_ORDER,0,1,nil) and vgf.GetMatchingGroupCount(nil,tp,LOCATION_ORDER,0,nil)>=2
 	end)
 	c:RegisterEffect(e1)
+	return e1
 end
 function VgD.NightFilter(c)
 	return not c:IsSetCard(0x5040) and c:IsType(TYPE_CONTINUOUS)
@@ -1591,6 +1603,7 @@ function VgD.CallInPrison(c,m)
 	e2:SetCondition(VgD.CallInPrisonCondition(2))
 	e2:SetOperation(VgD.CallInPrisonOperation(2))
 	c:RegisterEffect(e2)
+	return {e1, e2}
 end
 function VgD.CallInPrisonCondition(val)
 	return function (e,c,og)
