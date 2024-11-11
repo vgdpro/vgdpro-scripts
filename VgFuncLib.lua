@@ -782,6 +782,7 @@ function VgF.SearchCard(loc_to, loc_from, f, int_max, int_min, ...)
     local ext_params = {...}
     return function (e, tp, eg, ep, ev, re, r, rp)
         if not loc_to or not loc_from then return 0 end
+        if loc_from == LOCATION_RZONE then loc_from = LOCATION_MZONE end
         if VgF.GetValueType(int_max) ~= "number" then int_max = 1 end
         if VgF.GetValueType(int_min) ~= "number" then int_min = int_max end
         if loc_to == LOCATION_HAND then
@@ -791,7 +792,18 @@ function VgF.SearchCard(loc_to, loc_from, f, int_max, int_min, ...)
             if g:GetCount() > 0 then
                 return VgF.Sendto(loc_to, g, nil, REASON_EFFECT)
             end
+        elseif loc_to == LOCATION_VZONE then
+            local g = VgF.SelectMatchingCard(HINTMSG_CALL, e, tp, function (c)
+                if not VgF.IsCanBeCalled(c, e, tp) then return false end
+                return VgF.GetValueType(f) ~= "function" or f(c, table.unpack(ext_params))
+            end, tp, loc_from, 0, int_min, int_max, nil)
+            if g:GetCount() > 0 then
+                if loc_from == LOCATION_OVERLAY then return VgF.Sendto(loc_to, g, 0, tp, "FromOverlayToV")
+                else return VgF.Sendto(loc_to, g, 0, tp, 0x20)
+                end
+            end
         elseif loc_to == LOCATION_MZONE then
+            if VgF.GetAvailableLocation(tp) < int_min then return 0 end
             local g = VgF.SelectMatchingCard(HINTMSG_CALL, e, tp, function (c)
                 if not VgF.IsCanBeCalled(c, e, tp) then return false end
                 return VgF.GetValueType(f) ~= "function" or f(c, table.unpack(ext_params))
