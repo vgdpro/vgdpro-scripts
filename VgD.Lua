@@ -282,12 +282,12 @@ end
 
 ---舞装加身-「code」（在游戏中，也当做与指定的卡同名的卡使用。）
 function VgD.DressUp(c,code)
-    local e=Effect.CreateEffect(c)
-    e:SetType(EFFECT_TYPE_SINGLE)
-    e:SetCode(EFFECT_ADD_CODE)
-    e:SetProperty(EFFECT_FLAG_CANNOT_DISABLE+EFFECT_FLAG_UNCOPYABLE)
-    e:SetValue(code)
-    c:RegisterEffect(e)
+	local e=Effect.CreateEffect(c)
+	e:SetType(EFFECT_TYPE_SINGLE)
+	e:SetCode(EFFECT_ADD_CODE)
+	e:SetProperty(EFFECT_FLAG_CANNOT_DISABLE+EFFECT_FLAG_UNCOPYABLE)
+	e:SetValue(code)
+	c:RegisterEffect(e)
 end
 
 --战斗阶段
@@ -552,7 +552,7 @@ function vgd.CardToG(c,m,cost,op,con)
 	if VgF.GetValueType(con)=="function" then e1:SetCondition(con) end
 	if VgF.GetValueType(cost)=="function" then e1:SetCost(cost) end
 	e1:SetCondition(VgD.CardToGCondition)
-	if VgF.GetValueType(op)~="function" then e1:SetOperation(VgD.CardToGOperation) else  e1:SetOperation(op) end
+	if VgF.GetValueType(op)~="function" then e1:SetOperation(VgD.CardToGOperation) else e1:SetOperation(op) end
 	c:RegisterEffect(e1)
 end
 function VgD.CardToGCondition(e,tp,eg,ep,ev,re,r,rp)
