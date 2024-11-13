@@ -1374,12 +1374,13 @@ function VgF.PlayerEffect(e, tp, eg, ep, ev, re, r, rp)
     return true
 end
 ---创建一个函数检查器 检查func是否为nil或函数
-function VgF.IllegalFunctionCheck(name)
+function VgF.IllegalFunctionCheck(name, c)
+    local m = c:GetOriginalCode()
     local chk = function(key)
         return function(func)
             local ftyp = type(func)
             if ftyp == "nil" or ftyp == "function" then return false end
-            Debug.Message("c"..self_code.." VgD."..name.." param "..key.." isn't function | nil")
+            Debug.Message("c"..m.." VgD."..name.." param "..key.." isn't function | nil")
             return true
         end
     end
