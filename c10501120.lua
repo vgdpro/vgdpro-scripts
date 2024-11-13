@@ -1,6 +1,6 @@
 local cm,m,o=GetID()
 function cm.initial_effect(c)
-	vgf.VgCard(c)
+	vgd.VgCard(c)
 	vgd.ContinuousSpell(c)
 	vgd.EffectTypeTrigger(c,m,LOCATION_ORDER,EFFECT_TYPE_FIELD,EVENT_CUSTOM+EVENT_SING,cm.op,nil,cm.con)
 end

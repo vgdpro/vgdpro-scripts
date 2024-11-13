@@ -1,7 +1,7 @@
 --天剑的骑士 福特
 local cm,m,o=GetID()
 function cm.initial_effect(c)
-    vgf.VgCard(c)
+    vgd.VgCard(c)
     vgd.BeRidedByCard(c,m,10103002,cm.operation,cm.cost)
     vgd.EffectTypeIgnition(c,m,LOCATION_MZONE,cm.operation2,vgf.DamageCost(1),vgf.RMonsterCondition,nil,1)
 end

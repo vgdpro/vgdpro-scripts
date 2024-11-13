@@ -1,7 +1,7 @@
 --蒸汽艺术家 皮坦纳
 local cm,m,o=GetID()
 function cm.initial_effect(c)
-	vgf.VgCard(c)
+	vgd.VgCard(c)
 --	【起】【R】：通过【费用】[将这个单位放置到灵魂里]，选择你的1个单位，这个回合中，力量+2000。
 	vgd.EffectTypeIgnition(c,m,LOCATION_MZONE,cm.op,cm.cost,vgf.RMonsterCondition)
 end

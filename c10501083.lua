@@ -1,7 +1,7 @@
 --仓促短跑 瑟尔玛
 local cm,m,o=GetID()
 function cm.initial_effect(c)
-    vgf.VgCard(c)
+    vgd.VgCard(c)
     -- 【自】【R】：这个单位支援先导者时，抽1张卡，选择你的手牌中的1张卡，舍弃。
     vgd.EffectTypeTrigger(c,m,LOCATION_MZONE,EFFECT_TYPE_FIELD,EVENT_SUPPORT,cm.op,nil,cm.con)
 end

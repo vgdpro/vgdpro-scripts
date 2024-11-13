@@ -3,7 +3,7 @@ local cm,m,o=GetID()
 --通过【费用】[将你的2张后防者退场]施放！
 --抽1张卡，将这张卡放置到灵魂里，计数回充1。
 function cm.initial_effect(c)
-	vgf.VgCard(c)
+	vgd.VgCard(c)
 	vgd.SpellActivate(c,m,cm.op,cm.cost)
 	VgF.AddMixCostGroupFrom(c,m,"LOCATION_MZONE")
 	VgF.AddMixCostGroupTo(c,m,"LOCATION_DROP")

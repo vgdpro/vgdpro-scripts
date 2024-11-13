@@ -1,7 +1,7 @@
 --树角兽 卡利斯
 local cm,m,o=GetID()
 function cm.initial_effect(c)
-	vgf.VgCard(c)
+	vgd.VgCard(c)
 	--【自】：这个单位被「树角兽 拉提斯」RIDE时，将你的牌堆顶的1张卡公开，那张卡是等级2以下的单位卡的话，CALL到R上，不是的话，放置到你的灵魂里。
 	vgd.BeRidedByCard(c,m,10104002,cm.operation)
 	--【永】【后列的R】：这个单位攻击的战斗中，这个单位的力量+5000。

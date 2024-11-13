@@ -1,7 +1,7 @@
 --美丽的假日 菲尔缇萝萨
 local cm,m,o=GetID()
 function cm.initial_effect(c)
-    vgf.VgCard(c)
+    vgd.VgCard(c)
     -- 【自】：这个单位被RIDE时，通过【费用】[灵魂爆发1]，选择你的弃牌区中的至多1张〈幽灵〉，加入手牌。
     vgd.BeRidedByCard(c,m,nil,cm.op,OverlayCost(1))
     -- 【永】【V/R】：你的回合中，你的R上有〈幽灵〉的话，这个单位的力量+2000。

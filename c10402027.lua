@@ -1,6 +1,6 @@
 local cm,m,o=GetID()
 function cm.initial_effect(c)
-	vgf.VgCard(c)
+	vgd.VgCard(c)
 	vgd.BeRidedByCard(c,m,cm.filter,cm.op)
 	vgd.EffectTypeIgnition(c,m,LOCATION_MZONE,cm.op1,vgf.OverlayCost(1),cm.con1,nil,1)
 end

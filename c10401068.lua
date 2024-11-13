@@ -1,7 +1,7 @@
 --清澈的祈祷啊，旺盛燃烧吧
 local cm,m,o=GetID()
 function cm.initial_effect(c)
-	vgf.VgCard(c)
+	vgd.VgCard(c)
 	vgd.QuickSpell(c,cm.op,nil,cm.con)
 end
 --你的伤害区中的卡有3张以上的话，选择你的1个单位，这次战斗中，力量+15000。

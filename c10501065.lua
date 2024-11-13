@@ -1,7 +1,7 @@
 --书写记录的思绪 罗玛娜
 local cm,m,o=GetID()
 function cm.initial_effect(c)
-    vgf.VgCard(c)
+    vgd.VgCard(c)
     -- 【永】【R】：这个回合中你施放了「不移之绯红」和「无尽之苍蓝」的话，这个单位的力量+10000。
     vgd.GlobalCheckEffect(c,m,EVENT_CHAIN_SOLVING,cm.checkcon1)
     vgd.GlobalCheckEffect(c,m,EVENT_CHAIN_SOLVING,cm.checkcon2,cm.checkop)

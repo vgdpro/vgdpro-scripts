@@ -1,6 +1,6 @@
 local cm,m,o=GetID()
 function cm.initial_effect(c)
-	vgf.VgCard(c)
+	vgd.VgCard(c)
 	vgd.EffectTypeTrigger(c,m,LOCATION_MZONE,EFFECT_TYPE_FIELD,EVENT_MOVE,vgf.DamageFill(1),vgf.OverlayCost(2),cm.con,nil,1)
 end
 function cm.con(e,tp,eg,ep,ev,re,r,rp)

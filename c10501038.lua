@@ -1,7 +1,7 @@
 --花绽的歌声 罗洛涅萝尔
 local cm,m,o=GetID()
 function cm.initial_effect(c)
-	vgf.VgCard(c)
+	vgd.VgCard(c)
     -- 【永】【V】：【永】【V】：你的回合中，你的指令区中有正面表示的歌曲卡的话，这个单位的力量+5000。
 
     vgd.EffectTypeContinuousChangeAttack(c,m,LOCATION_MZONE,EFFECT_TYPE_SINGLE,5000,cm.con1)

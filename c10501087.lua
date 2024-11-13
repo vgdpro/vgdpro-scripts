@@ -1,7 +1,7 @@
 --紧张的早晨 珊塔尔
 local cm,m,o=GetID()
 function cm.initial_effect(c)
-    vgf.VgCard(c)
+    vgd.VgCard(c)
     -- 【起】【R】【1回合1次】：通过【费用】[计数爆发1]，选择你的1张先导者，这个回合中，力量+5000。
     vgd.EffectTypeIgnition(c,m,LOCATION_MZONE,cm.op,vgf.DamageCost(1),vgf.RMonsterCondition,nil,1)
 end

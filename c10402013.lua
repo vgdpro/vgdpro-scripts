@@ -1,6 +1,6 @@
 local cm,m,o=GetID()
 function cm.initial_effect(c)
-	vgf.VgCard(c)
+	vgd.VgCard(c)
     vgd.EffectTypeIgnition(c,m,LOCATION_MZONE,cm.op,vgf.DamageCost(1),cm.con)
 	vgd.GlobalCheckEffect(c,m,EVENT_TO_GRAVE,cm.checkcon)
 end

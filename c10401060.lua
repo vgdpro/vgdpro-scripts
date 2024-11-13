@@ -1,6 +1,6 @@
 local cm,m,o=GetID()
 function cm.initial_effect(c)
-	vgf.VgCard(c)
+	vgd.VgCard(c)
 	vgd.BeRidedByCard(c,m,10401027,vgf.OverlayFill(1))
 	vgd.EffectTypeTrigger(c,m,LOCATION_MZONE,EFFECT_TYPE_FIELD,EVENT_TO_GRAVE,cm.op,cm.cost,cm.con)
 end
