@@ -18,10 +18,10 @@ function cm.initial_effect(c)
 	vgd.EffectTypeTriggerWhenHitting(c,m,LOCATION_MZONE,EFFECT_TYPE_SINGLE,cm.op,cm.cost,nil,nil,1)
 end
 function cm.op(e,tp,eg,ep,ev,re,r,rp)
-    local c=e:GetHandler()
+	local c=e:GetHandler()
 	if c:IsRelateToEffect(e) and c:IsFaceup() then
 		Duel.ChangePosition(c,POS_FACEUP_ATTACK)
-		vgd.TriggerCountUp(c,m,-1,RESET_PHASE+PHASE_END)
+		vgd.TriggerCountUp(c,m,-1,nil,RESET_PHASE+PHASE_END)
 	end
 end
 function cm.cost(e,tp,eg,ep,ev,re,r,rp,chk)

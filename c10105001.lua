@@ -3,7 +3,7 @@ function cm.initial_effect(c)
 	vgf.VgCard(c)
 	vgd.EffectTypeIgnition(c,m,LOCATION_MZONE,cm.op1,vgf.DamageCost(1),nil,nil,1)
 	vgd.EffectTypeContinuousChangeAttack(c,m,LOCATION_MZONE,EFFECT_TYPE_SINGLE,10000,cm.con)
-	vgd.TriggerCountUp(c,m,1)
+	vgd.TriggerCountUp(c,m,1,cm.con2)
 end
 function cm.con(e,c)
 	local tp=e:GetHandlerPlayer()
@@ -16,4 +16,8 @@ function cm.op1(e,tp,eg,ep,ev,re,r,rp)
 	if not vgf.CheckPrison(tp) then return end
 	local g1=vgf.SelectMatchingCard(HINTMSG_IMPRISON,e,tp,vgf.RMonsterFilter,tp,0,LOCATION_MZONE,2,2,nil)
 	vgf.SendtoPrison(g1,tp)
+end
+function cm.con2(e,c)
+	local tp=e:GetHandlerPlayer()
+	return Duel.GetTurnPlayer()==tp and vgf.VMonsterCondition(e) and vgf.IsExistingMatchingCard(cm.filter,tp,LOCATION_ORDER,0,3,nil)
 end

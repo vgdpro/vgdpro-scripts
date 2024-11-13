@@ -17,7 +17,7 @@ function cm.op(e,tp,eg,ep,ev,re,r,rp)
 	vgf.AtkUp(c,g,10000)
 end
 function cm.checkcon(e,tp,eg,ep,ev,re,r,rp)
-    return eg:IsExists(Card.IsSummonType,1,nil,SUMMON_TYPE_SELFRIDE)
+	return eg:IsExists(Card.IsSummonType,1,nil,SUMMON_TYPE_SELFRIDE)
 end
 function cm.con1(e,tp,eg,ep,ev,re,r,rp)
 	return Duel.GetFlagEffect(tp,m)>0 and vgf.VMonsterCondition(e)
@@ -36,5 +36,5 @@ function cm.op1(e,tp,eg,ep,ev,re,r,rp)
 		Duel.ConfirmCards(1-tp,g)
 		vgf.Sendto(LOCATION_DECK,g,tp,SEQ_DECKTOP,REASON_EFFECT)
 	end
-	vgd.TriggerCountUp(c,m,1,RESET_PHASE+PHASE_END)
+	vgd.TriggerCountUp(c,m,1,nil,RESET_PHASE+PHASE_END)
 end
