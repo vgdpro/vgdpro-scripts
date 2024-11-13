@@ -308,25 +308,25 @@ function VgD.CardTrigger(c)
     e1:SetType(EFFECT_TYPE_SINGLE + EFFECT_TYPE_TRIGGER_F)
     e1:SetProperty(EFFECT_FLAG_DELAY + EFFECT_CANNOT_DISABLE + EFFECT_FLAG_DAMAGE_STEP)
     e1:SetCode(EVENT_MOVE)
-    e1:SetCondition(VgD.CardTriggerCondtion(0))
-    e1:SetOperation(VgD.CardTriggerOperation(0))
+    e1:SetCondition(VgD.CardTriggerCondtion('Damage'))
+    e1:SetOperation(VgD.CardTriggerOperation('Damage'))
     c:RegisterEffect(e1)
     local e2 = e1:Clone()
-    e2:SetCondition(VgD.CardTriggerCondtion(1))
-    e2:SetOperation(VgD.CardTriggerOperation(1))
+    e2:SetCondition(VgD.CardTriggerCondtion('Normal'))
+    e2:SetOperation(VgD.CardTriggerOperation('Normal'))
     c:RegisterEffect(e2)
 end
 function VgD.CardTriggerCondtion(chkcon)
     return function (e, tp, eg, ep, ev, re, r, rp)
         local c = e:GetHandler()
         local cp = tp
-        if chkcon == 0 then
+        if chkcon == 'Damage' then
             cp = 1 - tp
         end
-        return Duel.GetTurnPlayer() == cp and c:IsLocation(LOCATION_TRIGGER)
+        return Duel.GetAttacker() and Duel.GetAttacker():GetControler() == cp and c:IsLocation(LOCATION_TRIGGER)
     end
 end
-function VgD.CardTriggerOperation(chkop, f)
+function VgD.CardTriggerOperation(chkop)
     return function (e, tp, eg, ep, ev, re, r, rp)
         local c = e:GetHandler()
         if c:IsRace(TRIGGER_CRITICAL_STRIKE) then
@@ -353,7 +353,7 @@ function VgD.CardTriggerOperation(chkop, f)
             local g = Duel.GetMatchingGroup(VgF.IsSequence, tp, LOCATION_MZONE, 0, nil, 0, 4, 5)
             VgF.AtkUp(c, g, 10000, nil)
         end
-        if chkop == 0 then
+        if chkop == 'Damage' then
             if c:IsRace(TRIGGER_SUPER) then
                 local ops = {}
                 local sel = {}
