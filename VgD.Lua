@@ -1783,7 +1783,8 @@ function VgD.GlobalCheckEffect(c, m, code, con, op)
     m = m or c:GetOriginalCode()
     local cm = _G["c"..m]
     cm.global_check = cm.global_check or {}
-    local code_tab = cm.global_check[code] or {}
+    cm.global_check[code] = cm.global_check[code] or {}
+    local code_tab = cm.global_check[code]
     local key, tab = next(code_tab)
     if next(code_tab) then
         while key do
@@ -1793,10 +1794,10 @@ function VgD.GlobalCheckEffect(c, m, code, con, op)
     end
     cm.global_check[code][#code_tab + 1] = {con = con, op = op}
     op = op or function(e, tp, eg, ep, ev, re, r, rp)
-        Duel.RegisterFlagEffect(1 - tp, m, RESET_PHASE + PHASE_END, 0, 1)
-        Duel.RegisterFlagEffect(tp, m, RESET_PHASE + PHASE_END, 0, 1)
+        Duel.RegisterFlagEffect(rp, m, RESET_PHASE + PHASE_END, 0, 1)
     end
     -- set effect
+    Debug.Message("set")
     local ge = Effect.CreateEffect(c)
     ge:SetType(EFFECT_TYPE_FIELD + EFFECT_TYPE_CONTINUOUS)
     ge:SetCode(code)
