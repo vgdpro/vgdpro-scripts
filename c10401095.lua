@@ -1,6 +1,6 @@
 local cm,m,o=GetID()
 function cm.initial_effect(c)
-	vgf.VgCard(c)
+	vgd.VgCard(c)
 	vgd.EffectTypeContinuousChangeDefense(c,m,EFFECT_TYPE_SINGLE,cm.val,cm.con)
 end
 function cm.val(e)

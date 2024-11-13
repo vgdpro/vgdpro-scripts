@@ -1,7 +1,7 @@
 --友情的骑士 塞伊拉斯
 local cm,m,o=GetID()
 function cm.initial_effect(c)
-	vgf.VgCard(c)
+	vgd.VgCard(c)
 	--【起】【R】【1回合1次】：通过【费用】[灵魂爆发2]，公开你的牌堆顶的1张卡，那张卡是单位卡的话，CALL到R上，不是的话，加入手牌
 	vgd.EffectTypeIgnition(c,m,LOCATION_MZONE,cm.operation,vgf.OverlayCost(2),vgf.RMonsterCondition,nil,1)
 end

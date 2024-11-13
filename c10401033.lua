@@ -1,7 +1,7 @@
 --电光斯巴达
 local cm,m,o=GetID()
 function cm.initial_effect(c)
-	vgf.VgCard(c)
+	vgd.VgCard(c)
 	--【自】：这个单位被「重力的支配者 磁力重压」RIDE时，通过【费用】[将手牌中的1张卡放置到灵魂里]，抽1张卡，灵魂填充1。
 	vgd.BeRidedByCard(c,m,10401003,cm.operation,cm.cost)
 	--【自】：这个单位登场到R时，通过【费用】[计数爆发1]，灵魂填充2。

@@ -1,6 +1,6 @@
 local cm,m,o=GetID()
 function cm.initial_effect(c)
-	vgf.VgCard(c)
+	vgd.VgCard(c)
 	vgd.EffectTypeIgnition(c,m,LOCATION_MZONE,cm.op,cm.cost,cm.con)
 	vgd.EffectTypeTrigger(c,m,LOCATION_MZONE,EFFECT_TYPE_FIELD,EVENT_PHASE+PHASE_BATTLE_START,cm.op1,nil,cm.con1)
 end

@@ -1,6 +1,6 @@
 local cm,m,o=GetID()
 function cm.initial_effect(c)
-    vgf.VgCard(c)
+    vgd.VgCard(c)
     vgd.SpellActivate(c,m,cm.operation,vgf.OverlayCost(1))
 end
 function cm.operation(e,tp,eg,ep,ev,re,r,rp)

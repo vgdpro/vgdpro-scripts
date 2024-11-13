@@ -7,69 +7,34 @@ bit = {}
 ---@class Group
 ---@class Effect
 
----初始化c，使c具有vg卡的功能。
----@param c Card 要初始化的卡
-function VgF.VgCard(c)
-    VgD.Rule(c)
-    VgF.DefineArguments()
-    VgD.RideUp(c)
-    VgD.CardTrigger(c)
-    if c:IsType(TYPE_MONSTER) then
-        VgD.CallToR(c)
-        VgD.MonsterBattle(c)
-    end
-end
 ---获取脚本基本信息
 function GetID()
-	local offset = self_code < 100000000 and 1 or 100
-	return self_table, self_code, offset
+    local offset = self_code < 100000000 and 1 or 100
+    return self_table, self_code, offset
 end
 ---根据卡号和索引获取描述编号
----@param code integer 卡片密码
----@param id integer 索引
----@return integer 描述的编号
+---@param code number 卡片密码
+---@param id number 索引
+---@return number 描述的编号
 function VgF.Stringid(code, id)
-	return code * 16 + id
-end
-function VgF.DefineArguments()
-    if not code then code = nil end
-    if not loc then loc = nil end
-    if not typ then typ = nil end
-    if not typ2 then typ2 = nil end
-    if not count then count = nil end
-    if not property then property = nil end
-    if not reset then reset = nil end
-    if not op then op = nil end
-    if not cost then cost = nil end
-    if not con then con = nil end
-    if not tg then tg = nil end
-    if not f then f = nil end
-    if not zone then zone = nil end
+    return code * 16 + id
 end
 ---根据控制者，区域和编号获取zone；不合法的数据会返回0
----@param p integer 控制者
----@param loc integer 所在区域，若不是LOCATION_MZONE或LOCATION_SZONE则返回0
----@param seq integer 编号
----@return integer 卡片所在的zone
+---@param p number 控制者
+---@param loc number 所在区域，若不是LOCATION_MZONE或LOCATION_SZONE则返回0
+---@param seq number 编号
+---@return number 卡片所在的zone
 function VgF.SequenceToGlobal(p, loc, seq)
-	if p ~= 0 and p ~= 1 then
-		return 0
-	end
-	if loc == LOCATION_MZONE then
-		if seq <= 6 then
-			return 0x0001 << (seq)
-		else
-			return 0
-		end
-	elseif loc == LOCATION_SZONE then
-		if seq <= 4 then
-			return 0x0100 << (16 * p + seq)
-		else
-			return 0
-		end
-	else
-		return 0
-	end
+    if p ~= 0 or p ~= 1 or loc & 0xc ~= loc then
+        Debug.Message("VgF.SequenceToGlobal param illegal")
+        return 0
+    end
+    if loc == LOCATION_MZONE and seq <= 6 then
+        return 0x0001 << (seq)
+    elseif loc == LOCATION_SZONE and seq <= 4 then
+        return 0x0100 << (16 * p + seq)
+    end
+    return 0
 end
 ---一个总是返回true的函数。
 ---@return true
@@ -85,23 +50,23 @@ end
 ---@param g Group 要遍历的卡片组
 ---@return function 指示返回的卡的函数
 function VgF.Next(g)
-	local first = true
-	return	function()
-				if first then first = false return g:GetFirst()
-				else return g:GetNext() end
-			end
+    local first = true
+    return  function()
+                if first then first = false return g:GetFirst()
+                else return g:GetNext() end
+            end
 end
 ---返回v在lua中的变量类型，以string方式呈现。
 ---@param v any 要获取类型的变量（或常量）
 ---@return string 以字符串形式呈现的类型
 function VgF.GetValueType(v)
-	local t = type(v)
-	if t == "userdata" then
-		local mt = getmetatable(v)
-		if mt == Group then return "Group"
-		elseif mt == Effect then return "Effect"
-		else return "Card" end
-	else return t end
+    local t = type(v)
+    if t == "userdata" then
+        local mt = getmetatable(v)
+        if mt == Group then return "Group"
+        elseif mt == Effect then return "Effect"
+        else return "Card" end
+    else return t end
 end
 ---如果g是Group的话，返回其第一张卡；如果g是Card的话，返回其本身；否则返回nil。
 ---@param g any 要操作的变量
@@ -128,7 +93,7 @@ end
 
 ---返回g的前val张卡。
 ---@param g Group 要操作的卡片组
----@param val integer 要获取的卡片数量
+---@param val number 要获取的卡片数量
 function VgF.GetCardsFromGroup(g, val)
     if VgF.GetValueType(g) == "Group" then
         local sg = Group.CreateGroup()
@@ -155,45 +120,45 @@ function table.copy(copy, original)
 end
 
 ---返回对a和b进行按位与运算的结果。
----@param a integer 操作数1
----@param b integer 操作数2
----@return integer 运算结果
+---@param a number 操作数1
+---@param b number 操作数2
+---@return number 运算结果
 function bit.band(a, b)
-	return a & b
+    return a & b
 end
 ---返回对a和b进行按位或运算的结果。
----@param a integer 操作数1
----@param b integer 操作数2
----@return integer 运算结果
+---@param a number 操作数1
+---@param b number 操作数2
+---@return number 运算结果
 function bit.bor(a, b)
-	return a | b
+    return a | b
 end
 ---返回对a和b进行按位异或运算的结果。
----@param a integer 操作数1
----@param b integer 操作数2
----@return integer 运算结果
+---@param a number 操作数1
+---@param b number 操作数2
+---@return number 运算结果
 function bit.bxor(a, b)
-	return a ~ b
+    return a ~ b
 end
 ---返回a按位左移b位后的结果。
----@param a integer 操作数1
----@param b integer 操作数2
----@return integer 运算结果
+---@param a number 操作数1
+---@param b number 操作数2
+---@return number 运算结果
 function bit.lshift(a, b)
-	return a << b
+    return a << b
 end
 ---返回a按位右移b位后的结果。
----@param a integer 操作数1
----@param b integer 操作数2
----@return integer 运算结果
+---@param a number 操作数1
+---@param b number 操作数2
+---@return number 运算结果
 function bit.rshift(a, b)
-	return a >> b
+    return a >> b
 end
 ---返回a按位非后的结果。
----@param a integer 操作数
----@return integer 运算结果
+---@param a number 操作数
+---@return number 运算结果
 function bit.bnot(a)
-	return ~a
+    return ~a
 end
 ---返回c是不是先导者。
 ---@param c Card 要判断的卡
@@ -238,7 +203,7 @@ function VgF.IsSummonTypeR(c)
 end
 ---判断c是否在当前区域的某（几）个编号上
 ---@param c Card 要判断的卡
----@param ... integer 编号
+---@param ... number 编号
 ---@return boolean 指示是否在给定编号上
 function VgF.IsSequence(c, ...)
     for i, v in ipairs{...} do
@@ -263,9 +228,9 @@ end
 ---@param f 要操作的函数
 ---@return function 经过操作的函数
 function VgF.Not(f)
-	return	function(...)
-				return not f(...)
-			end
+    return  function(...)
+                return not f(...)
+            end
 end
 ---返回c所在列的所有单位。
 ---@param c Card 指示某一列的卡
@@ -324,11 +289,11 @@ function VgF.GetAvailableLocation(tp, zone)
 end
 ---将g（中的每一张卡）Call到单位区。返回Call成功的数量。
 ---@param g Card|Group 要Call的卡（片组）
----@param sumtype integer Call的方式，默认填0
----@param tp integer Call的玩家
----@param zone integer|nil 指示要Call到的格子。<br>前列的R：17； 后列的R：14； 全部的R：31； V：32
----@param pos integer|nil 表示形式
----@return integer Call成功的数量
+---@param sumtype number Call的方式，默认填0
+---@param tp number Call的玩家
+---@param zone number|nil 指示要Call到的格子。<br>前列的R：17； 后列的R：14； 全部的R：31； V：32
+---@param pos number|nil 表示形式
+---@return number Call成功的数量
 function VgF.Call(g, sumtype, tp, zone, pos)
     if (VgF.GetValueType(g) ~= "Card" and VgF.GetValueType(g) ~= "Group") or (VgF.GetValueType(g) == "Group" and g:GetCount() == 0) then return 0 end
     if VgF.GetValueType(pos) ~= "number" then pos = POS_FACEUP_ATTACK end
@@ -370,7 +335,7 @@ function VgF.Call(g, sumtype, tp, zone, pos)
             else VgF.Sendto(LOCATION_DROP, tc, REASON_COST)
             end
         end
-	    return Duel.SpecialSummon(sc, sumtype, tp, tp, false, false, pos, szone)
+        return Duel.SpecialSummon(sc, sumtype, tp, tp, false, false, pos, szone)
     else
         local sg
         local z = bit.bnot(VgF.GetAvailableLocation(tp))
@@ -411,8 +376,8 @@ end
 ---以c的名义，使g（中的每一张卡）的攻击力上升val，并在reset时重置。
 ---@param c Card 要使卡上升攻击力的卡
 ---@param g Card|Group 要被上升攻击力的卡
----@param val integer|string 要上升的攻击力（可以为负）
----@param reset integer|nil 指示重置的时点，默认为“回合结束时”。无论如何，都会在离场时重置。
+---@param val number|string 要上升的攻击力（可以为负）
+---@param reset number|nil 指示重置的时点，默认为“回合结束时”。无论如何，都会在离场时重置。
 function VgF.AtkUp(c, g, val, reset, resetcount)
     if not c or not g then return end
     if not resetcount then resetcount = 1 end
@@ -455,8 +420,8 @@ end
 ---以c的名义，使g（中的每一张卡）的盾值上升val，并在reset时重置。
 ---@param c Card 要使卡上升盾值的卡
 ---@param g Card|Group 要被上升盾值的卡
----@param val integer|string 要上升的盾值（可以为负）
----@param reset integer|nil 指示重置的时点，默认为“回合结束时”。无论如何，都会在离场时重置。
+---@param val number|string 要上升的盾值（可以为负）
+---@param reset number|nil 指示重置的时点，默认为“回合结束时”。无论如何，都会在离场时重置。
 function VgF.DefUp(c, g, val, reset, resetcount)
     if not c or not g then return end
     if not reset then reset = RESET_PHASE + PHASE_END end
@@ -498,8 +463,8 @@ end
 ---以c的名义，使g（中的每一张卡）的☆上升val，并在reset时重置。
 ---@param c Card 要使卡上升☆的卡
 ---@param g Card|Group 要被上升☆的卡
----@param val integer|string 要上升的☆（可以为负）
----@param reset integer|nil 指示重置的时点，默认为“回合结束时”。无论如何，都会在离场时重置。
+---@param val number|string 要上升的☆（可以为负）
+---@param reset number|nil 指示重置的时点，默认为“回合结束时”。无论如何，都会在离场时重置。
 function VgF.StarUp(c, g, val, reset, resetcount)
     if not c or not g then return end
     if not reset then reset = RESET_PHASE + PHASE_END end
@@ -562,7 +527,7 @@ function VgF.IsAbleToGZone(c, loc)
     return false
 end
 ---用于效果的Operation。它返回一个执行“[计数回充val]”的函数。
----@param val integer 计数回充的数量
+---@param val number 计数回充的数量
 ---@return function 效果的Operation函数
 function VgF.DamageFill(val)
     return function (e, tp, eg, ep, ev, re, r, rp)
@@ -606,7 +571,7 @@ function VgF.ChangePosDefence(c)
 end
 
 ---用于效果的Cost。它返回一个执行“【费用】[将手牌中的val张卡舍弃]”的函数。
----@param val integer 要舍弃的卡的数量
+---@param val number 要舍弃的卡的数量
 ---@return function 效果的Cost函数
 function VgF.DisCardCost(val)
     return function (e, tp, eg, ep, ev, re, r, rp, chk)
@@ -629,7 +594,7 @@ function VgF.DisCardCost(val)
     end
 end
 ---用于效果的Cost。它返回一个执行“【费用】[能量爆发val]”的函数。
----@param val integer 能量爆发的数量
+---@param val number 能量爆发的数量
 ---@return function 效果的Cost函数
 function VgF.EnergyCost(val)
     return function (e, tp, eg, ep, ev, re, r, rp, chk)
@@ -652,7 +617,7 @@ function VgF.EnergyCost(val)
     end
 end
 ---用于效果的Cost。它返回一个执行“【费用】[灵魂爆发val]”的函数。
----@param val integer 灵魂爆发的数量
+---@param val number 灵魂爆发的数量
 ---@return function 效果的Cost函数
 function VgF.OverlayCost(val)
     return function (e, tp, eg, ep, ev, re, r, rp, chk)
@@ -675,7 +640,7 @@ function VgF.OverlayCost(val)
     end
 end
 ---用于效果的Cost或Operation。它返回一个执行“【费用】[灵魂填充val]”的函数。
----@param val integer 灵魂填充的数量
+---@param val number 灵魂填充的数量
 ---@return function 效果的Cost或Operation函数
 function VgF.OverlayFill(val)
     return function (e, tp, eg, ep, ev, re, r, rp, chk)
@@ -700,7 +665,7 @@ function VgF.OverlayFill(val)
     end
 end
 ---用于效果的Cost。它返回一个执行“【费用】[计数爆发val]”的函数。
----@param val integer 计数爆发的数量
+---@param val number 计数爆发的数量
 ---@return function 效果的Cost函数
 function VgF.DamageCost(val)
     return function (e, tp, eg, ep, ev, re, r, rp, chk)
@@ -725,8 +690,8 @@ function VgF.DamageCost(val)
 end
 ---用于效果的Cost。它返回一个执行“【费用】[将xxx退场]”的函数。
 ---@param card_code_func Card|integer|function 退场的卡的条件
----@param val_max integer 退场的卡的最大数量
----@param val_min integer 退场的卡的最小数量
+---@param val_max number 退场的卡的最大数量
+---@param val_min number 退场的卡的最小数量
 ---@param except Card 
 ---@param ... any 
 ---@return function 效果的Cost函数
@@ -775,8 +740,8 @@ function VgF.IsCanBeCalled(c, e, tp, sumtype, pos, zone)
     return z > 0 and c:IsCanBeSpecialSummoned(e, sumtype, tp, false, false, pos, tp, zone)
 end
 ---用于效果的Operation。执行“从loc_from中选取最少int_min，最多int_max张满足f的卡，送去loc_to。”。
----@param loc_to integer 要送去的区域。不填则返回0。
----@param loc_from integer 要选取的区域。不填则返回0。
+---@param loc_to number 要送去的区域。不填则返回0。
+---@param loc_from number 要选取的区域。不填则返回0。
 ---@param f function|nil 卡片过滤的条件
 function VgF.SearchCard(loc_to, loc_from, f, int_max, int_min, ...)
     local ext_params = {...}
@@ -852,80 +817,80 @@ function VgF.SearchCard(loc_to, loc_from, f, int_max, int_min, ...)
     end
 end
 function Group.CheckSubGroup(g, f, min, max, ...)
-	min = min or 1
-	max = max or #g
-	if min > max then return false end
-	local ext_params = {...}
-	-- selected group
-	local sg = Group.CreateGroup()
-	-- be select group
-	local bg = g:Clone()
-	for c in VgF.Next(g) do
-		if VgF.CheckGroupRecursiveCapture(c, sg, bg, f, min, max, ext_params) then return true end
-		bg:RemoveCard(c)
-	end
-	return false
+    min = min or 1
+    max = max or #g
+    if min > max then return false end
+    local ext_params = {...}
+    -- selected group
+    local sg = Group.CreateGroup()
+    -- be select group
+    local bg = g:Clone()
+    for c in VgF.Next(g) do
+        if VgF.CheckGroupRecursiveCapture(c, sg, bg, f, min, max, ext_params) then return true end
+        bg:RemoveCard(c)
+    end
+    return false
 end
 function VgF.CheckGroupRecursiveCapture(c, sg, bg, f, min, max, ext_params)
-	sg = sg + c
-	if VgF.G_Add_Check and not VgF.G_Add_Check(sg, c, bg) then
-		sg = sg - c
-		return false
-	end
-	local res = #sg >= min and #sg <= max and (not f or f(sg, table.unpack(ext_params)))
-	if not res and #sg < max then
-		res = bg:IsExists(VgF.CheckGroupRecursiveCapture, 1, sg, sg, bg, f, min, max, ext_params)
-	end
-	sg = sg - c
-	return res
+    sg = sg + c
+    if VgF.G_Add_Check and not VgF.G_Add_Check(sg, c, bg) then
+        sg = sg - c
+        return false
+    end
+    local res = #sg >= min and #sg <= max and (not f or f(sg, table.unpack(ext_params)))
+    if not res and #sg < max then
+        res = bg:IsExists(VgF.CheckGroupRecursiveCapture, 1, sg, sg, bg, f, min, max, ext_params)
+    end
+    sg = sg - c
+    return res
 end
 function Group.SelectSubGroup(g, tp, f, cancelable, min, max, ...)
-	VgF.SubGroupCaptured = Group.CreateGroup()
-	min = min or 1
-	max = max or #g
-	local ext_params = {...}
-	local sg = Group.CreateGroup()
-	local fg = Duel.GrabSelectedCard()
-	if #fg > max or min > max or #(g + fg) < min then return nil end
-	for tc in VgF.Next(fg) do
-		fg:SelectUnselect(sg, tp, false, false, min, max)
-	end
-	sg:Merge(fg)
-	local finish = (#sg >= min and #sg <= max and f(sg, ...))
-	while #sg < max do
-		local cg = Group.CreateGroup()
-		local eg = g:Clone()
-		for c in VgF.Next(g - sg) do
-			if not cg:IsContains(c) then
-				if VgF.CheckGroupRecursiveCapture(c, sg, eg, f, min, max, ext_params) then
-					cg:Merge(VgF.SubGroupCaptured)
-				else
-					eg:RemoveCard(c)
-				end
-			end
-		end
-		cg:Sub(sg)
-		finish = (#sg >= min and #sg <= max and f(sg, ...))
-		if #cg == 0 then break end
-		local cancel = not finish and cancelable
-		local tc = cg:SelectUnselect(sg, tp, finish, cancel, min, max)
-		if not tc then break end
-		if not fg:IsContains(tc) then
-			if not sg:IsContains(tc) then
-				sg:AddCard(tc)
-				if #sg == max then finish = true end
-			else
-				sg:RemoveCard(tc)
-			end
-		elseif cancelable then
-			return nil
-		end
-	end
-	if finish then
-		return sg
-	else
-		return nil
-	end
+    VgF.SubGroupCaptured = Group.CreateGroup()
+    min = min or 1
+    max = max or #g
+    local ext_params = {...}
+    local sg = Group.CreateGroup()
+    local fg = Duel.GrabSelectedCard()
+    if #fg > max or min > max or #(g + fg) < min then return nil end
+    for tc in VgF.Next(fg) do
+        fg:SelectUnselect(sg, tp, false, false, min, max)
+    end
+    sg:Merge(fg)
+    local finish = (#sg >= min and #sg <= max and f(sg, ...))
+    while #sg < max do
+        local cg = Group.CreateGroup()
+        local eg = g:Clone()
+        for c in VgF.Next(g - sg) do
+            if not cg:IsContains(c) then
+                if VgF.CheckGroupRecursiveCapture(c, sg, eg, f, min, max, ext_params) then
+                    cg:Merge(VgF.SubGroupCaptured)
+                else
+                    eg:RemoveCard(c)
+                end
+            end
+        end
+        cg:Sub(sg)
+        finish = (#sg >= min and #sg <= max and f(sg, ...))
+        if #cg == 0 then break end
+        local cancel = not finish and cancelable
+        local tc = cg:SelectUnselect(sg, tp, finish, cancel, min, max)
+        if not tc then break end
+        if not fg:IsContains(tc) then
+            if not sg:IsContains(tc) then
+                sg:AddCard(tc)
+                if #sg == max then finish = true end
+            else
+                sg:RemoveCard(tc)
+            end
+        elseif cancelable then
+            return nil
+        end
+    end
+    if finish then
+        return sg
+    else
+        return nil
+    end
 end
 function Group.SelectDoubleSubGroup(g, p, f1, int_min1, int_max1, f2, int_min2, int_max2, except_g, ...)
     if VgF.GetValueType(f1) ~= "function" then f1 = VgF.True end
@@ -935,8 +900,8 @@ function Group.SelectDoubleSubGroup(g, p, f1, int_min1, int_max1, f2, int_min2, 
     local g2 = g:Filter(f2, except_g, ...)
     local g3 = Group.__band(g1, g2)
     if g:GetCount() < int_min1 + int_min2 or g1:GetCount() < int_min1 or g2:GetCount() < int_min2 then return result end
-	if g1:GetCount() < int_max1 then int_max1 = g1:GetCount() end
-	if g2:GetCount() < int_max2 then int_max2 = g2:GetCount() end
+    if g1:GetCount() < int_max1 then int_max1 = g1:GetCount() end
+    if g2:GetCount() < int_max2 then int_max2 = g2:GetCount() end
     if g3:GetCount() == g2:GetCount() and g3:GetCount() == g1:GetCount() then
         local min = int_min1 + int_min2
         local max = int_max1 + int_max2
@@ -950,8 +915,8 @@ function Group.SelectDoubleSubGroup(g, p, f1, int_min1, int_max1, f2, int_min2, 
         for tc in VgF.Next(Group.__sub(g1, result1)) do
             if g3:IsContains(tc) and not check_group:IsExists(VgF.True, int_min2, tc) then sg:RemoveCard(tc) end
         end
-		local btok = false
-		if result1:GetCount() >= int_min1 then btok = true end
+        local btok = false
+        if result1:GetCount() >= int_min1 then btok = true end
         local tc = sg:SelectUnselect(result1, p, btok, false, int_min1, int_max1)
         if not tc then break
         elseif result1:IsContains(tc) then result1:RemoveCard(tc)
@@ -960,8 +925,8 @@ function Group.SelectDoubleSubGroup(g, p, f1, int_min1, int_max1, f2, int_min2, 
     g2:Sub(result1)
     while result2:GetCount() < int_max2 do
         local sg = Group.__sub(g2, result2)
-		local btok = false
-		if result2:GetCount() >= int_min2 then btok = true end
+        local btok = false
+        if result2:GetCount() >= int_min2 then btok = true end
         local tc = sg:SelectUnselect(result2, p, btok, false, int_min2, int_max2)
         if not tc then break
         elseif result2:IsContains(tc) and not result1:IsContains(tc) then result2:RemoveCard(tc)
@@ -971,7 +936,7 @@ function Group.SelectDoubleSubGroup(g, p, f1, int_min1, int_max1, f2, int_min2, 
     return result
 end
 ---返回p场上的先导者。
----@param p integer 要获取先导者的玩家。不合法则返回nil。
+---@param p number 要获取先导者的玩家。不合法则返回nil。
 ---@return Card|nil p场上的先导者
 function VgF.GetVMonster(p)
     if p ~= 0 and p ~= 1 then return end
@@ -994,13 +959,13 @@ function VgF.PrisonFilter(c, ct)
 end
 ---收容g（中的每一张卡）到p的监狱。没有监狱时，不操作。
 ---@param g Card|Group
----@param p integer
+---@param p number
 function VgF.SendtoPrison(g, p)
     if not VgF.CheckPrison(p) or not g then return end
-	local og = Duel.GetFieldGroup(p, LOCATION_ORDER, 0)
-	local oc = og:Filter(VgF.PrisonFilter, nil, og:GetCount()):GetFirst()
+    local og = Duel.GetFieldGroup(p, LOCATION_ORDER, 0)
+    local oc = og:Filter(VgF.PrisonFilter, nil, og:GetCount()):GetFirst()
     if VgF.GetValueType(g) == "Card" then
-	    VgF.Sendto(LOCATION_ORDER, g, p, POS_FACEUP_ATTACK, REASON_EFFECT)
+        VgF.Sendto(LOCATION_ORDER, g, p, POS_FACEUP_ATTACK, REASON_EFFECT)
         g:RegisterFlagEffect(FLAG_IMPRISON, RESET_EVENT + RESETS_STANDARD, EFFECT_FLAG_CLIENT_HINT, 1, 0, VgF.Stringid(10105015, 0))
     elseif VgF.GetValueType(g) == "Group" then
         for tc in VgF.Next(g) do
@@ -1008,7 +973,7 @@ function VgF.SendtoPrison(g, p)
             tc:RegisterFlagEffect(FLAG_IMPRISON, RESET_EVENT + RESETS_STANDARD, EFFECT_FLAG_CLIENT_HINT, 1, 0, VgF.Stringid(10105015, 0))
         end
     end
-	Duel.MoveSequence(oc, og:GetCount() - 1)
+    Duel.MoveSequence(oc, og:GetCount() - 1)
 end
 --[[
 function VgF.PrisonFilter(c, tp)
@@ -1018,13 +983,13 @@ function VgF.PrisonFilter(c, tp)
 end
 ---收容g（中的每一张卡）到p的监狱。没有监狱时，不操作。
 ---@param g Card|Group
----@param p integer
+---@param p number
 function VgF.SendtoPrison(g, p)
     if not VgF.CheckPrison(p) or not g then return end
-	local og = Duel.GetFieldGroup(p, LOCATION_ORDER, 0)
-	local oc = og:Filter(VgF.PrisonFilter, nil, p):GetFirst()
+    local og = Duel.GetFieldGroup(p, LOCATION_ORDER, 0)
+    local oc = og:Filter(VgF.PrisonFilter, nil, p):GetFirst()
     if VgF.GetValueType(g) == "Card" then
-	    Duel.Sendto(g, p, LOCATION_ORDER, POS_FACEUP_ATTACK, REASON_EFFECT, 1)
+        Duel.Sendto(g, p, LOCATION_ORDER, POS_FACEUP_ATTACK, REASON_EFFECT, 1)
         g:RegisterFlagEffect(FLAG_IMPRISON, RESET_EVENT + RESETS_STANDARD, EFFECT_FLAG_CLIENT_HINT, 1, 0, VgF.Stringid(10105015, 0))
     elseif VgF.GetValueType(g) == "Group" then
         for tc in VgF.Next(g) do
@@ -1034,11 +999,11 @@ function VgF.SendtoPrison(g, p)
     end
 end]]
 ---检测p场上有没有监狱。
----@param p integer
+---@param p number
 ---@return boolean 指示p场上有没有监狱。
 function VgF.CheckPrison(p)
-	local og = Duel.GetFieldGroup(p, LOCATION_ORDER, 0)
-	return og:IsExists(Card.IsSetCard, 1, nil, 0x3040)
+    local og = Duel.GetFieldGroup(p, LOCATION_ORDER, 0)
+    return og:IsExists(Card.IsSetCard, 1, nil, 0x3040)
 end
 --重置Effect
 function VgF.EffectReset(c, e, code, con)
@@ -1244,7 +1209,7 @@ function VgF.GetMatchingGroup(f, tp, loc_self, loc_op, except_g, ...)
     return g
 end
 ---用于效果的Operation。执行“把卡sg，送去loc,第三个参数开始为额外参数，内容与原函数相同。”。
----@param loc integer 要送去的区域。不填则返回0。
+---@param loc number 要送去的区域。不填则返回0。
 ---@param sg Card|Group 要操作的卡|卡片组。
 ---@return number 具体操作的卡的数量
 function VgF.Sendto(loc, sg, ...)
@@ -1411,19 +1376,29 @@ end
 function VgF.PlayerEffect(e, tp, eg, ep, ev, re, r, rp)
     return true
 end
----检查func是否为nil或函数
-function VgF.FunctionLegal(func, from, name)
-	if VgF.GetValueType(func) == "nil" or VgF.GetValueType(func) == "function" then return true end
-	if VgF.GetValueType(name) == "string" and (VgF.GetValueType(from) == "string" or VgF.GetValueType(from) == "number") then
-        Debug.Message("c"..from..".lua : VgD.EffectTypeTrigger param"..name.." is not function | nil")
+---创建一个函数检查器 检查func是否为nil或函数
+function VgF.IllegalFunctionCheck(name)
+    local chk = function(key)
+        return function(func)
+            local ftyp = type(func)
+            if ftyp == "nil" or ftyp == "function" then return false end
+            Debug.Message("c"..self_code.." VgD."..name.." param "..key.." isn't function | nil")
+            return true
+        end
     end
-	return false
+    return {con = chk("con"), cost = chk("cost"), tg = chk("tg"), op = chk("op")}
 end
----检查card是否为卡片
-function VgF.CardLegal(card, from, name)
-	if VgF.GetValueType(card) == "Card" then return true end
-    if VgF.GetValueType(name) == "string" and (VgF.GetValueType(from) == "string" or VgF.GetValueType(from) == "number") then
-        Debug.Message("c"..from..".lua : VgD.EffectTypeTrigger param"..name.." is not card")
+---检查并转换 loc 以及 con 用于【起】等模板函数
+function VgF.GetLocCondition(loc, con)
+    local con_exf = VgF.True
+    if loc == LOCATION_RZONE then 
+        loc, con_exf = LOCATION_MZONE, VgF.RMonsterCondition
+    elseif loc == LOCATION_VZONE then 
+        loc, con_exf = LOCATION_MZONE, VgF.VMonsterCondition
     end
-	return false
+    loc = loc or LOCATION_MZONE 
+    local condition = function(e, tp, eg, ep, ev, re, r, rp)
+        return (not con or con(e, tp, eg, ep, ev, re, r, rp)) and con_exf(e)
+    end
+    return loc, condition
 end

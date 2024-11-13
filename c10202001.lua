@@ -1,7 +1,7 @@
 --拥宝之龙牙 道拉珠艾尔德
 local cm,m,o=GetID()
 function cm.initial_effect(c)
-	vgf.VgCard(c)
+	vgd.VgCard(c)
 	--【永】：这张卡将要被RIDE之际，这张卡也当做「魔宝龙 道拉珠艾尔德」使用。
 	vgf.AddRideMaterialCode(c,m,10407005)
 	vgf.AddRideMaterialSetCard(c,m,0xc00d,0x75,0xe8)

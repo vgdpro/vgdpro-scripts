@@ -1,7 +1,7 @@
 --根植花瓣 斯特玛利亚
 local cm,m,o=GetID()
 function cm.initial_effect(c)
-	vgf.VgCard(c)
+	vgd.VgCard(c)
 	vgd.EffectTypeIgnition(c,m,LOCATION_MZONE,cm.operation,cm.cost,vgf.RMonsterCondition,nil,1)
 end
 function cm.operation(e,tp,eg,ep,ev,re,r,rp)

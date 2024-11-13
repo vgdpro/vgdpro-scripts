@@ -1,7 +1,7 @@
 --扎起头发的憧憬 海尔维希
 local cm,m,o=GetID()
 function cm.initial_effect(c)
-    vgf.VgCard(c)
+    vgd.VgCard(c)
     -- 【自】：你的战斗阶段中这个单位登场到R时，通过【费用】[将这个单位放置到灵魂里]，抽1张卡。
     vgd.EffectTypeTrigger(c,m,LOCATION_MZONE,EFFECT_TYPE_SINGLE,EVENT_SPSUMMON_SUCCESS,cm.op,cm.cost,cm.con)
 end

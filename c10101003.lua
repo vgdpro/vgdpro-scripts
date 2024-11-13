@@ -1,7 +1,7 @@
 --
 local cm,m,o=GetID()
 function cm.initial_effect(c)
-	vgf.VgCard(c)
+	vgd.VgCard(c)
 	vgd.BeRidedByCard(c,m,10101002,vgf.SearchCard(LOCATION_MZONE,LOCATION_DECK,cm.filter))
     vgd.EffectTypeContinuousChangeAttack(c,m,LOCATION_MZONE,EFFECT_TYPE_SINGLE,2000,cm.con)
 end

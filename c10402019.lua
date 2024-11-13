@@ -1,6 +1,6 @@
 local cm,m,o=GetID()
 function cm.initial_effect(c)
-	vgf.VgCard(c)
+	vgd.VgCard(c)
     vgd.EffectTypeIgnition(c,m,LOCATION_MZONE,vgf.DamageFill(1),cm.cost,vgf.RMonsterCondition,nil,1)
 end
 function cm.cost(e,tp,eg,ep,ev,re,r,rp,chk)

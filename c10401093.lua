@@ -3,7 +3,7 @@
 -- 选择你的1张先导者，这次战斗中，力量+30000。
 local cm,m,o=GetID()
 function cm.initial_effect(c)
-    vgf.VgCard(c)
+    vgd.VgCard(c)
     vgd.SpellActivate(c,m,cm.operation,vgf.DamageCost(2))
 end
 function cm.operation(e,tp,eg,ep,ev,re,r,rp)

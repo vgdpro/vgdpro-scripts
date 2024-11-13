@@ -1,6 +1,6 @@
 local cm,m,o=GetID()
 function cm.initial_effect(c)
-	vgf.VgCard(c)
+	vgd.VgCard(c)
 	-- 【起】【V】【1回合1次】：通过【费用】[计数爆发1]，选择你的指令区中的1张正面表示的歌曲卡，将其歌唱。（发动歌曲卡的能力，那个能力结算完毕后将那张卡转为背面表示。）
 	vgd.EffectTypeIgnition(c,m,LOCATION_MZONE,cm.op,vgf.DamageCost(1),vgf.VMonsterCondition,nil,1)
 	-- 补充一回合一次描述

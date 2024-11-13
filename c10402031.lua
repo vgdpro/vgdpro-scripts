@@ -1,6 +1,6 @@
 local cm,m,o=GetID()
 function cm.initial_effect(c)
-	vgf.VgCard(c)
+	vgd.VgCard(c)
 	vgd.SpellActivate(c,m,cm.op,cm.cost)
 	VgF.AddMixCostGroupFilter(c,m,cm.filter)
 	VgF.AddMixCostGroupCountMin(c,m,1)

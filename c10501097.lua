@@ -1,7 +1,7 @@
 --震空的跃动 玛莉布耶尔
 local cm,m,o=GetID()
 function cm.initial_effect(c)
-    vgf.VgCard(c)
+    vgd.VgCard(c)
     	-- 白翼（你的封锁区中的卡只有奇数的等级的场合才有效）
         -- 【永】【R】：你的回合中，这个单位的力量+10000。
     vgd.EffectTypeContinuousChangeAttack(c,m,LOCATION_MZONE,EFFECT_TYPE_SINGLE,10000,cm.con)

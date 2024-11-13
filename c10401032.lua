@@ -1,7 +1,7 @@
 --幻想的奇术师 卡提斯
 local cm,m,o=GetID()
 function cm.initial_effect(c)
-	vgf.VgCard(c)
+	vgd.VgCard(c)
 --【自】：这个单位登场到R时，你有「重力的支配者 磁力重压」的先导者的话，灵魂填充2。
 	vgd.EffectTypeTrigger(c,m,LOCATION_MZONE,EFFECT_TYPE_SINGLE,EVENT_SPSUMMON_SUCCESS,vgf.OverlayFill(2),nil,cm.condition)
 --【起】【R】：你的灵魂在10张以上的话，通过【费用】[计数爆发2]，这个回合中，将当前存在于前列的你所有的单位的力量+5000。

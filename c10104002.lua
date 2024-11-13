@@ -1,7 +1,7 @@
 --树角兽 拉提斯
 local cm,m,o=GetID()
 function cm.initial_effect(c)
-	vgf.VgCard(c)
+	vgd.VgCard(c)
 	--【自】：这个单位被「树角兽王 马格诺利亚」RIDE时，通过【费用】[灵魂爆发1]，将你的牌堆顶的1张卡公开，那张卡是单位卡的话，CALL到R上，不是的话，加入手牌。
 	vgd.BeRidedByCard(c,m,10104001,cm.operation,vgf.OverlayCost(1))
 	--【自】【后列的R】：这个单位攻击先导者时，通过【费用】[灵魂爆发1]，这次战斗中，这个单位的力量+10000。

@@ -1,6 +1,6 @@
 local cm,m,o=GetID()
 function cm.initial_effect(c)
-	vgf.VgCard(c)
+	vgd.VgCard(c)
     cm.is_has_continuous=true
 	local e1=Effect.CreateEffect(c)
     e1:SetType(EFFECT_TYPE_FIELD)

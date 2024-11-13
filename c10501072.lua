@@ -1,7 +1,7 @@
 --魅惑的微笑 采塞利娅
 local cm,m,o=GetID()
 function cm.initial_effect(c)
-    vgf.VgCard(c)
+    vgd.VgCard(c)
     -- 【自】：这个单位从手牌登场到R时，你其他的后防者有3张以上的话，通过【费用】[计数爆发1]，抽1张卡。
     vgd.EffectTypeTrigger(c,m,nil,EFFECT_TYPE_SINGLE,EVENT_SPSUMMON_SUCCESS,cm.op,vgf.DamageCost(1),cm.con)
 end

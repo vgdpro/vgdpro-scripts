@@ -1,7 +1,7 @@
 --忍妖 凌汛爱子
 local cm,m,o=GetID()
 function cm.initial_effect(c)
-	vgf.VgCard(c)
+	vgd.VgCard(c)
 --【自】【R】：你的主要阶段中对手的后防者退场时，通过【费用】[将这个单位退场]，查看你的牌堆顶的1张卡，你可以将查看的单位卡CALL到R上。没有这么做的话，将其余的查看的卡放置到灵魂里。	
 	vgd.EffectTypeTrigger(c,m,LOCATION_MZONE,
 	EFFECT_TYPE_FIELD,EVENT_TO_GRAVE,cm.op,cm.cost,cm.con)

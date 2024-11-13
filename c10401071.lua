@@ -1,7 +1,7 @@
 --出众三头巨犬
 local cm,m,o=GetID()
 function cm.initial_effect(c)
-	vgf.VgCard(c)
+	vgd.VgCard(c)
 --	【自】【R】：这个单位支援时，这个回合中，这个单位的力量+2000。
     vgd.EffectTypeTrigger(c,m,LOCATION_MZONE,EFFECT_TYPE_FIELD,EVENT_CUSTOM+EVENT_SUPPORT,cm.op,nil,cm.con)
 end

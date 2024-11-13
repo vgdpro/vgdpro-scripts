@@ -1,7 +1,7 @@
 --亲卫队长 玛尔伦
 local cm,m,o=GetID()
 function cm.initial_effect(c)
-    vgf.VgCard(c)
+    vgd.VgCard(c)
     -- 【永】【R/G】：你的R上的〈幽灵〉有3张以上的话，这个单位的力量+2000、盾护+5000。
     vgd.EffectTypeContinuousChangeAttack(c,m,LOCATION_MZONE,EFFECT_TYPE_SINGLE,2000,cm.con1)
     vgd.EffectTypeContinuousChangeDefense(c,m,EFFECT_TYPE_SINGLE,5000,cm.con2)

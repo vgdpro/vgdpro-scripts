@@ -1,6 +1,6 @@
 local cm,m,o=GetID()
 function cm.initial_effect(c)
-	vgf.VgCard(c)
+	vgd.VgCard(c)
 	vgd.SpellActivate(c,m,vgf.SearchCard(LOCATION_HAND,LOCATION_DECK,cm.filter),vgf.DamageCost(1),cm.condition)
 end
 function cm.condition(e,tp,eg,ep,ev,re,r,rp)
