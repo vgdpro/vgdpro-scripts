@@ -1375,6 +1375,7 @@ function VgF.PlayerEffect(e, tp, eg, ep, ev, re, r, rp)
 end
 ---创建一个函数检查器 检查func是否为nil或函数
 function VgF.IllegalFunctionCheck(name, c)
+    if VgF.GetValueType(c) ~= "Card" then Debug.Message("VgD."..name.." param c isn't Card") end
     local m = c:GetOriginalCode()
     local chk = function(key)
         return function(func)
