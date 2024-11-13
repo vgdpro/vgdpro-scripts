@@ -25,10 +25,7 @@ end
 ---@param seq number 编号
 ---@return number 卡片所在的zone
 function VgF.SequenceToGlobal(p, loc, seq)
-    if p ~= 0 or p ~= 1 or loc & 0xc ~= loc then
-        Debug.Message("VgF.SequenceToGlobal param illegal")
-        return 0
-    end
+    if p ~= 0 or p ~= 1 or loc & 0xc ~= loc then return 0 end
     if loc == LOCATION_MZONE and seq <= 6 then
         return 0x0001 << (seq)
     elseif loc == LOCATION_SZONE and seq <= 4 then
