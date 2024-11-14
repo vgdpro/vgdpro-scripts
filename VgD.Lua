@@ -123,6 +123,8 @@ function VgD.ResetOperation(e, tp, eg, ep, ev, re, r, rp)
     if c:GetFlagEffect(FLAG_SUPPORT) > 0 then c:ResetFlagEffect(FLAG_SUPPORT) end
     if c:GetFlagEffect(FLAG_SUPPORTED) > 0 then c:ResetFlagEffect(FLAG_SUPPORTED) end
     if c:GetFlagEffect(FLAG_DEFENSE_ENTIRELY) > 0 then c:ResetFlagEffect(FLAG_DEFENSE_ENTIRELY) end
+    if c:GetFlagEffect(FLAG_ATTACK_TRIGGER) > 0 then c:ResetFlagEffect(FLAG_ATTACK_TRIGGER) end
+    if c:GetFlagEffect(FLAG_DAMAGE_TRIGGER) > 0 then c:ResetFlagEffect(FLAG_DAMAGE_TRIGGER) end
 end
 
 ---使卡片具有骑升的功能，已包含在 vgd.VgCard(c) 内
@@ -315,15 +317,22 @@ function VgD.CardTrigger(c)
     e2:SetCondition(VgD.CardTriggerCondtion('Normal'))
     e2:SetOperation(VgD.CardTriggerOperation('Normal'))
     c:RegisterEffect(e2)
+    local e3 = e1:Clone()
+    e3:SetCondition(VgD.CardTriggerCondtion('EffectDamage'))
+    e3:SetOperation(VgD.CardTriggerOperation('EffectDamage'))
+    c:RegisterEffect(e3)
 end
 function VgD.CardTriggerCondtion(chkcon)
     return function (e, tp, eg, ep, ev, re, r, rp)
         local c = e:GetHandler()
+        if chkcon == 'EffectDamage' then
+            return c:IsLocation(LOCATION_TRIGGER) and Duel.GetFlagEffect(tp, FLAG_EFFECT_DAMAGE) > 0
+        end
         local cp = tp
         if chkcon == 'Damage' then
             cp = 1 - tp
         end
-        return Duel.GetAttacker() and Duel.GetAttacker():GetControler() == cp and c:IsLocation(LOCATION_TRIGGER)
+        return Duel.GetAttacker() and Duel.GetAttacker():GetControler() == cp and c:IsLocation(LOCATION_TRIGGER) and Duel.GetFlagEffect(tp, FLAG_EFFECT_DAMAGE) == 0
     end
 end
 function VgD.CardTriggerOperation(chkop)
@@ -395,8 +404,7 @@ function VgD.CardTriggerOperation(chkop)
                     Duel.Damage(tp, 1, REASON_TRIGGER)
                 end
             end
-            local rc = VgF.GetVMonster(tp)
-            local bc = rc:GetBattleTarget()
+            local bc = Duel.GetAttackTarget()
             local label = bc:GetFlagEffectLabel(FLAG_DAMAGE_TRIGGER)
             if not label then return end
             if label > 0 then
@@ -406,9 +414,9 @@ function VgD.CardTriggerOperation(chkop)
                 bc:RegisterFlagEffect(FLAG_DAMAGE_TRIGGER, RESET_EVENT + RESETS_STANDARD, 0, 1, label)
             elseif label == 0 then
                 bc:ResetFlagEffect(FLAG_DAMAGE_TRIGGER)
-                Duel.RaiseEvent(rc, EVENT_CUSTOM + EVENT_DAMAGE_TRIGGER, e, 0, tp, tp, 0)
+                Duel.RaiseEvent(bc, EVENT_CUSTOM + EVENT_DAMAGE_TRIGGER, e, 0, tp, tp, 0)
             end
-        else
+        elseif chkop == 'Normal' then
             if c:IsRace(TRIGGER_SUPER) then
                 local ops = {}
                 local sel = {}
@@ -447,16 +455,72 @@ function VgD.CardTriggerOperation(chkop)
                 if VgD.OperationWhenCardTrigger(e, tp, eg, ep, ev, re, r, rp, c, 0) then VgD.OperationWhenCardTrigger(e, tp, eg, ep, ev, re, r, rp, c, 1) end
                 if c:IsRelateToEffect(e) then VgF.Sendto(LOCATION_HAND, c, nil, REASON_TRIGGER) end
             end
-            local rc = VgF.GetVMonster(tp)
-            local label = rc:GetFlagEffectLabel(FLAG_ATTACK_TRIGGER)
+            local bc = Duel.GetAttacker()
+            local label = bc:GetFlagEffectLabel(FLAG_ATTACK_TRIGGER)
             if not label then return end
             if label > 1 then
                 label = label - 1
                 Duel.RaiseEvent(c, EVENT_CUSTOM + EVENT_TRIGGER, e, 0, tp, tp, 0)
-                rc:ResetFlagEffect(FLAG_ATTACK_TRIGGER)
-                rc:RegisterFlagEffect(FLAG_ATTACK_TRIGGER, RESET_EVENT + RESETS_STANDARD, 0, 1, label)
+                bc:ResetFlagEffect(FLAG_ATTACK_TRIGGER)
+                bc:RegisterFlagEffect(FLAG_ATTACK_TRIGGER, RESET_EVENT + RESETS_STANDARD, 0, 1, label)
             elseif label == 1 then
-                rc:ResetFlagEffect(FLAG_ATTACK_TRIGGER)
+                bc:ResetFlagEffect(FLAG_ATTACK_TRIGGER)
+            end
+        else
+            if c:IsRace(TRIGGER_SUPER) then
+                local ops = {}
+                local sel = {}
+                if c:IsRelateToEffect(e) then
+                    table.insert(ops, VgF.Stringid(VgID + 5, 3))
+                    table.insert(sel, function ()
+                        VgF.Sendto(LOCATION_EXILE, c, REASON_TRIGGER)
+                    end)
+                end
+                if true then
+                    table.insert(ops, VgF.Stringid(VgID + 5, 4))
+                    table.insert(sel, function ()
+                        Duel.Draw(tp, 1, REASON_TRIGGER)
+                    end)
+                end
+                if VgF.IsExistingMatchingCard(nil, tp, LOCATION_MZONE, 0, 1, nil) then
+                    table.insert(ops, VgF.Stringid(VgID + 5, 5))
+                    table.insert(sel, function ()
+                        local g = VgF.SelectMatchingCard(HINTMSG_ATKUP, e, tp, nil, tp, LOCATION_MZONE, 0, 1, 1, nil)
+                        VgF.AtkUp(c, g, 100000000, nil)
+                    end)
+                end
+                if VgD.OperationWhenCardTrigger(e, tp, eg, ep, ev, re, r, rp, c, 0) then
+                    table.insert(ops, VgF.Stringid(VgID + 5, 5))
+                    table.insert(sel, function ()
+                        VgD.OperationWhenCardTrigger(e, tp, eg, ep, ev, re, r, rp, c, 1)
+                    end)
+                end
+                while #ops > 0 do
+                    local i = Duel.SelectOption(tp, table.unpack(ops)) + 1
+                    sel[i]()
+                    table.remove(ops, i)
+                    table.remove(sel, i)
+                end
+            else
+                if VgD.OperationWhenCardTrigger(e, tp, eg, ep, ev, re, r, rp, c, 0) then VgD.OperationWhenCardTrigger(e, tp, eg, ep, ev, re, r, rp, c, 1) end
+                if c:IsRelateToEffect(e) then
+                    VgF.Sendto(LOCATION_DAMAGE, c, tp, POS_FACEUP_ATTACK, REASON_EFFECT)
+                    Duel.Damage(tp, 1, REASON_EFFECT)
+                end
+            end
+            if VgF.GetValueType(VgF.EffectDamageE) ~= "Effect" then return end
+            local bc = VgF.EffectDamageE:GetHandler()
+            local label = bc:GetFlagEffectLabel(FLAG_DAMAGE_TRIGGER)
+            if not label then return end
+            if label > 0 then
+                label = label - 1
+                Duel.RaiseEvent(c, EVENT_CUSTOM + EVENT_TRIGGER, e, 0, tp, tp, 0)
+                bc:ResetFlagEffect(FLAG_DAMAGE_TRIGGER)
+                bc:RegisterFlagEffect(FLAG_DAMAGE_TRIGGER, 0, 0, 1, label)
+            elseif label == 0 then
+                bc:ResetFlagEffect(FLAG_DAMAGE_TRIGGER)
+                VgF.EffectDamageE:Reset()
+                VgF.EffectDamageE = nil
             end
         end
     end
@@ -695,15 +759,14 @@ function VgD.MonsterBattleDamageCondition(e, tp, eg, ep, ev, re, r, rp)
     return VgF.VMonsterFilter(c) and c == Duel.GetAttackTarget() and atk >= def and bc:GetLeftScale() > 0
 end
 function VgD.MonsterBattleDamageOperation(e, tp, eg, ep, ev, re, r, rp)
-    local c = e:GetHandler()
-    local bc = c:GetBattleTarget()
+    local bc = Duel.GetAttacker()
     local label = bc:GetLeftScale() - 1
     bc:RegisterFlagEffect(FLAG_DAMAGE_TRIGGER, RESET_EVENT + RESETS_STANDARD, 0, 1, label)
     VgD.TriggerCard(e, tp, eg, ep, ev, re, r, rp)
 end
 function VgD.MonsterNextTrigger(e, tp, eg, ep, ev, re, r, rp)
     local c = e:GetHandler()
-    return eg:GetFirst():GetControler() == tp and VgF.VMonsterFilter(c)
+    return VgF.ReturnCard(eg):GetControler() == tp and VgF.VMonsterFilter(c) and Duel.GetFlagEffect(tp, FLAG_EFFECT_DAMAGE) == 0
 end
 function VgD.SupportCondition(e, tp, eg, ep, ev, re, r, rp)
     return VgF.GetColumnGroup(Duel.GetAttacker()):IsContains(e:GetHandler()) and Duel.GetTurnPlayer() == tp and e:GetHandler():IsAttribute(SKILL_SUPPORT)

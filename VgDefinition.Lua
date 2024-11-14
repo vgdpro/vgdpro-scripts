@@ -876,6 +876,7 @@ FLAG_IMPRISON           = VgID + 8 --被收容
 FLAG_SPELL_COUNT_LIMIT  = VgID + 9 --指令卡次数
 FLAG_SPELL_USED_COUNT   = VgID + 10--指令卡已使用次数
 FLAG_ALSO_CAN_TRIGGER   = VgID + 11--后防着也能驱动判定
+FLAG_EFFECT_DAMAGE      = VgID + 12--效果伤害标识
 --AffectedByEffect
 AFFECT_CODE_MIX         = VgID   --魔合成
 AFFECT_CODE_MIX_DIFFERENT_NAME  = VgID + 1     --魔合成(卡名不同)

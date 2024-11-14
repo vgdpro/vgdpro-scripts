@@ -1399,3 +1399,32 @@ function VgF.GetLocCondition(loc, con)
     end
     return loc, condition
 end
+
+VgF.EffectDamageE = nil
+
+---效果伤害的operation函数
+---@param val number 伤害的数值
+---@param p number 受伤的玩家
+function VgF.EffectDamage(val, p)
+    return function (e, tp, eg, ep, ev, re, r, rp)
+        local c = e:GetHandler()
+        c:RegisterFlagEffect(FLAG_DAMAGE_TRIGGER, RESET_EVENT + RESETS_STANDARD, 0, 1, val - 1)
+        Duel.RegisterFlagEffect(p, FLAG_EFFECT_DAMAGE, 0, 0, 1)
+        VgD.TriggerCard(e, p, eg, ep, ev, re, r, rp)
+        local e1 = Effect.CreateEffect(c)
+        e1:SetType(EFFECT_TYPE_FIELD + EFFECT_TYPE_TRIGGER_F)
+        e1:SetCode(EVENT_CUSTOM + EVENT_TRIGGER)
+        e1:SetRange(LOCATION_ALL)
+        e1:SetProperty(EFFECT_FLAG_CANNOT_DISABLE)
+        e1:SetCondition(function (te, ttp, teg, tep, tev, tre, tr, trp)
+            return Duel.GetFlagEffect(p, FLAG_EFFECT_DAMAGE) > 0
+        end)
+        e1:SetOperation(VgD.TriggerCard)
+        c:RegisterEffect(e1)
+        if VgF.GetValueType(VgF.EffectDamageE) == "Effect" then
+            VgF.EffectDamageE:Reset()
+            VgF.EffectDamageE = nil
+        end
+        VgF.EffectDamageE = e1
+    end
+end
