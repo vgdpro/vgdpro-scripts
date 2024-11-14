@@ -935,7 +935,7 @@ end
 ---@return Effect 这个效果
 function VgD.SpellActivate(c, m, op, cost, con)
     -- check func
-    local fchk = VgF.IllegalFunctionCheck("SpellActivate")
+    local fchk = VgF.IllegalFunctionCheck("SpellActivate", c)
     if fchk.con(con) or fchk.cost(cost) or fchk.op(op) then return end
     -- set param
     m = m or c:GetOriginalCode()
@@ -1278,7 +1278,7 @@ end
 ---@return Effect 这个效果
 function VgD.QuickSpell(c, op, cost, con, tg)
     -- check func
-    local fchk = VgF.IllegalFunctionCheck("QuickSpell")
+    local fchk = VgF.IllegalFunctionCheck("QuickSpell", c)
     if fchk.con(con) or fchk.cost(cost) or fchk.tg(tg) or fchk.op(op) then return end
     -- set param
     local condition = function(e, tp, eg, ep, ev, re, r, rp)
@@ -1305,7 +1305,7 @@ end
 ---@return Effect 这个效果
 function VgD.ContinuousSpell(c, cost, con, tg)
     -- check func
-    local fchk = VgF.IllegalFunctionCheck("ContinuousSpell")
+    local fchk = VgF.IllegalFunctionCheck("ContinuousSpell", c)
     if fchk.con(con) or fchk.cost(cost) or fchk.tg(tg) then return end
     -- set param
     local operation = function(e, tp, eg, ep, ev, re, r, rp)
@@ -1342,7 +1342,7 @@ end
 ---@return Effect 这个效果
 function VgD.EffectTypeTrigger(c, m, loc, typ, code, op, cost, con, tg, count, property, id)
     -- check func
-    local fchk = VgF.IllegalFunctionCheck("EffectTypeTrigger")
+    local fchk = VgF.IllegalFunctionCheck("EffectTypeTrigger", c)
     if fchk.con(con) or fchk.cost(cost) or fchk.tg(tg) or fchk.op(op) then return end
     -- set param
     m = m or c:GetOriginalCode()
@@ -1381,7 +1381,7 @@ end
 ---@return Effect 这个效果 *回传两个效果*
 function VgD.EffectTypeTriggerWhenHitting(c, m, loc, typ, op, cost, con, tg, count, p, property, id)
     -- check func
-    local fchk = VgF.IllegalFunctionCheck("EffectTypeTriggerWhenHitting")
+    local fchk = VgF.IllegalFunctionCheck("EffectTypeTriggerWhenHitting", c)
     if fchk.con(con) or fchk.cost(cost) or fchk.tg(tg) or fchk.op(op) then return end
     -- set param
     typ = typ or EFFECT_TYPE_SINGLE 
@@ -1407,7 +1407,7 @@ end
 ---@return Effect 这个效果
 function VgD.CardToG(c, m, op, cost, con)
     -- check func
-    local fchk = VgF.IllegalFunctionCheck("CardToG")
+    local fchk = VgF.IllegalFunctionCheck("CardToG", c)
     if fchk.con(con) or fchk.cost(cost) or fchk.op(op) then return end
     -- set param
     m = m or c:GetOriginalCode()
@@ -1461,7 +1461,7 @@ end
 ---@return Effect 这个效果
 function VgD.BeRidedByCard(c, m, filter, op, cost, con, tg, id)
     -- check func
-    local fchk = VgF.IllegalFunctionCheck("BeRidedByCard")
+    local fchk = VgF.IllegalFunctionCheck("BeRidedByCard", c)
     if fchk.con(con) or fchk.cost(cost) or fchk.tg(tg) or fchk.op(op) then return end
     -- set param
     m = m or c:GetOriginalCode()
@@ -1531,7 +1531,7 @@ end
 ---@return Effect 这个效果
 function VgD.EffectTypeIgnition(c, m, loc, op, cost, con, tg, count, property, id)
     -- check func
-    local fchk = VgF.IllegalFunctionCheck("EffectTypeIgnition")
+    local fchk = VgF.IllegalFunctionCheck("EffectTypeIgnition", c)
     if fchk.con(con) or fchk.cost(cost) or fchk.tg(tg) or fchk.op(op) then return end
     -- set param
     m = m or c:GetOriginalCode()
@@ -1570,7 +1570,7 @@ end
 ---@return Effect 这个效果
 function VgD.EffectTypeContinuous(c, m, loc, typ, code, val, con, tg, loc_self, loc_op, reset, hc)
     -- check func
-    local fchk = VgF.IllegalFunctionCheck("EffectTypeContinuous")
+    local fchk = VgF.IllegalFunctionCheck("EffectTypeContinuous", c)
     if fchk.con(con) or fchk.tg(tg) then return end
     -- set param
     local cm = _G["c"..(m or c:GetOriginalCode())]
@@ -1652,7 +1652,7 @@ end
 ---@return Effect 这个效果
 function VgD.TriggerCountUp(c, m, num, con, reset, hc)
     -- check func
-    if VgF.IllegalFunctionCheck("TriggerCountUp").con(con) then return end
+    if VgF.IllegalFunctionCheck("TriggerCountUp", c).con(con) then return end
     -- set param
     local cm = _G["c"..(m or c:GetOriginalCode())]
     cm.is_has_continuous = cm.is_has_continuous or not reset
@@ -1696,7 +1696,7 @@ end
 ---@return Effect 这个效果
 function VgD.CannotBeTarget(c, m, loc, typ, val, con, tg, loc_self)
     -- check func
-    local fchk = VgF.IllegalFunctionCheck("CannotBeTarget")
+    local fchk = VgF.IllegalFunctionCheck("CannotBeTarget", c)
     if fchk.con(con) or fchk.tg(tg) then return end
     -- set param
     local cm = _G["c"..(m or c:GetOriginalCode())]
@@ -1840,7 +1840,7 @@ end
 ---@param con function|nil 这个效果的条件函数
 function VgD.GlobalCheckEffect(c, m, code, con, op)
     -- check func
-    local fchk = VgF.IllegalFunctionCheck("GlobalCheckEffect")
+    local fchk = VgF.IllegalFunctionCheck("GlobalCheckEffect", c)
     if fchk.con(con) or fchk.op(op) then return end
     -- set param and check global
     m = m or c:GetOriginalCode()
