@@ -1515,6 +1515,19 @@ function VgD.BeRidedByCardOpCondtion(e, tp, eg, ep, ev, re, r, rp)
     return eg:GetFirst() == e:GetHandler() and e:GetHandler():GetOverlayGroup():IsContains(c)
 end
 
+---【自】这个单位被RIDE时，你是后攻的话，抽1张卡。
+---@param c Card 拥有这个效果的卡
+---@return Effect 这个效果
+function VgD.Grade0BeRide(c)
+    return vgd.BeRidedByCard(c,nil,nil,VgD.Grade0BeRideOperation,nil,VgD.Grade0BeRideCondition)
+end
+function VgD.Grade0BeRideCondition(e,tp,eg,ep,ev,re,r,rp)
+    return tp==1 and Duel.GetTurnPlayer()==tp
+end
+function VgD.Grade0BeRideOperation(e,tp,eg,ep,ev,re,r,rp)
+    Duel.Draw(tp,1,REASON_EFFECT)
+end
+
 --起相关----------------------------------------------------------------------------------------
 
 ---【起】效果模板：当单位在loc时，可以发动的【起】效果
