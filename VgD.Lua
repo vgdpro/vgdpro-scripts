@@ -659,16 +659,13 @@ function VgD.MonsterBattle(c)
     e7:SetCategory(CATEGORY_DEFENDER)
     e7:SetType(EFFECT_TYPE_FIELD + EFFECT_TYPE_TRIGGER_O)
     e7:SetCode(EVENT_BATTLE_START)
-    e7:SetRange(LOCATION_MZONE)
+    e7:SetRange(LOCATION_MZONE + LOCATION_HAND)
     e7:SetProperty(EFFECT_FLAG_CANNOT_DISABLE)
     e7:SetCountLimit(1)
-    e7:SetCondition(VgD.SendToGCondition(LOCATION_MZONE))
+    e7:SetCondition(VgD.SendToGCondition)
+    e7:SetTarget(VgD.SendToGTarget)
     e7:SetOperation(VgD.SendToGOperation)
     c:RegisterEffect(e7)
-    local e17 = e7:Clone()
-    e17:SetRange(LOCATION_HAND)
-    e17:SetCondition(VgD.SendToGCondition(LOCATION_HAND))
-    c:RegisterEffect(e17)
     local e8 = Effect.CreateEffect(c)
     e8:SetType(EFFECT_TYPE_FIELD + EFFECT_TYPE_CONTINUOUS)
     e8:SetCode(EVENT_DAMAGE_STEP_END)
@@ -801,12 +798,14 @@ function VgD.SupportValue(e)
         return 0
     end
 end
-function VgD.SendToGCondition(loc)
-    return function(e, tp, eg, ep, ev, re, r, rp)
-        local c = e:GetHandler()
-        local bc = Duel.GetAttackTarget()
-        return bc and bc:IsControler(tp) and bc ~= c and VgF.IsAbleToGZone(c, loc)
-    end
+function VgD.SendToGCondition(e, tp, eg, ep, ev, re, r, rp)
+    local c = e:GetHandler()
+    local bc = Duel.GetAttackTarget()
+    return bc and bc:IsControler(tp) and bc ~= c
+end
+function VgD.SendToGTarget(e, tp, eg, ep, ev, re, r, rp, chk)
+    local c = e:GetHandler()
+    if chk == 0 then return VgF.IsAbleToGZone(c) end
 end
 function VgD.SendToGOperation(e, tp, eg, ep, ev, re, r, rp)
     local c = e:GetHandler()
@@ -1412,7 +1411,7 @@ function VgD.CardToG(c, m, op, cost, con)
     -- set param
     m = m or c:GetOriginalCode()
     _G["c"..m].is_has_trigger = true
-    local typ = cost and EFFECT_TYPE_TRIGGER_O or EFFECT_TYPE_TRIGGER_F 
+    local typ = cost and EFFECT_TYPE_TRIGGER_O or EFFECT_TYPE_TRIGGER_F
     op = op or VgD.CardToGOperation
     -- set effect
     local e = Effect.CreateEffect(c)

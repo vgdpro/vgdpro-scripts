@@ -515,10 +515,11 @@ end
 ---判断c是否可以以规则的手段到G区域。
 ---@param c Card 要判断的卡
 ---@return boolean 指示c能否去到G区域。
-function VgF.IsAbleToGZone(c, loc)
-    if loc == LOCATION_HAND then
+function VgF.IsAbleToGZone(c)
+    if c:IsLocation(LOCATION_HAND) then
+        if Duel.IsPlayerAffectedByEffect(c:GetControler(), AFFECT_CODE_DEFENDER_CANNOT_TO_GZONE) and c:GetBaseDefense() == 0 then return false end
         return c:IsType(TYPE_MONSTER)
-    elseif loc == LOCATION_MZONE then
+    elseif c:IsLocation(LOCATION_MZONE) then
         return c:IsAttribute(SKILL_BLOCK) and VgF.IsSequence(c, 0, 4) and c:IsLocation(LOCATION_MZONE) and c:IsFaceup()
     end
     return false

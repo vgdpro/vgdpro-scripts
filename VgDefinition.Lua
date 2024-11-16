@@ -884,6 +884,7 @@ AFFECT_CODE_BOTH_WING   = VgID + 2 --你的卡片的白翼能力和黑翼能力�
 AFFECT_CODE_NIGHT       = VgID + 3 --黑夜
 AFFECT_CODE_DEEP_NIGHT  = VgID + 4 --深渊黑夜
 AFFECT_CODE_OVERLAY_COST_FREE_WHEN_MIX  = VgID + 5 --魔合成可以不支付灵魂爆发
+AFFECT_CODE_DEFENDER_CANNOT_TO_GZONE    = VgID + 6 --不能将守护者从手牌CALL到G上
 
 
 AFFECT_CODE_OVERLAY_INSTEAD_WHEN_RIDE   =10501082   --不执行『选择手牌中的1张卡，舍弃』而是执行『灵魂爆发1』来将卡RIDE
