@@ -24,7 +24,7 @@ function cm.op(e,tp,eg,ep,ev,re,r,rp)
 end
 function cm.costtg(e,re,tp)
     e:SetLabelObject(re:GetHandler())
-    return re:IsHasCategory(CATEGORY_DEFENDER) and re:GetHandler():IsLocation(LOCATION_HAND) and re:GetHandlerPlayer()==tp and not vgf.IsExistingMatchingCard(nil,tp,LOCATION_GZONE,0,1,nil) and Duel.GetAttacker()==e:GetHandler()
+    return re:IsHasCategory(CATEGORY_DEFENDER) and re:GetHandler():IsLocation(LOCATION_HAND) and re:GetHandlerPlayer()==tp and not vgf.IsExistingMatchingCard(nil,tp,LOCATION_GZONE,0,1,nil) and Duel.GetAttacker()==e:GetHandler() and re:IsActiveType(TYPE_MONSTER)
 end
 function cm.costchk(e,re,tp)
     return vgf.IsExistingMatchingCard(vgf.IsAbleToGZone,tp,LOCATION_HAND,0,1,re:GetHandler(),LOCATION_HAND)
