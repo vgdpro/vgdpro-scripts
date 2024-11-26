@@ -1320,39 +1320,66 @@ end
 
 function VgF.AddRideMaterialSetCardCheck(c, m, ...)
     local cm = _G["c"..m]
-    cm.ride_material_setcard_chk = {...}
+    if VgF.GetValueType(cm.ride_material_setcard_chk) ~= "table" then cm.ride_material_setcard_chk = {} end
+    for i, v in ipairs({...}) do
+        table.insert(cm.ride_material_setcard_chk, v)
+    end
 end
 function VgF.AddRideMaterialCodeCheck(c, m, ...)
     local cm = _G["c"..m]
-    cm.ride_material_code_chk = {...}
+    if VgF.GetValueType(cm.ride_material_code_chk) ~= "table" then cm.ride_material_code_chk = {} end
+    for i, v in ipairs({...}) do
+        table.insert(cm.ride_material_code_chk, v)
+    end
 end
 function VgF.AddRideMaterialSetCard(c, m, ...)
     local cm = _G["c"..m]
-    cm.ride_setcard = {...}
+    if VgF.GetValueType(cm.ride_setcard) ~= "table" then cm.ride_setcard = {} end
+    for i, v in ipairs({...}) do
+        table.insert(cm.ride_setcard, v)
+    end
 end
 function VgF.AddRideMaterialCode(c, m, ...)
     local cm = _G["c"..m]
-    cm.ride_code = {...}
+    if VgF.GetValueType(cm.ride_code) ~= "table" then cm.ride_code = {} end
+    for i, v in ipairs({...}) do
+        table.insert(cm.ride_code, v)
+    end
 end
 function VgF.AddMixCostGroupFrom(c, m, ...)
     local cm = _G["c"..m]
-    cm.cos_from = {...}
+    if VgF.GetValueType(cm.cos_from) ~= "table" then cm.cos_from = {} end
+    for i, v in ipairs({...}) do
+        table.insert(cm.cos_from, v)
+    end
 end
 function VgF.AddMixCostGroupTo(c, m, ...)
     local cm = _G["c"..m]
-    cm.cos_to = {...}
+    if VgF.GetValueType(cm.cos_to) ~= "table" then cm.cos_to = {} end
+    for i, v in ipairs({...}) do
+        table.insert(cm.cos_to, v)
+    end
 end
 function VgF.AddMixCostGroupCountMin(c, m, ...)
     local cm = _G["c"..m]
-    cm.cos_val = {...}
+    if VgF.GetValueType(cm.cos_val) ~= "table" then cm.cos_val = {} end
+    for i, v in ipairs({...}) do
+        table.insert(cm.cos_val, v)
+    end
 end
 function VgF.AddMixCostGroupCountMax(c, m, ...)
     local cm = _G["c"..m]
-    cm.cos_val_max = {...}
+    if VgF.GetValueType(cm.cos_val_max) ~= "table" then cm.cos_val_max = {} end
+    for i, v in ipairs({...}) do
+        table.insert(cm.cos_val_max, v)
+    end
 end
 function VgF.AddMixCostGroupFilter(c, m, ...)
     local cm = _G["c"..m]
-    cm.cos_filter = {...}
+    if VgF.GetValueType(cm.cos_filter) ~= "table" then cm.cos_filter = {} end
+    for i, v in ipairs({...}) do
+        table.insert(cm.cos_filter, v)
+    end
 end
 function VgF.AddEffectWhenTrigger(c, m, op, cost, con, tg, chk)
     local cm = _G["c"..m]
