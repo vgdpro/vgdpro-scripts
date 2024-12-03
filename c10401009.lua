@@ -13,5 +13,5 @@ function cm.initial_effect(c)
 	local e2=e1:Clone()
     e2:SetCode(AFFECT_CODE_MIX_DIFFERENT_NAME)
     c:RegisterEffect(e2)
-	vgd.EffectTypeIgnition(c,m,LOCATION_MZONE,vgf.SearchCard(LOCATION_MZONE,LOCATION_DROP),vgf.DamageCost(1),vgf.VMonsterCondition,nil,1)
+	vgd.EffectTypeIgnition(c,m,LOCATION_MZONE,vgf.CardsFromTo(REASON_EFFECT,LOCATION_MZONE,LOCATION_DROP),vgf.DamageCost(1),vgf.VMonsterCondition,nil,1)
 end

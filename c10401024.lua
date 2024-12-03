@@ -12,7 +12,7 @@ end
 --效果二处理
 function cm.operation(e,tp,eg,ep,ev,re,r,rp)
 	local c=e:GetHandler()
-	vgf.SearchCard(LOCATION_MZONE,LOCATION_DROP,cm.filter2)(e,tp,eg,ep,ev,re,r,rp)
+	vgf.CardsFromTo(REASON_EFFECT,LOCATION_MZONE,LOCATION_DROP,cm.filter2)(e,tp,eg,ep,ev,re,r,rp)
 	local g=Duel.GetOperatedGroup()
 	vgf.AtkUp(c,g,5000)
 end

@@ -5,7 +5,7 @@ function cm.initial_effect(c)
 end
 function cm.op(e,tp,eg,ep,ev,re,r,rp)
 	local code=vgf.GetVMonster(tp):GetCode()
-	vgf.SearchCard(LOCATION_HAND,LOCATION_DECK,cm.filter,1,0,code)
+	vgf.CardsFromTo(REASON_EFFECT,LOCATION_HAND,LOCATION_DECK,cm.filter,1,0,code)
 end
 function cm.filter(c,code)
 	return c:IsCode(code)

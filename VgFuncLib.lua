@@ -741,7 +741,7 @@ end
 ---@param loc_to number 要送去的区域。不填则返回0。
 ---@param loc_from number 要选取的区域。不填则返回0。
 ---@param f function|nil 卡片过滤的条件
-function VgF.SearchCard(loc_to, loc_from, f, int_max, int_min, ...)
+function VgF.CardsFromTo(reason ,loc_to, loc_from, f, int_max, int_min, ...)
     local ext_params = {...}
     return function (e, tp, eg, ep, ev, re, r, rp)
         if not loc_to or not loc_from then return 0 end
@@ -753,7 +753,7 @@ function VgF.SearchCard(loc_to, loc_from, f, int_max, int_min, ...)
                 return VgF.GetValueType(f) ~= "function" or f(c, table.unpack(ext_params))
             end, tp, loc_from, 0, int_min, int_max, nil)
             if g:GetCount() > 0 then
-                return VgF.Sendto(loc_to, g, nil, REASON_EFFECT)
+                return VgF.Sendto(loc_to, g, nil, reason)
             end
         elseif loc_to == LOCATION_VZONE then
             local g = VgF.SelectMatchingCard(HINTMSG_CALL, e, tp, function (c)
@@ -779,21 +779,21 @@ function VgF.SearchCard(loc_to, loc_from, f, int_max, int_min, ...)
                 return VgF.GetValueType(f) ~= "function" or f(c, table.unpack(ext_params))
             end, tp, loc_from, 0, int_min, int_max, nil)
             if g:GetCount() > 0 then
-                return VgF.Sendto(loc_to, g, REASON_EFFECT)
+                return VgF.Sendto(loc_to, g, reason)
             end
         elseif loc_to == LOCATION_REMOVED then
             local g = VgF.SelectMatchingCard(HINTMSG_CALL, e, tp, function (c)
                 return VgF.GetValueType(f) ~= "function" or f(c, table.unpack(ext_params))
             end, tp, loc_from, 0, int_min, int_max, nil)
             if g:GetCount() > 0 then
-                return VgF.Sendto(loc_to, g, POS_FACEUP, REASON_EFFECT)
+                return VgF.Sendto(loc_to, g, POS_FACEUP, reason)
             end
         elseif loc_to == LOCATION_EXILE then
             local g = VgF.SelectMatchingCard(HINTMSG_CALL, e, tp, function (c)
                 return VgF.GetValueType(f) ~= "function" or f(c, table.unpack(ext_params))
             end, tp, loc_from, 0, int_min, int_max, nil)
             if g:GetCount() > 0 then
-                return VgF.Sendto(loc_to, g, REASON_EFFECT)
+                return VgF.Sendto(loc_to, g, reason)
             end
         elseif loc_to == LOCATION_OVERLAY then
             local g = VgF.SelectMatchingCard(HINTMSG_CALL, e, tp, function (c)
@@ -808,7 +808,7 @@ function VgF.SearchCard(loc_to, loc_from, f, int_max, int_min, ...)
                 return VgF.GetValueType(f) ~= "function" or f(c, table.unpack(ext_params))
             end, tp, loc_from, 0, int_min, int_max, nil)
             if g:GetCount() > 0 then
-                return VgF.Sendto(loc_to, g, tp, POS_FACEUP_ATTACK, REASON_EFFECT)
+                return VgF.Sendto(loc_to, g, tp, POS_FACEUP_ATTACK, reason)
             end
         end
         return 0

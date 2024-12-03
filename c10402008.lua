@@ -1,7 +1,7 @@
 local cm,m,o=GetID()
 function cm.initial_effect(c)
 	vgd.VgCard(c)
-	vgd.EffectTypeTrigger(c,m,nil,EFFECT_TYPE_SINGLE,EVENT_SPSUMMON_SUCCESS,vgf.SearchCard(LOCATION_MZONE,LOCATION_OVERLAY,Card.IsSetCard,1,1,0x78),nil,vgf.VSummonCondition)
+	vgd.EffectTypeTrigger(c,m,nil,EFFECT_TYPE_SINGLE,EVENT_SPSUMMON_SUCCESS,vgf.CardsFromTo(REASON_EFFECT,LOCATION_MZONE,LOCATION_OVERLAY,Card.IsSetCard,1,1,0x78),nil,vgf.VSummonCondition)
 	vgd.EffectTypeIgnition(c,m,LOCATION_MZONE,cm.op,cm.cost,nil,nil,1)
 end
 function cm.op(e,tp,eg,ep,ev,re,r,rp)

@@ -6,7 +6,7 @@ end
 function cm.op(e,tp,eg,ep,ev,re,r,rp)
 	local c=e:GetHandler()
 	Duel.Draw(tp,1,REASON_EFFECT)
-	vgf.SearchCard(LOCATION_MZONE,LOCATION_HAND,vgf.IsCanBeCalled,1,1,e,tp)
+	vgf.CardsFromTo(REASON_EFFECT,LOCATION_MZONE,LOCATION_HAND,vgf.IsCanBeCalled,1,1,e,tp)
 	local ct=Duel.GetFlagEffectLabel(tp,FLAG_CONDITION)
 	if VgF.GetValueType(ct)=="number" and ct==10102001 then
 		Duel.BreakEffect()

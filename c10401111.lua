@@ -12,8 +12,8 @@ end
 function cm.operation(e,tp,eg,ep,ev,re,r,rp)
     local c=e:GetHandler()
 	Duel.Draw(tp,2,REASON_EFFECT)
-	if vgf.SearchCard(LOCATION_HAND,LOCATION_DROP,cm.filter,1,0)(e,tp,eg,ep,ev,re,r,rp)==0 then
-		vgf.SearchCard(LOCATION_HAND,LOCATION_DROP,nil,2,2)(e,tp,eg,ep,ev,re,r,rp)
+	if vgf.CardsFromTo(REASON_EFFECT,LOCATION_HAND,LOCATION_DROP,cm.filter,1,0)(e,tp,eg,ep,ev,re,r,rp)==0 then
+		vgf.CardsFromTo(REASON_EFFECT,LOCATION_HAND,LOCATION_DROP,nil,2,2)(e,tp,eg,ep,ev,re,r,rp)
 	end
 end
 function cm.filter(c)

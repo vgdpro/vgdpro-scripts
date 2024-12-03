@@ -10,7 +10,7 @@ end
 --效果一处理
 function cm.operation(e,tp,eg,ep,ev,re,r,rp)
 	local c=e:GetHandler()
-	vgf.SearchCard(LOCATION_HAND,LOCATION_DECK,cm.filter)(e,tp,eg,ep,ev,re,r,rp)
+	vgf.CardsFromTo(REASON_EFFECT,LOCATION_HAND,LOCATION_DECK,cm.filter)(e,tp,eg,ep,ev,re,r,rp)
 	if c:IsRelateToEffect(e) and c:IsFaceup() then
 		vgf.AtkUp(c,c,10000,nil)
 	end
@@ -27,7 +27,7 @@ end
 --效果二处理
 function cm.operation2(e,tp,eg,ep,ev,re,r,rp)
 	local c=e:GetHandler()
-	vgf.SearchCard(LOCATION_MZONE,LOCATION_DROP,cm.filter2)(e,tp,eg,ep,ev,re,r,rp)
+	vgf.CardsFromTo(REASON_EFFECT,LOCATION_MZONE,LOCATION_DROP,cm.filter2)(e,tp,eg,ep,ev,re,r,rp)
 	local g=Duel.GetOperatedGroup()
 	vgf.AtkUp(c,g,10000)
 end
