@@ -1,4 +1,7 @@
 --拥宝之龙牙 道拉珠艾尔德
+dofile("script/VgFuncLib.lua")
+dofile("script/VgD.Lua")
+dofile("script/VgDefinition.Lua")
 local cm,m,o=GetID()
 function cm.initial_effect(c)
 	vgd.VgCard(c)

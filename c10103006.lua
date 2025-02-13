@@ -1,4 +1,7 @@
 --斧钺的骑士 拉夫尔克
+dofile("script/VgFuncLib.lua")
+dofile("script/VgD.Lua")
+dofile("script/VgDefinition.Lua")
 local cm,m,o=GetID()
 function cm.initial_effect(c)
     vgd.VgCard(c)

@@ -1,3 +1,6 @@
+dofile("script/VgFuncLib.lua")
+dofile("script/VgD.Lua")
+dofile("script/VgDefinition.Lua")
 local cm,m,o=GetID()
 --幽灵追猎
 --选择你的1个单位，这次战斗中，力量+5000。选择你的1张没有正在被攻击的后防者，返回手牌

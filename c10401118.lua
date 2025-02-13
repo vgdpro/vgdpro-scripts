@@ -1,3 +1,6 @@
+dofile("script/VgFuncLib.lua")
+dofile("script/VgD.Lua")
+dofile("script/VgDefinition.Lua")
 local cm,m,o=GetID()
 --泪流之恶意
 --通过【费用】[将你的2张后防者退场]施放！

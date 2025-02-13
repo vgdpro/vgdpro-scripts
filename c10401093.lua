@@ -1,6 +1,9 @@
 -- 《电光防壁，紧急展开》
 -- 通过【费用】[计数爆发2]施放！
 -- 选择你的1张先导者，这次战斗中，力量+30000。
+dofile("script/VgFuncLib.lua")
+dofile("script/VgD.Lua")
+dofile("script/VgDefinition.Lua")
 local cm,m,o=GetID()
 function cm.initial_effect(c)
     vgd.VgCard(c)
