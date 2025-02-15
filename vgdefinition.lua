@@ -222,6 +222,7 @@ PHASE_DAMAGE_CAL	= 0x40	--伤害计算时
 PHASE_BATTLE		= 0x80	--战斗阶段結束
 PHASE_MAIN2			= 0x100	--主要阶段2
 PHASE_END			= 0x200	--结束阶段
+PHASE_RIDE          = PHASE_STANDBY --骑升阶段
 --Player	--玩家
 PLAYER_NONE			= 2		--2个玩家都不是
 PLAYER_ALL			= 3		--2个玩家都是
@@ -429,6 +430,7 @@ EFFECT_FLIPSUMMON_COST			= 93		--翻转召唤代价
 EFFECT_MSET_COST				= 94		--怪兽放置代价
 EFFECT_SSET_COST				= 95		--魔陷放置代价
 EFFECT_ATTACK_COST				= 96		--攻击代价（霞之谷猎鹰）
+EFFECT_CANMOVE_PARALLEL		    = 97        --横向移动
 
 EFFECT_UPDATE_ATTACK			= 100	--增减攻击力
 EFFECT_SET_ATTACK				= 101	--设置自身攻击力、攻击力变成X特殊召唤、持续改变攻击力

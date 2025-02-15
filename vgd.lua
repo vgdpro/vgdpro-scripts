@@ -1873,7 +1873,6 @@ function VgD.GlobalCheckEffect(c, m, code, con, op)
         Duel.RegisterFlagEffect(rp, m, RESET_PHASE + PHASE_END, 0, 1)
     end
     -- set effect
-    Debug.Message("set")
     local ge = Effect.CreateEffect(c)
     ge:SetType(EFFECT_TYPE_FIELD + EFFECT_TYPE_CONTINUOUS)
     ge:SetCode(code)
