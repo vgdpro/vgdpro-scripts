@@ -5,7 +5,7 @@ function cm.initial_effect(c)
 end
 function cm.op(e,tp,eg,ep,ev,re,r,rp,chk)
 	local c=e:GetHandler()
-	vgf.CardsFromTo(REASON_EFFECT,LOCATION_MZONE,LOCATION_GRAVE,cm.filter,1,1)(e,tp,eg,ep,ev,re,r,rp)
+	vgf.CardsFromTo(REASON_EFFECT,LOCATION_MZONE,LOCATION_DROP,cm.filter,1,1)(e,tp,eg,ep,ev,re,r,rp)
 	local g=Duel.GetOperatedGroup()
 	vgf.AtkUp(c,g,10000)
 end

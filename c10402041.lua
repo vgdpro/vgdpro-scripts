@@ -11,6 +11,6 @@ function cm.filter(c)
 end
 function cm.operation(e,tp,eg,ep,ev,re,r,rp)
 	if not vgf.CheckPrison(tp) then return end
-	local g=vgf.SelectMatchingCard(HINTMSG_IMPRISON,e,tp,Card.IsType,tp,0,LOCATION_GRAVE,1,1,nil,TYPE_MONSTER)
+	local g=vgf.SelectMatchingCard(HINTMSG_IMPRISON,e,tp,Card.IsType,tp,0,LOCATION_DROP,1,1,nil,TYPE_MONSTER)
 	vgf.SendtoPrison(g,tp)
 end

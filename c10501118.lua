@@ -32,7 +32,7 @@ function cm.op(e,tp,eg,ep,ev,re,r,rp)
     Duel.RegisterEffect(e4,tp)
 end
 function cm.repfilter(c,tp)
-    return c:IsControler(tp) and (c:IsLocation(LOCATION_GZONE) or vgf.RMonsterFilter(c)) and c:GetDestination()==LOCATION_GRAVE and c:IsType(TYPE_MONSTER) and c:IsFaceup() and not cm.filter(c)
+    return c:IsControler(tp) and (c:IsLocation(LOCATION_GZONE) or vgf.RMonsterFilter(c)) and c:GetDestination()==LOCATION_DROP and c:IsType(TYPE_MONSTER) and c:IsFaceup() and not cm.filter(c)
 end
 function cm.reptg(e,tp,eg,ep,ev,re,r,rp,chk)
     if chk==0 then return eg:IsExists(cm.repfilter,1,nil,tp) end

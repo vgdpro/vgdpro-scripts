@@ -5,7 +5,7 @@ function cm.initial_effect(c)
 end
 function cm.op(e,tp,eg,ep,ev,re,r,rp)
 	local g=Duel.GetDecktopGroup(tp,2)
-	vgf.Sendto(LOCATION_GRAVE,g,REASON_EFFECT)
+	vgf.Sendto(LOCATION_DROP,g,REASON_EFFECT)
 	local ct=bit.ReturnCount(vgf.GetAvailableLocation(tp))
 	if vgf.GetVMonster(tp):IsCode(10104001) then if ct>2 then ct=2 end
 	else if ct>1 then ct=1 end

@@ -8,7 +8,7 @@ function cm.op(e,tp,eg,ep,ev,re,r,rp)
 	vgf.Sendto(LOCATION_DROP,g,REASON_EFFECT)
 	Duel.BreakEffect()
 	if vgf.GetVMonster(tp):IsCode(10101001) then
-		vgf.CardsFromTo(REASON_EFFECT,LOCATION_MZONE,LOCATION_GRAVE,Card.IsLevel,1,0,0)(e,tp,eg,ep,ev,re,r,rp)
+		vgf.CardsFromTo(REASON_EFFECT,LOCATION_MZONE,LOCATION_DROP,Card.IsLevel,1,0,0)(e,tp,eg,ep,ev,re,r,rp)
 	end
 end
 function cm.filter(c)
