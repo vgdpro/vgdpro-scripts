@@ -25,11 +25,11 @@ end
 ---@param seq number 编号
 ---@return number 卡片所在的zone
 function VgF.SequenceToGlobal(p, loc, seq)
-    if p ~= 0 or p ~= 1 or loc & 0xc ~= loc then return 0 end
-    if loc == LOCATION_MZONE and seq <= 6 then
-        return 0x0001 << (seq)
-    elseif loc == LOCATION_SZONE and seq <= 4 then
-        return 0x0100 << (16 * p + seq)
+	if p ~= 0 and p ~= 1 then return 0 end
+	if loc==LOCATION_MZONE then
+		if seq <= 6 then return 0x0001 << (seq) end
+	elseif loc == LOCATION_SZONE then
+		if seq <= 4 then return 0x0100 << (16 * p + seq) end
     end
     return 0
 end

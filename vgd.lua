@@ -574,8 +574,9 @@ end
 function VgD.CallFilter(c, tp, zone)
     return VgF.RMonsterFilter(c) and zone == VgF.SequenceToGlobal(tp, c:GetLocation(), c:GetSequence())
 end
-function VgD.CallOperation(e, tp, eg, ep, ev, re, r, rp)
+function VgD.CallOperation(e)
     local c = e:GetHandler()
+    local tp = e:GetHandlerPlayer()
     local z = bit.bnot(VgF.GetAvailableLocation(tp))
     local rg = Duel.GetMatchingGroup(Card.IsPosition, tp, LOCATION_MZONE, 0, nil, POS_FACEDOWN_ATTACK)
     for tc in VgF.Next(rg) do
