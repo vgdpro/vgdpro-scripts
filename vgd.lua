@@ -405,7 +405,7 @@ function VgD.CardTriggerOperation(chkop)
                     Duel.Damage(tp, 1, REASON_TRIGGER)
                 end
             end
-            local bc = Duel.GetAttackTarget()
+            local bc = Duel.GetAttacker()
             local label = bc:GetFlagEffectLabel(FLAG_DAMAGE_TRIGGER)
             if not label then return end
             if label > 0 then
