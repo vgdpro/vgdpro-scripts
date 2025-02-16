@@ -1496,19 +1496,20 @@ function VgD.BeRidedByCardOperation(desc, op, cost, tg)
         local c = e:GetHandler()
         local rc = c:GetReasonCard()
         local typ = cost and EFFECT_TYPE_TRIGGER_O or EFFECT_TYPE_TRIGGER_F 
-        local e = Effect.CreateEffect(rc)
-        e:SetDescription(desc)
-        e:SetType(typ + EFFECT_TYPE_FIELD)
-        e:SetProperty(EFFECT_FLAG_DELAY+EFFECT_FLAG_IGNORE_IMMUNE)
-        e:SetCode(EVENT_SPSUMMON_SUCCESS)
-        e:SetLabelObject(c)
-        e:SetRange(LOCATION_MZONE)
-        e:SetCondition(VgD.BeRidedByCardOpCondtion)
-        if cost then e:SetCost(cost) end
-        if tg then e:SetTarget(tg) end
-        if op then e:SetOperation(op) end
-        e:SetReset(RESET_EVENT + RESETS_STANDARD)
-        rc:RegisterEffect(e)
+        local e1 = Effect.CreateEffect(rc)
+        e1:SetDescription(desc)
+        e1:SetType(typ + EFFECT_TYPE_FIELD)
+        e1:SetProperty(EFFECT_FLAG_DELAY+EFFECT_FLAG_IGNORE_IMMUNE)
+        e1:SetCode(EVENT_SPSUMMON_SUCCESS)
+        e1:SetCountLimit(1)
+        e1:SetLabelObject(c)
+        e1:SetRange(LOCATION_MZONE)
+        e1:SetCondition(VgD.BeRidedByCardOpCondtion)
+        if cost then e1:SetCost(cost) end
+        if tg then e1:SetTarget(tg) end
+        if op then e1:SetOperation(op) end
+        e1:SetReset(RESET_EVENT + RESETS_STANDARD)
+        rc:RegisterEffect(e1)
     end
 end
 function VgD.BeRidedByCardOpCondtion(e, tp, eg, ep, ev, re, r, rp)
