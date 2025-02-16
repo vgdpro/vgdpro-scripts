@@ -270,7 +270,7 @@ function VgD.RideUpOperation(e, tp, eg, ep, ev, re, r, rp)
         local sc = sg:GetFirst()
         local mg = rc:GetOverlayGroup()
         if mg:GetCount() ~= 0 then
-            VgF.Sendto(LOCATION_OVERLAY, mg, sg)
+            VgF.Sendto(LOCATION_OVERLAY, mg, sc)
         end
         sc:SetMaterial(Group.FromCards(rc))
         VgF.Sendto(LOCATION_OVERLAY, Group.FromCards(rc), sc)
