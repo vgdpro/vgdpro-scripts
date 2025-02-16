@@ -768,7 +768,7 @@ function VgD.MonsterNextTrigger(e, tp, eg, ep, ev, re, r, rp)
     return VgF.ReturnCard(eg):GetControler() == tp and VgF.VMonsterFilter(c) and Duel.GetFlagEffect(tp, FLAG_EFFECT_DAMAGE) == 0
 end
 function VgD.SupportCondition(e, tp, eg, ep, ev, re, r, rp)
-    return VgF.GetColumnGroup(Duel.GetAttacker()):IsContains(e:GetHandler()) and Duel.GetTurnPlayer() == tp and e:GetHandler():IsAttribute(SKILL_SUPPORT)
+    return VgF.GetColumnGroup(Duel.GetAttacker()):IsContains(e:GetHandler()) and Duel.GetTurnPlayer() == tp and e:GetHandler():IsAttribute(SKILL_SUPPORT) and e:GetHandler():IsPosition(POS_FACEUP_ATTACK)
 end
 function VgD.SupportOperation(e, tp, eg, ep, ev, re, r, rp)
     local c = e:GetHandler()
