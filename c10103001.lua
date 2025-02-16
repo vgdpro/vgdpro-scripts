@@ -12,7 +12,7 @@ function cm.checkfilter(c,tp)
     return c:IsLocation(LOCATION_TRIGGER) and c:IsLevel(3) and c:IsControler(tp)
 end
 function cm.checkcon(e,tp,eg,ep,ev,re,r,rp)
-    return Duel.GetAttackTarget() and eg:IsExists(cm.checkfilter,1,nil,Duel.GetAttackTarget():GetControler())
+    return Duel.GetAttackTarget() and Duel.GetAttacker() and eg:IsExists(cm.checkfilter,1,nil,Duel.GetAttacker():GetControler())
 end
 function cm.filter(c)
     return vgf.RMonsterFilter(c) and c:IsDefensePos()
@@ -37,6 +37,6 @@ function cm.con(e)
     return vgf.VMonsterCondition(e) and Duel.GetTurnPlayer()==tp
 end
 function cm.checkop(e,tp,eg,ep,ev,re,r,rp)
-    local e1=Duel.RegisterFlagEffect(Duel.GetAttackTarget():GetControler(),m,RESET_PHASE+PHASE_END,0,1)
+    local e1=Duel.RegisterFlagEffect(Duel.GetAttacker():GetControler(),m,RESET_PHASE+PHASE_END,0,1)
     vgf.EffectReset(e:GetHandler(),e1,EVENT_BATTLED)
 end
