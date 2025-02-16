@@ -36,7 +36,7 @@ function cm.repfilter(c,tp)
 end
 function cm.reptg(e,tp,eg,ep,ev,re,r,rp,chk)
     if chk==0 then return eg:IsExists(cm.repfilter,1,nil,tp) end
-    if Duel.SelectYesNo(tp,aux.Stringid(m,0)) then
+    if Duel.SelectYesNo(tp,VgF.Stringid(m,0)) then
         local g=eg:Filter(cm.repfilter,nil,tp)
         local ct=g:GetCount()
         if ct>1 then

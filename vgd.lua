@@ -959,7 +959,7 @@ function VgD.SpellCondtion(con)
 end
 function VgD.MixCost(cost)
     return function(e, tp, eg, ep, ev, re, r, rp, chk)
-        cost = cost or aux.TRUE
+        cost = cost or VgF.TRUE
         local c = e:GetHandler()
         local alchemagic_g = Duel.GetMatchingGroup(VgD.MixCostFilter, tp, LOCATION_DROP, 0, nil, e, tp, eg, ep, ev, re, r, rp, c)
         local alchemagic_chk = Duel.IsPlayerAffectedByEffect(tp, AFFECT_CODE_MIX) and #alchemagic_g > 0
