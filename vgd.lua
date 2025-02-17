@@ -647,6 +647,7 @@ function VgD.MonsterBattle(c)
     e6:SetCode(EVENT_ATTACK_ANNOUNCE)
     e6:SetProperty(EFFECT_FLAG_CANNOT_DISABLE)
     e6:SetCondition(VgD.SupportCondition)
+    e6:SetTarget(VgD.SupportTarget)
     e6:SetOperation(VgD.SupportOperation)
     c:RegisterEffect(e6)
     local e9 = Effect.CreateEffect(c)
@@ -768,7 +769,13 @@ function VgD.MonsterNextTrigger(e, tp, eg, ep, ev, re, r, rp)
     return VgF.ReturnCard(eg):GetControler() == tp and VgF.VMonsterFilter(c) and Duel.GetFlagEffect(tp, FLAG_EFFECT_DAMAGE) == 0
 end
 function VgD.SupportCondition(e, tp, eg, ep, ev, re, r, rp)
-    return VgF.GetColumnGroup(Duel.GetAttacker()):IsContains(e:GetHandler()) and Duel.GetTurnPlayer() == tp and e:GetHandler():IsAttribute(SKILL_SUPPORT) and e:GetHandler():IsPosition(POS_FACEUP_ATTACK)
+    local c = e:GetHandler()
+    if not c:IsAttribute(SKILL_SUPPORT) or Duel.GetTurnPlayer() ~= tp or not VgF.GetColumnGroup(Duel.GetAttacker()):IsContains(c) then return false end
+    return true
+end
+function VgD.SupportTarget(e, tp, eg, ep, ev, re, r, rp, chk)
+    local c = e:GetHandler()
+    if chk == 0 then return c:IsPosition(POS_FACEUP_ATTACK) end
 end
 function VgD.SupportOperation(e, tp, eg, ep, ev, re, r, rp)
     local c = e:GetHandler()
