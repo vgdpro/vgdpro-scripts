@@ -1483,19 +1483,17 @@ function VgD.BeRidedByCardCondition(con, filter)
         if r ~= REASON_RIDEUP or (con and not con(e, tp, eg, ep, ev, re, r, rp)) then return false end
         local c, rc = e:GetHandler(), e:GetHandler():GetReasonCard()
         filter = filter or vgf.True
-        if type(filter) == "number" then 
-            filter = function(c, rc)
-                return rc:IsCode(filter)
-            end 
+        if type(filter) == "number" then
+            return rc:IsCode(filter)
         end
-        return filter(c:GetReasonCard(), c)
+        return filter(rc, c)
     end
 end
 function VgD.BeRidedByCardOperation(desc, op, cost, tg)
     return function(e, tp, eg, ep, ev, re, r, rp)
         local c = e:GetHandler()
         local rc = c:GetReasonCard()
-        local typ = cost and EFFECT_TYPE_TRIGGER_O or EFFECT_TYPE_TRIGGER_F 
+        local typ = cost and EFFECT_TYPE_TRIGGER_O or EFFECT_TYPE_TRIGGER_F
         local e1 = Effect.CreateEffect(rc)
         e1:SetDescription(desc)
         e1:SetType(typ + EFFECT_TYPE_FIELD)
