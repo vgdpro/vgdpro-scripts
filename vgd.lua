@@ -852,7 +852,7 @@ end
 ---@param c Card 要注册超限舞装功能的卡
 ---@param filter number 卡名为 filter 的后防者，或符合 filter 的后防者等
 ---@return Effect 这个效果
-function VgD.OverDress(c, filter)
+function VgD.XOD(c, filter)
     local e1 = Effect.CreateEffect(c)
     e1:SetDescription(VgF.Stringid(VgID, 9))
     e1:SetType(EFFECT_TYPE_FIELD)
@@ -860,33 +860,33 @@ function VgD.OverDress(c, filter)
     e1:SetRange(LOCATION_HAND)
     e1:SetProperty(EFFECT_FLAG_SPSUM_PARAM)
     e1:SetTargetRange(POS_FACEUP_ATTACK, 0)
-    e1:SetCondition(VgD.OverDressCondition(filter))
-    e1:SetOperation(VgD.OverDressOperation(filter))
+    e1:SetCondition(VgD.XODCondition(filter))
+    e1:SetOperation(VgD.XODOperation(filter))
     c:RegisterEffect(e1)
     local e2 = Effect.CreateEffect(c)
     e2:SetType(EFFECT_TYPE_SINGLE + EFFECT_TYPE_CONTINUOUS)
     e2:SetCode(EVENT_SPSUMMON_SUCCESS)
     e2:SetProperty(EFFECT_FLAG_CANNOT_DISABLE)
-    e2:SetOperation(VgD.OverDressSum)
+    e2:SetOperation(VgD.XODSum)
     c:RegisterEffect(e2)
     return e1
 end
-function VgD.OverDressCondition(filter)
+function VgD.XODCondition(filter)
     return function (e, c)
         if c == nil then return true end
         local tp = e:GetHandlerPlayer()
-        return VgF.LvCondition(e) and VgF.IsExistingMatchingCard(VgD.OverDressFilter, tp, LOCATION_MZONE, 0, 1, nil, filter)
+        return VgF.LvCondition(e) and VgF.IsExistingMatchingCard(VgD.XODFilter, tp, LOCATION_MZONE, 0, 1, nil, filter)
     end
 end
-function VgD.OverDressFilter(c, filter, tp, zone)
+function VgD.XODFilter(c, filter, tp, zone)
     if not c:IsFaceup() then return false end
     if zone and zone ~= VgF.SequenceToGlobal(tp, c:GetLocation(), c:GetSequence()) then return false end
     return not filter or (type(filter) == "function" and filter(c)) or (type(filter) == "number" and c:IsCode(filter))
 end
-function VgD.OverDressOperation(filter)
+function VgD.XODOperation(filter)
     return function(e, tp, eg, ep, ev, re, r, rp)
         local c = e:GetHandler()
-        local g = Duel.GetMatchingGroup(VgD.OverDressFilter, tp, LOCATION_MZONE, 0, nil, filter, tp)
+        local g = Duel.GetMatchingGroup(VgD.XODFilter, tp, LOCATION_MZONE, 0, nil, filter, tp)
         local zone, szone = 0, 0
         for tc in VgF.Next(g) do
             zone = bit.bor(zone, VgF.SequenceToGlobal(tp, tc:GetLocation(), tc:GetSequence()))
@@ -896,7 +896,7 @@ function VgD.OverDressOperation(filter)
         Duel.Hint(HINT_SELECTMSG, tp, HINTMSG_CallZONE)
         szone = Duel.SelectField(tp, 1, LOCATION_MZONE, 0, zone)
         e:SetValue(function () return SUMMON_VALUE_CALL + SUMMON_VALUE_OverDress, szone end)
-        local mg = Duel.GetMatchingGroup(VgD.OverDressFilter, tp, LOCATION_MZONE, 0, nil, filter, tp, szone)
+        local mg = Duel.GetMatchingGroup(VgD.XODFilter, tp, LOCATION_MZONE, 0, nil, filter, tp, szone)
         if #mg == 0 then return end
         local og = tc:GetOverlayGroup()
         if #og ~= 0 then
@@ -906,7 +906,7 @@ function VgD.OverDressOperation(filter)
         VgF.Sendto(LOCATION_OVERLAY, mg, c)
     end
 end
-function VgD.OverDressSum(e, tp, eg, ep, ev, re, r, rp)
+function VgD.XODSum(e, tp, eg, ep, ev, re, r, rp)
     e:GetHandler():RegisterFlagEffect(FLAG_CONDITION, RESET_EVENT + RESETS_STANDARD, EFFECT_FLAG_CLIENT_HINT, 1, 201, VgF.Stringid(10101006, 0))
 end
 

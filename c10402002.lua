@@ -1,7 +1,7 @@
 local cm,m,o=GetID()
 function cm.initial_effect(c)
 	vgd.VgCard(c)
-	vgd.OverDress(c,10101009)
+	vgd.XOD(c,10101009)
 	vgd.EffectTypeTrigger(c,m,LOCATION_HAND,EFFECT_TYPE_FIELD,EVENT_BATTLED,cm.op,vgf.OverlayCost(2),cm.con)
 	vgd.EffectTypeContinuousChangeAttack(c,m,LOCATION_MZONE,EFFECT_TYPE_SINGLE,10000,cm.con2)
 	vgd.EffectTypeContinuousChangeDefense(c,m,EFFECT_TYPE_SINGLE,10000,cm.con2)
