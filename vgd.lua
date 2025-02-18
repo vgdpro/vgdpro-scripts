@@ -884,8 +884,9 @@ function VgD.OverDressFilter(c, filter, tp, zone)
     return not filter or (type(filter) == "function" and filter(c)) or (type(filter) == "number" and c:IsCode(filter))
 end
 function VgD.OverDressOperation(filter)
-    return function(e, tp, eg, ep, ev, re, r, rp)
+    return function(e)
         local c = e:GetHandler()
+        local tp = e:GetHandlerPlayer()
         local g = Duel.GetMatchingGroup(VgD.OverDressFilter, tp, LOCATION_MZONE, 0, nil, filter, tp)
         local zone, szone = 0, 0
         for tc in VgF.Next(g) do
