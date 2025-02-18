@@ -328,7 +328,7 @@ function VgF.Call(g, sumtype, tp, zone, pos)
             end
         elseif VgF.IsExistingMatchingCard(VgD.CallFilter, tp, LOCATION_MZONE, 0, 1, nil, tp, szone) then
             local tc = Duel.GetMatchingGroup(VgD.CallFilter, tp, LOCATION_MZONE, 0, nil, tp, szone):GetFirst()
-            if bit.band(sumtype, SUMMON_VALUE_OverDress) > 0 then VgF.Sendto(LOCATION_OVERLAY, Group.FromCards(tc), sc)
+            if bit.band(sumtype, SUMMON_VALUE_OVERDRESS) > 0 then VgF.Sendto(LOCATION_OVERLAY, Group.FromCards(tc), sc)
             else VgF.Sendto(LOCATION_DROP, tc, REASON_COST)
             end
         end
@@ -531,7 +531,7 @@ function VgF.DamageFill(val)
     return function (e, tp, eg, ep, ev, re, r, rp)
         local c = e:GetHandler()
         Duel.Hint(HINT_SELECTMSG, tp, HINTMSG_POSCHANGE)
-        local g = Duel.SelectMatchingCard(tp, Card.IsFaceup, tp, LOCATION_DAMAGE, 0, val, val, nil)
+        local g = Duel.SelectMatchingCard(tp, Card.IsFacedown, tp, LOCATION_DAMAGE, 0, val, val, nil)
         Duel.ChangePosition(g, POS_FACEUP_ATTACK)
         return Duel.GetOperatedGroup():GetCount()
     end

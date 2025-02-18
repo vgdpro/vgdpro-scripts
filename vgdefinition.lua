@@ -159,7 +159,7 @@ SUMMON_TYPE_LINK		= 0x4c000000 --连接召唤
 --Summon Value --特定的召唤方式
 SUMMON_VALUE_CALL					= 0x1	--通常CALL出场
 SUMMON_VALUE_REVOLT		            = 0x2	--反抗舞装
-SUMMON_VALUE_OverDress		        = 0x4	--超限舞装
+SUMMON_VALUE_OVERDRESS		        = 0x4	--超限舞装
 SUMMON_VALUE_DARK_SANCTUARY			= 0x12	--暗黑圣域
 SUMMON_VALUE_MONSTER_REBORN			= 0x13	--死者苏生（千年的启示）
 SUMMON_VALUE_MASK_CHANGE			= 0x14	--

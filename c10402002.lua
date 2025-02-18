@@ -1,7 +1,7 @@
 local cm,m,o=GetID()
 function cm.initial_effect(c)
 	vgd.VgCard(c)
-	vgd.XOD(c,10101009)
+	vgd.OverDress(c,10101009)
 	vgd.EffectTypeTrigger(c,m,LOCATION_HAND,EFFECT_TYPE_FIELD,EVENT_BATTLED,cm.op,vgf.OverlayCost(2),cm.con)
 	vgd.EffectTypeContinuousChangeAttack(c,m,LOCATION_MZONE,EFFECT_TYPE_SINGLE,10000,cm.con2)
 	vgd.EffectTypeContinuousChangeDefense(c,m,EFFECT_TYPE_SINGLE,10000,cm.con2)
@@ -14,7 +14,7 @@ function cm.op(e,tp,eg,ep,ev,re,r,rp)
 			g=g:Select(tp,1,1,nil)
 		end
 		if g:GetCount()>0 then
-			vgf.Sendto(LOCATION_MZONE,c,SUMMON_VALUE_OverDress,tp,vgf.SequenceToGlobal(tp,g:GetFirst():GetLocation(),g:GetFirst():GetSequence()))
+			vgf.Sendto(LOCATION_MZONE,c,SUMMON_VALUE_OVERDRESS,tp,vgf.SequenceToGlobal(tp,g:GetFirst():GetLocation(),g:GetFirst():GetSequence()))
 		end
 	end
 	vgf.OverlayFill(1)(e,tp,eg,ep,ev,re,r,rp)
