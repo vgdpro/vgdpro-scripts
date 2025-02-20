@@ -5,9 +5,10 @@ function cm.initial_effect(c)
 	vgd.EffectTypeTrigger(c,m,LOCATION_MZONE,EFFECT_TYPE_FIELD,EVENT_PHASE+PHASE_BATTLE_START,cm.op1,nil,cm.con1)
 end
 function cm.cost(e,tp,eg,ep,ev,re,r,rp,chk)
-	if chk==0 then return e:GetHandler():IsCanChangePosition() and e:GetHandler():IsPosition(POS_FACEUP_ATTACK) and vgf.OverlayCost(1)(e,tp,eg,ep,ev,re,r,rp,chk) end
+	local c=e:GetHandler()
+	if chk==0 then return vgf.ChangePosDefence(c)(e,tp,eg,ep,ev,re,r,rp,chk) and vgf.OverlayCost(1)(e,tp,eg,ep,ev,re,r,rp,chk) end
 	vgf.OverlayCost(1)(e,tp,eg,ep,ev,re,r,rp,chk)
-	Duel.ChangePosition(e:GetHandler(),POS_FACEUP_DEFENCE)
+	vgf.ChangePosDefence(c)(e,tp,eg,ep,ev,re,r,rp,chk)
 end
 function cm.con(e,tp,eg,ep,ev,re,r,rp)
 	return vgf.RMonsterCondition(e) and vgf.GetVMonster(tp):IsCode(10401002)

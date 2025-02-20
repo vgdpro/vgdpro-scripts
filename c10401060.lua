@@ -17,7 +17,7 @@ end
 function cm.cost(e,tp,eg,ep,ev,re,r,rp,chk)
 	local c=e:GetHandler()
 	if chk==0 then
-		return c:IsAbleToGraveAsCost() and vgf.DamageCost(1)(e,tp,eg,ep,ev,re,r,rp,chk)
+		return c:IsAbleToGraveAsCost() and vgf.DamageCost(1)(e,tp,eg,ep,ev,re,r,rp,chk) and c:IsRelateToEffect(e)
 	end
 	vgf.DamageCost(1)(e,tp,eg,ep,ev,re,r,rp,chk)
 	vgf.Sendto(LOCATION_DROP,c,REASON_COST)

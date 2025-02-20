@@ -5,7 +5,7 @@ function cm.initial_effect(c)
 end
 function cm.cost(e,tp,eg,ep,ev,re,r,rp,chk)
     local c=e:GetHandler()
-    if chk==0 then return true end
+    if chk==0 then return c:IsRelateToEffect(e) end
 	vgf.Sendto(LOCATION_OVERLAY,c)
 end
 function cm.con(e,tp,eg,ep,ev,re,r,rp)

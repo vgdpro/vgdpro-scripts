@@ -9,6 +9,6 @@ function cm.op(e,tp,eg,ep,ev,re,r,rp)
 	vgf.AtkUp(c,g,5000)
 end
 function cm.cost(e,tp,eg,ep,ev,re,r,rp,chk)
-	if chk==0 then return e:GetHandler():IsAbleToGraveAsCost() end
+	if chk==0 then return e:GetHandler():IsAbleToGraveAsCost() and e:GetHandler():IsRelateToEffect(e) end
 	vgf.Sendto(LOCATION_DROP,e:GetHandler(),REASON_COST)
 end

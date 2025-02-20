@@ -7,7 +7,7 @@ function cm.initial_effect(c)
 end
 function cm.cost(e,tp,eg,ep,ev,re,r,rp,chk)
 	local c=e:GetHandler()
-	if chk==0 then return true end
+	if chk==0 then return c:IsRelateToEffect(e) end
 	local rc=vgf.GetMatchingGroup(vgf.VMonsterFilter,tp,LOCATION_MZONE,0,nil):GetFirst()
 	vgf.Sendto(LOCATION_OVERLAY,c,rc)
 end

@@ -555,7 +555,7 @@ end
 function VgF.ChangePosAttack(c)
     return function (e, tp, eg, ep, ev, re, r, rp, chk)
         if VgF.GetValueType(c) ~= "Card" then c = e:GetHandler() end
-        if chk == 0 then return c:IsCanChangePosition() and c:IsPosition(POS_FACEUP_DEFENCE) end
+        if chk == 0 then return c:IsCanChangePosition() and c:IsPosition(POS_FACEUP_DEFENCE) and (c ~= e:GetHandler() or c:IsRelateToEffect(e)) end
         Duel.ChangePosition(c, POS_FACEUP_ATTACK)
     end
 end
@@ -563,7 +563,7 @@ end
 function VgF.ChangePosDefence(c)
     return function (e, tp, eg, ep, ev, re, r, rp, chk)
         if VgF.GetValueType(c) ~= "Card" then c = e:GetHandler() end
-        if chk == 0 then return c:IsCanChangePosition() and c:IsPosition(POS_FACEUP_ATTACK) end
+        if chk == 0 then return c:IsCanChangePosition() and c:IsPosition(POS_FACEUP_ATTACK) and (c ~= e:GetHandler() or c:IsRelateToEffect(e)) end
         Duel.ChangePosition(c, POS_FACEUP_DEFENCE)
     end
 end
@@ -694,7 +694,7 @@ end
 ---@param ... any 
 ---@return function 效果的Cost函数
 function VgF.LeaveFieldCost(card_code_func, val_max, val_min, except, ...)
-    if not card_code_func then 
+    if not card_code_func then
         return VgF.LeaveFieldCostGroup()
     elseif VgF.GetValueType(card_code_func) == "Card" then
         return VgF.LeaveFieldCostGroup(Group.FromCards(card_code_func))
@@ -720,7 +720,8 @@ end
 function VgF.LeaveFieldCostGroup(g)
     return function (e, tp, eg, ep, ev, re, r, rp, chk)
         g = g or Group.FromCards(e:GetHandler())
-        if chk == 0 then return not g:IsExists(VgF.NOT(Card.IsAbleToGraveAsCost), 1, nil) end
+        g = g:Filter(function(c) return c:IsAbleToGraveAsCost() and (c ~= e:GetHandler() or c:IsRelateToEffect(e)) end, nil)
+        if chk == 0 then return g:GetCount() > 0 end
         VgF.Sendto(LOCATION_DROP, g, REASON_COST)
     end
 end

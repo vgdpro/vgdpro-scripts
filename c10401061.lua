@@ -10,7 +10,7 @@ end
 function cm.cost(e,tp,eg,ep,ev,re,r,rp,chk)
 	local c = e:GetHandler()
 	if chk ==0 then
-		return c:IsAbleToGraveAsCost()
+		return c:IsAbleToGraveAsCost() and e:GetHandler():IsRelateToEffect(e)
 	end
 	vgf.Sendto(LOCATION_DROP,c,REASON_COST)
 end

@@ -13,7 +13,7 @@ end
 function cm.cost(e,tp,eg,ep,ev,re,r,rp,chk)
 	local c=e:GetHandler()
 	if chk==0 then
-		return vgf.OverlayCost(1)(e,tp,eg,ep,ev,re,r,rp,chk)
+		return vgf.OverlayCost(1)(e,tp,eg,ep,ev,re,r,rp,chk) and c:IsRelateToEffect(e) and c:IsAbleToGrave()
 	end
 	vgf.OverlayCost(1)(e,tp,eg,ep,ev,re,r,rp,chk)
 	vgf.Sendto(LOCATION_DROP,c,REASON_COST)
