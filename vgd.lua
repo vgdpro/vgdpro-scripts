@@ -1617,7 +1617,7 @@ end
 ---@param m number|nil 效果的创建者的卡号
 ---@param loc number 生效的区域
 ---@param typ number 只影响自己，则填EFFECT_TYPE_SINGLE；<br>影响场上，则填EFFECT_TYPE_FIELD。
----@param val number 变更的数值
+---@param val function|number 变更的数值
 ---@param con function|nil 这个效果的条件函数
 ---@param tg function|nil 这个效果的影响目标(全域)
 ---@param loc_self number|nil 这个效果影响的自己区域，影响全域范围才需填
@@ -1633,7 +1633,7 @@ end
 ---@param c Card 效果的创建者
 ---@param m number|nil 效果的创建者的卡号
 ---@param typ number 只影响自己，则填EFFECT_TYPE_SINGLE；<br>影响场上，则填EFFECT_TYPE_FIELD。
----@param val number 变更的数值
+---@param val function|number 变更的数值
 ---@param con function|nil 这个效果的条件函数
 ---@param tg function|nil 这个效果的影响目标(全域)
 ---@param loc_self number|nil 这个效果影响的自己区域，影响全域范围才需填
