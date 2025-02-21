@@ -12,5 +12,5 @@ end
 
 function cm.con(e,tp,eg,ep,ev,re,r,rp)
     local c = e:GetHandler()
-    return vgf.RMonsterFilter(c) and c:IsPreviousLocation(LOCATION_HAND) and vgf.IsExistingMatchingCard(vgf.RMonsterFilter,tp,LOCATION_MZONE,0,3,c)
+    return vgf.RSummonCondition(e) and c:IsPreviousLocation(LOCATION_HAND) and vgf.IsExistingMatchingCard(vgf.RMonsterFilter,tp,LOCATION_MZONE,0,3,c)
 end
