@@ -588,7 +588,7 @@ function VgF.DisCardCost(val)
         end
         Duel.Hint(HINT_SELECTMSG, tp, HINTMSG_DISCARD)
         local g = Duel.SelectMatchingCard(tp, nil, tp, LOCATION_HAND, 0, val, val, nil)
-        return VgF.Sendto(LOCATION_DROP, g, REASON_COST)
+        return VgF.Sendto(LOCATION_DROP, g, REASON_COST + REASON_DISCARD)
     end
 end
 ---用于效果的Cost。它返回一个执行“【费用】[能量爆发val]”的函数。
