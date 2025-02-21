@@ -14,17 +14,12 @@ end
 
 function cm.op(e,tp,eg,ep,ev,re,r,rp)
 	local c=e:GetHandler()
-	local g=vgf.SelectMatchingCard(HINTMSG_ATOHAND,e,tp,cm.filter,tp,LOCATION_MZONE+LOCATION_OVERLAY,0,0,1,nil)
+	local g=vgf.SelectMatchingCard(HINTMSG_ATOHAND,e,tp,nil,tp,LOCATION_RZONE+LOCATION_OVERLAY,0,0,1,nil)
 	if #g>0 then
 		local tc=g:GetFirst()
 		vgf.Sendto(LOCATION_HAND,tc,tp)
-		if tc:IsPreviousLocation(LOCATION_OVERLAY) then
-			local rc=vgf.GetVMonster(tp)
-			vgf.Sendto(LOCATION_OVERLAY,c,rc)
+		if not tc:IsPreviousLocation(LOCATION_MZONE) then
+			vgf.Sendto(LOCATION_OVERLAY,c)
 		end
 	end
-end
-
-function cm.filter(c)
-	return c:IsCanBeEffectTarget()
 end

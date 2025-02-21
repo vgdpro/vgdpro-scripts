@@ -10,7 +10,6 @@ end
 function cm.operation(e,tp,eg,ep,ev,re,r,rp)
 	local c=e:GetHandler()
 	Duel.Draw(tp,2,REASON_EFFECT)
-	-- local g=vgf.SelectMatchingCard(HINTMSG_DISCARD,tp,nil,tp,LOCATION_HAND,0,1,1,nil)
     VgF.CardsFromTo(REASON_EFFECT,LOCATION_DROP,LOCATION_HAND,nil,1,1)(e,tp,eg,ep,ev,re,r,rp)
     local rc=vgf.GetVMonster(tp)
 	if c:IsRelateToEffect(e) then

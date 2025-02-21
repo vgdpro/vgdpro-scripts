@@ -14,8 +14,6 @@ function cm.op(e,tp,eg,ep,ev,re,r,rp)
 end
 
 function cm.con(e,tp,eg,ep,ev,re,r,rp)
-	local c=e:GetHandler()
-	local rc=vgf.GetVMonster(tp)
-	return vgf.RMonsterCondition(e) and Duel.GetAttacker() == rc
+	return vgf.RMonsterCondition(e) and vgf.VMonsterFilter(Duel.GetAttacker())
 end
 

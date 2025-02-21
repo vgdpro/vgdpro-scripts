@@ -3,7 +3,7 @@ local cm,m,o=GetID()
 function cm.initial_effect(c)
 	vgd.VgCard(c)
 	-- 【自】【R】：你的含有「诚意真心」的单位被攻击时，通过【费用】[将这个单位退场]，选择1张正在被攻击的单位，这次战斗中，力量+10000。
-	vgd.EffectTypeIgnition(c,m,LOCATION_MZONE,EFFECT_TYPE_FIELD,EVENT_BE_BATTLE_TARGET,cm.op,cm.cost,cm.con)
+	vgd.EffectTypeTrigger(c,m,LOCATION_MZONE,EFFECT_TYPE_FIELD,EVENT_BE_BATTLE_TARGET,cm.op,vgf.LeaveFieldCost,cm.con)
 	-- EFFECT_TYPE_FIELD
 	-- EVENT_BE_BATTLE_TARGET
 end
@@ -17,11 +17,6 @@ function cm.op(e,tp,eg,ep,ev,re,r,rp)
 		local e1=vgf.AtkUp(c,g,10000)
 		vgf.EffectReset(c,e1,EVENT_BATTLED)
 	end
-end
-
-function cm.cost(e,tp,eg,ep,ev,re,r,rp,chk)
-	if chk==0 then return e:GetHandler():IsAbleToGraveAsCost() end
-	vgf.Sendto(LOCATION_DROP,e:GetHandler(),REASON_COST)
 end
 
 function cm.con(e,tp,eg,ep,ev,re,r,rp)

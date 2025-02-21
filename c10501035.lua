@@ -3,15 +3,9 @@ local cm,m,o=GetID()
 function cm.initial_effect(c)
 	vgd.VgCard(c)
 	-- 【自】：这个单位被RIDE时，通过【费用】[将手牌中的1张〈幽灵〉的普通单位卡公开，放置到牌堆顶]，选择你的弃牌区中的1张〈幽灵〉，加入手牌。
-	vgd.BeRidedByCard(c,m,nil,cm.op,cm.cost)
+	vgd.BeRidedByCard(c,m,nil,VgF.CardsFromTo(REASON_EFFECT,LOCATION_HAND,LOCATION_DROP,Card.IsSetCard,1,0,0xa013),cm.cost)
 	-- 【永】【V/R】：你的回合中，你的R上的〈幽灵〉有3张以上的话，这个单位的力量+5000。
     vgd.EffectTypeContinuousChangeAttack(c,m,LOCATION_MZONE,EFFECT_TYPE_SINGLE,5000,cm.con1)
-	vgd.EffectTypeContinuousChangeAttack(c,m,LOCATION_MZONE,EFFECT_TYPE_SINGLE,5000,cm.con2)
-
-end
-
-function cm.op(e,tp,eg,ep,ev,re,r,rp)
-    VgF.CardsFromTo(REASON_EFFECT,LOCATION_HAND,LOCATION_DROP,cm.filter,1,0)(e,tp,eg,ep,ev,re,r,rp)
 end
 
 function cm.cost(e,tp,eg,ep,ev,re,r,rp,chk)
@@ -22,21 +16,8 @@ function cm.cost(e,tp,eg,ep,ev,re,r,rp,chk)
 end
 
 function cm.con1(e)
-    return cm.con3(e) and vgf.RMonsterCondition(e) and Duel.GetTurnPlayer()==tp
-end
-
-function cm.con2(e)
-    return cm.con3(e) and vgf.VMonsterCondition(e) and Duel.GetTurnPlayer()==tp
-end
-
-function cm.con3(e)
-    local c = e:GetHandler()
     local tp = e:GetHandlerPlayer()
-    return vgf.IsExistingMatchingCard(cm.filter2,tp,LOCATION_MZONE,0,3)
-end
-
-function cm.filter1(c)
-    return c:IsSetCard(0xa013)
+    return vgf.IsExistingMatchingCard(cm.filter2,tp,LOCATION_MZONE,0,3,nil) and vgf.RMonsterCondition(e) and Duel.GetTurnPlayer()==tp
 end
 
 function cm.filter2(c)
@@ -44,5 +25,5 @@ function cm.filter2(c)
 end
 
 function cm.filter3(c)
-    return c:IsSetCard(0xa013) and c:IsType(TYPE_EFFECT+TYPE_MONSTER)
+    return c:IsSetCard(0xa013) and c:IsType(TYPE_NORMAL+TYPE_MONSTER)
 end

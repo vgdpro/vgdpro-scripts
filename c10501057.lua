@@ -14,15 +14,14 @@ function cm.initial_effect(c)
 end
 function cm.op1(e,tp,eg,ep,ev,re,r,rp)
 	local c=e:GetHandler()
-	local g=vgf.SelectMatchingCard(HINTMSG_ATKUP,e,tp,vgf.VMonsterFilter,tp,LOCATION_MZONE,0,1,1,nil)
+	local g=vgf.SelectMatchingCard(HINTMSG_VMONSTER,e,tp,nil,tp,LOCATION_VZONE,0,1,1,nil)
 	vgf.AtkUp(c,g,5000)
-	Duel.ChangePosition(c,POS_FACEDOWN_ATTACK)
 end
 
 function cm.op2(e,tp,eg,ep,ev,re,r,rp)
 	local c=e:GetHandler()
 	local g=vgf.GetMatchingGroup(vgf.FrontFilter,tp,LOCATION_MZONE,0,nil)
-	vgf.AtkUp(c,g,5000,nil)
+	vgf.AtkUp(c,g,5000)
 end
 
 function cm.con(e,tp,eg,ep,ev,re,r,rp)

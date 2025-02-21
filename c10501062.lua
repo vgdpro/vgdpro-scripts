@@ -7,12 +7,11 @@ function cm.initial_effect(c)
 end
 function cm.val(e)
 	local tp=e:GetHandlerPlayer()
-	local ct=vgf.GetMatchingGroupCount(nil,tp,LOCATION_ORDER,0,c)
-	local val=math.floor(ct)*2000
-	return val
+	local ct=vgf.GetMatchingGroupCount(nil,tp,LOCATION_ORDER,0,nil)
+	return ct*2000
 end
 
-function cm.con1(e)
+function cm.con(e)
 	local c=e:GetHandler()
 	local tp=e:GetHandlerPlayer()
 	return vgf.RMonsterCondition(e) and Duel.GetTurnPlayer()==tp
