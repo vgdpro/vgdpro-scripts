@@ -3,7 +3,7 @@ function cm.initial_effect(c)
 	vgd.VgCard(c)
 	vgd.ContinuousSpell(c)
 	vgd.EffectTypeTrigger(c,m,loc,EFFECT_TYPE_SINGLE,EVENT_MOVE,vgf.OverlayFill(3),nil,cm.con)
-	VgD.CallInPrison(c,m)
+	vgd.CallInPrison(c,m)
 end
 function cm.cost(e,tp,eg,ep,ev,re,r,rp,chk)
 	if chk==0 then return vgf.IsExistingMatchingCard(cm.cfilter,tp,LOCATION_MZONE,0,1,nil) end

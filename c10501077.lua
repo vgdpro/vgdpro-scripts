@@ -14,5 +14,5 @@ function cm.op(e,tp,eg,ep,ev,re,r,rp)
 end
 
 function cm.con(e,tp,eg,ep,ev,re,r,rp)
-    return VgF.RMonsterCondition(e) and eg:IsPreviousLocation(LOCATION_MZONE)
+    return vgf.RMonsterCondition(e) and eg:IsPreviousLocation(LOCATION_MZONE)
 end

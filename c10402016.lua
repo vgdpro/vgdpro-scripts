@@ -6,7 +6,7 @@ end
 function cm.con(e,tp,eg,ep,ev,re,r,rp)
 	local c=e:GetHandler()
 	local ct=Duel.GetFlagEffectLabel(tp,FLAG_CONDITION)
-	if VgF.GetValueType(ct)~="number" or ct~=10102001 then return false end
+	if vgf.GetValueType(ct)~="number" or ct~=10102001 then return false end
 	return eg:GetFirst()==c and Duel.GetAttacker()==vgf.GetVMonster(tp) and vgf.RMonsterCondition(e)
 end
 function cm.op(e,tp,eg,ep,ev,re,r,rp)

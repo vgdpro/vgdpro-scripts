@@ -14,5 +14,5 @@ function cm.op(e,tp,eg,ep,ev,re,r,rp)
     local c = e:GetHandler()
     local ct = Duel.GetMatchingGroupCount(nil,tp,LOCATION_ORDER,0,c)
     local defup = 5000*ct
-    VgF.DefUp(c,c,defup)
+    vgf.DefUp(c,c,defup)
 end

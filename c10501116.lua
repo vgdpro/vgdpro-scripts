@@ -9,7 +9,7 @@ end
 function cm.operation(e,tp,eg,ep,ev,re,r,rp)
 	local c=e:GetHandler()
 	local g=vgf.SelectMatchingCard(HINTMSG_ATKUP,tp,nil,tp,LOCATION_MZONE,0,1,1,nil)
-	VgF.AtkUp(c,g,5000,nil)
+	vgf.AtkUp(c,g,5000,nil)
     local rc=vgf.GetVMonster(tp)
 	if c:IsRelateToEffect(e) then
         c:CancelToGrave()

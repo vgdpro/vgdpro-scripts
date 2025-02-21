@@ -8,11 +8,11 @@ end
 
 function cm.con(e,tp,eg,ep,ev,re,r,rp)
     local ca = Duel.GetAttacker()
-    return VgF.VMonsterFilter(ca) and eg:GetFirst()==e:GetHandler()
+    return vgf.VMonsterFilter(ca) and eg:GetFirst()==e:GetHandler()
 end
 
 function cm.op(e,tp,eg,ep,ev,re,r,rp)
     local c=e:GetHandler()
     Duel.Draw(tp,1,REASON_EFFECT)
-    VgF.CardsFromTo(REASON_EFFECT,LOCATION_DROP,LOCATION_HAND,nil,1,1)(e,tp,eg,ep,ev,re,r,rp)
+    vgf.CardsFromTo(REASON_EFFECT,LOCATION_DROP,LOCATION_HAND,nil,1,1)(e,tp,eg,ep,ev,re,r,rp)
 end

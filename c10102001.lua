@@ -17,5 +17,5 @@ function cm.op2(e,tp,eg,ep,ev,re,r,rp)
 end
 function cm.con2(e,tp,eg,ep,ev,re,r,rp)
 	local ct=Duel.GetFlagEffectLabel(tp,FLAG_CONDITION)
-	return VgF.GetValueType(ct)=="number" and ct==10102001 and vgf.VMonsterCondition(e)
+	return vgf.GetValueType(ct)=="number" and ct==10102001 and vgf.VMonsterCondition(e)
 end

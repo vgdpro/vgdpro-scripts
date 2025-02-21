@@ -11,7 +11,7 @@ function cm.checkcon(e,tp,eg,ep,ev,re,r,rp)
 end
 function cm.con(e,tp,eg,ep,ev,re,r,rp)
 	local ct=Duel.GetFlagEffectLabel(tp,FLAG_CONDITION)
-	return VgF.GetValueType(ct)=="number" and ct==10102001
+	return vgf.GetValueType(ct)=="number" and ct==10102001
 end
 function cm.con1(e,tp,eg,ep,ev,re,r,rp)
 	return Duel.GetFlagEffect(tp,m)>0 and cm.con(e,tp,eg,ep,ev,re,r,rp)

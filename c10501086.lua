@@ -7,7 +7,7 @@ function cm.initial_effect(c)
 end
 function cm.con(e,tp,eg,ep,ev,re,r,rp)
     local c=e:GetHandler()
-    return VgF.RMonsterCondition(e) and eg:IsExists(cm.filter,1,nil,tp,c)
+    return vgf.RMonsterCondition(e) and eg:IsExists(cm.filter,1,nil,tp,c)
 end
 function cm.op(e,tp,eg,ep,ev,re,r,rp)
 	local c=e:GetHandler()
@@ -16,6 +16,6 @@ function cm.op(e,tp,eg,ep,ev,re,r,rp)
     end
 end
 function cm.filter(c,tp,mc)
-    local g=VgF.GetColumnGroup(mc)
+    local g=vgf.GetColumnGroup(mc)
     return g:GetCount()>0 and g:IsContains(c)
 end

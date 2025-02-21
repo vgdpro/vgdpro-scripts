@@ -18,5 +18,5 @@ function cm.initial_effect(c)
 end
 function cm.con(e)
     local c = e:GetHandler()
-    return VgF.BackFilter(c)
+    return vgf.BackFilter(c)
 end

@@ -9,7 +9,7 @@ function cm.initial_effect(c)
 end
 
 function cm.op(e,tp,eg,ep,ev,re,r,rp)
-    VgF.CardsFromTo(REASON_EFFECT,LOCATION_HAND,LOCATION_DROP,cm.filter,1,0)(e,tp,eg,ep,ev,re,r,rp)
+    vgf.CardsFromTo(REASON_EFFECT,LOCATION_HAND,LOCATION_DROP,cm.filter,1,0)(e,tp,eg,ep,ev,re,r,rp)
 end
 
 function cm.con(e)

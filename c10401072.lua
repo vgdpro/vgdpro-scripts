@@ -14,5 +14,5 @@ end
 function cm.op(e,tp,eg,ep,ev,re,r,rp)
 	local c=e:GetHandler()
 	local g=vgf.SelectMatchingCard(HINTMSG_ATKUP,tp,nil,tp,LOCATION_MZONE,0,1,1,nil)
-	VgF.AtkUp(c,g,2000,nil)
+	vgf.AtkUp(c,g,2000,nil)
 end

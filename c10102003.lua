@@ -6,7 +6,7 @@ function cm.initial_effect(c)
 end
 function cm.con(e,tp,eg,ep,ev,re,r,rp)
 	local ct=Duel.GetFlagEffectLabel(tp,FLAG_CONDITION)
-	return VgF.GetValueType(ct)=="number" and ct==10102001
+	return vgf.GetValueType(ct)=="number" and ct==10102001
 end
 
 function cm.op(e,tp,eg,ep,ev,re,r,rp)
