@@ -260,8 +260,8 @@ function VgD.RideUpOperation(e, tp, eg, ep, ev, re, r, rp)
         sc:SetMaterial(Group.FromCards(rc))
         VgF.Sendto(LOCATION_OVERLAY, Group.FromCards(rc), sc)
         VgF.Sendto(LOCATION_MZONE, sc, SUMMON_TYPE_RIDE, tp, 0x20)
-        if VgF.IsExistingMatchingCard(Card.IsType, tp, LOCATION_RIDE, 0, 1, nil, TYPE_EMBLEM) then
-            local tc = Duel.GetMatchingGroup(Card.IsType, tp, LOCATION_RIDE, 0, nil, TYPE_EMBLEM):GetFirst()
+        if VgF.IsExistingMatchingCard(Card.IsType, tp, LOCATION_RIDE, 0, 1, nil, TYPE_RIDE_EMBLEM) then
+            local tc = Duel.GetMatchingGroup(Card.IsType, tp, LOCATION_RIDE, 0, nil, TYPE_RIDE_EMBLEM):GetFirst()
             VgF.Sendto(LOCATION_EMBLEM, tc, tp, POS_FACEUP_DEFENSE, REASON_EFFECT)
         end
     elseif sel == 0 or (sel == 1 and a and b) then
@@ -1670,7 +1670,7 @@ end
 ---@param con function|nil 这个效果的条件函数
 ---@param reset number|nil 效果的重置条件
 ---@param hc Card|nil 效果的拥有者, 没有则为 c
----@return Effect 这个效果
+---@return Effect|nil 这个效果
 function VgD.TriggerCountUp(c, m, num, con, reset, hc)
     -- check func
     if VgF.IllegalFunctionCheck("TriggerCountUp", c).con(con) then return end
@@ -1744,6 +1744,41 @@ function VgD.CannotBeTarget(c, m, loc, typ, val, con, tg, loc_self)
     c:RegisterEffect(e)
     return e
 end
+---【永】Card c 攻击的战斗中，对手不能将符合函数f的卡CALL到G上。
+---@param c Card 效果的创建者
+---@param m number|nil 效果的创建者的卡号
+---@param val function|nil 这个效果的目标函数
+---@param condition function|nil 这个效果的条件函数
+---@param reset number|nil 效果的重置条件
+---@param hc Card|nil 效果的拥有者, 没有则为 c
+---@return Effect|nil 这个效果
+function VgD.CannotCallToGZoneWhenAttack(c, m, val, condition, reset, hc)
+    -- set param
+    local cm = _G["c"..(m or c:GetOriginalCode())]
+    cm.is_has_continuous = cm.is_has_continuous or not reset
+    hc = hc and VgF.ReturnCard(hc) or c
+
+    val = val or function(e, re, rp)
+        return VgF.True()
+    end
+
+    local e1 = Effect.CreateEffect(c)
+	e1:SetType(EFFECT_TYPE_FIELD)
+	e1:SetProperty(EFFECT_FLAG_PLAYER_TARGET)
+	e1:SetCode(EFFECT_CANNOT_ACTIVATE)
+	e1:SetRange(LOCATION_MZONE)
+	e1:SetTargetRange(0,1)
+    e1:SetValue(function (e, re, tp)
+        return re:IsHasCategory(CATEGORY_DEFENDER) and val(e, re, tp)
+    end)
+    e1:SetCondition(function (e)
+		return Duel.GetAttacker() == e:GetHandler() and (not condition or condition(e, e:GetHandler()))
+	end)
+    if reset then e1:SetReset(RESET_EVENT + RESETS_STANDARD + reset) end
+    hc:RegisterEffect(e1)
+    return e1
+end
+
 
 ---【永】【指令区】：你的指令区中没有世界卡以外的设置指令卡的话，根据你的指令区中的卡的张数生效以下全部的效果。
 ---●1张——你的世界卡的内容变为黑夜。

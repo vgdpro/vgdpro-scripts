@@ -56,36 +56,18 @@ POS_ATTACK				= 0x3	--攻击表示
 POS_DEFENSE				= 0xc	--守备表示
 NO_FLIP_EFFECT			= 0x10000--不发动反转效果
 --Types 卡片类型
-TYPE_MONSTER		= 0x1		--怪兽卡
-TYPE_SPELL			= 0x2		--魔法卡
-TYPE_TRAP			= 0x4		--陷阱卡
-TYPE_NORMAL			= 0x10		--通常怪兽
-TYPE_EFFECT			= 0x20		--效果
-TYPE_FUSION			= 0x40		--融合
-TYPE_RITUAL			= 0x80		--仪式
-TYPE_TRAPMONSTER	= 0x100		--陷阱怪兽
-TYPE_SPIRIT			= 0x200		--灵魂
-TYPE_UNION			= 0x400		--同盟
-TYPE_DUAL			= 0x800		--二重
-TYPE_TUNER			= 0x1000		--调整
-TYPE_SYNCHRO		= 0x2000		--同调
-TYPE_TOKEN			= 0x4000		--衍生物
-TYPE_QUICKPLAY		= 0x10000	--速攻
-TYPE_CONTINUOUS		= 0x20000	--永续
-TYPE_EQUIP			= 0x40000	--装备
-TYPE_FIELD			= 0x80000	--场地
-TYPE_COUNTER		= 0x100000	--反击
-TYPE_FLIP			= 0x200000	--翻转
-TYPE_TOON			= 0x400000	--卡通
-TYPE_XYZ			= 0x800000	--超量
-TYPE_PENDULUM		= 0x1000000	--灵摆
-TYPE_SPSUMMON		= 0x2000000	--特殊召唤
-TYPE_LINK			= 0x4000000	--连接
---组合类型
-TYPES_TOKEN_MONSTER	= 0x4011
-TYPES_NORMAL_TRAP_MONSTER	= 0x111
-TYPES_EFFECT_TRAP_MONSTER	= 0x121
-TYPE_EMBLEM         = TYPE_TRAP + TYPE_COUNTER + TYPE_FUSION
+TYPE_MONSTER		= 0x1		--单位卡
+TYPE_SPELL			= 0x2		--指令卡
+TYPE_TRAP			= 0x4		--标记
+TYPE_NORMAL			= 0x20		--普通
+TYPE_TRIIGER		= 0x80		--触发
+TYPE_G				= 0x200		--G
+TYPE_TOKEN			= 0x4000	--衍生
+TYPE_QUICKPLAY		= 0x10000	--闪现
+TYPE_CONTINUOUS		= 0x20000	--设置
+TYPE_EMBLEM		    = 0x100000	--纹章
+TYPE_RIDE_EMBLEM    = 0x100044  --RIDE卡组纹章
+
 --技能              --属性
 SKILL_ALL		    = 0x7f		--All
 SKILL_NONE		    = 0x01		--无
@@ -106,7 +88,7 @@ TRIGGER_SUPER		    = 0x20		--超限触发
 --组合类型
 TRIGGER_CARDS           = 0x3e       --触发单位卡
 --Category	效果分类
-CATEGORY_DEFENDER       = 0x1		--守护者
+CATEGORY_DEFENDER       = 0x1		--防御
 --Reason 卡片到当前位置的原因
 REASON_DESTROY		= 0x1		--破坏
 REASON_RELEASE		= 0x2		--解放

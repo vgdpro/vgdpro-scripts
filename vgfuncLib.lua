@@ -734,7 +734,7 @@ function VgF.IsCanBeCalled(c, e, tp, sumtype, pos, zone)
     if VgF.GetValueType(pos) ~= "number" then pos = POS_FACEUP_ATTACK end
     if VgF.GetValueType(zone) == "string" and zone == "FromOverlayToV" then
         local _, code = c:GetOriginalCode()
-        return Duel.IsPlayerCanSpecialSummonMonster(tp, code, nil, TYPE_MONSTER + TYPE_EFFECT, c:GetBaseAttack(), c:GetBaseDefense(), c:GetOriginalLevel(), c:GetOriginalRace(), c:GetOriginalAttribute())
+        return Duel.IsPlayerCanSpecialSummonMonster(tp, code, nil, TYPE_MONSTER + TYPE_NORMAL, c:GetBaseAttack(), c:GetBaseDefense(), c:GetOriginalLevel(), c:GetOriginalRace(), c:GetOriginalAttribute())
     end
     return z > 0 and c:IsCanBeSpecialSummoned(e, sumtype, tp, false, false, pos, tp, zone)
 end
@@ -815,6 +815,14 @@ function VgF.CardsFromTo(reason ,loc_to, loc_from, f, int_max, int_min, ...)
         return 0
     end
 end
+
+function Group.ForEach(g, f, ...)
+    local ext_params = {...}
+    for c in VgF.Next(g) do
+        f(c, table.unpack(ext_params))
+    end
+end
+
 function Group.CheckSubGroup(g, f, min, max, ...)
     min = min or 1
     max = max or #g
