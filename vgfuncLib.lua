@@ -705,7 +705,7 @@ function VgF.LeaveFieldCost(card_code_func, val_max, val_min, except, ...)
     val_min, val_max = val_min or 1, val_max or 1
     if val_min > val_max then val_min = val_max end
     local leave_filter = VgF.True
-    if type(card_code_func) == "function" then 
+    if type(card_code_func) == "function" then
         leave_filter = card_code_func
     elseif type(card_code_func) == "number" then
         leave_filter = function(c) return c:IsCode(card_code_func) end
@@ -818,6 +818,7 @@ end
 
 function Group.ForEach(g, f, ...)
     local ext_params = {...}
+    if #g == 0 then return end
     for c in VgF.Next(g) do
         f(c, table.unpack(ext_params))
     end
@@ -1409,6 +1410,19 @@ end
 
 function VgF.PlayerEffect(e, tp, eg, ep, ev, re, r, rp)
     return true
+end
+
+
+---玩家抽1张卡
+---@param p number 0：自己 1：对手 默认为0
+---@param count number 抽count数量的卡 默认为1
+function VgF.Draw(p, count)
+    p = (VgF.GetValueType(p) ~= "number" or p < 0 or p > 1) and 0 or p
+    count = VgF.GetValueType(count) ~= "number" and 1 or count
+    return function (e,tp,eg,ep,ev,re,r,rp)
+        local draw_player = p == 0 and tp or (1 - tp)
+	    Duel.Draw(draw_player, count, REASON_EFFECT)
+    end
 end
 ---创建一个函数检查器 检查func是否为nil或函数
 function VgF.IllegalFunctionCheck(name, c)
