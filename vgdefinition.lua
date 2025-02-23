@@ -586,6 +586,7 @@ EFFECT_LIMIT_SPECIAL_SUMMON_POSITION	= 368	--不能以特定表示形式特殊�
 EFFECT_TUNER					= 369	--同调召唤时可以当作调整（百檎龙- 苹果鳞虫）
 EFFECT_KAISER_COLOSSEUM			= 370	--皇帝斗技场
 EFFECT_REPLACE_DAMAGE			= 371	--伤害由特定行动代替
+EFFECT_EXTRA_LEAVEFIELD_COUNT      = 372	--增加额外退场数量
 EFFECT_FLAG_EFFECT				= 0x20000000	--标记类效果，即RegisterFlagEffect()创建的效果
 EFFECT_CANNOT_TO_EXILE          = 0x688  ----不能除外
 
