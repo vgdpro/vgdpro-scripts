@@ -23,6 +23,6 @@ function cm.operation(e,tp,eg,ep,ev,re,r,rp)
 	else
 		vgf.Sendto(LOCATION_HAND,g,nil,REASON_EFFECT)
 		local tg=vgf.SelectMatchingCard(HINTMSG_DISCARD,e,tp,nil,tp,LOCATION_HAND,0,1,1,nil)
-		vgf.Sendto(LOCATION_DROP,tg,REASON_COST)
+		vgf.Sendto(LOCATION_DROP,tg,REASON_EFFECT)
 	end
 end

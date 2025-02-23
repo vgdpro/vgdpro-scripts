@@ -1,7 +1,7 @@
 local cm,m,o=GetID()
 function cm.initial_effect(c)
 	vgd.VgCard(c)
-	vgd.EffectTypeTriggerWhenHitting(c,m,LOCATION_MZONE,EFFECT_TYPE_FIELD,cm.op,cm.cost,cm.con)
+	vgd.EffectTypeTriggerWhenHitting(c,m,LOCATION_MZONE,EFFECT_TYPE_FIELD,cm.op,vgf.CostAnd(vgf.DamageCost(1),vgf.LeaveFieldCost()),cm.con)
 end
 function cm.op(e,tp,eg,ep,ev,re,r,rp)
 	local code=vgf.GetVMonster(tp):GetCode()
@@ -9,12 +9,6 @@ function cm.op(e,tp,eg,ep,ev,re,r,rp)
 end
 function cm.filter(c,code)
 	return c:IsCode(code)
-end
-function cm.cost(e,tp,eg,ep,ev,re,r,rp,chk)
-	local c=e:GetHandler()
-	if chk==0 then return c:IsAbleToGraveAsCost() and vgf.DamageCost(1)(e,tp,eg,ep,ev,re,r,rp,chk) and c:IsRelateToEffect(e) end
-	vgf.DamageCost(1)(e,tp,eg,ep,ev,re,r,rp,chk)
-	vgf.Sendto(LOCATION_DROP,c,REASON_COST)
 end
 function cm.con(e,tp,eg,ep,ev,re,r,rp)
 	local c=e:GetHandler()

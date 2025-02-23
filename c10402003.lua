@@ -8,9 +8,9 @@ function cm.con(e,tp,eg,ep,ev,re,r,rp)
 	return vgf.VMonsterFilter(Duel.GetAttackTarget())
 end
 function cm.cost(e,tp,eg,ep,ev,re,r,rp,chk)
-	if chk==0 then return vgf.DamageCost(1)(e,tp,eg,ep,ev,re,r,rp,chk) and e:GetHandler():IsAbleToGraveAsCost() end
+	if chk==0 then return vgf.DamageCost(1)(e,tp,eg,ep,ev,re,r,rp,chk) and vgf.LeaveFieldCost(e:GetHandler())(e,tp,eg,ep,ev,re,r,rp,chk) end
 	vgf.DamageCost(1)(e,tp,eg,ep,ev,re,r,rp,chk)
-	vgf.Sendto(LOCATION_DROP,e:GetHandler(),REASON_COST)
+	vgf.LeaveFieldCost(e:GetHandler())(e,tp,eg,ep,ev,re,r,rp,chk)
 end
 function cm.op(e,tp,eg,ep,ev,re,r,rp)
 	local c=e:GetHandler()

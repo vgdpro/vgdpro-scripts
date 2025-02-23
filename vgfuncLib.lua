@@ -739,10 +739,10 @@ function VgF.DamageCost(val)
     end
 end
 ---用于效果的Cost。它返回一个执行“【费用】[将xxx退场]”的函数。
----@param card_code_func Card|integer|function 退场的卡的条件
----@param val_max number 退场的卡的最大数量
----@param val_min number 退场的卡的最小数量
----@param except Card 
+---@param card_code_func Card|integer|function|nil 退场的卡的条件
+---@param val_max number|nil 退场的卡的最大数量
+---@param val_min number|nil 退场的卡的最小数量
+---@param except Card|nil 
 ---@param ... any 
 ---@return function 效果的Cost函数
 function VgF.LeaveFieldCost(card_code_func, val_max, val_min, except, ...)
@@ -765,7 +765,7 @@ function VgF.LeaveFieldCost(card_code_func, val_max, val_min, except, ...)
     return function(e, tp, eg, ep, ev, re, r, rp, chk)
         leave_filter = function(c) return leave_filter(c, table.unpack(ex_params)) and c:IsAbleToGraveAsCost() end
         if chk == 0 then return VgF.IsExistingMatchingCard(leave_filter, tp, LOCATION_MZONE, 0, val_min, except) end
-        local g = vgf.SelectMatchingCard(HINTMSG_LEAVEFIELD, e, tp, leave_filter, tp, LOCATION_MZONE, 0, val_min, val_max, except)
+        local g = VgF.SelectMatchingCard(HINTMSG_LEAVEFIELD, e, tp, leave_filter, tp, LOCATION_MZONE, 0, val_min, val_max, except)
         VgF.Sendto(LOCATION_DROP, g, REASON_COST)
     end
 end

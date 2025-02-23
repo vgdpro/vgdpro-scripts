@@ -18,7 +18,7 @@ function cm.cost(e,tp,eg,ep,ev,re,r,rp,chk)
 		return vgf.IsExistingMatchingCard(cm.filter,tp,LOCATION_HAND,0,1,nil)
 	end
 	local g=vgf.SelectMatchingCard(HINTMSG_TODROP,e,tp,cm.filter,tp,LOCATION_HAND,0,1,1,nil)
-	vgf.Sendto(LOCATION_DROP,g,REASON_COST)
+	vgf.Sendto(LOCATION_DROP,g,REASON_COST+REASON_DISCARD)
 end
 function cm.filter(c)
 	return c:IsSetCard(0x201)

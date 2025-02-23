@@ -9,7 +9,7 @@ function cm.cost(e,tp,eg,ep,ev,re,r,rp,chk)
 	end
 	Duel.Hint(HINT_SELECTMSG,tp,HINTMSG_DISCARD)
 	local g=vgf.SelectMatchingCard(tp,cm.filter,tp,LOCATION_HAND,0,1,1,nil)
-	return vgf.Sendto(LOCATION_DROP,g,REASON_COST)
+	return vgf.Sendto(LOCATION_DROP,g,REASON_COST+REASON_DISCARD)
 end
 function cm.filter(c)
 	return c:IsType(TYPE_CONTINUOUS) and c:IsType(TYPE_SPELL)
