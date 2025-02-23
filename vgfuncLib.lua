@@ -385,7 +385,7 @@ function VgF.AtkUp(c, g, val, reset, resetcount)
         for tc in VgF.Next(g) do
             if tc:IsLocation(LOCATION_MZONE) then
                 if VgF.GetValueType(val) == "string" and val == "DOUBLE" then
-                    val = tc:GetLeftScale()
+                    val = tc:GetAttack()
                 end
                 local e1 = Effect.CreateEffect(c)
                 e1:SetType(EFFECT_TYPE_SINGLE)
@@ -402,7 +402,7 @@ function VgF.AtkUp(c, g, val, reset, resetcount)
         if tc:IsLocation(LOCATION_MZONE) then
             local tc = VgF.ReturnCard(g)
             if VgF.GetValueType(val) == "string" and val == "DOUBLE" then
-                val = tc:GetLeftScale()
+                val = tc:GetAttack()
             end
             local e1 = Effect.CreateEffect(c)
             e1:SetType(EFFECT_TYPE_SINGLE)
@@ -429,7 +429,7 @@ function VgF.DefUp(c, g, val, reset, resetcount)
         for tc in VgF.Next(g) do
             if tc:IsLocation(LOCATION_MZONE) then
                 if VgF.GetValueType(val) == "string" and val == "DOUBLE" then
-                    val = tc:GetLeftScale()
+                    val = tc:GetDefense()
                 end
                 local e1 = Effect.CreateEffect(c)
                 e1:SetType(EFFECT_TYPE_SINGLE)
@@ -445,7 +445,7 @@ function VgF.DefUp(c, g, val, reset, resetcount)
         local tc = g
         if tc:IsLocation(LOCATION_MZONE) then
             if VgF.GetValueType(val) == "string" and val == "DOUBLE" then
-                val = tc:GetLeftScale()
+                val = tc:GetDefense()
             end
             local e1 = Effect.CreateEffect(c)
             e1:SetType(EFFECT_TYPE_SINGLE)
@@ -512,6 +512,49 @@ function VgF.StarUp(c, g, val, reset, resetcount)
         end
     end
 end
+---以c的名义，使g（中的每一张卡）的等级上升val，并在reset时重置。
+---@param c Card 要使卡上升等级的卡
+---@param g Card|Group 要被上升等级的卡
+---@param val number|string 要上升的等级（可以为负,等级最低为0）
+---@param reset number|nil 指示重置的时点，默认为“回合结束时”。无论如何，都会在离场时重置。
+function VgF.LevelUp(c, g, val, reset, resetcount)
+    if not c or not g then return end
+    if not reset then reset = RESET_PHASE + PHASE_END end
+    if not resetcount then resetcount = 1 end
+    if not val or (VgF.GetValueType(val) == "number" and val == 0) then return end
+    if VgF.GetValueType(g) == "Group" and g:GetCount() > 0 then
+        local e = {}
+        for tc in VgF.Next(g) do
+            if tc:IsLocation(LOCATION_MZONE) then
+                if VgF.GetValueType(val) == "string" and val == "DOUBLE" then
+                    val = tc:GetLevel()
+                end
+                local e1 = Effect.CreateEffect(c)
+                e1:SetType(EFFECT_TYPE_SINGLE)
+                e1:SetCode(EFFECT_UPDATE_LEVEL)
+                e1:SetValue(val)
+                e1:SetReset(RESET_EVENT + RESETS_STANDARD + reset, resetcount)
+                tc:RegisterEffect(e1)
+                table.insert(e, e1)
+            end
+        end
+        return e
+    elseif VgF.GetValueType(g) == "Card" then
+        local tc = g
+        if tc:IsLocation(LOCATION_MZONE) then
+            if VgF.GetValueType(val) == "string" and val == "DOUBLE" then
+                val = tc:GetLevel()
+            end
+            local e1 = Effect.CreateEffect(c)
+            e1:SetType(EFFECT_TYPE_SINGLE)
+            e1:SetCode(EFFECT_UPDATE_LEVEL)
+            e1:SetValue(val)
+            e1:SetReset(RESET_EVENT + RESETS_STANDARD + reset, resetcount)
+            tc:RegisterEffect(e1)
+            return e1
+        end
+    end
+end
 ---判断c是否可以以规则的手段到G区域。
 ---@param c Card 要判断的卡
 ---@return boolean 指示c能否去到G区域。
@@ -537,7 +580,16 @@ function VgF.DamageFill(val)
     end
 end
 
----用于多Cost。例如 VgF.CostAnd(vgf.DamageCost(1), vgf.DisCardCost(1))。
+---用于效果的Cost。它返回一个执行“【费用】[将这个单位放置到灵魂里]”的函数。
+function VgF.ToOverlayCost(e,tp,eg,ep,ev,re,r,rp,chk)
+    return function ()
+        local c = e:GetHandler()
+        if chk == 0 then return c:IsRelateToEffect(e) end
+        VgF.Sendto(LOCATION_OVERLAY,c)
+    end
+end
+
+---用于效果的Cost。它返回一个执行“【费用】[将手牌中的val张卡舍弃]”的函数。
 function VgF.CostAnd(...)
     local funcs = {...}
     return function (e, tp, eg, ep, ev, re, r, rp, chk)
@@ -1441,12 +1493,12 @@ end
 ---检查并转换 loc 以及 con 用于【起】等模板函数
 function VgF.GetLocCondition(loc, con)
     local con_exf = VgF.True
-    if loc == LOCATION_RZONE then 
+    if loc == LOCATION_RZONE then
         loc, con_exf = LOCATION_MZONE, VgF.RMonsterCondition
     elseif loc == LOCATION_VZONE then 
         loc, con_exf = LOCATION_MZONE, VgF.VMonsterCondition
     end
-    loc = loc or LOCATION_MZONE 
+    loc = loc or LOCATION_MZONE
     local condition = function(e, tp, eg, ep, ev, re, r, rp)
         return (not con or con(e, tp, eg, ep, ev, re, r, rp)) and con_exf(e)
     end

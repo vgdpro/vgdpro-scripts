@@ -1705,16 +1705,54 @@ function VgD.TriggerCountUpOperation(num)
     end
 end
 
----【永】这个单位不会被对手的卡片的效果选择
+---【永】这个单位不会被攻击
 ---@param c Card 拥有这个效果的卡
 ---@param m number|nil 效果的拥有者的卡号
----@param loc number 生效的区域
----@param typ number 只影响自己，则填EFFECT_TYPE_SINGLE；<br>影响场上，则填EFFECT_TYPE_FIELD。
----@param val number 不会被 val 的效果选择
+---@param loc number|nil 生效的区域
+---@param typ number|nil 只影响自己，则填EFFECT_TYPE_SINGLE；<br>影响场上，则填EFFECT_TYPE_FIELD。
+---@param val function|nil 不会被 val 的卡选择
 ---@param con function|nil 这个效果的条件函数
 ---@param tg function|nil 这个效果的影响目标，影响全域范围才需填
 ---@param loc_self number|nil 这个效果影响的自己区域，影响全域范围才需填
----@return Effect 这个效果
+---@return Effect|nil 这个效果
+function VgD.CannotBeAttackTarget(c, m, loc, typ, val, con, tg, loc_self)
+    -- check func
+    local fchk = VgF.IllegalFunctionCheck("CannotBeAttackTarget", c)
+    if fchk.con(con) or fchk.tg(tg) then return end
+    -- set param
+    local cm = _G["c"..(m or c:GetOriginalCode())]
+    cm.is_has_continuous = true
+    typ = typ or EFFECT_TYPE_SINGLE
+    loc, con = VgF.GetLocCondition(loc, con)
+    val = val or VgF.True
+    -- set effect
+    local e = Effect.CreateEffect(c)
+    e:SetRange(loc)
+    e:SetCode(EFFECT_CANNOT_BE_BATTLE_TARGET)
+    e:SetCondition(con)
+    e:SetValue(val)
+    if typ == EFFECT_TYPE_FIELD or tg or loc_self then
+        e:SetType(EFFECT_TYPE_FIELD)
+        e:SetTargetRange(loc_self or LOCATION_MZONE , 0)
+        if tg then e:SetTarget(tg) end
+    else
+        e:SetType(EFFECT_TYPE_SINGLE)
+        e:SetProperty(EFFECT_FLAG_SINGLE_RANGE)
+    end
+    c:RegisterEffect(e)
+    return e
+end
+
+---【永】这个单位不会被对手的卡片的效果选择
+---@param c Card 拥有这个效果的卡
+---@param m number|nil 效果的拥有者的卡号
+---@param loc number|nil 生效的区域
+---@param typ number|nil 只影响自己，则填EFFECT_TYPE_SINGLE；<br>影响场上，则填EFFECT_TYPE_FIELD。
+---@param val function|nil 不会被 val 的效果选择
+---@param con function|nil 这个效果的条件函数
+---@param tg function|nil 这个效果的影响目标，影响全域范围才需填
+---@param loc_self number|nil 这个效果影响的自己区域，影响全域范围才需填
+---@return Effect|nil 这个效果
 function VgD.CannotBeTarget(c, m, loc, typ, val, con, tg, loc_self)
     -- check func
     local fchk = VgF.IllegalFunctionCheck("CannotBeTarget", c)
@@ -1722,7 +1760,7 @@ function VgD.CannotBeTarget(c, m, loc, typ, val, con, tg, loc_self)
     -- set param
     local cm = _G["c"..(m or c:GetOriginalCode())]
     cm.is_has_continuous = true
-    typ = typ or EFFECT_TYPE_SINGLE 
+    typ = typ or EFFECT_TYPE_SINGLE
     loc, con = VgF.GetLocCondition(loc, con)
     val = val or function(e, re, rp)
         return rp == 1 - e:GetHandlerPlayer()
