@@ -740,12 +740,12 @@ function VgF.DamageCost(val)
 end
 ---用于效果的Cost。它返回一个执行“【费用】[将xxx退场]”的函数。
 ---@param card_code_func Card|integer|function|nil 退场的卡的条件
----@param val_max number|nil 退场的卡的最大数量
----@param val_min number|nil 退场的卡的最小数量
+---@param max number|nil 退场的卡的最大数量
+---@param min number|nil 退场的卡的最小数量
 ---@param except Card|nil 
 ---@param ... any 
 ---@return function 效果的Cost函数
-function VgF.LeaveFieldCost(card_code_func, val_max, val_min, except, ...)
+function VgF.LeaveFieldCost(card_code_func, max, min, except, ...)
     if not card_code_func then
         return VgF.LeaveFieldCostGroup()
     elseif VgF.GetValueType(card_code_func) == "Card" then
@@ -754,8 +754,8 @@ function VgF.LeaveFieldCost(card_code_func, val_max, val_min, except, ...)
         return VgF.LeaveFieldCostGroup(card_code_func)
     end
     local ex_params = {...}
-    val_min, val_max = val_min or 1, val_max or 1
-    if val_min > val_max then val_min = val_max end
+    min, max = min or 1, max or 1
+    if min > max then min = max end
     local leave_filter = VgF.True
     if type(card_code_func) == "function" then
         leave_filter = card_code_func
@@ -764,16 +764,38 @@ function VgF.LeaveFieldCost(card_code_func, val_max, val_min, except, ...)
     end
     return function(e, tp, eg, ep, ev, re, r, rp, chk)
         leave_filter = function(c) return leave_filter(c, table.unpack(ex_params)) and c:IsAbleToGraveAsCost() end
-        if chk == 0 then return VgF.IsExistingMatchingCard(leave_filter, tp, LOCATION_MZONE, 0, val_min, except) end
-        local g = VgF.SelectMatchingCard(HINTMSG_LEAVEFIELD, e, tp, leave_filter, tp, LOCATION_MZONE, 0, val_min, val_max, except)
+        local g = VgF.GetMatchingGroup(leave_filter, tp, LOCATION_MZONE, 0, except)
+        if chk == 0 then return g:CheckSubGroup(VgF.LeaveFieldCostFilter, 1, max, min, e, tp) end
+        Duel.Hint(HINT_SELECTMSG, tp, HINTMSG_LEAVEFIELD)
+        g = g:SelectSubGroup(tp, VgF.LeaveFieldCostFilter, false, 1, max, min, e, tp)
         VgF.Sendto(LOCATION_DROP, g, REASON_COST)
     end
 end
+function VgF.LeaveFieldCostFilter(g, min, e, tp)
+    local fg = g:Filter(Card.IsHasEffect, nil, EFFECT_EXTRA_LEAVEFIELD_COUNT)
+    if #fg == 0 then return #g >= min end
+    local val_total = 0
+    for c in VgF.Next(fg) do
+        for _, te in pairs({c:IsHasEffect(EFFECT_EXTRA_LEAVEFIELD_COUNT)}) do
+            local val = te:GetValue() -- number or function
+            if not (val or type(val) == "number" or type(val) == "function") then 
+                Debug.Message("EFFECT_EXTRA_LEAVEFIELD_COUNT Value should be number or function")
+            end
+            if type(val) == "function" then 
+                val = val(g, e, tp)
+            end
+            val_total = val_total + val
+        end
+    end
+    min = min > val_total and (min - val_total) or 1
+    return #g >= min
+end
+---将 自己/g 退场
 function VgF.LeaveFieldCostGroup(g)
     return function (e, tp, eg, ep, ev, re, r, rp, chk)
         g = g or Group.FromCards(e:GetHandler())
-        g = g:Filter(function(c) return c:IsAbleToGraveAsCost() and (c ~= e:GetHandler() or c:IsRelateToEffect(e)) end, nil)
-        if chk == 0 then return g:GetCount() > 0 end
+        local fg = g:Filter(function(c) return c:IsAbleToGraveAsCost() and (c ~= e:GetHandler() or c:IsRelateToEffect(e)) end, nil)
+        if chk == 0 then return #g == #fg end
         VgF.Sendto(LOCATION_DROP, g, REASON_COST)
     end
 end
