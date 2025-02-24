@@ -341,27 +341,27 @@ function VgD.CardTriggerOperation(chkop)
         local c = e:GetHandler()
         if c:IsRace(TRIGGER_CRITICAL_STRIKE) then
             local g1 = VgF.SelectMatchingCard(HINTMSG_CRITICAL_STRIKE, e, tp, nil, tp, LOCATION_MZONE, 0, 1, 1, nil)
-            VgF.StarUp(c, g1, 1, nil)
+            VgF.StarUp(c, g1, c.trigger_star_up or 1, nil)
             local g2 = VgF.SelectMatchingCard(HINTMSG_ATKUP, e, tp, nil, tp, LOCATION_MZONE, 0, 1, 1, nil)
-            VgF.AtkUp(c, g2, 10000, nil)
+            VgF.AtkUp(c, g2, c.trigger_atk_up or 10000, nil)
         elseif c:IsRace(TRIGGER_DRAW) then
             local g = VgF.SelectMatchingCard(HINTMSG_ATKUP, e, tp, nil, tp, LOCATION_MZONE, 0, 1, 1, nil)
-            VgF.AtkUp(c, g, 10000, nil)
-            Duel.Draw(tp, 1, REASON_TRIGGER)
+            VgF.AtkUp(c, g, c.trigger_atk_up or 10000, nil)
+            Duel.Draw(tp, c.trigger_draw or 1, REASON_TRIGGER)
         elseif c:IsRace(TRIGGER_HEAL) then
             local g = VgF.SelectMatchingCard(HINTMSG_ATKUP, e, tp, nil, tp, LOCATION_MZONE, 0, 1, 1, nil)
-            VgF.AtkUp(c, g, 10000, nil)
+            VgF.AtkUp(c, g, c.trigger_atk_up or 10000, nil)
             if Duel.GetMatchingGroupCount(nil, tp, LOCATION_DAMAGE, 0, nil) >= Duel.GetMatchingGroupCount(nil, tp, 0, LOCATION_DAMAGE, nil) then
                 Duel.Hint(HINT_SELECTMSG, tp, HINTMSG_TODROP)
-                local tc = Duel.SelectMatchingCard(tp, nil, tp, LOCATION_DAMAGE, 0, 1, 1, nil):GetFirst()
-                if tc then
-                    VgF.Sendto(LOCATION_DROP, tc, REASON_TRIGGER)
-                    Duel.Recover(tp, 1, REASON_RULE)
+                local sg = Duel.SelectMatchingCard(tp, nil, tp, LOCATION_DAMAGE, 0, c.trigger_recover or 1, c.trigger_recover or 1, nil)
+                if sg:GetCount() > 0 then
+                    VgF.Sendto(LOCATION_DROP, sg, REASON_TRIGGER)
+                    Duel.Recover(tp, sg:GetCount(), REASON_RULE)
                 end
             end
         elseif c:IsRace(TRIGGER_ADVANCE) then
             local g = Duel.GetMatchingGroup(VgF.IsSequence, tp, LOCATION_MZONE, 0, nil, 0, 4, 5)
-            VgF.AtkUp(c, g, 10000, nil)
+            VgF.AtkUp(c, g, c.trigger_atk_up or 10000, nil)
         end
         if chkop == 'Damage' then
             if c:IsRace(TRIGGER_SUPER) then
@@ -376,14 +376,14 @@ function VgD.CardTriggerOperation(chkop)
                 if true then
                     table.insert(ops, VgF.Stringid(VgID + 5, 4))
                     table.insert(sel, function ()
-                        Duel.Draw(tp, 1, REASON_TRIGGER)
+                        Duel.Draw(tp, c.trigger_draw or 1, REASON_TRIGGER)
                     end)
                 end
                 if VgF.IsExistingMatchingCard(nil, tp, LOCATION_MZONE, 0, 1, nil) then
                     table.insert(ops, VgF.Stringid(VgID + 5, 5))
                     table.insert(sel, function ()
                         local g = VgF.SelectMatchingCard(HINTMSG_ATKUP, e, tp, nil, tp, LOCATION_MZONE, 0, 1, 1, nil)
-                        VgF.AtkUp(c, g, 100000000, nil)
+                        VgF.AtkUp(c, g, c.trigger_atk_up or 100000000, nil)
                     end)
                 end
                 if VgD.OperationWhenCardTrigger(e, tp, eg, ep, ev, re, r, rp, c, 0) then
@@ -430,14 +430,14 @@ function VgD.CardTriggerOperation(chkop)
                 if true then
                     table.insert(ops, VgF.Stringid(VgID + 5, 4))
                     table.insert(sel, function ()
-                        Duel.Draw(tp, 1, REASON_TRIGGER)
+                        Duel.Draw(tp, c.trigger_draw or 1, REASON_TRIGGER)
                     end)
                 end
                 if VgF.IsExistingMatchingCard(nil, tp, LOCATION_MZONE, 0, 1, nil) then
                     table.insert(ops, VgF.Stringid(VgID + 5, 5))
                     table.insert(sel, function ()
                         local g = VgF.SelectMatchingCard(HINTMSG_ATKUP, e, tp, nil, tp, LOCATION_MZONE, 0, 1, 1, nil)
-                        VgF.AtkUp(c, g, 100000000, nil)
+                        VgF.AtkUp(c, g, c.trigger_atk_up or 100000000, nil)
                     end)
                 end
                 if VgD.OperationWhenCardTrigger(e, tp, eg, ep, ev, re, r, rp, c, 0) then
@@ -480,14 +480,14 @@ function VgD.CardTriggerOperation(chkop)
                 if true then
                     table.insert(ops, VgF.Stringid(VgID + 5, 4))
                     table.insert(sel, function ()
-                        Duel.Draw(tp, 1, REASON_TRIGGER)
+                        Duel.Draw(tp, c.trigger_draw or 1, REASON_TRIGGER)
                     end)
                 end
                 if VgF.IsExistingMatchingCard(nil, tp, LOCATION_MZONE, 0, 1, nil) then
                     table.insert(ops, VgF.Stringid(VgID + 5, 5))
                     table.insert(sel, function ()
                         local g = VgF.SelectMatchingCard(HINTMSG_ATKUP, e, tp, nil, tp, LOCATION_MZONE, 0, 1, 1, nil)
-                        VgF.AtkUp(c, g, 100000000, nil)
+                        VgF.AtkUp(c, g, c.trigger_atk_up or 100000000, nil)
                     end)
                 end
                 if VgD.OperationWhenCardTrigger(e, tp, eg, ep, ev, re, r, rp, c, 0) then
