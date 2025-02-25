@@ -767,7 +767,7 @@ function VgD.MonsterBattle(c)
             end
             return atk
         elseif Duel.GetAttackTarget() == e:GetHandler() then
-            local g = Duel.GetMatchingGroup(nil, tp, LOCATION_GCIRCLE, 0, nil)
+            local g = Duel.GetMatchingGroup(nil, tp, LOCATION_G_CIRCLE, 0, nil)
             for tc in VgF.Next(g) do
                 local def = tc:GetDefense()
                 if def < 0 then def = 0 end
@@ -792,10 +792,10 @@ function VgD.MonsterBattle(c)
         return bc and bc:IsControler(tp) and bc ~= e:GetHandler()
     end)
     e7:SetTarget(function (e, tp, eg, ep, ev, re, r, rp, chk)
-        if chk == 0 then return VgF.IsAbleToGcircle(e:GetHandler()) end
+        if chk == 0 then return VgF.IsAbleToGCircle(e:GetHandler()) end
     end)
     e7:SetOperation(function (e, tp, eg, ep, ev, re, r, rp)
-        VgF.Sendto(LOCATION_GCIRCLE, e:GetHandler(), tp, POS_FACEUP, REASON_EFFECT)
+        VgF.Sendto(LOCATION_G_CIRCLE, e:GetHandler(), tp, POS_FACEUP, REASON_EFFECT)
     end)
     c:RegisterEffect(e7)
     local e8 = Effect.CreateEffect(c)
@@ -805,7 +805,7 @@ function VgD.MonsterBattle(c)
     e8:SetRange(LOCATION_ALL)
     e8:SetCondition(VgF.RuleCardCondtion)
     e8:SetOperation(function (e, tp, eg, ep, ev, re, r, rp)
-        local g = Duel.GetFieldGroup(tp, LOCATION_GCIRCLE, 0)
+        local g = Duel.GetFieldGroup(tp, LOCATION_G_CIRCLE, 0)
         if g:GetCount() > 0 then VgF.Sendto(LOCATION_DROP, g, REASON_RULE) end
     end)
     c:RegisterEffect(e8)
@@ -1416,7 +1416,7 @@ function VgD.AbilityAuto(c, m, loc, typ, code, op, cost, con, tg, count, propert
         e1:SetCode(EVENT_MOVE)
         if cost then e1:SetCost(cost) end
         e1:SetCondition(function(e, tp, eg, ep, ev, re, r, rp)
-            return (not con or con(e, tp, eg, ep, ev, re, r, rp)) and e:GetHandler():IsLocation(LOCATION_GCIRCLE) and Duel.GetAttackTarget()
+            return (not con or con(e, tp, eg, ep, ev, re, r, rp)) and e:GetHandler():IsLocation(LOCATION_G_CIRCLE) and Duel.GetAttackTarget()
         end)
         e1:SetOperation(op)
         c:RegisterEffect(e1)
@@ -1567,7 +1567,7 @@ end
 ---@param loc_op number|nil 这个效果影响的对方区域，影响全域范围才需填
 ---@param reset number|nil 效果的重置条件
 ---@param hc Card|nil 效果的拥有者, 没有则为 c
----@return Effect|nil 这个效果
+---@return Effect|nil, Effect|nil 这个效果
 function VgD.AbilityCont(c, m, loc, typ, code, val, con, tg, loc_self, loc_op, reset, hc)
     -- check func
     local fchk = VgF.IllegalFunctionCheck("AbilityCont", c)
@@ -1575,6 +1575,11 @@ function VgD.AbilityCont(c, m, loc, typ, code, val, con, tg, loc_self, loc_op, r
     -- set param
     local cm = _G["c"..(m or c:GetOriginalCode())]
     cm.is_has_continuous = cm.is_has_continuous or not reset
+    if code == EFFECT_UPDATE_CRITICAL then
+        local e1 = VgD.AbilityCont(c, m, LOCATION_MZONE, typ, EFFECT_UPDATE_LSCALE, val, con, tg, loc_self, loc_op, reset, hc)
+        local e2 = VgD.AbilityCont(c, m, LOCATION_MZONE, typ, EFFECT_UPDATE_RSCALE, val, con, tg, loc_self, loc_op, reset, hc)
+        return e1, e2
+    end
     loc, con = VgF.GetLocCondition(loc, con)
     hc = hc or c
     -- set effect
@@ -1589,57 +1594,6 @@ function VgD.AbilityCont(c, m, loc, typ, code, val, con, tg, loc_self, loc_op, r
     if reset then e:SetReset(RESET_EVENT + RESETS_STANDARD + reset) end
     hc:RegisterEffect(e)
     return e
-end
-
----【永】力量数值变更
----@param c Card 效果的创建者
----@param m number|nil 效果的创建者的卡号
----@param loc number 生效的区域
----@param typ number 只影响自己，则填EFFECT_TYPE_SINGLE；<br>影响场上，则填EFFECT_TYPE_FIELD。
----@param val function|number 变更的数值
----@param con function|nil 这个效果的条件函数
----@param tg function|nil 这个效果的影响目标(全域)
----@param loc_self number|nil 这个效果影响的自己区域，影响全域范围才需填
----@param loc_op number|nil 这个效果影响的对方区域，影响全域范围才需填
----@param reset number|nil 效果的重置条件
----@param hc Card|nil 效果的拥有者, 没有则为 c
----@return Effect|nil 这个效果
-function VgD.AbilityContChangeAttack(c, m, loc, typ, val, con, tg, loc_self, loc_op, reset, hc)
-    return VgD.AbilityCont(c, m, loc, typ, EFFECT_UPDATE_ATTACK, val, con, tg, loc_self, loc_op, reset, hc)
-end
-
----【永】盾护数值变更
----@param c Card 效果的创建者
----@param m number|nil 效果的创建者的卡号
----@param typ number 只影响自己，则填EFFECT_TYPE_SINGLE；<br>影响场上，则填EFFECT_TYPE_FIELD。
----@param val function|number 变更的数值
----@param con function|nil 这个效果的条件函数
----@param tg function|nil 这个效果的影响目标(全域)
----@param loc_self number|nil 这个效果影响的自己区域，影响全域范围才需填
----@param loc_op number|nil 这个效果影响的对方区域，影响全域范围才需填
----@param reset number|nil 效果的重置条件
----@param hc Card|nil 效果的拥有者, 没有则为 c
----@return Effect 这个效果
-function VgD.AbilityContChangeDefense(c, m, typ, val, con, tg, loc_self, loc_op, reset, hc)
-    return VgD.AbilityCont(c, m, LOCATION_GCIRCLE, typ, EFFECT_UPDATE_DEFENSE, val, con, tg, loc_self, loc_op, reset, hc)
-end
-
----【永】暴击数值变更
----@param c Card 效果的创建者
----@param m number|nil 效果的创建者的卡号
----@param typ number 只影响自己，则填EFFECT_TYPE_SINGLE；<br>影响场上，则填EFFECT_TYPE_FIELD。
----@param val number 变更的数值
----@param con function|nil 这个效果的条件函数
----@param tg function|nil 这个效果的影响目标(全域)
----@param loc_self number|nil 这个效果影响的自己区域，影响全域范围才需填
----@param loc_op number|nil 这个效果影响的对方区域，影响全域范围才需填
----@param reset number|nil 效果的重置条件
----@param hc Card|nil 效果的拥有者, 没有则为 c
----@return Effect 两个效果
-function VgD.AbilityContChangeStar(c, m, typ, val, con, tg, loc_self, loc_op, reset, hc)
-    local e1 = VgD.AbilityCont(c, m, LOCATION_MZONE, typ, EFFECT_UPDATE_LSCALE, val, con, tg, loc_self, loc_op, reset, hc)
-    local e2 = VgD.AbilityCont(c, m, LOCATION_MZONE, typ, EFFECT_UPDATE_RSCALE, val, con, tg, loc_self, loc_op, reset, hc)
-    return e1, e2
 end
 
 ---【永】驱动数值变更
@@ -1769,7 +1723,7 @@ end
 ---@param reset number|nil 效果的重置条件
 ---@param hc Card|nil 效果的拥有者, 没有则为 c
 ---@return Effect|nil 这个效果
-function VgD.CannotCallToGcircleWhenAttack(c, m, val, condition, reset, hc)
+function VgD.CannotCallToGCircleWhenAttack(c, m, val, condition, reset, hc)
     -- set param
     local cm = _G["c"..(m or c:GetOriginalCode())]
     cm.is_has_continuous = cm.is_has_continuous or not reset

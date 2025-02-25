@@ -5,7 +5,7 @@ function cm.initial_effect(c)
 end
 function cm.con(e,tp,eg,ep,ev,re,r,rp)
 	local c=e:GetHandler()
-	return c:IsLocation(LOCATION_GCIRCLE) and c:IsPreviousLocation(LOCATION_MZONE) and re:IsHasCategory(CATEGORY_DEFENDER) and vgf.GetVMonster(tp):GetOverlayGroup():FilterCount(Card.IsSetCard,nil,0x76)>=1
+	return c:IsLocation(LOCATION_G_CIRCLE) and c:IsPreviousLocation(LOCATION_MZONE) and re:IsHasCategory(CATEGORY_DEFENDER) and vgf.GetVMonster(tp):GetOverlayGroup():FilterCount(Card.IsSetCard,nil,0x76)>=1
 end
 function cm.filter(e,tp,eg,ep,ev,re,r,rp)
 	local c=e:GetHandler()

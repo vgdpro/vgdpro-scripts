@@ -14,7 +14,7 @@ function cm.initial_effect(c)
 end
 function cm.op1(e,tp,eg,ep,ev,re,r,rp)
 	local c=e:GetHandler()
-	local g=vgf.SelectMatchingCard(HINTMSG_VMONSTER,e,tp,nil,tp,LOCATION_VZONE,0,1,1,nil)
+	local g=vgf.SelectMatchingCard(HINTMSG_VMONSTER,e,tp,nil,tp,LOCATION_V_CIRCLE,0,1,1,nil)
 	vgf.AtkUp(c,g,5000)
 end
 

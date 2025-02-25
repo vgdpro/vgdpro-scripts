@@ -18,5 +18,5 @@ end
 
 function cm.con(e,tp,eg,ep,ev,re,r,rp)
     local c = e:GetHandler()
-    return c:IsLocation(LOCATION_GCIRCLE)
+    return c:IsLocation(LOCATION_G_CIRCLE)
 end

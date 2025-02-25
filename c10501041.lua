@@ -1,9 +1,9 @@
 local cm,m,o=GetID()
 function cm.initial_effect(c)
 	vgd.VgCard(c)
-	vgd.AbilityAct(c,m,LOCATION_RZONE,cm.op,vgf.CostAnd(vgf.DamageCost(1), vgf.ToOverlayCost))
-	vgd.CannotBeTarget(c, m, LOCATION_VZONE, EFFECT_TYPE_SINGLE, nil, vgf.DarkWing)
-	vgd.CannotBeAttackTarget(c, m, LOCATION_VZONE, EFFECT_TYPE_SINGLE, cm.val, vgf.DarkWing)
+	vgd.AbilityAct(c,m,LOCATION_R_CIRCLE,cm.op,vgf.CostAnd(vgf.DamageCost(1), vgf.ToOverlayCost))
+	vgd.CannotBeTarget(c, m, LOCATION_V_CIRCLE, EFFECT_TYPE_SINGLE, nil, vgf.DarkWing)
+	vgd.CannotBeAttackTarget(c, m, LOCATION_V_CIRCLE, EFFECT_TYPE_SINGLE, cm.val, vgf.DarkWing)
 end
 function cm.val(e,c)
 	return vgf.RMonsterFilter(c)

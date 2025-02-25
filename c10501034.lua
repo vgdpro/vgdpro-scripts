@@ -7,7 +7,7 @@ function cm.initial_effect(c)
 	-- 白翼-【起】【V】【1回合1次】：通过【费用】[计数爆发1]，这个回合中，这个单位的☆+1。
 	vgd.AbilityAct(c,m,LOCATION_MZONE,cm.op2,vgf.DamageCost(1),cm.con2,nil,1)
 	-- 黑翼-【永】【V】：这个单位攻击的战斗中，对手不能将触发单位卡从手牌CALL到G上。
-	VgD.CannotCallToGcircleWhenAttack(c,m,function (e,re,tp)
+	VgD.CannotCallToGCircleWhenAttack(c,m,function (e,re,tp)
 		return re:GetHandler():IsType(TYPE_TRIIGER) and re:GetHandler():IsLocation(LOCATION_HAND)
 	end,cm.con3)
 end

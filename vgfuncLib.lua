@@ -558,9 +558,9 @@ end
 ---判断c是否可以以规则的手段到G区域。
 ---@param c Card 要判断的卡
 ---@return boolean 指示c能否去到G区域。
-function VgF.IsAbleToGcircle(c)
+function VgF.IsAbleToGCircle(c)
     if c:IsLocation(LOCATION_HAND) then
-        if Duel.IsPlayerAffectedByEffect(c:GetControler(), AFFECT_CODE_DEFENDER_CANNOT_TO_GCIRCLE) and c:GetBaseDefense() == 0 then return false end
+        if Duel.IsPlayerAffectedByEffect(c:GetControler(), AFFECT_CODE_DEFENDER_CANNOT_TO_G_CIRCLE) and c:GetBaseDefense() == 0 then return false end
         return c:IsType(TYPE_MONSTER)
     elseif c:IsLocation(LOCATION_MZONE) then
         return c:IsAttribute(SKILL_BLOCK) and VgF.IsSequence(c, 0, 4) and c:IsLocation(LOCATION_MZONE) and c:IsFaceup()
@@ -820,7 +820,7 @@ function VgF.CardsFromTo(reason ,loc_to, loc_from, f, int_max, int_min, ...)
     local ext_params = {...}
     return function (e, tp, eg, ep, ev, re, r, rp)
         if not loc_to or not loc_from then return 0 end
-        if loc_from == LOCATION_RZONE then loc_from = LOCATION_MZONE end
+        if loc_from == LOCATION_R_CIRCLE then loc_from = LOCATION_MZONE end
         if VgF.GetValueType(int_max) ~= "number" then int_max = 1 end
         if VgF.GetValueType(int_min) ~= "number" then int_min = int_max end
         if loc_to == LOCATION_HAND then
@@ -830,7 +830,7 @@ function VgF.CardsFromTo(reason ,loc_to, loc_from, f, int_max, int_min, ...)
             if g:GetCount() > 0 then
                 return VgF.Sendto(loc_to, g, nil, reason)
             end
-        elseif loc_to == LOCATION_VZONE then
+        elseif loc_to == LOCATION_V_CIRCLE then
             local g = VgF.SelectMatchingCard(HINTMSG_CALL, e, tp, function (c)
                 if not VgF.IsCanBeCalled(c, e, tp) then return false end
                 return VgF.GetValueType(f) ~= "function" or f(c, table.unpack(ext_params))
@@ -1132,37 +1132,37 @@ function VgF.SelectMatchingCard(hintmsg, e, select_tp, f, tp, loc_self, loc_op, 
     local g = Group.CreateGroup()
     local loc_self_f = VgF.True
     local loc_op_f = VgF.True
-    if bit.band(loc_self, LOCATION_VZONE) > 0 and bit.band(loc_self, LOCATION_RZONE) > 0 then
-        loc_self = loc_self - LOCATION_VZONE - LOCATION_RZONE
+    if bit.band(loc_self, LOCATION_V_CIRCLE) > 0 and bit.band(loc_self, LOCATION_R_CIRCLE) > 0 then
+        loc_self = loc_self - LOCATION_V_CIRCLE - LOCATION_R_CIRCLE
         if bit.band(loc_self, LOCATION_MZONE) == 0 then
             loc_self = loc_self + LOCATION_MZONE
         end
-    elseif bit.band(loc_self, LOCATION_VZONE) > 0 then
-        loc_self = loc_self - LOCATION_VZONE
+    elseif bit.band(loc_self, LOCATION_V_CIRCLE) > 0 then
+        loc_self = loc_self - LOCATION_V_CIRCLE
         loc_self_f = VgF.VMonsterFilter
         if bit.band(loc_self, LOCATION_MZONE) == 0 then
             loc_self = loc_self + LOCATION_MZONE
         end
-    elseif bit.band(loc_self, LOCATION_RZONE) > 0 then
-        loc_self = loc_self - LOCATION_RZONE
+    elseif bit.band(loc_self, LOCATION_R_CIRCLE) > 0 then
+        loc_self = loc_self - LOCATION_R_CIRCLE
         loc_self_f = VgF.RMonsterFilter
         if bit.band(loc_self, LOCATION_MZONE) == 0 then
             loc_self = loc_self + LOCATION_MZONE
         end
     end
-    if bit.band(loc_op, LOCATION_VZONE) > 0 and bit.band(loc_op, LOCATION_RZONE) > 0 then
-        loc_op = loc_op - LOCATION_VZONE - LOCATION_RZONE
+    if bit.band(loc_op, LOCATION_V_CIRCLE) > 0 and bit.band(loc_op, LOCATION_R_CIRCLE) > 0 then
+        loc_op = loc_op - LOCATION_V_CIRCLE - LOCATION_R_CIRCLE
         if bit.band(loc_op, LOCATION_MZONE) == 0 then
             loc_op = loc_op + LOCATION_MZONE
         end
-    elseif bit.band(loc_op, LOCATION_VZONE) > 0 then
-        loc_op = loc_op - LOCATION_VZONE
+    elseif bit.band(loc_op, LOCATION_V_CIRCLE) > 0 then
+        loc_op = loc_op - LOCATION_V_CIRCLE
         loc_op_f = VgF.VMonsterFilter
         if bit.band(loc_op, LOCATION_MZONE) == 0 then
             loc_op = loc_op + LOCATION_MZONE
         end
-    elseif bit.band(loc_op, LOCATION_RZONE) > 0 then
-        loc_op = loc_op - LOCATION_RZONE
+    elseif bit.band(loc_op, LOCATION_R_CIRCLE) > 0 then
+        loc_op = loc_op - LOCATION_R_CIRCLE
         loc_op_f = VgF.RMonsterFilter
         if bit.band(loc_op, LOCATION_MZONE) == 0 then
             loc_op = loc_op + LOCATION_MZONE
@@ -1220,37 +1220,37 @@ end
 function VgF.GetMatchingGroup(f, tp, loc_self, loc_op, except_g, ...)
     local loc_self_f = VgF.True
     local loc_op_f = VgF.True
-    if bit.band(loc_self, LOCATION_VZONE) > 0 and bit.band(loc_self, LOCATION_RZONE) > 0 then
-        loc_self = loc_self - LOCATION_VZONE - LOCATION_RZONE
+    if bit.band(loc_self, LOCATION_V_CIRCLE) > 0 and bit.band(loc_self, LOCATION_R_CIRCLE) > 0 then
+        loc_self = loc_self - LOCATION_V_CIRCLE - LOCATION_R_CIRCLE
         if bit.band(loc_self, LOCATION_MZONE) == 0 then
             loc_self = loc_self + LOCATION_MZONE
         end
-    elseif bit.band(loc_self, LOCATION_VZONE) > 0 then
-        loc_self = loc_self - LOCATION_VZONE
+    elseif bit.band(loc_self, LOCATION_V_CIRCLE) > 0 then
+        loc_self = loc_self - LOCATION_V_CIRCLE
         loc_self_f = VgF.VMonsterFilter
         if bit.band(loc_self, LOCATION_MZONE) == 0 then
             loc_self = loc_self + LOCATION_MZONE
         end
-    elseif bit.band(loc_self, LOCATION_RZONE) > 0 then
-        loc_self = loc_self - LOCATION_RZONE
+    elseif bit.band(loc_self, LOCATION_R_CIRCLE) > 0 then
+        loc_self = loc_self - LOCATION_R_CIRCLE
         loc_self_f = VgF.RMonsterFilter
         if bit.band(loc_self, LOCATION_MZONE) == 0 then
             loc_self = loc_self + LOCATION_MZONE
         end
     end
-    if bit.band(loc_op, LOCATION_VZONE) > 0 and bit.band(loc_op, LOCATION_RZONE) > 0 then
-        loc_op = loc_op - LOCATION_VZONE - LOCATION_RZONE
+    if bit.band(loc_op, LOCATION_V_CIRCLE) > 0 and bit.band(loc_op, LOCATION_R_CIRCLE) > 0 then
+        loc_op = loc_op - LOCATION_V_CIRCLE - LOCATION_R_CIRCLE
         if bit.band(loc_op, LOCATION_MZONE) == 0 then
             loc_op = loc_op + LOCATION_MZONE
         end
-    elseif bit.band(loc_op, LOCATION_VZONE) > 0 then
-        loc_op = loc_op - LOCATION_VZONE
+    elseif bit.band(loc_op, LOCATION_V_CIRCLE) > 0 then
+        loc_op = loc_op - LOCATION_V_CIRCLE
         loc_op_f = VgF.VMonsterFilter
         if bit.band(loc_op, LOCATION_MZONE) == 0 then
             loc_op = loc_op + LOCATION_MZONE
         end
-    elseif bit.band(loc_op, LOCATION_RZONE) > 0 then
-        loc_op = loc_op - LOCATION_RZONE
+    elseif bit.band(loc_op, LOCATION_R_CIRCLE) > 0 then
+        loc_op = loc_op - LOCATION_R_CIRCLE
         loc_op_f = VgF.RMonsterFilter
         if bit.band(loc_op, LOCATION_MZONE) == 0 then
             loc_op = loc_op + LOCATION_MZONE
@@ -1515,9 +1515,9 @@ end
 ---检查并转换 loc 以及 con 用于【起】等模板函数
 function VgF.GetLocCondition(loc, con)
     local con_exf = VgF.True
-    if loc == LOCATION_RZONE then
+    if loc == LOCATION_R_CIRCLE then
         loc, con_exf = LOCATION_MZONE, VgF.RMonsterCondition
-    elseif loc == LOCATION_VZONE then 
+    elseif loc == LOCATION_V_CIRCLE then 
         loc, con_exf = LOCATION_MZONE, VgF.VMonsterCondition
     end
     loc = loc or LOCATION_MZONE

@@ -3,11 +3,11 @@ function cm.initial_effect(c)
 	vgd.VgCard(c)
 	vgd.AbilityAuto(c,m,nil,EFFECT_TYPE_SINGLE,EVENT_SPSUMMON_SUCCESS,cm.op,vgf.CostAnd(vgf.DamageCost(1),vgf.LeaveFieldCost(vgf.RMonsterFilter,1,1,c)))
 	vgd.GlobalCheckEffect(c,m,EVENT_TO_GRAVE,cm.chkcon)
-	vgd.AbilityContChangeAttack(c,m,LOCATION_RZONE,EFFECT_TYPE_SINGLE,5000,cm.con)
+	vgd.AbilityContChangeAttack(c,m,LOCATION_R_CIRCLE,EFFECT_TYPE_SINGLE,5000,cm.con)
 end
 function cm.op(e,tp,eg,ep,ev,re,r,rp)
 	local c=e:GetHandler()
-	local g=vgf.SelectMatchingCard(HINTMSG_RMONSTER,e,tp,nil,tp,0,LOCATION_VZONE,1,1,nil)
+	local g=vgf.SelectMatchingCard(HINTMSG_RMONSTER,e,tp,nil,tp,0,LOCATION_V_CIRCLE,1,1,nil)
 	vgf.Sendto(LOCATION_DROP,g,REASON_EFFECT)
 	vgd.TriggerCountUp(c, m, 1, nil, RESET_PHASE+PHASE_END)
 end

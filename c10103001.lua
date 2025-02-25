@@ -6,7 +6,7 @@ function cm.initial_effect(c)
     vgd.AbilityAuto(c,m,LOCATION_MZONE,EFFECT_TYPE_FIELD,EVENT_BATTLED,cm.operation,vgf.DisCardCost(1),cm.condition,nil,1)
     vgd.GlobalCheckEffect(c,m,EVENT_MOVE,cm.checkcon,cm.checkop)
     --【永】【V】：你的回合中，你所有的等级3的单位的力量+2000。
-    vgd.AbilityContChangeAttack(c,m,LOCATION_MZONE,EFFECT_TYPE_FIELD,2000,cm.con,cm.target,LOCATION_MZONE+LOCATION_GCIRCLE,0)
+    vgd.AbilityContChangeAttack(c,m,LOCATION_MZONE,EFFECT_TYPE_FIELD,2000,cm.con,cm.target,LOCATION_MZONE+LOCATION_G_CIRCLE,0)
 end
 function cm.checkfilter(c,tp)
     return c:IsLocation(LOCATION_TRIGGER) and c:IsLevel(3) and c:IsControler(tp)
