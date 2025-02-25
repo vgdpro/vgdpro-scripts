@@ -2,11 +2,11 @@
 local cm,m,o=GetID()
 function cm.initial_effect(c)
     vgd.VgCard(c)
-    vgd.AbilityAct(c,m,LOCATION_MZONE,cm.operation,cm.cost,vgf.RMonsterCondition)
+    vgd.AbilityAct(c,m,LOCATION_CIRCLE,cm.operation,cm.cost,vgf.RMonsterCondition)
 end
 function cm.operation(e,tp,eg,ep,ev,re,r,rp)
     local c=e:GetHandler()
-    local g=vgf.SelectMatchingCard(HINTMSG_ATKUP,e,tp,cm.filter,tp,LOCATION_MZONE,0,1,1,nil)
+    local g=vgf.SelectMatchingCard(HINTMSG_ATKUP,e,tp,cm.filter,tp,LOCATION_CIRCLE,0,1,1,nil)
     vgf.AtkUp(c,g,10000,nil)
 end
 function cm.filter(c)
@@ -15,6 +15,6 @@ end
 function cm.cost(e,tp,eg,ep,ev,re,r,rp,chk)
     local c=e:GetHandler()
     if chk==0 then return c:IsRelateToEffect(e) end
-    local rc=vgf.GetMatchingGroup(vgf.VMonsterFilter,tp,LOCATION_MZONE,0,nil):GetFirst()
-	vgf.Sendto(LOCATION_OVERLAY,c,rc)
+    local rc=vgf.GetMatchingGroup(vgf.VMonsterFilter,tp,LOCATION_CIRCLE,0,nil):GetFirst()
+	vgf.Sendto(LOCATION_SOUL,c,rc)
 end

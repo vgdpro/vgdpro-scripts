@@ -13,5 +13,5 @@ function cm.initial_effect(c)
 	local e2=e1:Clone()
     e2:SetCode(AFFECT_CODE_ALCHEMAGIC_DIFFERENT_NAME)
     c:RegisterEffect(e2)
-	vgd.AbilityAct(c,m,LOCATION_MZONE,vgf.CardsFromTo(REASON_EFFECT,LOCATION_MZONE,LOCATION_DROP),vgf.DamageCost(1),vgf.VMonsterCondition,nil,1)
+	vgd.AbilityAct(c,m,LOCATION_CIRCLE,vgf.CardsFromTo(REASON_EFFECT,LOCATION_CIRCLE,LOCATION_DROP),vgf.DamageCost(1),vgf.VMonsterCondition,nil,1)
 end

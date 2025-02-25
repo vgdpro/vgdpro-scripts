@@ -12,7 +12,7 @@ function cm.op(e,tp,eg,ep,ev,re,r,rp)
 	vgd.TriggerCountUp(c, m, 1, nil, RESET_PHASE+PHASE_END)
 end
 function cm.checkfilter(c,tp)
-	return c:IsControler(tp) and c:IsPreviousLocation(LOCATION_MZONE)
+	return c:IsControler(tp) and c:IsPreviousLocation(LOCATION_CIRCLE)
 end
 function cm.chkcon(e,tp,eg,ep,ev,re,r,rp)
     return eg:IsExists(cm.checkfilter,1,nil,Duel.GetTurnPlayer())

@@ -1,7 +1,7 @@
 local cm,m,o=GetID()
 function cm.initial_effect(c)
 	vgd.VgCard(c)
-	vgd.AbilityAuto(c,m,LOCATION_MZONE,EFFECT_TYPE_FIELD,EVENT_BATTLED,cm.op,vgf.CostAnd(vgf.OverlayCost(1),vgf.LeaveFieldCost()),cm.con)
+	vgd.AbilityAuto(c,m,LOCATION_CIRCLE,EFFECT_TYPE_FIELD,EVENT_BATTLED,cm.op,vgf.CostAnd(vgf.OverlayCost(1),vgf.LeaveFieldCost()),cm.con)
 end
 function cm.op(e,tp,eg,ep,ev,re,r,rp)
 	Duel.Draw(tp,1,REASON_EFFECT)

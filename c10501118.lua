@@ -18,7 +18,7 @@ function cm.op(e,tp,eg,ep,ev,re,r,rp)
     if g:GetCount()>0 then
         Duel.Hint(HINT_SELECTMSG,tp,HINTMSG_ATKUP)
         g=g:FilterSelect(tp,Card.IsCanBeEffectTarget,1,1,nil,e)
-        local ct=vgf.GetMatchingGroupCount(cm.filter,tp,LOCATION_MZONE,0,c)
+        local ct=vgf.GetMatchingGroupCount(cm.filter,tp,LOCATION_CIRCLE,0,c)
         local atk=5000*ct
         local e1=vgf.AtkUp(c,g,atk)
         vgf.EffectReset(c,e1,EVENT_BATTLED)
@@ -48,7 +48,7 @@ function cm.reptg(e,tp,eg,ep,ev,re,r,rp,chk)
             e1:SetType(EFFECT_TYPE_SINGLE)
             e1:SetCode(EFFECT_TO_GRAVE_REDIRECT)
             e1:SetProperty(EFFECT_FLAG_CANNOT_DISABLE)
-            e1:SetValue(LOCATION_OVERLAY)
+            e1:SetValue(LOCATION_SOUL)
             e1:SetReset(RESET_EVENT+RESETS_STANDARD+RESET_PHASE+PHASE_END)
             tc:RegisterEffect(e1)
         end

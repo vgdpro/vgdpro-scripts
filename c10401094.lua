@@ -7,7 +7,7 @@ function cm.initial_effect(c)
 	vgd.NightEffect(c,m)
 end
 function cm.operation(e,tp,eg,ep,ev,re,r,rp)
-	local g=vgf.SelectMatchingCard(HINTMSG_OPPO,e,tp,cm.filter,tp,0,LOCATION_MZONE,1,1,nil)
+	local g=vgf.SelectMatchingCard(HINTMSG_OPPO,e,tp,cm.filter,tp,0,LOCATION_CIRCLE,1,1,nil)
 	vgf.Sendto(LOCATION_DROP,g,REASON_EFFECT)
 end
 function cm.filter(c)

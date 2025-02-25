@@ -1,7 +1,7 @@
 local cm,m,o=GetID()
 function cm.initial_effect(c)
 	vgd.VgCard(c)
-	vgd.AbilityAuto(c,m,LOCATION_MZONE,EFFECT_TYPE_SINGLE,EVENT_ATTACK_ANNOUNCE,cm.op,vgf.DamageCost(1),vgf.VMonsterCondition)
+	vgd.AbilityAuto(c,m,LOCATION_CIRCLE,EFFECT_TYPE_SINGLE,EVENT_ATTACK_ANNOUNCE,cm.op,vgf.DamageCost(1),vgf.VMonsterCondition)
 end
 function cm.op(e,tp,eg,ep,ev,re,r,rp)
 	local c=e:GetHandler()
@@ -14,15 +14,15 @@ function cm.op(e,tp,eg,ep,ev,re,r,rp)
 		end
 	end
 	if ct>=15 then
-		local g1=vgf.GetMatchingGroup(vgf.RMonsterFilter,tp,LOCATION_MZONE,0,nil)
-		local g2=vgf.GetMatchingGroup(vgf.RMonsterFilter,tp,0,LOCATION_MZONE,nil)
+		local g1=vgf.GetMatchingGroup(vgf.RMonsterFilter,tp,LOCATION_CIRCLE,0,nil)
+		local g2=vgf.GetMatchingGroup(vgf.RMonsterFilter,tp,0,LOCATION_CIRCLE,nil)
 		local tc1=vgf.GetVMonster(tp)
 		local tc2=vgf.GetVMonster(1-tp)
-		vgf.Sendto(LOCATION_OVERLAY,g1,tc1)
-		vgf.Sendto(LOCATION_OVERLAY,g2,tc2)
+		vgf.Sendto(LOCATION_SOUL,g1,tc1)
+		vgf.Sendto(LOCATION_SOUL,g2,tc2)
 		if vgf.GetAvailableLocation(tp)>0 then
 			local g=tc1:GetOverlayGroup():FilterSelect(tp,vgf.IsCanBeCalled,tp,0,2,nil,e,tp)
-			vgf.Sendto(LOCATION_MZONE,g,0,tp)
+			vgf.Sendto(LOCATION_CIRCLE,g,0,tp)
 		end
 	end
 end

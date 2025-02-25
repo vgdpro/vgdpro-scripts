@@ -4,7 +4,7 @@ function cm.initial_effect(c)
 	vgd.Order(c,m,cm.op,vgf.CostAnd(vgf.DamageCost(1),vgf.OverlayCost(1)))
 end
 function cm.op(e,tp,eg,ep,ev,re,r,rp,chk)
-	local g=vgf.SelectMatchingCard(HINTMSG_LEAVEFIELD,e,tp,vgf.RMonsterFilter,tp,LOCATION_MZONE,LOCATION_MZONE,1,1,nil)
+	local g=vgf.SelectMatchingCard(HINTMSG_LEAVEFIELD,e,tp,vgf.RMonsterFilter,tp,LOCATION_CIRCLE,LOCATION_CIRCLE,1,1,nil)
 	if g:GetCount()>0 then
 		vgf.Sendto(LOCATION_DROP,g,REASON_EFFECT)
 		local ct=bit.ReturnCount(vgf.GetAvailableLocation(tp))
@@ -13,7 +13,7 @@ function cm.op(e,tp,eg,ep,ev,re,r,rp,chk)
 		end
 		local sg=vgf.SelectMatchingCard(HINTMSG_CALL,e,tp,cm.filter,tp,LOCATION_DROP,0,0,ct,nil,g:GetFirst():GetLevel(),e,tp)
 		if sg:GetCount()>0 then
-			vgf.Sendto(LOCATION_MZONE,sg,0,tp)
+			vgf.Sendto(LOCATION_CIRCLE,sg,0,tp)
 		end
 	end
 end

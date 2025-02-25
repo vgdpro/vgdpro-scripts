@@ -1,7 +1,7 @@
 local cm,m,o=GetID()
 function cm.initial_effect(c)
 	vgd.VgCard(c)
-	vgd.AbilityAuto(c,m,LOCATION_MZONE,EFFECT_TYPE_SINGLE,EVENT_SPSUMMON_SUCCESS,cm.op,vgf.OverlayCost(1),cm.con)
+	vgd.AbilityAuto(c,m,LOCATION_CIRCLE,EFFECT_TYPE_SINGLE,EVENT_SPSUMMON_SUCCESS,cm.op,vgf.OverlayCost(1),cm.con)
 end
 function cm.con(e,tp,eg,ep,ev,re,r,rp)
 	return vgf.RSummonCondition(e) and vgf.GetVMonster(tp):IsSetCard(0x78)
@@ -20,7 +20,7 @@ function cm.op(e,tp,eg,ep,ev,re,r,rp)
 		Duel.Hint(HINT_SELECTMSG,tp,HINTMSG_CALL)
 		local sg=g:FilterSelect(tp,cm.filter,0,1,nil,e,tp)
 		if sg:GetCount()>0 then
-			vgf.Sendto(LOCATION_MZONE,sg,0,tp)
+			vgf.Sendto(LOCATION_CIRCLE,sg,0,tp)
 		end
 		Duel.ShuffleDeck(tp)
 	end

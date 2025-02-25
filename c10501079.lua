@@ -5,7 +5,7 @@ function cm.initial_effect(c)
     -- 【自】：这个单位被RIDE时，通过【费用】[灵魂爆发1]，选择你的弃牌区中的至多1张〈幽灵〉，加入手牌。
     vgd.BeRidedByCard(c,m,nil,cm.op,OverlayCost(1))
     -- 【永】【V/R】：你的回合中，你的R上有〈幽灵〉的话，这个单位的力量+2000。
-	vgd.AbilityCont(c, m, LOCATION_MZONE, EFFECT_TYPE_SINGLE, EFFECT_UPDATE_ATTACK, 2000, cm.con)
+	vgd.AbilityCont(c, m, LOCATION_CIRCLE, EFFECT_TYPE_SINGLE, EFFECT_UPDATE_ATTACK, 2000, cm.con)
 end
 
 function cm.op(e,tp,eg,ep,ev,re,r,rp)
@@ -14,7 +14,7 @@ end
 
 function cm.con(e)
     local tp=e:GetHandlerPlayer()
-    return vgf.IsExistingMatchingCard(cm.filter1,tp,LOCATION_MZONE,0,1,nil) and Duel.GetTurnPlayer()==tp
+    return vgf.IsExistingMatchingCard(cm.filter1,tp,LOCATION_CIRCLE,0,1,nil) and Duel.GetTurnPlayer()==tp
 end
 
 function cm.filter(c)

@@ -9,6 +9,6 @@ end
 function cm.op(e,tp,eg,ep,ev,re,r,rp)
 	local c=e:GetHandler()
 	if c:IsRelateToEffect(e) and c:IsFaceup() then
-		vgf.Sendto(LOCATION_OVERLAY,c)
+		vgf.Sendto(LOCATION_SOUL,c)
 	end
 end

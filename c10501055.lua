@@ -14,6 +14,6 @@ function cm.operation(e,tp,eg,ep,ev,re,r,rp)
     local rc=vgf.GetVMonster(tp)
 	if c:IsRelateToEffect(e) then
         c:CancelToGrave()
-        vgf.Sendto(LOCATION_OVERLAY,c,rc)
+        vgf.Sendto(LOCATION_SOUL,c,rc)
     end
 end

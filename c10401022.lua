@@ -14,7 +14,7 @@ function cm.operation(e,tp,eg,ep,ev,re,r,rp)
     Duel.RegisterEffect(e1,tp)
 end
 function cm.op(e,tp,eg,ep,ev,re,r,rp)
-	local g=vgf.GetMatchingGroup(e,cm.filter,tp,LOCATION_MZONE,0,nil)
+	local g=vgf.GetMatchingGroup(e,cm.filter,tp,LOCATION_CIRCLE,0,nil)
 	for tc in vgf.Next(g) do
 		tc:RegisterFlagEffect(FLAG_ALSO_CAN_TRIGGER,RESET_EVENT+RESETS_STANDARD+RESET_PHASE+PHASE_END,0,1)
 	end

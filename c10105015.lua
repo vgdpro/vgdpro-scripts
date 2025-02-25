@@ -6,8 +6,8 @@ function cm.initial_effect(c)
 	vgd.CallInPrison(c,m)
 end
 function cm.cost(e,tp,eg,ep,ev,re,r,rp,chk)
-	if chk==0 then return vgf.IsExistingMatchingCard(cm.cfilter,tp,LOCATION_MZONE,0,1,nil) end
-	local g=vgf.SelectMatchingCard(HINTMSG_POSCHANGE,e,tp,cm.cfilter,tp,LOCATION_MZONE,0,1,nil)
+	if chk==0 then return vgf.IsExistingMatchingCard(cm.cfilter,tp,LOCATION_CIRCLE,0,1,nil) end
+	local g=vgf.SelectMatchingCard(HINTMSG_POSCHANGE,e,tp,cm.cfilter,tp,LOCATION_CIRCLE,0,1,nil)
 	Duel.ChangePosition(g,POS_FACEUP_DEFENCE)
 end
 function cm.cfilter(c)

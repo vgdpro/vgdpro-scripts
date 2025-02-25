@@ -2,7 +2,7 @@ local cm,m,o=GetID()
 function cm.initial_effect(c)
 	vgd.VgCard(c)
 	vgd.AbilityAuto(c,m,loc,EFFECT_TYPE_SINGLE,EVENT_SPSUMMON_SUCCESS,cm.op,nil,cm.con)
-	vgd.AbilityAuto(c,m,LOCATION_MZONE,EFFECT_TYPE_FIELD,EVENT_PHASE+PHASE_END,cm.op1,nil,cm.con1)
+	vgd.AbilityAuto(c,m,LOCATION_CIRCLE,EFFECT_TYPE_FIELD,EVENT_PHASE+PHASE_END,cm.op1,nil,cm.con1)
 	if not cm.global_check then
         cm.global_check=true
         local ge1=Effect.CreateEffect(c)
@@ -36,7 +36,7 @@ end
 function cm.op1(e,tp,eg,ep,ev,re,r,rp)
 	Duel.Hint(HINT_SELECTMSG,tp,HINTMSG_Call)
 	local g=vgf.GetVMonster(tp):GetOverlayGroup():FilterSelect(tp,cm.filter,1,1,nil,e,tp)
-	vgf.Sendto(LOCATION_MZONE,g,SUMMON_TYPE_RIDE,tp,"FromOverlayToV",POS_FACEDOWN_DEFENCE)
+	vgf.Sendto(LOCATION_CIRCLE,g,SUMMON_TYPE_RIDE,tp,"FromOverlayToV",POS_FACEDOWN_DEFENCE)
 end
 function cm.filter(c,e,tp)
 	return c:IsSetCard(0x202) and vgf.IsCanBeCalled(c,e,tp,SUMMON_TYPE_RIDE,POS_FACEDOWN_DEFENCE,"FromOverlayToV")

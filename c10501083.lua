@@ -3,7 +3,7 @@ local cm,m,o=GetID()
 function cm.initial_effect(c)
     vgd.VgCard(c)
     -- 【自】【R】：这个单位支援先导者时，抽1张卡，选择你的手牌中的1张卡，舍弃。
-    vgd.AbilityAuto(c,m,LOCATION_MZONE,EFFECT_TYPE_FIELD,EVENT_SUPPORT,cm.op,nil,cm.con)
+    vgd.AbilityAuto(c,m,LOCATION_CIRCLE,EFFECT_TYPE_FIELD,EVENT_SUPPORT,cm.op,nil,cm.con)
 end
 
 function cm.con(e,tp,eg,ep,ev,re,r,rp)

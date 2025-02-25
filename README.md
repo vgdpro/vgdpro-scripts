@@ -157,7 +157,7 @@ function cm.initial_effect(c)
 end
 function cm.operation(e,tp,eg,ep,ev,re,r,rp)
 	local c=e:GetHandler()
-	local g=vgf.SelectMatchingCard(HINTMSG_ATKUP,e,tp,nil,tp,LOCATION_MZONE,0,1,1,nil)
+	local g=vgf.SelectMatchingCard(HINTMSG_ATKUP,e,tp,nil,tp,LOCATION_CIRCLE,0,1,1,nil)
 	vgf.AtkUp(c,g,5000,nil)
 	vgf.CardsFromTo(REASON_EFFECT,LOCATION_HAND,LOCATION_DROP,cm.filter)(e,tp,eg,ep,ev,re,r,rp)
 end
@@ -184,7 +184,7 @@ vgd.BeRidedByCard(c, m[, code, op, cost, con, tg])
 local cm,m,o=GetID()
 function cm.initial_effect(c)
 	vgf.VgCard(c)
-	vgd.BeRidedByCard(c,m,10101002,vgf.CardsFromTo(REASON_EFFECT,LOCATION_MZONE,LOCATION_DECK,cm.filter))
+	vgd.BeRidedByCard(c,m,10101002,vgf.CardsFromTo(REASON_EFFECT,LOCATION_CIRCLE,LOCATION_DECK,cm.filter))
 end
 function cm.filter(c)
 	return c:IsCode(10101009)
@@ -199,7 +199,7 @@ vgd.AbilityAuto(c, m, loc, typ, code[, op, cost, con, tg, count, property])
 
 参数注释
 
-> **loc : 发动的区域（vg的描述中会在效果类型后描述这个效果在哪些区域适用） `填 nil 则默认为 LOCATION_MZONE`**
+> **loc : 发动的区域（vg的描述中会在效果类型后描述这个效果在哪些区域适用） `填 nil 则默认为 LOCATION_CIRCLE`**
 > 
 > **typ : 自身状态变化触发/场上的卡状态变化触发 `填 nil 则填默认为 EFFECT_TYPE_SINGLE`**
 > 
@@ -217,7 +217,7 @@ vgd.AbilityAuto(c, m, loc, typ, code[, op, cost, con, tg, count, property])
 local cm,m,o=GetID()
 function cm.initial_effect(c)
 	vgf.VgCard(c)
-	vgd.AbilityAuto(c,m,LOCATION_MZONE,EFFECT_TYPE_SINGLE,EVENT_ATTACK_ANNOUNCE,cm.operation,nil,cm.condition)
+	vgd.AbilityAuto(c,m,LOCATION_CIRCLE,EFFECT_TYPE_SINGLE,EVENT_ATTACK_ANNOUNCE,cm.operation,nil,cm.condition)
 end
 function cm.operation(e,tp,eg,ep,ev,re,r,rp)
 	local c=e:GetHandler()
@@ -225,10 +225,10 @@ function cm.operation(e,tp,eg,ep,ev,re,r,rp)
 		local e1=vgf.AtkUp(c,c,5000,nil)
 		vgf.EffectReset(c,e1,EVENT_BATTLED)
 	end
-	if vgf.GetMatchingGroup(vgf.VMonsterFilter,tp,LOCATION_MZONE,0,nil,nil):GetFirst():GetOverlayCount()>=2 and Duel.SelectEffectYesNo(tp,vgf.stringid(VgID,10)) then
-		local cg=vgf.GetMatchingGroup(vgf.VMonsterFilter,tp,LOCATION_MZONE,0,nil):GetFirst():GetOverlayGroup():Select(tp,2,2,nil)
+	if vgf.GetMatchingGroup(vgf.VMonsterFilter,tp,LOCATION_CIRCLE,0,nil,nil):GetFirst():GetOverlayCount()>=2 and Duel.SelectEffectYesNo(tp,vgf.stringid(VgID,10)) then
+		local cg=vgf.GetMatchingGroup(vgf.VMonsterFilter,tp,LOCATION_CIRCLE,0,nil):GetFirst():GetOverlayGroup():Select(tp,2,2,nil)
         if vgf.Sendto(LOCATION_DROP,cg,REASON_COST)==2 then
-			local g=vgf.SelectMatchingCard(HINTMSG_LEAVEFIELD,e,tp,vgf.RMonsterFilter,tp,0,LOCATION_MZONE,1,1,nil)
+			local g=vgf.SelectMatchingCard(HINTMSG_LEAVEFIELD,e,tp,vgf.RMonsterFilter,tp,0,LOCATION_CIRCLE,1,1,nil)
 			vgf.Sendto(LOCATION_DROP,g,REASON_EFFECT)
 		end
 	end
@@ -247,7 +247,7 @@ VgD.AbilityAct(c, m[, loc, op, cost, con, tg, count, property])
 
 参数注释
 
-> **loc : 发动的区域（vg的描述中会在效果类型后描述这个效果在哪些区域适用） `填 nil 则默认为 LOCATION_MZONE`**
+> **loc : 发动的区域（vg的描述中会在效果类型后描述这个效果在哪些区域适用） `填 nil 则默认为 LOCATION_CIRCLE`**
 > 
 > **count : 效果的次数限制**
 >
@@ -261,7 +261,7 @@ VgD.AbilityAct(c, m[, loc, op, cost, con, tg, count, property])
 local cm,m,o=GetID()
 function cm.initial_effect(c)
 	vgf.VgCard(c)
-	vgd.AbilityAct(c,m,LOCATION_MZONE,vgf.CardsFromTo(REASON_EFFECT,LOCATION_HAND,LOCATION_MZONE,LOCATION_DROP,cm.filter),vgf.DisCardCost(1),nil,nil,1)
+	vgd.AbilityAct(c,m,LOCATION_CIRCLE,vgf.CardsFromTo(REASON_EFFECT,LOCATION_HAND,LOCATION_CIRCLE,LOCATION_DROP,cm.filter),vgf.DisCardCost(1),nil,nil,1)
 end
 function cm.filter(c)
 	return c:IsLevel(0)
@@ -276,7 +276,7 @@ vgd.AbilityContChangeAttack(c,m, loc, typ, val[, con, tg, loc_self, loc_op, rese
 
 参数注释
 
-> **loc : 发动的区域（vg的描述中会在效果类型后描述这个效果在哪些区域适用） `填 nil 则默认为 LOCATION_MZONE`**
+> **loc : 发动的区域（vg的描述中会在效果类型后描述这个效果在哪些区域适用） `填 nil 则默认为 LOCATION_CIRCLE`**
 > 
 > **typ : 自身力量上升/场上的卡力量上升 `填 nil 则填默认为 EFFECT_TYPE_SINGLE`**
 > 
@@ -294,7 +294,7 @@ vgd.AbilityContChangeAttack(c,m, loc, typ, val[, con, tg, loc_self, loc_op, rese
 local cm,m,o=GetID()
 function cm.initial_effect(c)
 	vgf.VgCard(c)
-	vgd.AbilityContChangeAttack(c,m,LOCATION_MZONE,EFFECT_TYPE_SINGLE,5000,function(e) return vgf.RMonsterCondition(e) and cm.con(e) end)
+	vgd.AbilityContChangeAttack(c,m,LOCATION_CIRCLE,EFFECT_TYPE_SINGLE,5000,function(e) return vgf.RMonsterCondition(e) and cm.con(e) end)
 	vgd.AbilityContChangeDefense(c,m,EFFECT_TYPE_SINGLE,5000,cm.con)
 end
 function cm.con(e)
@@ -352,13 +352,13 @@ function cm.initial_effect(c)
     e2:SetType(EFFECT_TYPE_SINGLE)
     e2:SetProperty(EFFECT_FLAG_SINGLE_RANGE)
     e2:SetCode(EFFECT_ADD_SKILL)
-    e2:SetRange(LOCATION_MZONE)
+    e2:SetRange(LOCATION_CIRCLE)
     e2:SetValue(SKILL_SUPPORT)
     e2:SetCondition(cm.condition)
     c:RegisterEffect(e2)
 end
 function cm.condition(e,tp,eg,ep,ev,re,r,rp)
-    return vgf.VMonsterCondition(e) and vgf.IsExistingMatchingCard(Card.IsLevel,tp,LOCATION_MZONE,0,3,nil,3)
+    return vgf.VMonsterCondition(e) and vgf.IsExistingMatchingCard(Card.IsLevel,tp,LOCATION_CIRCLE,0,3,nil,3)
 end
 ```
 
@@ -502,14 +502,14 @@ vgf..Sendto(loc,sg,...)
 > 
 > **LOCATION_HAND : p | nil,reason `p为送去的玩家，送去原本持有者则填nil`**
 > 
-> **LOCATION_REMOVED : pos,reason**
+> **LOCATION_BIND : pos,reason**
 > 
-> **LOCATION_EXILE : reason**
+> **LOCATION_REMOVED : reason**
 > 
-> **LOCATION_OVERLAY : c `c为叠放的卡，填nil | 不填则为先导者`**
+> **LOCATION_SOUL : c `c为叠放的卡，填nil | 不填则为先导者`**
 > 
 > **LOCATION_TRIGGER : tp**
 > 
-> **LOCATION_MZONE : sumtype,tp,zone,pos**
+> **LOCATION_CIRCLE : sumtype,tp,zone,pos**
 > 
 > **其他区域 : tp,pos,reason**

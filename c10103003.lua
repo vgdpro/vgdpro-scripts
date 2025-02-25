@@ -3,7 +3,7 @@ local cm,m,o=GetID()
 function cm.initial_effect(c)
     vgd.VgCard(c)
     vgd.BeRidedByCard(c,m,10103002,cm.operation,cm.cost)
-    vgd.AbilityAct(c,m,LOCATION_MZONE,cm.operation2,vgf.DamageCost(1),vgf.RMonsterCondition,nil,1)
+    vgd.AbilityAct(c,m,LOCATION_CIRCLE,cm.operation2,vgf.DamageCost(1),vgf.RMonsterCondition,nil,1)
 end
 function cm.cost(e,tp,eg,ep,ev,re,r,rp,chk)
     if chk==0 then return vgf.IsExistingMatchingCard(Card.IsLevel,tp,LOCATION_HAND,0,2,nil,3) end
@@ -17,14 +17,14 @@ function cm.operation(e,tp,eg,ep,ev,re,r,rp)
     local tc=vgf.ReturnCard(g)
     Duel.DisableShuffleCheck()
     if vgf.IsCanBeCalled(tc,e,tp) then
-        vgf.Sendto(LOCATION_MZONE,g,0,tp)
+        vgf.Sendto(LOCATION_CIRCLE,g,0,tp)
     else
         vgf.Sendto(LOCATION_DROP,g,REASON_EFFECT)
     end
 end
 function cm.operation2(e,tp,eg,ep,ev,re,r,rp)
     local c=e:GetHandler()
-    local g=vgf.SelectMatchingCard(HINTMSG_ATKUP,e,tp,cm.filter,tp,LOCATION_MZONE,0,1,1,nil)
+    local g=vgf.SelectMatchingCard(HINTMSG_ATKUP,e,tp,cm.filter,tp,LOCATION_CIRCLE,0,1,1,nil)
     if g:GetCount()>0 then
         vgf.AtkUp(c,g,5000)
     end

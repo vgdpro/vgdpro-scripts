@@ -1,14 +1,14 @@
 local cm,m,o=GetID()
 function cm.initial_effect(c)
 	vgd.VgCard(c)
-	vgd.AbilityAuto(c,m,LOCATION_MZONE,EFFECT_TYPE_SINGLE,EVENT_HITTING,cm.op,cm.cost)
+	vgd.AbilityAuto(c,m,LOCATION_CIRCLE,EFFECT_TYPE_SINGLE,EVENT_HITTING,cm.op,cm.cost)
 end
 function cm.op(e,tp,eg,ep,ev,re,r,rp)
-	local g=vgf.SelectMatchingCard(HINTMSG_LEAVEFIELD,e,tp,cm.filter,tp,0,LOCATION_MZONE,1,1,nil)
+	local g=vgf.SelectMatchingCard(HINTMSG_LEAVEFIELD,e,tp,cm.filter,tp,0,LOCATION_CIRCLE,1,1,nil)
 	vgf.Sendto(LOCATION_DROP,g,REASON_EFFECT)
 	Duel.BreakEffect()
 	if vgf.GetVMonster(tp):IsCode(10101001) then
-		vgf.CardsFromTo(REASON_EFFECT,LOCATION_MZONE,LOCATION_DROP,Card.IsLevel,1,0,0)(e,tp,eg,ep,ev,re,r,rp)
+		vgf.CardsFromTo(REASON_EFFECT,LOCATION_CIRCLE,LOCATION_DROP,Card.IsLevel,1,0,0)(e,tp,eg,ep,ev,re,r,rp)
 	end
 end
 function cm.filter(c)

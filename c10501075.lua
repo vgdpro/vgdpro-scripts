@@ -7,7 +7,7 @@ function cm.initial_effect(c)
 	vgd.AbilityAuto(c, m,nil,nil,EVENT_TO_G_CIRCLE,cm.op,nil,vgf.DarkWing)
 end
 function cm.op(e,tp,eg,ep,ev,re,r,rp)
-	local g=vgf.SelectMatchingCard(HINTMSG_OPPO,e,tp,cm.filter,tp,0,LOCATION_MZONE,1,1,nil)
+	local g=vgf.SelectMatchingCard(HINTMSG_OPPO,e,tp,cm.filter,tp,0,LOCATION_CIRCLE,1,1,nil)
 	if g:GetCount()>0 then
 		Duel.ChangePosition(g,POS_FACEUP_DEFENSE)
 	end

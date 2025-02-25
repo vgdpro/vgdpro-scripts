@@ -1,8 +1,8 @@
 local cm,m,o=GetID()
 function cm.initial_effect(c)
 	vgd.VgCard(c)
-	vgd.AbilityAuto(c,m,LOCATION_MZONE,EFFECT_TYPE_FIELD,EVENT_MOVE,cm.op,nil,cm.con)
-	vgd.AbilityAct(c,m,LOCATION_MZONE,cm.op1,cm.cost1,cm.con1,nil,1)
+	vgd.AbilityAuto(c,m,LOCATION_CIRCLE,EFFECT_TYPE_FIELD,EVENT_MOVE,cm.op,nil,cm.con)
+	vgd.AbilityAct(c,m,LOCATION_CIRCLE,cm.op1,cm.cost1,cm.con1,nil,1)
 	vgd.GlobalCheckEffect(c,m,EVENT_SPSUMMON_SUCCESS,cm.checkcon)
 end
 function cm.con(e,tp,eg,ep,ev,re,r,rp)
@@ -13,7 +13,7 @@ function cm.filter(c,tp)
 end
 function cm.op(e,tp,eg,ep,ev,re,r,rp)
 	local c=e:GetHandler()
-	local g=vgf.SelectMatchingCard(HINTMSG_RMONSTER,e,tp,vgf.RMonsterFilter,tp,LOCATION_MZONE,0,1,1,nil)
+	local g=vgf.SelectMatchingCard(HINTMSG_RMONSTER,e,tp,vgf.RMonsterFilter,tp,LOCATION_CIRCLE,0,1,1,nil)
 	vgf.AtkUp(c,g,10000)
 end
 function cm.checkcon(e,tp,eg,ep,ev,re,r,rp)

@@ -1,11 +1,11 @@
 local cm,m,o=GetID()
 function cm.initial_effect(c)
 	vgd.VgCard(c)
-	vgd.AbilityAuto(c,m,LOCATION_MZONE,EFFECT_TYPE_SINGLE,EVENT_BATTLED,cm.operation,vgf.CostAnd(vgf.OverlayCost(1),vgf.LeaveFieldCost()),cm.condition)
+	vgd.AbilityAuto(c,m,LOCATION_CIRCLE,EFFECT_TYPE_SINGLE,EVENT_BATTLED,cm.operation,vgf.CostAnd(vgf.OverlayCost(1),vgf.LeaveFieldCost()),cm.condition)
 end
 function cm.condition(e,tp,eg,ep,ev,re,r,rp)
 	local c=e:GetHandler()
-	return vgf.RMonsterFilter(c) and vgf.VMonsterFilter(Duel.GetAttackTarget()) and vgf.IsExistingMatchingCard(nil,tp,LOCATION_MZONE+LOCATION_DROP,0,4,nil)
+	return vgf.RMonsterFilter(c) and vgf.VMonsterFilter(Duel.GetAttackTarget()) and vgf.IsExistingMatchingCard(nil,tp,LOCATION_CIRCLE+LOCATION_DROP,0,4,nil)
 end
 function cm.operation(e,tp,eg,ep,ev,re,r,rp)
     local g=Duel.GetDecktopGroup(tp,3)

@@ -12,7 +12,7 @@ function cm.initial_effect(c)
     local e2=Effect.CreateEffect(c)
     e2:SetType(EFFECT_TYPE_FIELD+EFFECT_TYPE_CONTINUOUS)
     e2:SetCode(EVENT_PHASE+PHASE_STANDBY)
-    e2:SetRange(LOCATION_EMBLEM)
+    e2:SetRange(LOCATION_CREST)
     e2:SetCountLimit(1)
     e2:SetCondition(cm.con2)
     e2:SetOperation(cm.op)
@@ -21,7 +21,7 @@ function cm.initial_effect(c)
     local e3=Effect.CreateEffect(c)
     e3:SetCategory(CATEGORY_DRAW)
     e3:SetType(EFFECT_TYPE_IGNITION)
-    e3:SetRange(LOCATION_EMBLEM)
+    e3:SetRange(LOCATION_CREST)
     e3:SetCountLimit(1)
     e3:SetCost(vgf.EnergyCost(7))
     e3:SetOperation(cm.op3)
@@ -29,23 +29,23 @@ function cm.initial_effect(c)
 end
 function cm.con1(e,tp,eg,ep,ev,re,r,rp)
     local c=e:GetHandler()
-    return c:IsLocation(LOCATION_EMBLEM) and e:GetHandlerPlayer()==1
+    return c:IsLocation(LOCATION_CREST) and e:GetHandlerPlayer()==1
 end
 function cm.op1(e,tp,eg,ep,ev,re,r,rp)
     local c=e:GetHandler()
     for i = 1, 3, 1 do
         local token=Duel.CreateToken(tp,20401001)
-        vgf.Sendto(LOCATION_EMBLEM,token,tp,POS_FACEUP,REASON_EFFECT)
+        vgf.Sendto(LOCATION_CREST,token,tp,POS_FACEUP,REASON_EFFECT)
     end
 end
 function cm.con2(e,tp,eg,ep,ev,re,r,rp)
-    return Duel.GetTurnPlayer()==tp and vgf.GetMatchingGroupCount(Card.IsCode,tp,LOCATION_EMBLEM,0,nil,20401001)<10
+    return Duel.GetTurnPlayer()==tp and vgf.GetMatchingGroupCount(Card.IsCode,tp,LOCATION_CREST,0,nil,20401001)<10
 end
 function cm.op2(e,tp,eg,ep,ev,re,r,rp)
     local c=e:GetHandler()
-    if vgf.GetMatchingGroupCount(Card.IsCode,tp,LOCATION_EMBLEM,0,nil,20401001)>=10 then return end
+    if vgf.GetMatchingGroupCount(Card.IsCode,tp,LOCATION_CREST,0,nil,20401001)>=10 then return end
     local token=Duel.CreateToken(tp,20401001)
-    vgf.Sendto(LOCATION_EMBLEM,token,tp,POS_FACEUP,REASON_EFFECT)
+    vgf.Sendto(LOCATION_CREST,token,tp,POS_FACEUP,REASON_EFFECT)
 end
 function cm.op3(e,tp,eg,ep,ev,re,r,rp)
     Duel.Draw(tp,1,REASON_EFFECT)

@@ -11,6 +11,6 @@ end
 function cm.op(e,tp,eg,ep,ev,re,r,rp)
 	local c=e:GetHandler()
 	vgf.Draw(0,1)(e,tp,eg,ep,ev,re,r,rp)
-	local g = vgf.SelectMatchingCard(HINTMSG_SELF,e,tp,LOCATION_REMOVED,0,0,1,nil)
+	local g = vgf.SelectMatchingCard(HINTMSG_SELF,e,tp,LOCATION_BIND,0,0,1,nil)
 	vgf.LevelUp(c,g,1)
 end

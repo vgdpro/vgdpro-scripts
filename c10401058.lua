@@ -10,5 +10,5 @@ function cm.op(e,tp,eg,ep,ev,re,r,rp)
 end
 function cm.con(e,tp,eg,ep,ev,re,r,rp)
 	local c=e:GetHandler()
-	return c:IsLocation(LOCATION_G_CIRCLE) and c:IsPreviousLocation(LOCATION_MZONE) and re:IsHasCategory(CATEGORY_DEFENDER)
+	return c:IsLocation(LOCATION_G_CIRCLE) and c:IsPreviousLocation(LOCATION_CIRCLE) and re:IsHasCategory(CATEGORY_DEFENDER)
 end

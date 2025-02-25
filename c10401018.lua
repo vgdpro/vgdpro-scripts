@@ -1,12 +1,12 @@
 local cm,m,o=GetID()
 function cm.initial_effect(c)
 	vgd.VgCard(c)
-	vgd.AbilityAuto(c,m,LOCATION_MZONE,EFFECT_TYPE_FIELD,EVENT_BATTLED,vgf.DamageFill(1),cm.cost,cm.con)
+	vgd.AbilityAuto(c,m,LOCATION_CIRCLE,EFFECT_TYPE_FIELD,EVENT_BATTLED,vgf.DamageFill(1),cm.cost,cm.con)
 end
 function cm.cost(e,tp,eg,ep,ev,re,r,rp,chk)
     local c=e:GetHandler()
     if chk==0 then return c:IsRelateToEffect(e) end
-	vgf.Sendto(LOCATION_OVERLAY,c)
+	vgf.Sendto(LOCATION_SOUL,c)
 end
 function cm.con(e,tp,eg,ep,ev,re,r,rp)
 	local c=e:GetHandler()

@@ -1,7 +1,7 @@
 local cm,m,o=GetID()
 function cm.initial_effect(c)
 	vgd.VgCard(c)
-	vgd.AbilityAuto(c,m,LOCATION_MZONE,EFFECT_TYPE_SINGLE,EVENT_SPSUMMON_SUCCESS,cm.operation,vgf.CostAnd(vgf.DamageCost(1),vgf.DisCardCost(1)),cm.condition)
+	vgd.AbilityAuto(c,m,LOCATION_CIRCLE,EFFECT_TYPE_SINGLE,EVENT_SPSUMMON_SUCCESS,cm.operation,vgf.CostAnd(vgf.DamageCost(1),vgf.DisCardCost(1)),cm.condition)
 end
 function cm.condition(e,tp,eg,ep,ev,re,r,rp)
 	local c=e:GetHandler()
@@ -16,7 +16,7 @@ function cm.operation(e,tp,eg,ep,ev,re,r,rp)
 	Duel.Hint(HINT_SELECTMSG,tp,HINTMSG_CALL)
 	local sg=g:FilterSelect(tp,vgf.IsCanBeCalled,0,ct,nil,e,tp)
 	if sg:GetCount()>0 then
-		vgf.Sendto(LOCATION_MZONE,sg,0,tp)
+		vgf.Sendto(LOCATION_CIRCLE,sg,0,tp)
 		g:Sub(sg)
 	end
 	if g:GetCount()>1 then

@@ -5,7 +5,7 @@ function cm.initial_effect(c)
 end
 function cm.val(e)
 	local tp=e:GetHandlerPlayer()
-	local ct=vgf.GetMatchingGroupCount(Card.IsLevel,tp,LOCATION_MZONE+LOCATION_G_CIRCLE,0,nil,3)
+	local ct=vgf.GetMatchingGroupCount(Card.IsLevel,tp,LOCATION_CIRCLE+LOCATION_G_CIRCLE,0,nil,3)
 	local val=math.floor(ct/2)*5000
 	return val
 end

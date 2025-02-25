@@ -10,7 +10,7 @@ function cm.op(e,tp,eg,ep,ev,re,r,rp)
 	vgf.SendtoPrison(g,tp)
 	if vgf.IsExistingMatchingCard(cm.filter,tp,LOCATION_ORDER,0,3,nil) then
 		Duel.BreakEffect()
-		local sg=vgf.SelectMatchingCard(HINTMSG_ATKUP,e,tp,nil,tp,LOCATION_MZONE,0,1,1,nil)
+		local sg=vgf.SelectMatchingCard(HINTMSG_ATKUP,e,tp,nil,tp,LOCATION_CIRCLE,0,1,1,nil)
 		vgf.AtkUp(c,sg,5000)
 	end
 end

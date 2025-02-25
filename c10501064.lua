@@ -3,7 +3,7 @@ local cm,m,o=GetID()
 function cm.initial_effect(c)
     vgd.VgCard(c)
     -- 【自】：这个单位登场到R时，通过【费用】[计数爆发2]，查看你的牌堆顶的5张卡，选择至多2张触发单位卡，CALL到不存在单位的R上，然后牌堆洗切。
-    vgd.AbilityAuto(c,m,LOCATION_MZONE,EFFECT_TYPE_SINGLE,EVENT_SPSUMMON_SUCCESS,cm.op,vgf.DamageCost(2),cm.con)
+    vgd.AbilityAuto(c,m,LOCATION_CIRCLE,EFFECT_TYPE_SINGLE,EVENT_SPSUMMON_SUCCESS,cm.op,vgf.DamageCost(2),cm.con)
 end
 function cm.con(e,tp,eg,ep,ev,re,r,rp)
     
@@ -16,7 +16,7 @@ function cm.op(e,tp,eg,ep,ev,re,r,rp)
 	Duel.Hint(HINT_SELECTMSG,tp,HINTMSG_CALL)
 	local sg=g:FilterSelect(tp,cm.filter,0,2,nil,e,tp)
 	if #sg>0 then
-		vgf.Sendto(LOCATION_MZONE,sg,0,tp,"NoMonster")
+		vgf.Sendto(LOCATION_CIRCLE,sg,0,tp,"NoMonster")
 	end
 	Duel.ShuffleDeck(tp)
 end

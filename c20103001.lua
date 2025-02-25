@@ -1,8 +1,8 @@
 local cm,m,o=GetID()
 function cm.initial_effect(c)
 	vgd.VgCard(c)
-	vgd.AbilityAct(c,m,LOCATION_MZONE,cm.op,vgf.DamageCost(1),vgf.VMonsterCondition)
-	vgd.AbilityAuto(c,m,LOCATION_MZONE,EFFECT_TYPE_SINGLE,EVENT_ATTACK_ANNOUNCE,cm.op1,vgf.EnergyCost(4),cm.con)
+	vgd.AbilityAct(c,m,LOCATION_CIRCLE,cm.op,vgf.DamageCost(1),vgf.VMonsterCondition)
+	vgd.AbilityAuto(c,m,LOCATION_CIRCLE,EFFECT_TYPE_SINGLE,EVENT_ATTACK_ANNOUNCE,cm.op1,vgf.EnergyCost(4),cm.con)
 end
 function cm.op(e,tp,eg,ep,ev,re,r,rp)
 	local c=e:GetHandler()
@@ -19,7 +19,7 @@ function cm.con(e,tp,eg,ep,ev,re,r,rp)
 end
 function cm.op1(e,tp,eg,ep,ev,re,r,rp)
 	local c=e:GetHandler()
-	local g=vgf.SelectMatchingCard(HINTMSG_RMONSTER,e,tp,cm.filter,tp,LOCATION_MZONE,0,1,1,nil)
+	local g=vgf.SelectMatchingCard(HINTMSG_RMONSTER,e,tp,cm.filter,tp,LOCATION_CIRCLE,0,1,1,nil)
     if g:GetCount()>0 then
         Duel.ChangePosition(g,POS_FACEUP_ATTACK)
 		g:AddCard(c)

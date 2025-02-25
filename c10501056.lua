@@ -26,5 +26,5 @@ function cm.filter(c)
 end
 
 function cm.con1(e,tp,eg,ep,ev,re,r,rp)
-	return cm.con(e,tp,eg,ep,ev,re,r,rp) and Duel.IsExistingMatchingCard(cm.filter,tp,0,LOCATION_MZONE,1,nil)
+	return cm.con(e,tp,eg,ep,ev,re,r,rp) and Duel.IsExistingMatchingCard(cm.filter,tp,0,LOCATION_CIRCLE,1,nil)
 end

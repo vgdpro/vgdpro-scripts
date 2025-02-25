@@ -8,5 +8,5 @@ function cm.op(e,tp,eg,ep,ev,re,r,rp)
 end
 function cm.cost(e,tp,eg,ep,ev,re,r,rp,chk)
 	if chk==0 then return vgf.IsExistingMatchingCard(nil,tp,LOCATION_HAND,0,1,nil) end
-	vgf.CardsFromTo(REASON_EFFECT,LOCATION_OVERLAY,LOCATION_HAND,nil,1)
+	vgf.CardsFromTo(REASON_EFFECT,LOCATION_SOUL,LOCATION_HAND,nil,1)
 end

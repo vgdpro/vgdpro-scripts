@@ -10,6 +10,6 @@ function cm.condition(e,tp,eg,ep,ev,re,r,rp)
 end
 function cm.operation(e,tp,eg,ep,ev,re,r,rp)
 	local c=e:GetHandler()
-	local rc=vgf.GetMatchingGroup(vgf.VMonsterFilter,tp,LOCATION_MZONE,0,nil):GetFirst()
-	if c:IsRelateToEffect(e) then vgf.Sendto(LOCATION_OVERLAY,c,rc) end
+	local rc=vgf.GetMatchingGroup(vgf.VMonsterFilter,tp,LOCATION_CIRCLE,0,nil):GetFirst()
+	if c:IsRelateToEffect(e) then vgf.Sendto(LOCATION_SOUL,c,rc) end
 end

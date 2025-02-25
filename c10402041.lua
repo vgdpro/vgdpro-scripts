@@ -1,7 +1,7 @@
 local cm,m,o=GetID()
 function cm.initial_effect(c)
 	vgd.VgCard(c)
-    vgd.AbilityAct(c,m,LOCATION_MZONE,cm.operation,vgf.Rest(),cm.con)
+    vgd.AbilityAct(c,m,LOCATION_CIRCLE,cm.operation,vgf.Rest(),cm.con)
 end
 function cm.con(e,tp,eg,ep,ev,re,r,rp)
 	return vgf.RMonsterCondition(e) and vgf.GetMatchingGroupCount(cm.filter,tp,LOCATION_ORDER,0,nil)<=1

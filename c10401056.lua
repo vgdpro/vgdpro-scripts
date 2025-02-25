@@ -6,10 +6,10 @@ end
 function cm.con(e,tp,eg,ep,ev,re,r,rp)
 	local c=e:GetHandler()
 	return vgf.RSummonCondition(e)
-		and vgf.IsExistingMatchingCard(cm.filter,tp,LOCATION_MZONE,0,1,nil)
+		and vgf.IsExistingMatchingCard(cm.filter,tp,LOCATION_CIRCLE,0,1,nil)
 end
 function cm.op(e,tp,eg,ep,ev,re,r,rp)
-	local g=vgf.SelectMatchingCard(HINTMSG_LEAVEFIELD,e,tp,vgf.RMonsterFilter,tp,0,LOCATION_MZONE,1,1,nil)
+	local g=vgf.SelectMatchingCard(HINTMSG_LEAVEFIELD,e,tp,vgf.RMonsterFilter,tp,0,LOCATION_CIRCLE,1,1,nil)
 	vgf.Sendto(LOCATION_DROP,g,REASON_EFFECT)
 end
 function cm.filter(c)

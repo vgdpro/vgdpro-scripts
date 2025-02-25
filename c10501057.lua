@@ -20,7 +20,7 @@ end
 
 function cm.op2(e,tp,eg,ep,ev,re,r,rp)
 	local c=e:GetHandler()
-	local g=vgf.GetMatchingGroup(vgf.FrontFilter,tp,LOCATION_MZONE,0,nil)
+	local g=vgf.GetMatchingGroup(vgf.FrontFilter,tp,LOCATION_CIRCLE,0,nil)
 	vgf.AtkUp(c,g,5000)
 end
 

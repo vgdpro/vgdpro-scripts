@@ -8,7 +8,7 @@ end
 
 function cm.op(e,tp,eg,ep,ev,re,r,rp)
     Duel.Hint(HINT_SELECTMSG,tp,HINTMSG_ATKUP)
-    local g = vgf.SelectMatchingCard(HINTMSG_ATKUP,e,tp,cm.filter,tp,LOCATION_MZONE,0,1,1,nil)
+    local g = vgf.SelectMatchingCard(HINTMSG_ATKUP,e,tp,cm.filter,tp,LOCATION_CIRCLE,0,1,1,nil)
     vgf.AtkUp(c,g,10000)
 end
 

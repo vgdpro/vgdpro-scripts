@@ -2,7 +2,7 @@ local cm,m,o=GetID()
 function cm.initial_effect(c)
 	vgd.VgCard(c)
 	vgd.Order(c,m,cm.op,cm.cost)
-	vgf.AddAlchemagicFrom(c,m,"LOCATION_OVERLAY")
+	vgf.AddAlchemagicFrom(c,m,"LOCATION_SOUL")
 	vgf.AddAlchemagicTo(c,m,"LOCATION_DROP")
 	vgf.AddAlchemagicFilter(c,m,function (tc) return tc:IsLevel(3) end)
 	vgf.AddAlchemagicCountMin(c,m,1)
@@ -12,7 +12,7 @@ function cm.filter(c,p)
 	return c:IsControler(p) and vgf.RMonsterFilter(c)
 end
 function cm.op(e,tp,eg,ep,ev,re,r,rp)
-	local g=vgf.SelectMatchingCard(HINTMSG_OPPO,e,tp,vgf.RMonsterFilter,tp,0,LOCATION_MZONE,1,1,nil)
+	local g=vgf.SelectMatchingCard(HINTMSG_OPPO,e,tp,vgf.RMonsterFilter,tp,0,LOCATION_CIRCLE,1,1,nil)
 	if g:GetCount()==0 then return end
 	local sg=vgf.GetColumnGroup(g:GetFirst()):Filter(cm.filter,nil,1-tp)
 	if sg:GetCount()>0 then g:Sub(sg) end
@@ -28,9 +28,9 @@ function cm.op(e,tp,eg,ep,ev,re,r,rp)
 end
 function cm.cost(e,tp,eg,ep,ev,re,r,rp,chk)
 	if chk==0 then
-		vgf.GetMatchingGroup(vgf.VMonsterFilter,tp,LOCATION_MZONE,0,nil,nil):GetFirst():GetOverlayGroup():IsExists(Card.IsLevel,1,nil,3)
+		vgf.GetMatchingGroup(vgf.VMonsterFilter,tp,LOCATION_CIRCLE,0,nil,nil):GetFirst():GetOverlayGroup():IsExists(Card.IsLevel,1,nil,3)
 	end
 	Duel.Hint(HINT_SELECTMSG,tp,HINTMSG_REMOVEXYZ)
-	local g=vgf.GetMatchingGroup(vgf.VMonsterFilter,tp,LOCATION_MZONE,0,nil):GetFirst():GetOverlayGroup():FilterSelect(tp,Card.IsLevel,1,1,nil,3)
+	local g=vgf.GetMatchingGroup(vgf.VMonsterFilter,tp,LOCATION_CIRCLE,0,nil):GetFirst():GetOverlayGroup():FilterSelect(tp,Card.IsLevel,1,1,nil,3)
 	vgf.Sendto(LOCATION_DROP,g,REASON_COST)
 end
