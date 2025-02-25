@@ -7,5 +7,5 @@ function cm.initial_effect(c)
 	vgd.AbilityCont(c, m, LOCATION_CIRCLE, EFFECT_TYPE_SINGLE, EFFECT_UPDATE_ATTACK, 10000, cm.con)
 end
  function cm.con(e,tp,eg,ep,ev,re,r,rp)
-    return vgf.WhiteWing(e) and Duel.GetTurnPlayer()==tp and vgf.RMonsterCondition(e)
+    return vgf.WhiteWings(e) and Duel.GetTurnPlayer()==tp and vgf.RMonsterCondition(e)
 end

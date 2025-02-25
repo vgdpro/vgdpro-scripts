@@ -563,7 +563,7 @@ function VgF.IsAbleToGCircle(c)
         if Duel.IsPlayerAffectedByEffect(c:GetControler(), AFFECT_CODE_DEFENDER_CANNOT_TO_G_CIRCLE) and c:GetBaseDefense() == 0 then return false end
         return c:IsType(TYPE_UNIT)
     elseif c:IsLocation(LOCATION_CIRCLE) then
-        return c:IsAttribute(SKILL_BLOCK) and VgF.IsSequence(c, 0, 4) and c:IsLocation(LOCATION_CIRCLE) and c:IsFaceup()
+        return c:IsSkill(SKILL_INTERCEPT) and VgF.IsSequence(c, 0, 4) and c:IsLocation(LOCATION_CIRCLE) and c:IsFaceup()
     end
     return false
 end
@@ -888,6 +888,14 @@ function VgF.CardsFromTo(reason ,loc_to, loc_from, f, int_max, int_min, ...)
         end
         return 0
     end
+end
+
+function Card.IsSkill(c, skill)
+    return c:IsAttribute(skill)
+end
+
+function Card.IsTrigger(c, skill)
+    return c:IsRace(skill)
 end
 
 function Group.ForEach(g, f, ...)
@@ -1380,7 +1388,7 @@ function VgF.Sendto(loc, sg, ...)
 end
 
 -- 白翼能力在你的封锁区中的卡只有奇数的等级的场合有效
-function VgF.WhiteWing(e)
+function VgF.WhiteWings(e)
     local tp = e:GetHandlerPlayer()
     local a = vgf.IsExistingMatchingCard(function (c)
         return c:GetLevel()%2 == 1
@@ -1388,10 +1396,10 @@ function VgF.WhiteWing(e)
     local b = vgf.IsExistingMatchingCard(function (c)
         return c:GetLevel()%2 == 0
     end, tp, LOCATION_BIND, 0, 1, nil)
-    return (a and not b) or Duel.IsPlayerAffectedByEffect(tp, AFFECT_CODE_BOTH_WING)
+    return (a and not b) or Duel.IsPlayerAffectedByEffect(tp, AFFECT_CODE_BOTH_WINGS)
 end
 -- 黑翼能力在你的封锁区中的卡只有偶数的等级的场合有效
-function VgF.DarkWing(e)
+function VgF.BlackWings(e)
     local tp = e:GetHandlerPlayer()
     local a = vgf.IsExistingMatchingCard(function (c)
         return c:GetLevel()%2 == 1
@@ -1399,7 +1407,7 @@ function VgF.DarkWing(e)
     local b = vgf.IsExistingMatchingCard(function (c)
         return c:GetLevel()%2 == 0
     end, tp, LOCATION_BIND, 0, 1, nil)
-    return (not a and b) or Duel.IsPlayerAffectedByEffect(tp, AFFECT_CODE_BOTH_WING)
+    return (not a and b) or Duel.IsPlayerAffectedByEffect(tp, AFFECT_CODE_BOTH_WINGS)
 end
 
 function VgF.AddRideMaterialSetCardCheck(c, m, ...)

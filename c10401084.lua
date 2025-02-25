@@ -10,7 +10,7 @@ end
 function cm.con(e)
 	local tp=e:GetHandlerPlayer()
 	local c=e:GetHandler()
-	return (Duel.IsPlayerAffectedByEffect(tp,AFFECT_CODE_NIGHT) or Duel.IsPlayerAffectedByEffect(tp,AFFECT_CODE_DEEP_NIGHT))
+	return (Duel.IsPlayerAffectedByEffect(tp,AFFECT_CODE_DARK_NIGHT) or Duel.IsPlayerAffectedByEffect(tp,AFFECT_CODE_ABYSSAL_DARK_NIGHT))
 		and (Duel.GetAttacker()==e:GetHandler() or c:GetFlagEffect(FLAG_SUPPORT)>0)
 		and vgf.RMonsterCondition(e)
 end

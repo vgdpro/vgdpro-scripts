@@ -7,8 +7,8 @@ end
 function cm.val(e)
 	local tp=e:GetHandlerPlayer()
 	local val=0
-	if Duel.IsPlayerAffectedByEffect(tp,AFFECT_CODE_NIGHT) then val=2000
-	elseif Duel.IsPlayerAffectedByEffect(tp,AFFECT_CODE_DEEP_NIGHT) then val=5000
+	if Duel.IsPlayerAffectedByEffect(tp,AFFECT_CODE_DARK_NIGHT) then val=2000
+	elseif Duel.IsPlayerAffectedByEffect(tp,AFFECT_CODE_ABYSSAL_DARK_NIGHT) then val=5000
 	end
 	return val
 end

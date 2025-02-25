@@ -9,7 +9,7 @@ function cm.initial_effect(c)
     e1:SetProperty(EFFECT_FLAG_SINGLE_RANGE)
     e1:SetCode(EFFECT_ADD_SKILL)
     e1:SetRange(LOCATION_CIRCLE)
-    e1:SetValue(SKILL_SUPPORT)
+    e1:SetValue(SKILL_BOOST)
     e1:SetCondition(cm.condition)
     c:RegisterEffect(e1)
 end

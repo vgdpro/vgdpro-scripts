@@ -32,7 +32,7 @@ end
 function cm.op1(e,tp,eg,ep,ev,re,r,rp)
     local c=e:GetHandler()
     local _,selfcode=c:GetOriginalCode()
-    local code=CARD_ENERGY_LIST[selfcode]
+    local code=CARD_CREST_LIST[selfcode]
     local token1=Duel.CreateToken(tp,code)
     local token2=Duel.CreateToken(tp,code)
     local token3=Duel.CreateToken(tp,code)
@@ -45,7 +45,7 @@ end
 function cm.op2(e,tp,eg,ep,ev,re,r,rp)
     local c=e:GetHandler()
     local _,selfcode=c:GetOriginalCode()
-    local code=CARD_ENERGY_LIST[selfcode]
+    local code=CARD_CREST_LIST[selfcode]
     if vgf.GetMatchingGroupCount(Card.IsCode,tp,LOCATION_CREST,0,nil,CARD_ENERGY)>=10 then return end
     local ct=10-vgf.GetMatchingGroupCount(Card.IsCode,tp,LOCATION_CREST,0,nil,CARD_ENERGY)
     local token1=Duel.CreateToken(tp,code)

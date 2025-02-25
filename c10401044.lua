@@ -12,7 +12,7 @@ function cm.op(e,tp,eg,ep,ev,re,r,rp)
 		e1:SetProperty(EFFECT_FLAG_SINGLE_RANGE)
 		e1:SetCode(EFFECT_ADD_SKILL)
 		e1:SetRange(LOCATION_CIRCLE)
-		e1:SetValue(SKILL_SUPPORT)
+		e1:SetValue(SKILL_BOOST)
 		e1:SetReset(RESET_EVENT+RESETS_STANDARD+RESET_PHASE+PHASE_END)
 		tc:RegisterEffect(e1)
 	end

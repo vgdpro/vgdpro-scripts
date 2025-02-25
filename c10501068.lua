@@ -14,12 +14,12 @@ function cm.op(e,tp,eg,ep,ev,re,r,rp)
 		e2:SetProperty(EFFECT_FLAG_SINGLE_RANGE)
 		e2:SetCode(EFFECT_ADD_SKILL)
 		e2:SetRange(LOCATION_CIRCLE)
-		e2:SetValue(SKILL_SUPPORT)
+		e2:SetValue(SKILL_BOOST)
 		e2:SetReset(RESET_EVENT+RESETS_STANDARD+RESET_PHASE+PHASE_END)
 		c:RegisterEffect(e2)
 	end
 end
 
 function cm.con(e,tp,eg,ep,ev,re,r,rp)
-	return vgf.DarkWing(e) and vgf.RSummonCondition(e)
+	return vgf.BlackWings(e) and vgf.RSummonCondition(e)
 end

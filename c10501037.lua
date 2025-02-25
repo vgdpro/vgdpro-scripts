@@ -9,7 +9,7 @@ end
 
 function cm.con(e,tp,eg,ep,ev,re,r,rp)
 	local c=e:GetHandler()
-	return c:GetFlagEffect(FLAG_SUPPORTED)>0 and c:IsRelateToEffect(e) and Duel.GetAttacker() == c and vgf.DarkWing(e)
+	return c:GetFlagEffect(FLAG_SUPPORTED)>0 and c:IsRelateToEffect(e) and Duel.GetAttacker() == c and vgf.BlackWings(e)
 end
 
 function cm.op(e,tp,eg,ep,ev,re,r,rp)

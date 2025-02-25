@@ -3,7 +3,7 @@ function cm.initial_effect(c)
 	vgd.VgCard(c)
 	vgd.SetOrder(c,vgf.SoulBlast(1))
 	vgd.AbilityAuto(c,m,nil,EFFECT_TYPE_SINGLE,EVENT_MOVE,cm.operation,nil,cm.condition)
-	vgd.NightEffect(c,m)--黑夜
+	vgd.DarkNight(c,m)--黑夜
 end
 function cm.operation(e,tp,eg,ep,ev,re,r,rp)
 	Duel.Draw(tp,1,REASON_EFFECT)

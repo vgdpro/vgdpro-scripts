@@ -190,7 +190,7 @@ end
 function VgD.RideFilter1(c, lv, code, rc)
     local tp = c:GetControler()
     if not c:IsType(TYPE_UNIT) then return false end
-    if rc:IsAttribute(SKILL_SELF_RIDE) and c:IsCode(code) then return false end
+    if rc:IsSkill(SKILL_PERSONA_RIDE) and c:IsCode(code) then return false end
     if (c:IsLevel(lv, lv + 1) and c:IsLocation(LOCATION_HAND)) then return VgD.RideMaterialCheck(c, rc) end
     if (c:IsLevel(lv + 1) and c:IsLocation(LOCATION_RIDE) and (VgF.IsExistingMatchingCard(nil, tp, LOCATION_HAND, 0, 1, nil) or (Duel.IsPlayerAffectedByEffect(tp, AFFECT_CODE_OVERLAY_INSTEAD_WHEN_RIDE) and VgF.GetVMonster(tp):GetOverlayCount() > 0))) then return VgD.RideMaterialCheck(c, rc) end
     return false
@@ -200,7 +200,7 @@ function VgD.DisCardRideFilter(c, e, lv, code, rc)
     return c:IsDiscardable() and VgF.IsExistingMatchingCard(VgD.RideFilter1, tp, LOCATION_HAND + LOCATION_RIDE, 0, 1, c, lv, code, rc)
 end
 function VgD.RideFilter2(c, lv, code, rc)
-    return c:IsLevel(lv) and c:IsType(TYPE_UNIT) and c:IsCode(code) and rc:IsAttribute(SKILL_SELF_RIDE)
+    return c:IsLevel(lv) and c:IsType(TYPE_UNIT) and c:IsCode(code) and rc:IsSkill(SKILL_PERSONA_RIDE)
 end
 function VgD.RideCondition(e, tp, eg, ep, ev, re, r, rp)
     local rc = Duel.GetMatchingGroup(VgF.VMonsterFilter, tp, LOCATION_CIRCLE, 0, nil):GetFirst()
@@ -334,7 +334,7 @@ end
 function VgD.CardTriggerOperation(chkop)
     return function (e, tp, eg, ep, ev, re, r, rp)
         local c = e:GetHandler()
-        if c:IsRace(TRIGGER_CRITICAL_STRIKE) then
+        if c:IsTrigger(TRIGGER_CRITICAL_STRIKE) then
             local g1 = VgF.SelectMatchingCard(HINTMSG_CRITICAL_STRIKE, e, tp, nil, tp, LOCATION_CIRCLE, 0, 1, 1, nil)
             local star_up = c.trigger_star_up or 1
             local atk_up = c.trigger_atk_up or 10000
@@ -347,7 +347,7 @@ function VgD.CardTriggerOperation(chkop)
             VgF.StarUp(c, g1, star_up, nil)
             local g2 = VgF.SelectMatchingCard(HINTMSG_ATKUP, e, tp, nil, tp, LOCATION_CIRCLE, 0, 1, 1, nil)
             VgF.AtkUp(c, g2, atk_up, nil)
-        elseif c:IsRace(TRIGGER_DRAW) then
+        elseif c:IsTrigger(TRIGGER_DRAW) then
             local g = VgF.SelectMatchingCard(HINTMSG_ATKUP, e, tp, nil, tp, LOCATION_CIRCLE, 0, 1, 1, nil)
             local atk_up = c.trigger_atk_up or 10000
             local draw = c.trigger_draw or 1
@@ -359,7 +359,7 @@ function VgD.CardTriggerOperation(chkop)
             end
             VgF.AtkUp(c, g, atk_up, nil)
             Duel.Draw(tp, draw, REASON_TRIGGER)
-        elseif c:IsRace(TRIGGER_HEAL) then
+        elseif c:IsTrigger(TRIGGER_HEAL) then
             local g = VgF.SelectMatchingCard(HINTMSG_ATKUP, e, tp, nil, tp, LOCATION_CIRCLE, 0, 1, 1, nil)
             local atk_up = c.trigger_atk_up or 10000
             if c:IsHasEffect(EFFECT_CHANGE_TRIGGER_ATK) then
@@ -378,7 +378,7 @@ function VgD.CardTriggerOperation(chkop)
                     Duel.Recover(tp, sg:GetCount(), REASON_RULE)
                 end
             end
-        elseif c:IsRace(TRIGGER_ADVANCE) then
+        elseif c:IsTrigger(TRIGGER_ADVANCE) then
             local g = Duel.GetMatchingGroup(VgF.IsSequence, tp, LOCATION_CIRCLE, 0, nil, 0, 4, 5)
             local atk_up = c.trigger_atk_up or 10000
             if c:IsHasEffect(EFFECT_CHANGE_TRIGGER_ATK) then
@@ -387,7 +387,7 @@ function VgD.CardTriggerOperation(chkop)
             VgF.AtkUp(c, g, atk_up, nil)
         end
         if chkop == 'Damage' then
-            if c:IsRace(TRIGGER_SUPER) then
+            if c:IsTrigger(TRIGGER_SUPER) then
                 local ops = {}
                 local sel = {}
                 if c:IsRelateToEffect(e) then
@@ -449,7 +449,7 @@ function VgD.CardTriggerOperation(chkop)
                 Duel.RaiseEvent(bc, EVENT_CUSTOM + EVENT_DAMAGE_TRIGGER, e, 0, tp, tp, 0)
             end
         elseif chkop == 'Normal' then
-            if c:IsRace(TRIGGER_SUPER) then
+            if c:IsTrigger(TRIGGER_SUPER) then
                 local ops = {}
                 local sel = {}
                 if c:IsRelateToEffect(e) then
@@ -507,7 +507,7 @@ function VgD.CardTriggerOperation(chkop)
                 bc:ResetFlagEffect(FLAG_ATTACK_TRIGGER)
             end
         else
-            if c:IsRace(TRIGGER_SUPER) then
+            if c:IsTrigger(TRIGGER_SUPER) then
                 local ops = {}
                 local sel = {}
                 if c:IsRelateToEffect(e) then
@@ -651,9 +651,9 @@ function VgD.MonsterBattle(c)
         local tc = e:GetHandler()
         Duel.ChangePosition(tc, POS_FACEUP_DEFENSE)
         local label = 1
-        if tc:IsAttribute(SKILL_TWICE_TRIGGER) then
+        if tc:IsSkill(SKILL_TWINDRIVE) then
             label = label + 1
-        elseif tc:IsAttribute(SKILL_THRICE_TRIGGER) then
+        elseif tc:IsSkill(SKILL_TRIPLEDRIVE) then
             label = label + 2
         end
         tc:RegisterFlagEffect(FLAG_ATTACK_TRIGGER, RESET_EVENT + RESETS_STANDARD, 0, 1, label)
@@ -736,7 +736,7 @@ function VgD.MonsterBattle(c)
     e6:SetProperty(EFFECT_FLAG_CANNOT_DISABLE)
     e6:SetCondition(function (e, tp, eg, ep, ev, re, r, rp)
         local tc = e:GetHandler()
-        if not tc:IsAttribute(SKILL_SUPPORT) or Duel.GetTurnPlayer() ~= tp or not VgF.GetColumnGroup(Duel.GetAttacker()):IsContains(tc) then return false end
+        if not tc:IsSkill(SKILL_BOOST) or Duel.GetTurnPlayer() ~= tp or not VgF.GetColumnGroup(Duel.GetAttacker()):IsContains(tc) then return false end
         return true
     end)
     e6:SetTarget(function (e, tp, eg, ep, ev, re, r, rp, chk)
@@ -1758,8 +1758,8 @@ end
 ---●2张以上——你的世界卡的内容变为深渊黑夜。
 ---@param c Card 要注册以上功能的卡
 ---@param m number|nil 效果的创建者的卡号
----@return Effect 两个效果
-function VgD.NightEffect(c, m)
+---@return Effect, Effect 两个效果
+function VgD.DarkNight(c, m)
     -- set param
     local cm = _G["c"..(m or c:GetOriginalCode())]
     cm.is_has_continuous = true
@@ -1775,13 +1775,13 @@ function VgD.NightEffect(c, m)
     local e1 = Effect.CreateEffect(c)
     e1:SetType(EFFECT_TYPE_FIELD)
     e1:SetProperty(EFFECT_FLAG_PLAYER_TARGET)
-    e1:SetCode(AFFECT_CODE_NIGHT)
+    e1:SetCode(AFFECT_CODE_DARK_NIGHT)
     e1:SetRange(LOCATION_ORDER)
     e1:SetTargetRange(1, 0)
     e1:SetCondition(condition(true))
     c:RegisterEffect(e1)
     local e2 = e1:Clone()
-    e2:SetCode(AFFECT_CODE_DEEP_NIGHT)
+    e2:SetCode(AFFECT_CODE_ABYSSAL_DARK_NIGHT)
     e2:SetCondition(condition(false))
     c:RegisterEffect(e2)
     return e1, e2

@@ -12,13 +12,13 @@ end
 function cm.op(e,tp,eg,ep,ev,re,r,rp)
 	local c=e:GetHandler()
 	local tc=vgf.SelectMatchingCard(HINTMSG_VMONSTER,e,tp,vgf.VMonsterFilter,tp,LOCATION_CIRCLE,0,1,1,nil):GetFirst()
-	if tc:IsAttribute(SKILL_TWICE_TRIGGER) then
+	if tc:IsSkill(SKILL_TWINDRIVE) then
 		local e1=Effect.CreateEffect(c)
 		e1:SetType(EFFECT_TYPE_SINGLE)
 		e1:SetProperty(EFFECT_FLAG_SINGLE_RANGE)
 		e1:SetCode(EFFECT_REMOVE_SKILL)
 		e1:SetRange(LOCATION_CIRCLE)
-		e1:SetValue(SKILL_TWICE_TRIGGER)
+		e1:SetValue(SKILL_TWINDRIVE)
 		e1:SetReset(RESET_EVENT+RESETS_STANDARD+RESET_PHASE+PHASE_END)
 		tc:RegisterEffect(e1)
 	end
@@ -27,7 +27,7 @@ function cm.op(e,tp,eg,ep,ev,re,r,rp)
     e1:SetProperty(EFFECT_FLAG_SINGLE_RANGE)
     e1:SetCode(EFFECT_ADD_SKILL)
     e1:SetRange(LOCATION_CIRCLE)
-    e1:SetValue(SKILL_THRICE_TRIGGER)
+    e1:SetValue(SKILL_TRIPLEDRIVE)
 	e1:SetReset(RESET_EVENT+RESETS_STANDARD+RESET_PHASE+PHASE_END)
     tc:RegisterEffect(e1)
 end

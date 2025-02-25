@@ -1,9 +1,7 @@
 VgID = 10000001
 CARD_ENERGY = 10800731
 CARD_ENERGY_EMBLEM = 10800851
-CARD_ENERGY_LIST = {}
-CARD_ENERGY_LIST[10800851] = 10800730
-CARD_ENERGY_LIST[10800855] = 10800731
+CARD_CREST_LIST = {[10800851] = 10800730, [10800855] = 10800731}
 --min/max value
 MIN_ID		= 1000		--4 digits, by DataManager::GetDesc()
 MAX_ID		= 268435455	--28 bits, by DataManager::GetDesc()
@@ -54,7 +52,7 @@ NO_FLIP_EFFECT			= 0x10000--不发动反转效果
 --Types 卡片类型
 TYPE_UNIT		    = 0x1		--单位卡
 TYPE_ORDER			= 0x2		--指令卡
-TYPE_TRAP			= 0x4		--标记
+TYPE_MARKER			= 0x4		--标记
 TYPE_NORMAL			= 0x20		--普通
 TYPE_TRIGGER		= 0x80		--触发
 TYPE_G				= 0x200		--G
@@ -64,17 +62,16 @@ TYPE_SET		    = 0x20000	--设置
 TYPE_CREST		    = 0x100000	--纹章
 TYPE_RIDE_CREST     = 0x100044  --RIDE卡组纹章
 
-
---技能              --属性
+--技能
 SKILL_ALL		    = 0x7f		--All
 SKILL_NONE		    = 0x01		--无
-SKILL_SUPPORT	    = 0x02		--支援
-SKILL_BLOCK		    = 0x04		--截击
-SKILL_THRICE_TRIGGER= 0x08       --三判
-SKILL_TWICE_TRIGGER = 0x10       --双判
-SKILL_SELF_RIDE		= 0x20		--人格骑升
-SKILL_DEBRIS	    = 0x40		--结晶碎片
---触发类型          --种族
+SKILL_BOOST	        = 0x02		--支援
+SKILL_INTERCEPT		= 0x04		--截击
+SKILL_TRIPLEDRIVE   = 0x08      --三判
+SKILL_TWINDRIVE     = 0x10      --双判
+SKILL_PERSONA_RIDE	= 0x20		--人格骑升
+SKILL_REGALIS_PIECE	= 0x40		--结晶碎片
+--触发类型
 TRIGGER_ALL			= 0x3ffffff	--All
 TRIGGER_NONE		    = 0x1		--无
 TRIGGER_CRITICAL_STRIKE = 0x2		--暴击触发
@@ -721,8 +718,8 @@ OPCODE_NOT				= 0x40000007
 OPCODE_ISCODE			= 0x40000100
 OPCODE_ISSETCARD		= 0x40000101
 OPCODE_ISTYPE			= 0x40000102
-OPCODE_ISRACE			= 0x40000103
-OPCODE_ISATTRIBUTE		= 0x40000104
+OPCODE_IsTrigger			= 0x40000103
+OPCODE_IsSkill		= 0x40000104
 --
 DOUBLE_DAMAGE			= -2147483648
 HALF_DAMAGE				= -2147483647
@@ -873,9 +870,9 @@ FLAG_EFFECT_DAMAGE      = VgID + 12--效果伤害标识
 --AffectedByEffect
 AFFECT_CODE_ALCHEMAGIC  = VgID   --魔合成
 AFFECT_CODE_ALCHEMAGIC_DIFFERENT_NAME   = VgID + 1      --魔合成(卡名不同)
-AFFECT_CODE_BOTH_WING   = VgID + 2 --你的卡片的白翼能力和黑翼能力两方均有效
-AFFECT_CODE_NIGHT       = VgID + 3 --黑夜
-AFFECT_CODE_DEEP_NIGHT  = VgID + 4 --深渊黑夜
+AFFECT_CODE_BOTH_WINGS  = VgID + 2 --你的卡片的白翼能力和黑翼能力两方均有效
+AFFECT_CODE_DARK_NIGHT       = VgID + 3 --黑夜
+AFFECT_CODE_ABYSSAL_DARK_NIGHT  = VgID + 4 --深渊黑夜
 AFFECT_CODE_SOUL_BLAST_FREE_WHEN_ALCHEMAGIC   = VgID + 5 --魔合成可以不支付灵魂爆发
 AFFECT_CODE_DEFENDER_CANNOT_TO_G_CIRCLE    = VgID + 6      --不能将守护者从手牌CALL到G上
 

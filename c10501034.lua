@@ -29,12 +29,12 @@ end
 
 function cm.con2(e,tp,eg,ep,ev,re,r,rp)
 	local c=e:GetHandler()
-	return vgf.VMonsterCondition(e) and vgf.WhiteWing(e)
+	return vgf.VMonsterCondition(e) and vgf.WhiteWings(e)
 end
 function cm.op2(e,tp,eg,ep,ev,re,r,rp)
 	local c=e:GetHandler()
 	vgf.StarUp(c,c,1)
 end
 function cm.con3(e)
-	return vgf.VMonsterCondition(e) and vgf.DarkWing(e)
+	return vgf.VMonsterCondition(e) and vgf.BlackWings(e)
 end

@@ -11,7 +11,7 @@ function cm.con(e,tp,eg,ep,ev,re,r,rp)
 	return vgf.RMonsterCondition(e) and eg:IsExists(cm.filter,1,nil,tp) and Duel.GetTurnPlayer()==tp and Duel.GetAttackTarget()
 end
 function cm.filter(c,tp)
-	return c:IsRace(TRIGGER_CARDS) and c:IsLocation(LOCATION_TRIGGER) and c:IsControler(tp)
+	return c:IsTrigger(TRIGGER_CARDS) and c:IsLocation(LOCATION_TRIGGER) and c:IsControler(tp)
 end
 function cm.op(e,tp,eg,ep,ev,re,r,rp)
 	local g=vgf.SelectMatchingCard(HINTMSG_TODECK,e,tp,cm.filter2,tp,0,LOCATION_CIRCLE,1,1,nil)

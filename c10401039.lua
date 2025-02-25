@@ -16,5 +16,5 @@ function cm.filter(c,tp)
 	return c:IsSetCard(0x5040) and c:IsLocation(LOCATION_ORDER) and c:IsControler(tp)
 end
 function cm.con2(e,tp,eg,ep,ev,re,r,rp)
-	return vgf.RMonsterCondition(e) and Duel.IsPlayerAffectedByEffect(tp,AFFECT_CODE_DEEP_NIGHT) and Duel.GetTurnPlayer()==tp
+	return vgf.RMonsterCondition(e) and Duel.IsPlayerAffectedByEffect(tp,AFFECT_CODE_ABYSSAL_DARK_NIGHT) and Duel.GetTurnPlayer()==tp
 end
