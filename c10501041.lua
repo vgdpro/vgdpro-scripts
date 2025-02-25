@@ -1,7 +1,7 @@
 local cm,m,o=GetID()
 function cm.initial_effect(c)
 	vgd.VgCard(c)
-	vgd.AbilityAct(c,m,LOCATION_R_CIRCLE,cm.op,vgf.CostAnd(vgf.DamageCost(1), vgf.ToOverlayCost))
+	vgd.AbilityAct(c,m,LOCATION_R_CIRCLE,cm.op,vgf.CostAnd(vgf.CounterBlast(1), vgf.ToSoul))
 	vgd.CannotBeTarget(c, m, LOCATION_V_CIRCLE, EFFECT_TYPE_SINGLE, nil, vgf.DarkWing)
 	vgd.CannotBeAttackTarget(c, m, LOCATION_V_CIRCLE, EFFECT_TYPE_SINGLE, cm.val, vgf.DarkWing)
 end

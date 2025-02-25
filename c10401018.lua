@@ -1,7 +1,7 @@
 local cm,m,o=GetID()
 function cm.initial_effect(c)
 	vgd.VgCard(c)
-	vgd.AbilityAuto(c,m,LOCATION_CIRCLE,EFFECT_TYPE_FIELD,EVENT_BATTLED,vgf.DamageFill(1),cm.cost,cm.con)
+	vgd.AbilityAuto(c,m,LOCATION_CIRCLE,EFFECT_TYPE_FIELD,EVENT_BATTLED,vgf.CounterCharge(1),cm.cost,cm.con)
 end
 function cm.cost(e,tp,eg,ep,ev,re,r,rp,chk)
     local c=e:GetHandler()
@@ -13,5 +13,5 @@ function cm.con(e,tp,eg,ep,ev,re,r,rp)
 	return c:GetFlagEffect(FLAG_SUPPORT)>0 and vgf.IsExistingMatchingCard(cm.filter,tp,LOCATION_ORDER,0,1,nil)
 end
 function cm.filter(c)
-	return c:IsFaceup() and c:IsType(TYPE_CONTINUOUS)
+	return c:IsFaceup() and c:IsType(TYPE_SET)
 end

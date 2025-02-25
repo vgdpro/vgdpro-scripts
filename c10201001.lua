@@ -10,9 +10,9 @@ function cm.con(e,tp,eg,ep,ev,re,r,rp)
 	return e:GetHandler():GetFlagEffect(FLAG_SUPPORTED)>0 and Duel.GetAttacker()==e:GetHandler() and vgf.RMonsterCondition(e)
 end
 function cm.cost(e,tp,eg,ep,ev,re,r,rp,chk)
-	if chk==0 then return vgf.OverlayCost(1)(e,tp,eg,ep,ev,re,r,rp,chk) and vgf.DisCardCost(1)(e,tp,eg,ep,ev,re,r,rp,chk) end
-	vgf.OverlayCost(1)(e,tp,eg,ep,ev,re,r,rp,chk)
-	vgf.DisCardCost(1)(e,tp,eg,ep,ev,re,r,rp,chk)
+	if chk==0 then return vgf.SoulBlast(1)(e,tp,eg,ep,ev,re,r,rp,chk) and vgf.Discard(1)(e,tp,eg,ep,ev,re,r,rp,chk) end
+	vgf.SoulBlast(1)(e,tp,eg,ep,ev,re,r,rp,chk)
+	vgf.Discard(1)(e,tp,eg,ep,ev,re,r,rp,chk)
 end
 function cm.op(e,tp,eg,ep,ev,re,r,rp)
 	local c=e:GetHandler()

@@ -12,7 +12,7 @@ function cm.op(e,tp,eg,ep,ev,re,r,rp)
 	Duel.ConfirmCards(tp,g)
 	Duel.ConfirmCards(1-tp,g)
 	local tc=g:GetFirst()
-	if tc:IsType(TYPE_MONSTER) and tc:GetLevel()~=2 and vgf.IsCanBeCalled(tc,e,tp) and vgf.Sendto(LOCATION_CIRCLE,tc,0,tp,"NoMonster")==0 then
+	if tc:IsType(TYPE_UNIT) and tc:GetLevel()~=2 and vgf.IsCanBeCalled(tc,e,tp) and vgf.Sendto(LOCATION_CIRCLE,tc,0,tp,"NoMonster")==0 then
 		Duel.MoveSequence(tc,1)
 	end
 end

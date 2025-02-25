@@ -73,7 +73,7 @@ function cm.initial_effect(c)
 	vgf.VgCard(c)
 	--在这之后加入需要注册的效果
 	local e1=Effect.CreateEffect(c)--创建一个效果
-	e1:SetType(EFFECT_TYPE_SINGLE+EFFECT_TYPE_CONTINUOUS)--效果的类型
+	e1:SetType(EFFECT_TYPE_SINGLE+EFFECT_TYPE_SET)--效果的类型
 	e1:SetCode(EVENT_BE_MATERIAL)--什么情况下会发动这个效果
 	e1:SetProperty(EFFECT_FLAG_EVENT_PLAYER)
 	e1:SetCondition(cm.condition)--效果的条件
@@ -153,7 +153,7 @@ vgd.Order(c, m, op, con, cost)
 local cm,m,o=GetID()
 function cm.initial_effect(c)
 	vgf.VgCard(c)
-	vgd.Order(c,m,cm.operation,vgf.DamageCost(1))
+	vgd.Order(c,m,cm.operation,vgf.CounterBlast(1))
 end
 function cm.operation(e,tp,eg,ep,ev,re,r,rp)
 	local c=e:GetHandler()
@@ -261,7 +261,7 @@ VgD.AbilityAct(c, m[, loc, op, cost, con, tg, count, property])
 local cm,m,o=GetID()
 function cm.initial_effect(c)
 	vgf.VgCard(c)
-	vgd.AbilityAct(c,m,LOCATION_CIRCLE,vgf.CardsFromTo(REASON_EFFECT,LOCATION_HAND,LOCATION_CIRCLE,LOCATION_DROP,cm.filter),vgf.DisCardCost(1),nil,nil,1)
+	vgd.AbilityAct(c,m,LOCATION_CIRCLE,vgf.CardsFromTo(REASON_EFFECT,LOCATION_HAND,LOCATION_CIRCLE,LOCATION_DROP,cm.filter),vgf.Discard(1),nil,nil,1)
 end
 function cm.filter(c)
 	return c:IsLevel(0)

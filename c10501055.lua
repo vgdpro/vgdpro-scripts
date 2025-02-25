@@ -4,7 +4,7 @@ function cm.initial_effect(c)
     vgd.VgCard(c)
 -- 通过【费用】[计数爆发1]施放！
 -- 抽2张卡，选择你的手牌的1张卡，舍弃。将这张卡放置到灵魂里。
-    vgd.Order(c,m,cm.operation,vgf.DamageCost(1))
+    vgd.Order(c,m,cm.operation,vgf.CounterBlast(1))
 end
 
 function cm.operation(e,tp,eg,ep,ev,re,r,rp)

@@ -5,6 +5,6 @@ function cm.initial_effect(c)
 	vgd.AbilityAuto(c,m,LOCATION_CIRCLE,EFFECT_TYPE_SINGLE,EVENT_HITTING,cm.op,nil,vgf.RMonsterCondition)
 end
 function cm.op(e,tp,eg,ep,ev,re,r,rp)
-	vgf.DamageFill(1)(e,tp,eg,ep,ev,re,r,rp)
-	vgf.OverlayFill(1)(e,tp,eg,ep,ev,re,r,rp)
+	vgf.CounterCharge(1)(e,tp,eg,ep,ev,re,r,rp)
+	vgf.SoulCharge(1)(e,tp,eg,ep,ev,re,r,rp)
 end

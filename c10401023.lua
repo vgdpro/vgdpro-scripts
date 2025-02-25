@@ -9,5 +9,5 @@ function cm.op(e,tp,eg,ep,ev,re,r,rp)
 	vgf.Sendto(LOCATION_DROP,g,REASON_EFFECT)
 end
 function cm.op1(e,tp,eg,ep,ev,re,r,rp)
-	Duel.RegisterFlagEffect(tp,AFFECT_CODE_OVERLAY_COST_FREE_WHEN_ALCHEMAGIC,RESET_PHASE+PHASE_END,EFFECT_FLAG_CLIENT_HINT,1,0,vgf.Stringid(m,0))
+	Duel.RegisterFlagEffect(tp,AFFECT_CODE_SOUL_BLAST_FREE_WHEN_ALCHEMAGIC,RESET_PHASE+PHASE_END,EFFECT_FLAG_CLIENT_HINT,1,0,vgf.Stringid(m,0))
 end

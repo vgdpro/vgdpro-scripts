@@ -3,7 +3,7 @@ local cm,m,o=GetID()
 function cm.initial_effect(c)
     vgd.VgCard(c)
     -- 【自】：这个单位被RIDE时，通过【费用】[灵魂爆发1]，选择你的弃牌区中的至多1张〈幽灵〉，加入手牌。
-    vgd.BeRidedByCard(c,m,nil,cm.op,OverlayCost(1))
+    vgd.BeRidedByCard(c,m,nil,cm.op,SoulBlast(1))
     -- 【永】【V/R】：你的回合中，你的R上有〈幽灵〉的话，这个单位的力量+2000。
 	vgd.AbilityCont(c, m, LOCATION_CIRCLE, EFFECT_TYPE_SINGLE, EFFECT_UPDATE_ATTACK, 2000, cm.con)
 end

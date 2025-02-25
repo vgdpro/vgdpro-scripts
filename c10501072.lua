@@ -3,7 +3,7 @@ local cm,m,o=GetID()
 function cm.initial_effect(c)
     vgd.VgCard(c)
     -- 【自】：这个单位从手牌登场到R时，你其他的后防者有3张以上的话，通过【费用】[计数爆发1]，抽1张卡。
-    vgd.AbilityAuto(c,m,nil,EFFECT_TYPE_SINGLE,EVENT_SPSUMMON_SUCCESS,vgf.Draw,vgf.DamageCost(1),cm.con)
+    vgd.AbilityAuto(c,m,nil,EFFECT_TYPE_SINGLE,EVENT_SPSUMMON_SUCCESS,vgf.Draw,vgf.CounterBlast(1),cm.con)
 end
 
 function cm.con(e,tp,eg,ep,ev,re,r,rp)

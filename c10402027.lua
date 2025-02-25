@@ -2,7 +2,7 @@ local cm,m,o=GetID()
 function cm.initial_effect(c)
 	vgd.VgCard(c)
 	vgd.BeRidedByCard(c,m,cm.filter,cm.op)
-	vgd.AbilityAct(c,m,LOCATION_CIRCLE,cm.op1,vgf.OverlayCost(1),cm.con1,nil,1)
+	vgd.AbilityAct(c,m,LOCATION_CIRCLE,cm.op1,vgf.SoulBlast(1),cm.con1,nil,1)
 end
 function cm.filter(c)
 	return c:IsSetCard(0x79)

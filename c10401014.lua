@@ -6,7 +6,7 @@ end
 function cm.op(e,tp,eg,ep,ev,re,r,rp)
 	local c=e:GetHandler()
 	Duel.Draw(tp,1,REASON_EFFECT)
-	vgf.OverlayFill(1)(e,tp,eg,ep,ev,re,r,rp)
+	vgf.SoulCharge(1)(e,tp,eg,ep,ev,re,r,rp)
 	if c:IsRelateToEffect(e) and c:IsFaceup() then
 		vgf.AtkUp(c,c,10000)
 	end

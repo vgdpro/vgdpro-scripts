@@ -7,9 +7,9 @@ function cm.initial_effect(c)
 end
 --计数爆发1，灵魂爆发1
 function cm.cost(e,tp,eg,ep,ev,re,r,rp,chk)
-	if chk==0 then return vgf.DamageCost(1)(e,tp,eg,ep,ev,re,r,rp,chk) and vgf.OverlayCost(1)(e,tp,eg,ep,ev,re,r,rp,chk) end
-	vgf.DamageCost(1)(e,tp,eg,ep,ev,re,r,rp,chk)
-	vgf.OverlayCost(1)(e,tp,eg,ep,ev,re,r,rp,chk)
+	if chk==0 then return vgf.CounterBlast(1)(e,tp,eg,ep,ev,re,r,rp,chk) and vgf.SoulBlast(1)(e,tp,eg,ep,ev,re,r,rp,chk) end
+	vgf.CounterBlast(1)(e,tp,eg,ep,ev,re,r,rp,chk)
+	vgf.SoulBlast(1)(e,tp,eg,ep,ev,re,r,rp,chk)
 end
 --选择对手的1张等级2以上的后防者
 function cm.operation(e,tp,eg,ep,ev,re,r,rp)

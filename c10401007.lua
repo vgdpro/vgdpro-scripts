@@ -6,10 +6,10 @@ function cm.initial_effect(c)
 end
 function cm.cost(e,tp,eg,ep,ev,re,r,rp,chk)
 	if chk==0 then
-		return vgf.DamageCost(2)(e,tp,eg,ep,ev,re,r,rp,chk) and vgf.OverlayCost(1)(e,tp,eg,ep,ev,re,r,rp,chk)
+		return vgf.CounterBlast(2)(e,tp,eg,ep,ev,re,r,rp,chk) and vgf.SoulBlast(1)(e,tp,eg,ep,ev,re,r,rp,chk)
 	end
-	vgf.DamageCost(2)(e,tp,eg,ep,ev,re,r,rp,chk)
-	vgf.OverlayCost(1)(e,tp,eg,ep,ev,re,r,rp,chk)
+	vgf.CounterBlast(2)(e,tp,eg,ep,ev,re,r,rp,chk)
+	vgf.SoulBlast(1)(e,tp,eg,ep,ev,re,r,rp,chk)
 end
 function cm.op(e,tp,eg,ep,ev,re,r,rp)
 	local g=vgf.SelectMatchingCard(HINTMSG_CALL,e,tp,vgf.IsCanBeCalled,tp,LOCATION_HAND,0,1,1,nil,e,tp)

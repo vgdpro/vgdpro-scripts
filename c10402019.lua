@@ -1,7 +1,7 @@
 local cm,m,o=GetID()
 function cm.initial_effect(c)
 	vgd.VgCard(c)
-    vgd.AbilityAct(c,m,LOCATION_CIRCLE,vgf.DamageFill(1),cm.cost,vgf.RMonsterCondition,nil,1)
+    vgd.AbilityAct(c,m,LOCATION_CIRCLE,vgf.CounterCharge(1),cm.cost,vgf.RMonsterCondition,nil,1)
 end
 function cm.cost(e,tp,eg,ep,ev,re,r,rp,chk)
 	if chk==0 then
@@ -12,5 +12,5 @@ function cm.cost(e,tp,eg,ep,ev,re,r,rp,chk)
 	return vgf.Sendto(LOCATION_DROP,g,REASON_COST+REASON_DISCARD)
 end
 function cm.filter(c)
-	return c:IsType(TYPE_CONTINUOUS) and c:IsType(TYPE_SPELL)
+	return c:IsType(TYPE_SET) and c:IsType(TYPE_ORDER)
 end

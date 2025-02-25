@@ -13,8 +13,8 @@ function cm.op(e,tp,eg,ep,ev,re,r,rp)
         vgf.EffectReset(c,e1,EVENT_BATTLED)
     end
 	Duel.BreakEffect()
-	if vgf.DamageCost(1)(e,tp,eg,ep,ev,re,r,rp,0) and Duel.SelectEffectYesNo(tp,vgf.stringid(VgID,10)) then
-		vgf.DamageCost(1)(e,tp,eg,ep,ev,re,r,rp,1)
+	if vgf.CounterBlast(1)(e,tp,eg,ep,ev,re,r,rp,0) and Duel.SelectEffectYesNo(tp,vgf.stringid(VgID,10)) then
+		vgf.CounterBlast(1)(e,tp,eg,ep,ev,re,r,rp,1)
 		local g=vgf.SelectMatchingCard(HINTMSG_LEAVEFIELD,e,tp,cm.filter,tp,0,LOCATION_CIRCLE,1,1,nil)
 		vgf.Sendto(LOCATION_DROP,g,REASON_EFFECT)
 	end

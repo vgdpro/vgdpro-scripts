@@ -1,7 +1,7 @@
 local cm,m,o=GetID()
 function cm.initial_effect(c)
 	vgd.VgCard(c)
-	vgd.BeRidedByCard(c,m,10203002,cm.operation,vgf.OverlayCost(1))
+	vgd.BeRidedByCard(c,m,10203002,cm.operation,vgf.SoulBlast(1))
 	vgd.AbilityCont(c, m, LOCATION_CIRCLE, EFFECT_TYPE_SINGLE, EFFECT_UPDATE_ATTACK, 2000, cm.con)
 end
 function cm.con(e)

@@ -11,8 +11,8 @@ function cm.operation(e,tp,eg,ep,ev,re,r,rp)
 		local e1=vgf.AtkUp(c,c,5000,nil)
 		vgf.EffectReset(c,e1,EVENT_BATTLED)
 	end
-	if vgf.OverlayCost(2)(e,tp,eg,ep,ev,re,r,rp,0) and Duel.SelectEffectYesNo(tp,vgf.stringid(VgID,10)) then
-        vgf.OverlayCost(2)(e,tp,eg,ep,ev,re,r,rp,1)
+	if vgf.SoulBlast(2)(e,tp,eg,ep,ev,re,r,rp,0) and Duel.SelectEffectYesNo(tp,vgf.stringid(VgID,10)) then
+        vgf.SoulBlast(2)(e,tp,eg,ep,ev,re,r,rp,1)
 		local g=vgf.SelectMatchingCard(HINTMSG_LEAVEFIELD,e,tp,vgf.RMonsterFilter,tp,0,LOCATION_CIRCLE,1,1,nil)
 		vgf.Sendto(LOCATION_DROP,g,REASON_EFFECT)
 	end

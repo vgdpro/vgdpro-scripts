@@ -4,7 +4,7 @@
 local cm,m,o=GetID()
 function cm.initial_effect(c)
     vgd.VgCard(c)
-    vgd.Order(c,m,cm.operation,vgf.DamageCost(2))
+    vgd.Order(c,m,cm.operation,vgf.CounterBlast(2))
 end
 function cm.operation(e,tp,eg,ep,ev,re,r,rp)
     local c=e:GetHandler()

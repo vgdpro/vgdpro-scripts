@@ -561,7 +561,7 @@ end
 function VgF.IsAbleToGCircle(c)
     if c:IsLocation(LOCATION_HAND) then
         if Duel.IsPlayerAffectedByEffect(c:GetControler(), AFFECT_CODE_DEFENDER_CANNOT_TO_G_CIRCLE) and c:GetBaseDefense() == 0 then return false end
-        return c:IsType(TYPE_MONSTER)
+        return c:IsType(TYPE_UNIT)
     elseif c:IsLocation(LOCATION_CIRCLE) then
         return c:IsAttribute(SKILL_BLOCK) and VgF.IsSequence(c, 0, 4) and c:IsLocation(LOCATION_CIRCLE) and c:IsFaceup()
     end
@@ -570,7 +570,7 @@ end
 ---用于效果的Operation。它返回一个执行“[计数回充val]”的函数。
 ---@param val number 计数回充的数量
 ---@return function 效果的Operation函数
-function VgF.DamageFill(val)
+function VgF.CounterCharge(val)
     return function (e, tp, eg, ep, ev, re, r, rp)
         local c = e:GetHandler()
         Duel.Hint(HINT_SELECTMSG, tp, HINTMSG_POSCHANGE)
@@ -581,7 +581,7 @@ function VgF.DamageFill(val)
 end
 
 ---用于效果的Cost。它返回一个执行“【费用】[将这个单位放置到灵魂里]”的函数。
-function VgF.ToOverlayCost(e,tp,eg,ep,ev,re,r,rp,chk)
+function VgF.ToSoul(e,tp,eg,ep,ev,re,r,rp,chk)
     return function ()
         local c = e:GetHandler()
         if chk == 0 then return c:IsRelateToEffect(e) end
@@ -623,7 +623,7 @@ end
 ---用于效果的Cost。它返回一个执行“【费用】[将手牌中的val张卡舍弃]”的函数。
 ---@param val number 要舍弃的卡的数量
 ---@return function 效果的Cost函数
-function VgF.DisCardCost(val)
+function VgF.Discard(val)
     return function (e, tp, eg, ep, ev, re, r, rp, chk)
         if VgF.GetValueType(val) ~= "number" then return 0 end
         local c = e:GetHandler()
@@ -646,7 +646,7 @@ end
 ---用于效果的Cost。它返回一个执行“【费用】[能量爆发val]”的函数。
 ---@param val number 能量爆发的数量
 ---@return function 效果的Cost函数
-function VgF.EnergyCost(val)
+function VgF.EnergyBlast(val)
     return function (e, tp, eg, ep, ev, re, r, rp, chk)
         if VgF.GetValueType(val) ~= "number" then return 0 end
         local c = e:GetHandler()
@@ -669,7 +669,7 @@ end
 ---用于效果的Cost。它返回一个执行“【费用】[灵魂爆发val]”的函数。
 ---@param val number 灵魂爆发的数量
 ---@return function 效果的Cost函数
-function VgF.OverlayCost(val)
+function VgF.SoulBlast(val)
     return function (e, tp, eg, ep, ev, re, r, rp, chk)
         if VgF.GetValueType(val) ~= "number" then return 0 end
         local c = e:GetHandler()
@@ -692,7 +692,7 @@ end
 ---用于效果的Cost或Operation。它返回一个执行“【费用】[灵魂填充val]”的函数。
 ---@param val number 灵魂填充的数量
 ---@return function 效果的Cost或Operation函数
-function VgF.OverlayFill(val)
+function VgF.SoulCharge(val)
     return function (e, tp, eg, ep, ev, re, r, rp, chk)
         if VgF.GetValueType(val) ~= "number" then return 0 end
         local c = e:GetHandler()
@@ -717,7 +717,7 @@ end
 ---用于效果的Cost。它返回一个执行“【费用】[计数爆发val]”的函数。
 ---@param val number 计数爆发的数量
 ---@return function 效果的Cost函数
-function VgF.DamageCost(val)
+function VgF.CounterBlast(val)
     return function (e, tp, eg, ep, ev, re, r, rp, chk)
         if VgF.GetValueType(val) ~= "number" then return 0 end
         local c = e:GetHandler()
@@ -808,7 +808,7 @@ function VgF.IsCanBeCalled(c, e, tp, sumtype, pos, zone)
     if VgF.GetValueType(pos) ~= "number" then pos = POS_FACEUP_ATTACK end
     if VgF.GetValueType(zone) == "string" and zone == "FromOverlayToV" then
         local _, code = c:GetOriginalCode()
-        return Duel.IsPlayerCanSpecialSummonMonster(tp, code, nil, TYPE_MONSTER + TYPE_NORMAL, c:GetBaseAttack(), c:GetBaseDefense(), c:GetOriginalLevel(), c:GetOriginalRace(), c:GetOriginalAttribute())
+        return Duel.IsPlayerCanSpecialSummonMonster(tp, code, nil, TYPE_UNIT + TYPE_NORMAL, c:GetBaseAttack(), c:GetBaseDefense(), c:GetOriginalLevel(), c:GetOriginalRace(), c:GetOriginalAttribute())
     end
     return z > 0 and c:IsCanBeSpecialSummoned(e, sumtype, tp, false, false, pos, tp, zone)
 end
@@ -1091,7 +1091,7 @@ end
 function VgF.EffectReset(c, e, code, con)
     if VgF.GetValueType(e) == "Effect" then
         local e1 = Effect.CreateEffect(c)
-        e1:SetType(EFFECT_TYPE_FIELD + EFFECT_TYPE_CONTINUOUS)
+        e1:SetType(EFFECT_TYPE_FIELD + EFFECT_TYPE_SET)
         e1:SetCode(code)
         e1:SetProperty(EFFECT_FLAG_CANNOT_DISABLE)
         e1:SetRange(LOCATION_ALL)
@@ -1102,7 +1102,7 @@ function VgF.EffectReset(c, e, code, con)
     elseif VgF.GetValueType(e) == "table" then
         for i, v in ipairs(e) do
             local e1 = Effect.CreateEffect(c)
-            e1:SetType(EFFECT_TYPE_FIELD + EFFECT_TYPE_CONTINUOUS)
+            e1:SetType(EFFECT_TYPE_FIELD + EFFECT_TYPE_SET)
             e1:SetCode(code)
             e1:SetProperty(EFFECT_FLAG_CANNOT_DISABLE)
             e1:SetRange(LOCATION_ALL)
@@ -1468,18 +1468,6 @@ end
 function VgF.AddEffectWhenTrigger(c, m, op, cost, con, tg, chk)
     local cm = _G["c"..m]
     cm.effect_when_trigger = {op, cost, con, tg, chk}
-end
-
-function VgF.ShiftLocationFromString(str)
-    local loc = 0
-    if str == "POSCHANGE" then return str end
-    for i = 1, 13 do
-        if str == LOCATION_LIST_STRING[i] then
-            loc = LOCATION_LIST[i]
-            break
-        end
-    end
-    return loc
 end
 
 function VgF.PlayerEffect(e, tp, eg, ep, ev, re, r, rp)

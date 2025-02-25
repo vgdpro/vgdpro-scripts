@@ -12,8 +12,8 @@ function cm.op(e,tp,eg,ep,ev,re,r,rp)
 end
 
 function cm.cost(e,tp,eg,ep,ev,re,r,rp,chk)
-	if chk==0 then return vgf.IsExistingMatchingCard(cm.filter,tp,LOCATION_HAND,0,2,nil) and vgf.DamageCost(1)(e,tp,eg,ep,ev,re,r,rp,chk) end
-    vgf.DamageCost(1)(e,tp,eg,ep,ev,re,r,rp,chk)
+	if chk==0 then return vgf.IsExistingMatchingCard(cm.filter,tp,LOCATION_HAND,0,2,nil) and vgf.CounterBlast(1)(e,tp,eg,ep,ev,re,r,rp,chk) end
+    vgf.CounterBlast(1)(e,tp,eg,ep,ev,re,r,rp,chk)
 	local g=vgf.SelectMatchingCard(HINTMSG_CONFIRM,e,tp,cm.filter,tp,LOCATION_HAND,0,2,2,nil)
 	Duel.ConfirmCards(1-tp,g)
 	if vgf.Sendto(LOCATION_DECK,g,nil,SEQ_DECKTOP,REASON_COST)==#g then
@@ -26,6 +26,6 @@ function cm.cost(e,tp,eg,ep,ev,re,r,rp,chk)
 end
 
 function cm.filter(c)
-	return c:IsType(TYPE_NORMAL+TYPE_MONSTER)
+	return c:IsType(TYPE_NORMAL+TYPE_UNIT)
 end
 

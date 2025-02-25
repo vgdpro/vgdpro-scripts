@@ -9,7 +9,7 @@ function vgd.VgCard(c)
     VgD.Rule(c)
     VgD.Ride(c)
     VgD.CardTrigger(c)
-    if c:IsType(TYPE_MONSTER) then
+    if c:IsType(TYPE_UNIT) then
         VgD.CallToR(c)
         VgD.MonsterBattle(c)
     end
@@ -19,7 +19,7 @@ end
 ---@param c Card 要注册规则的卡
 function VgD.Rule(c)
     local e1 = Effect.CreateEffect(c)
-    e1:SetType(EFFECT_TYPE_FIELD + EFFECT_TYPE_CONTINUOUS)
+    e1:SetType(EFFECT_TYPE_FIELD + EFFECT_TYPE_SET)
     e1:SetCode(EVENT_PHASE + PHASE_DRAW)
     e1:SetRange(LOCATION_ALL)
     e1:SetProperty(EFFECT_FLAG_CANNOT_DISABLE)
@@ -42,7 +42,7 @@ function VgD.Rule(c)
     end)
     c:RegisterEffect(e1)
     local e2 = Effect.CreateEffect(c)
-    e2:SetType(EFFECT_TYPE_FIELD + EFFECT_TYPE_CONTINUOUS)
+    e2:SetType(EFFECT_TYPE_FIELD + EFFECT_TYPE_SET)
     e2:SetCode(EVENT_BATTLED)
     e2:SetProperty(EFFECT_FLAG_CANNOT_DISABLE)
     e2:SetRange(LOCATION_ALL)
@@ -56,7 +56,7 @@ function VgD.Rule(c)
     end)
     c:RegisterEffect(e2)
     local e3 = Effect.CreateEffect(c)
-    e3:SetType(EFFECT_TYPE_FIELD + EFFECT_TYPE_CONTINUOUS)
+    e3:SetType(EFFECT_TYPE_FIELD + EFFECT_TYPE_SET)
     e3:SetCode(EVENT_PHASE_START + PHASE_STANDBY)
     e3:SetProperty(EFFECT_FLAG_CANNOT_DISABLE)
     e3:SetRange(LOCATION_ALL)
@@ -79,7 +79,7 @@ function VgD.Rule(c)
     e10:SetCondition(VgF.RuleCardCondtion)
     c:RegisterEffect(e10)
     local e11 = Effect.CreateEffect(c)
-    e11:SetType(EFFECT_TYPE_FIELD + EFFECT_TYPE_CONTINUOUS)
+    e11:SetType(EFFECT_TYPE_FIELD + EFFECT_TYPE_SET)
     e11:SetCode(EVENT_ADJUST)
     e11:SetRange(LOCATION_ALL)
     e11:SetProperty(EFFECT_FLAG_CANNOT_DISABLE)
@@ -127,7 +127,7 @@ end
 ---@param c Card 要注册骑升功能的卡
 function VgD.Ride(c)
     local e1 = Effect.CreateEffect(c)
-    e1:SetType(EFFECT_TYPE_FIELD + EFFECT_TYPE_CONTINUOUS)
+    e1:SetType(EFFECT_TYPE_FIELD + EFFECT_TYPE_SET)
     e1:SetCode(EVENT_PREDRAW)
     e1:SetCountLimit(1, VgID)
     e1:SetRange(LOCATION_ALL)
@@ -136,7 +136,7 @@ function VgD.Ride(c)
     e1:SetOperation(VgD.RideOperation_lv0)
     c:RegisterEffect(e1)
     local e2 = Effect.CreateEffect(c)
-    e2:SetType(EFFECT_TYPE_FIELD + EFFECT_TYPE_CONTINUOUS)
+    e2:SetType(EFFECT_TYPE_FIELD + EFFECT_TYPE_SET)
     e2:SetCode(EVENT_PHASE + PHASE_STANDBY)
     e2:SetRange(LOCATION_ALL)
     e2:SetCountLimit(1, VgID + 1)
@@ -189,7 +189,7 @@ function VgD.RideMaterialCheck(c, rc)
 end
 function VgD.RideFilter1(c, lv, code, rc)
     local tp = c:GetControler()
-    if not c:IsType(TYPE_MONSTER) then return false end
+    if not c:IsType(TYPE_UNIT) then return false end
     if rc:IsAttribute(SKILL_SELF_RIDE) and c:IsCode(code) then return false end
     if (c:IsLevel(lv, lv + 1) and c:IsLocation(LOCATION_HAND)) then return VgD.RideMaterialCheck(c, rc) end
     if (c:IsLevel(lv + 1) and c:IsLocation(LOCATION_RIDE) and (VgF.IsExistingMatchingCard(nil, tp, LOCATION_HAND, 0, 1, nil) or (Duel.IsPlayerAffectedByEffect(tp, AFFECT_CODE_OVERLAY_INSTEAD_WHEN_RIDE) and VgF.GetVMonster(tp):GetOverlayCount() > 0))) then return VgD.RideMaterialCheck(c, rc) end
@@ -200,7 +200,7 @@ function VgD.DisCardRideFilter(c, e, lv, code, rc)
     return c:IsDiscardable() and VgF.IsExistingMatchingCard(VgD.RideFilter1, tp, LOCATION_HAND + LOCATION_RIDE, 0, 1, c, lv, code, rc)
 end
 function VgD.RideFilter2(c, lv, code, rc)
-    return c:IsLevel(lv) and c:IsType(TYPE_MONSTER) and c:IsCode(code) and rc:IsAttribute(SKILL_SELF_RIDE)
+    return c:IsLevel(lv) and c:IsType(TYPE_UNIT) and c:IsCode(code) and rc:IsAttribute(SKILL_SELF_RIDE)
 end
 function VgD.RideCondition(e, tp, eg, ep, ev, re, r, rp)
     local rc = Duel.GetMatchingGroup(VgF.VMonsterFilter, tp, LOCATION_CIRCLE, 0, nil):GetFirst()
@@ -241,7 +241,7 @@ function VgD.RideOperation(e, tp, eg, ep, ev, re, r, rp)
         local sc = sg:GetFirst()
         if sc:IsLocation(LOCATION_RIDE) then
             if Duel.IsPlayerAffectedByEffect(tp, AFFECT_CODE_OVERLAY_INSTEAD_WHEN_RIDE) and Duel.SelectYesNo(tp, VgF.Stringid(VgID, 14)) then
-                VgF.OverlayCost(1)(e, tp, eg, ep, ev, re, r, rp, 1)
+                VgF.SoulBlast(1)(e, tp, eg, ep, ev, re, r, rp, 1)
             else
                 Duel.Hint(HINT_SELECTMSG, tp, HINTMSG_DISCARD)
                 local g = Duel.SelectMatchingCard(tp, VgD.DisCardRideFilter, tp, LOCATION_HAND, 0, 1, 1, nil, e, lv, code, rc)
@@ -255,8 +255,8 @@ function VgD.RideOperation(e, tp, eg, ep, ev, re, r, rp)
         sc:SetMaterial(Group.FromCards(rc))
         VgF.Sendto(LOCATION_SOUL, Group.FromCards(rc), sc)
         VgF.Sendto(LOCATION_CIRCLE, sc, SUMMON_TYPE_RIDE, tp, 0x20)
-        if VgF.IsExistingMatchingCard(Card.IsType, tp, LOCATION_RIDE, 0, 1, nil, TYPE_RIDE_EMBLEM) then
-            local tc = Duel.GetMatchingGroup(Card.IsType, tp, LOCATION_RIDE, 0, nil, TYPE_RIDE_EMBLEM):GetFirst()
+        if VgF.IsExistingMatchingCard(Card.IsType, tp, LOCATION_RIDE, 0, 1, nil, TYPE_RIDE_CREST) then
+            local tc = Duel.GetMatchingGroup(Card.IsType, tp, LOCATION_RIDE, 0, nil, TYPE_RIDE_CREST):GetFirst()
             VgF.Sendto(LOCATION_CREST, tc, tp, POS_FACEUP_DEFENSE, REASON_EFFECT)
         end
     elseif sel == 0 or (sel == 1 and a and b) then
@@ -644,7 +644,7 @@ end
 function VgD.MonsterBattle(c)
     --攻击转守备
     local e1 = Effect.CreateEffect(c)
-    e1:SetType(EFFECT_TYPE_SINGLE + EFFECT_TYPE_CONTINUOUS)
+    e1:SetType(EFFECT_TYPE_SINGLE + EFFECT_TYPE_SET)
     e1:SetCode(EVENT_ATTACK_ANNOUNCE)
     e1:SetProperty(EFFECT_FLAG_CANNOT_DISABLE)
     e1:SetOperation(function (e, tp, eg, ep, ev, re, r, rp)
@@ -662,7 +662,7 @@ function VgD.MonsterBattle(c)
     c:RegisterEffect(e1)
     --回合开始转攻
     local e2 = Effect.CreateEffect(c)
-    e2:SetType(EFFECT_TYPE_FIELD + EFFECT_TYPE_CONTINUOUS)
+    e2:SetType(EFFECT_TYPE_FIELD + EFFECT_TYPE_SET)
     e2:SetCode(EVENT_PREDRAW)
     e2:SetRange(LOCATION_ALL)
     e2:SetCountLimit(1, VgID + 4)
@@ -799,7 +799,7 @@ function VgD.MonsterBattle(c)
     end)
     c:RegisterEffect(e7)
     local e8 = Effect.CreateEffect(c)
-    e8:SetType(EFFECT_TYPE_FIELD + EFFECT_TYPE_CONTINUOUS)
+    e8:SetType(EFFECT_TYPE_FIELD + EFFECT_TYPE_SET)
     e8:SetCode(EVENT_DAMAGE_STEP_END)
     e8:SetProperty(EFFECT_FLAG_DAMAGE_STEP + EFFECT_FLAG_CANNOT_DISABLE + EFFECT_FLAG_DELAY)
     e8:SetRange(LOCATION_ALL)
@@ -886,7 +886,7 @@ function VgD.OverDress(c, filter)
     e1:SetOperation(VgD.OverDressOperation(filter))
     c:RegisterEffect(e1)
     local e2 = Effect.CreateEffect(c)
-    e2:SetType(EFFECT_TYPE_SINGLE + EFFECT_TYPE_CONTINUOUS)
+    e2:SetType(EFFECT_TYPE_SINGLE + EFFECT_TYPE_SET)
     e2:SetCode(EVENT_SPSUMMON_SUCCESS)
     e2:SetProperty(EFFECT_FLAG_CANNOT_DISABLE)
     e2:SetOperation(function (e, tp, eg, ep, ev, re, r, rp)
@@ -1029,7 +1029,7 @@ function VgD.AlchemagicCostFilter(c, e, tp, eg, ep, ev, re, r, rp, mc)
                     if VgF.GetValueType(c_cos_val) ~= "number" then c_cos_val = 0 end
                     local both_cos_val = mc_cos_val + c_cos_val
                     --判断其他减少费用的效果
-                    if mc_cost_from == LOCATION_SOUL and Duel.GetFlagEffect(tp, AFFECT_CODE_OVERLAY_COST_FREE_WHEN_ALCHEMAGIC) > 0 then mc_cos_val, c_cos_val, both_cos_val = 0, 0, 0 end
+                    if mc_cost_from == LOCATION_SOUL and Duel.GetFlagEffect(tp, AFFECT_CODE_SOUL_BLAST_FREE_WHEN_ALCHEMAGIC) > 0 then mc_cos_val, c_cos_val, both_cos_val = 0, 0, 0 end
                     local mcg = VgF.GetMatchingGroup(mcfilter[mcv], tp, mc_cost_from, 0, c, e, tp)
                     local cg = VgF.GetMatchingGroup(cfilter[cv], tp, c_cost_from, 0, mc, e, tp)
                     local a = mcg:GetCount() < mc_cos_val
@@ -1069,7 +1069,7 @@ function VgD.AlchemagicCostFilter(c, e, tp, eg, ep, ev, re, r, rp, mc)
                 local c_cos_val = cval[cv]
                 if VgF.GetValueType(c_cos_val) ~= "number" then c_cos_val = 0 end
                 --判断其他减少费用的效果
-                if c_cost_from == LOCATION_SOUL and Duel.GetFlagEffect(tp, AFFECT_CODE_OVERLAY_COST_FREE_WHEN_ALCHEMAGIC) > 0 then c_cos_val = 0 end
+                if c_cost_from == LOCATION_SOUL and Duel.GetFlagEffect(tp, AFFECT_CODE_SOUL_BLAST_FREE_WHEN_ALCHEMAGIC) > 0 then c_cos_val = 0 end
                 if c_cost_from == LOCATION_DAMAGE and Duel.GetFlagEffect(tp, 10402010) > 0 then
                     local c_10402010 = Duel.GetFlagEffectLabel(tp, 10402010)
                     if c_cos_val > c_10402010 then c_cos_val = c_cos_val - c_10402010
@@ -1087,7 +1087,7 @@ function VgD.AlchemagicCostFilter(c, e, tp, eg, ep, ev, re, r, rp, mc)
             local mc_cos_val = mcval[mcv]
             if VgF.GetValueType(mc_cos_val) ~= "number" then mc_cos_val = 0 end
             --判断其他减少费用的效果
-            if mc_cost_from == LOCATION_SOUL and Duel.GetFlagEffect(tp, AFFECT_CODE_OVERLAY_COST_FREE_WHEN_ALCHEMAGIC) > 0 then mc_cos_val = 0 end
+            if mc_cost_from == LOCATION_SOUL and Duel.GetFlagEffect(tp, AFFECT_CODE_SOUL_BLAST_FREE_WHEN_ALCHEMAGIC) > 0 then mc_cos_val = 0 end
             local mcg = VgF.GetMatchingGroup(mcfilter[mcv], tp, mc_cost_from, 0, c, e, tp)
             if mc_cost_from == LOCATION_DAMAGE and Duel.GetFlagEffect(tp, 10402010) > 0 then
                 local c_10402010 = Duel.GetFlagEffectLabel(tp, 10402010)
@@ -1105,7 +1105,7 @@ function VgD.AlchemagicCostFilter(c, e, tp, eg, ep, ev, re, r, rp, mc)
             local c_cos_val = mcval[cv]
             if VgF.GetValueType(c_cos_val) ~= "number" then c_cos_val = 0 end
             --判断其他减少费用的效果
-            if c_cost_from == LOCATION_SOUL and Duel.GetFlagEffect(tp, AFFECT_CODE_OVERLAY_COST_FREE_WHEN_ALCHEMAGIC) > 0 then c_cos_val = 0 end
+            if c_cost_from == LOCATION_SOUL and Duel.GetFlagEffect(tp, AFFECT_CODE_SOUL_BLAST_FREE_WHEN_ALCHEMAGIC) > 0 then c_cos_val = 0 end
             local cg = VgF.GetMatchingGroup(cfilter[cv], tp, c_cost_from, 0, c, e, tp)
             if c_cost_from == LOCATION_DAMAGE and Duel.GetFlagEffect(tp, 10402010) > 0 then
                 local c_10402010 = Duel.GetFlagEffectLabel(tp, 10402010)
@@ -1219,12 +1219,12 @@ function VgD.AlchemagicCostOperation(c, bc, tp)
         if tg_val_bc_max < tg_val_bc then tg_val_bc_max = tg_val_bc end
         --判断其他减少费用的效果
         --继承的少女 亨德莉娜
-        if tg_from == LOCATION_SOUL and Duel.GetFlagEffect(tp, AFFECT_CODE_OVERLAY_COST_FREE_WHEN_ALCHEMAGIC) > 0 then
+        if tg_from == LOCATION_SOUL and Duel.GetFlagEffect(tp, AFFECT_CODE_SOUL_BLAST_FREE_WHEN_ALCHEMAGIC) > 0 then
             if tg:GetCount() < tg_val_c + tg_val_bc or tg:FilterCount(tg_filter_c, nil) < tg_val_c or tg:FilterCount(tg_filter_bc, nil) < tg_val_bc then
-                Duel.ResetFlagEffect(tp, AFFECT_CODE_OVERLAY_COST_FREE_WHEN_ALCHEMAGIC)
+                Duel.ResetFlagEffect(tp, AFFECT_CODE_SOUL_BLAST_FREE_WHEN_ALCHEMAGIC)
                 goto continue
             elseif Duel.SelectYesNo(tp, VgF.Stringid(10401023, 1)) then
-                Duel.ResetFlagEffect(tp, AFFECT_CODE_OVERLAY_COST_FREE_WHEN_ALCHEMAGIC)
+                Duel.ResetFlagEffect(tp, AFFECT_CODE_SOUL_BLAST_FREE_WHEN_ALCHEMAGIC)
                 goto continue
             end
         end
@@ -1461,7 +1461,7 @@ function VgD.BeRidedByCard(c, m, filter, op, cost, con, tg, id)
     local desc = VgF.Stringid(m, id or 2)
     -- set effect
     local e = Effect.CreateEffect(c)
-    e:SetType(EFFECT_TYPE_SINGLE + EFFECT_TYPE_CONTINUOUS)
+    e:SetType(EFFECT_TYPE_SINGLE + EFFECT_TYPE_SET)
     e:SetCode(EVENT_BE_MATERIAL)
     e:SetProperty(EFFECT_FLAG_EVENT_PLAYER)
     e:SetCondition(VgD.BeRidedByCardCondition(con, filter))
@@ -1618,7 +1618,7 @@ function VgD.TriggerCountUp(c, m, num, con, reset, hc)
     hc = hc and VgF.ReturnCard(hc) or c
     -- set effect
     local e = Effect.CreateEffect(c)
-    e:SetType(EFFECT_TYPE_FIELD + EFFECT_TYPE_CONTINUOUS)
+    e:SetType(EFFECT_TYPE_FIELD + EFFECT_TYPE_SET)
     e:SetRange(LOCATION_CIRCLE)
     e:SetCode(EVENT_CUSTOM + EVENT_TRIGGERCOUNTUP)
     e:SetProperty(EFFECT_FLAG_DELAY)
@@ -1787,7 +1787,7 @@ function VgD.NightEffect(c, m)
     return e1, e2
 end
 function VgD.NightFilter(c)
-    return not c:IsSetCard(0x5040) and c:IsType(TYPE_CONTINUOUS)
+    return not c:IsSetCard(0x5040) and c:IsType(TYPE_SET)
 end
 
 ---【永】【指令区】：对手在可以将后防者通常CALL出场的时段，对手可以将以下的效果执行。
@@ -1823,26 +1823,26 @@ function VgD.CallInPrisonCondition(val)
         local eg, ep, ev, re, r, rp
         if Duel.GetTurnPlayer() == e:GetHandlerPlayer() then return false end
         if val == 1 then
-            return (VgF.OverlayCost(1)(e, tp, eg, ep, ev, re, r, rp, 0) and VgF.IsExistingMatchingCard(VgD.CallInPrisonFilter, tp, LOCATION_HAND, 0, 1, nil, e, tp))
+            return (VgF.SoulBlast(1)(e, tp, eg, ep, ev, re, r, rp, 0) and VgF.IsExistingMatchingCard(VgD.CallInPrisonFilter, tp, LOCATION_HAND, 0, 1, nil, e, tp))
         elseif val == 2 then
-            return (VgF.DamageCost(1)(e, tp, eg, ep, ev, re, r, rp, 0) and VgF.IsExistingMatchingCard(VgD.CallInPrisonFilter, tp, LOCATION_HAND, 0, 2, nil, e, tp))
+            return (VgF.CounterBlast(1)(e, tp, eg, ep, ev, re, r, rp, 0) and VgF.IsExistingMatchingCard(VgD.CallInPrisonFilter, tp, LOCATION_HAND, 0, 2, nil, e, tp))
         end
     end
 end
 function VgD.CallInPrisonOperation(val)
     return function(e, tp, eg, ep, ev, re, r, rp, c, sg, og)
         if val == 1 then
-            VgF.OverlayCost(1)(e, tp, eg, ep, ev, re, r, rp, 1)
+            VgF.SoulBlast(1)(e, tp, eg, ep, ev, re, r, rp, 1)
             local g = VgF.SelectMatchingCard(HINTMSG_CALL, e, tp, VgD.CallInPrisonFilter, tp, LOCATION_ORDER, 0, 1, 1, nil, e, tp)
-            if g:GetFirst():IsType(TYPE_MONSTER) then
+            if g:GetFirst():IsType(TYPE_UNIT) then
                 VgF.Sendto(LOCATION_CIRCLE, g, 0, tp)
             else
                 VgF.Sendto(LOCATION_DROP, g, REASON_EFFECT)
             end
         elseif val == 2 then
-            VgF.DamageCost(1)(e, tp, eg, ep, ev, re, r, rp, 1)
+            VgF.CounterBlast(1)(e, tp, eg, ep, ev, re, r, rp, 1)
             local tg = VgF.SelectMatchingCard(HINTMSG_CALL, e, tp, VgD.CallInPrisonFilter, tp, LOCATION_ORDER, 0, 2, 2, nil, e, tp)
-            local g = tg:Filter(Card.IsType, nil, TYPE_MONSTER)
+            local g = tg:Filter(Card.IsType, nil, TYPE_UNIT)
             if g:GetCount() > 0 then
                 VgF.Sendto(LOCATION_CIRCLE, g, 0, tp)
                 tg:Sub(g)
@@ -1856,7 +1856,7 @@ function VgD.CallInPrisonOperation(val)
     end
 end
 function VgD.CallInPrisonFilter(c, e, tp)
-    return c:GetFlagEffect(FLAG_IMPRISON) > 0 and (vgf.IsCanBeCalled(c, e, tp) or not c:IsType(TYPE_MONSTER))
+    return c:GetFlagEffect(FLAG_IMPRISON) > 0 and (vgf.IsCanBeCalled(c, e, tp) or not c:IsType(TYPE_UNIT))
 end
 
 --其他----------------------------------------------------------------------------------------
@@ -1890,7 +1890,7 @@ function VgD.GlobalCheckEffect(c, m, code, con, op)
     end
     -- set effect
     local ge = Effect.CreateEffect(c)
-    ge:SetType(EFFECT_TYPE_FIELD + EFFECT_TYPE_CONTINUOUS)
+    ge:SetType(EFFECT_TYPE_FIELD + EFFECT_TYPE_SET)
     ge:SetCode(code)
     if con then ge:SetCondition(con) end
     ge:SetOperation(op)

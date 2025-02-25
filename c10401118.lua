@@ -16,5 +16,5 @@ function cm.op(e,tp,eg,ep,ev,re,r,rp)
     local c=e:GetHandler()
 	Duel.Draw(tp,1,REASON_TRIGGER)
     vgf.Sendto(LOCATION_SOUL,c)
-	vgf.DamageFill(1)
+	vgf.CounterCharge(1)
 end

@@ -2,7 +2,7 @@ local cm,m,o=GetID()
 function cm.initial_effect(c)
 	vgd.VgCard(c)
 	vgd.AbilityAct(c,m,LOCATION_CIRCLE,cm.op,cm.cost,vgf.VMonsterCondition)
-	vgd.AbilityAct(c,m,LOCATION_CIRCLE,cm.op1,vgf.OverlayCost(5),cm.con,nil,nil,nil,2)
+	vgd.AbilityAct(c,m,LOCATION_CIRCLE,cm.op1,vgf.SoulBlast(5),cm.con,nil,nil,nil,2)
 	vgd.GlobalCheckEffect(c,m,EVENT_TO_GRAVE,cm.checkcon)
 end
 function cm.cost(e,tp,eg,ep,ev,re,r,rp,chk)

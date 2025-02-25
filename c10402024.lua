@@ -1,7 +1,7 @@
 local cm,m,o=GetID()
 function cm.initial_effect(c)
 	vgd.VgCard(c)
-	vgd.Order(c,m,cm.op,vgf.CostAnd(vgf.DamageCost(1),vgf.OverlayCost(1)))
+	vgd.Order(c,m,cm.op,vgf.CostAnd(vgf.CounterBlast(1),vgf.SoulBlast(1)))
 end
 function cm.op(e,tp,eg,ep,ev,re,r,rp,chk)
 	local g=vgf.SelectMatchingCard(HINTMSG_LEAVEFIELD,e,tp,vgf.RMonsterFilter,tp,LOCATION_CIRCLE,LOCATION_CIRCLE,1,1,nil)

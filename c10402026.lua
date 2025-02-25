@@ -6,8 +6,8 @@ function cm.initial_effect(c)
 end
 function cm.cost(e,tp,eg,ep,ev,re,r,rp,chk)
 	local c=e:GetHandler()
-	if chk==0 then return vgf.Rest(c)(e,tp,eg,ep,ev,re,r,rp,chk) and vgf.OverlayCost(1)(e,tp,eg,ep,ev,re,r,rp,chk) end
-	vgf.OverlayCost(1)(e,tp,eg,ep,ev,re,r,rp,chk)
+	if chk==0 then return vgf.Rest(c)(e,tp,eg,ep,ev,re,r,rp,chk) and vgf.SoulBlast(1)(e,tp,eg,ep,ev,re,r,rp,chk) end
+	vgf.SoulBlast(1)(e,tp,eg,ep,ev,re,r,rp,chk)
 	vgf.Rest(c)(e,tp,eg,ep,ev,re,r,rp,chk)
 end
 function cm.con(e,tp,eg,ep,ev,re,r,rp)

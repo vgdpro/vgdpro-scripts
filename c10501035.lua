@@ -25,5 +25,5 @@ function cm.filter2(c)
 end
 
 function cm.filter3(c)
-    return c:IsSetCard(0xa013) and c:IsType(TYPE_NORMAL+TYPE_MONSTER)
+    return c:IsSetCard(0xa013) and c:IsType(TYPE_NORMAL+TYPE_UNIT)
 end

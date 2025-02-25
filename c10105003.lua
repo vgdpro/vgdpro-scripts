@@ -18,7 +18,7 @@ function cm.operation1(e,tp,eg,ep,ev,re,r,rp)
 	Duel.Draw(tp,1,REASON_EFFECT)
 end
 function cm.cost(e,tp,eg,ep,ev,re,r,rp,chk)
-	if chk==0 then return vgf.DamageCost(1)(e,tp,eg,ep,ev,re,r,rp,chk) and vgf.OverlayCost(1)(e,tp,eg,ep,ev,re,r,rp,chk) end
-	vgf.DamageCost(1)(e,tp,eg,ep,ev,re,r,rp,chk)
-	vgf.OverlayCost(1)(e,tp,eg,ep,ev,re,r,rp,chk)
+	if chk==0 then return vgf.CounterBlast(1)(e,tp,eg,ep,ev,re,r,rp,chk) and vgf.SoulBlast(1)(e,tp,eg,ep,ev,re,r,rp,chk) end
+	vgf.CounterBlast(1)(e,tp,eg,ep,ev,re,r,rp,chk)
+	vgf.SoulBlast(1)(e,tp,eg,ep,ev,re,r,rp,chk)
 end

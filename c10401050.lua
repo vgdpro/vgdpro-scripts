@@ -6,7 +6,7 @@ function cm.initial_effect(c)
 	vgd.GlobalCheckEffect(c,m,EVENT_CHAINING,cm.checkcon)
 end
 function cm.filter(c)
-	return c:GetType()==TYPE_SPELL
+	return c:GetType()==TYPE_ORDER
 end
 function cm.checkcon(e,tp,eg,ep,ev,re,r,rp)
     return re:IsHasType(EFFECT_TYPE_ACTIVATE) and rp==tp

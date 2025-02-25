@@ -6,7 +6,7 @@ function cm.initial_effect(c)
 	vgd.AbilityAuto(c,m,nil,EFFECT_TYPE_SINGLE,EVENT_SPSUMMON_SUCCESS,cm.op,nil,cm.con)
 end
 function cm.op(e,tp,eg,ep,ev,re,r,rp)
-	vgf.OverlayFill(1)(e,tp,eg,ep,ev,re,r,rp)
+	vgf.SoulCharge(1)(e,tp,eg,ep,ev,re,r,rp)
 	local c=e:GetHandler()
 	if c:IsRelateToEffect(e) and c:IsFaceup() then
 		local e2=Effect.CreateEffect(c)

@@ -2,7 +2,7 @@ local cm,m,o=GetID()
 function cm.initial_effect(c)
 	vgd.VgCard(c)
 	-- 【起】【V】【1回合1次】：通过【费用】[计数爆发1]，选择你的指令区中的1张正面表示的歌曲卡，将其歌唱。（发动歌曲卡的能力，那个能力结算完毕后将那张卡转为背面表示。）
-	vgd.AbilityAct(c,m,LOCATION_CIRCLE,cm.op,vgf.DamageCost(1),vgf.VMonsterCondition,nil,1)
+	vgd.AbilityAct(c,m,LOCATION_CIRCLE,cm.op,vgf.CounterBlast(1),vgf.VMonsterCondition,nil,1)
 	-- 补充一回合一次描述
 	-- 【自】【V】：这个单位攻击时，你的指令区中的背面表示的卡有2张以上的话，选择你的指令区中的1张卡正面表示的歌曲卡，将其歌唱，这次战斗中，对手不能将守护者从手牌CALL到G上。
 	vgd.AbilityAuto(c,m,LOCATION_CIRCLE,EFFECT_TYPE_SINGLE,EVENT_ATTACK_ANNOUNCE,cm.op2,nil,cm.con2)
@@ -40,5 +40,5 @@ function cm.op2(e,tp,eg,ep,ev,re,r,rp)
 end
 function cm.actlimit(e,te,tp)
 	local tc=te:GetHandler()
-    return te:IsHasCategory(CATEGORY_DEFENDER) and tc:IsType(TYPE_MONSTER) and tc:GetBaseDefense()==0 and tc:IsLocation(LOCATION_HAND)
+    return te:IsHasCategory(CATEGORY_DEFENDER) and tc:IsType(TYPE_UNIT) and tc:GetBaseDefense()==0 and tc:IsLocation(LOCATION_HAND)
 end

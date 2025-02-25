@@ -1,7 +1,7 @@
 local cm,m,o=GetID()
 function cm.initial_effect(c)
 	vgd.VgCard(c)
-    vgd.AbilityAuto(c,m,LOCATION_CIRCLE,EFFECT_TYPE_FIELD,EVENT_CUSTOM+EVENT_SUPPORT,cm.op,vgf.DamageCost(1),cm.con)
+    vgd.AbilityAuto(c,m,LOCATION_CIRCLE,EFFECT_TYPE_FIELD,EVENT_CUSTOM+EVENT_SUPPORT,cm.op,vgf.CounterBlast(1),cm.con)
 end
 function cm.con(e,tp,eg,ep,ev,re,r,rp)
     local c=e:GetHandler()
@@ -25,7 +25,7 @@ function cm.op(e,tp,eg,ep,ev,re,r,rp)
 end
 function cm.costtg(e,re,tp)
     e:SetLabelObject(re:GetHandler())
-    return re:IsHasCategory(CATEGORY_DEFENDER) and re:GetHandler():IsLocation(LOCATION_HAND) and re:GetHandlerPlayer()==tp and not vgf.IsExistingMatchingCard(nil,tp,LOCATION_G_CIRCLE,0,1,nil) and Duel.GetAttacker()==e:GetHandler() and re:IsActiveType(TYPE_MONSTER)
+    return re:IsHasCategory(CATEGORY_DEFENDER) and re:GetHandler():IsLocation(LOCATION_HAND) and re:GetHandlerPlayer()==tp and not vgf.IsExistingMatchingCard(nil,tp,LOCATION_G_CIRCLE,0,1,nil) and Duel.GetAttacker()==e:GetHandler() and re:IsActiveType(TYPE_UNIT)
 end
 function cm.costchk(e,re,tp)
     return vgf.IsExistingMatchingCard(vgf.IsAbleToGCircle,tp,LOCATION_HAND,0,1,re:GetHandler(),LOCATION_HAND)

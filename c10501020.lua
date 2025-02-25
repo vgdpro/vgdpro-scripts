@@ -15,7 +15,7 @@ function cm.op(e,tp,eg,ep,ev,re,r,rp)
 		vgf.EffectReset(c,e1,EVENT_BATTLED)
 	end
 	if vgf.IsSequence(c,2) then
-		vgf.DamageFill(1)(e,tp,eg,ep,ev,re,r,rp)
+		vgf.CounterCharge(1)(e,tp,eg,ep,ev,re,r,rp)
 	end
 end
 function cm.checkfilter(c,tp,re)

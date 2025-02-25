@@ -4,7 +4,7 @@ function cm.initial_effect(c)
 	--通过【费用】[计数爆发2]施放！
     --选择对手的1张先导者，这次战斗中，那个单位的☆-1。
 	vgd.VgCard(c)
-	vgd.Order(c,m,cm.operation,vgf.DamageCost(2))
+	vgd.Order(c,m,cm.operation,vgf.CounterBlast(2))
 end
 function cm.operation(e,tp,eg,ep,ev,re,r,rp)
 	local c=e:GetHandler()

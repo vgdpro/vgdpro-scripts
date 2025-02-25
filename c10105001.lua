@@ -1,7 +1,7 @@
 local cm,m,o=GetID()
 function cm.initial_effect(c)
 	vgd.VgCard(c)
-	vgd.AbilityAct(c,m,LOCATION_CIRCLE,cm.op1,vgf.DamageCost(1),nil,nil,1)
+	vgd.AbilityAct(c,m,LOCATION_CIRCLE,cm.op1,vgf.CounterBlast(1),nil,nil,1)
 	vgd.AbilityCont(c, m, LOCATION_CIRCLE, EFFECT_TYPE_SINGLE, EFFECT_UPDATE_ATTACK, 10000, cm.con)
 	vgd.TriggerCountUp(c,m,1,cm.con2)
 end
