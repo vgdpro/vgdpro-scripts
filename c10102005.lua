@@ -5,7 +5,7 @@ function cm.initial_effect(c)
 end
 function cm.operation(e,tp,eg,ep,ev,re,r,rp)
 	local c=e:GetHandler()
-	vgf.SoulCharge(1)
+	vgf.op.SoulCharge(1)
 	Duel.BreakEffect()
 	local ct=Duel.GetFlagEffectLabel(tp,FLAG_CONDITION)
 	if vgf.GetValueType(ct)=="number" and ct==10102001 and vgf.IsExistingMatchingCard(Card.IsFaceup,tp,LOCATION_DAMAGE,0,1,nil) and Duel.SelectEffectYesNo(tp,vgf.stringid(VgID,10)) then

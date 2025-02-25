@@ -2,7 +2,7 @@ local cm,m,o=GetID()
 function cm.initial_effect(c)
 	vgd.VgCard(c)
 	vgd.AbilityAuto(c,m,nil,EFFECT_TYPE_SINGLE,EVENT_SPSUMMON_SUCCESS,cm.op,nil,vgf.RSummonCondition)
-	vgd.AbilityAct(c,m,LOCATION_CIRCLE,cm.op1,vgf.LeaveFieldCost(),vgf.RMonsterCondition)
+	vgd.AbilityAct(c,m,LOCATION_CIRCLE,cm.op1,vgf.cost.Retire(),vgf.RMonsterCondition)
 end
 function cm.op(e,tp,eg,ep,ev,re,r,rp)
 	local g=Duel.GetDecktopGroup(tp,3)

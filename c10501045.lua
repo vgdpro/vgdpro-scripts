@@ -8,12 +8,12 @@ end
 
 function cm.op(e,tp,eg,ep,ev,re,r,rp)
 	local code=vgf.GetVMonster(tp):GetCode()
-	vgf.CardsFromTo(REASON_EFFECT,LOCATION_HAND,LOCATION_DECK,Card.IsCode,1,0,code)(e,tp,eg,ep,ev,re,r,rp)
+	vgf.op.CardsFromTo(REASON_EFFECT,LOCATION_HAND,LOCATION_DECK,Card.IsCode,1,0,code)(e,tp,eg,ep,ev,re,r,rp)
 end
 
 function cm.cost(e,tp,eg,ep,ev,re,r,rp,chk)
-	if chk==0 then return vgf.IsExistingMatchingCard(cm.filter,tp,LOCATION_HAND,0,2,nil) and vgf.CounterBlast(1)(e,tp,eg,ep,ev,re,r,rp,chk) end
-    vgf.CounterBlast(1)(e,tp,eg,ep,ev,re,r,rp,chk)
+	if chk==0 then return vgf.IsExistingMatchingCard(cm.filter,tp,LOCATION_HAND,0,2,nil) and vgf.cost.CounterBlast(1)(e,tp,eg,ep,ev,re,r,rp,chk) end
+    vgf.cost.CounterBlast(1)(e,tp,eg,ep,ev,re,r,rp,chk)
 	local g=vgf.SelectMatchingCard(HINTMSG_CONFIRM,e,tp,cm.filter,tp,LOCATION_HAND,0,2,2,nil)
 	Duel.ConfirmCards(1-tp,g)
 	if vgf.Sendto(LOCATION_DECK,g,nil,SEQ_DECKTOP,REASON_COST)==#g then

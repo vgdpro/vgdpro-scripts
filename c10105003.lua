@@ -1,7 +1,7 @@
 local cm,m,o=GetID()
 function cm.initial_effect(c)
 	vgd.VgCard(c)
-	vgd.AbilityAuto(c,m,LOCATION_CIRCLE,EFFECT_TYPE_SINGLE,EVENT_SPSUMMON_SUCCESS,vgf.CardsFromTo(REASON_EFFECT,LOCATION_HAND,LOCATION_DECK,cm.filter),nil,vgf.VSummonCondition)
+	vgd.AbilityAuto(c,m,LOCATION_CIRCLE,EFFECT_TYPE_SINGLE,EVENT_SPSUMMON_SUCCESS,vgf.op.CardsFromTo(REASON_EFFECT,LOCATION_HAND,LOCATION_DECK,cm.filter),nil,vgf.VSummonCondition)
 	vgd.AbilityAuto(c,m,LOCATION_CIRCLE,EFFECT_TYPE_SINGLE,EVENT_SPSUMMON_SUCCESS,cm.operation1,cm.cost,cm.condition)
 end
 function cm.filter(c)
@@ -18,7 +18,7 @@ function cm.operation1(e,tp,eg,ep,ev,re,r,rp)
 	Duel.Draw(tp,1,REASON_EFFECT)
 end
 function cm.cost(e,tp,eg,ep,ev,re,r,rp,chk)
-	if chk==0 then return vgf.CounterBlast(1)(e,tp,eg,ep,ev,re,r,rp,chk) and vgf.SoulBlast(1)(e,tp,eg,ep,ev,re,r,rp,chk) end
-	vgf.CounterBlast(1)(e,tp,eg,ep,ev,re,r,rp,chk)
-	vgf.SoulBlast(1)(e,tp,eg,ep,ev,re,r,rp,chk)
+	if chk==0 then return vgf.cost.CounterBlast(1)(e,tp,eg,ep,ev,re,r,rp,chk) and vgf.cost.SoulBlast(1)(e,tp,eg,ep,ev,re,r,rp,chk) end
+	vgf.cost.CounterBlast(1)(e,tp,eg,ep,ev,re,r,rp,chk)
+	vgf.cost.SoulBlast(1)(e,tp,eg,ep,ev,re,r,rp,chk)
 end

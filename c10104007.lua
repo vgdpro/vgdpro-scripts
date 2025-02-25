@@ -19,8 +19,8 @@ function cm.operation(e,tp,eg,ep,ev,re,r,rp)
     end
 end
 function cm.cost(e,tp,eg,ep,ev,re,r,rp,chk)
-	if chk==0 then return vgf.IsExistingMatchingCard(Card.IsFaceup,tp,LOCATION_DAMAGE,0,1,nil) and vgf.SoulBlast(1)(e,tp,eg,ep,ev,re,r,rp,chk) end
+	if chk==0 then return vgf.IsExistingMatchingCard(Card.IsFaceup,tp,LOCATION_DAMAGE,0,1,nil) and vgf.cost.SoulBlast(1)(e,tp,eg,ep,ev,re,r,rp,chk) end
     local g1=vgf.SelectMatchingCard(HINTMSG_DAMAGE,e,tp,Card.IsFaceup,tp,LOCATION_DAMAGE,0,1,1,nil)
     Duel.ChangePosition(g1,POS_FACEDOWN)
-    vgf.SoulBlast(1)(e,tp,eg,ep,ev,re,r,rp,chk)
+    vgf.cost.SoulBlast(1)(e,tp,eg,ep,ev,re,r,rp,chk)
 end

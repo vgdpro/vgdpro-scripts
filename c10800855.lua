@@ -21,7 +21,7 @@ function cm.initial_effect(c)
     e3:SetType(EFFECT_TYPE_IGNITION)
     e3:SetRange(LOCATION_CREST)
     e3:SetCountLimit(1)
-    e3:SetCost(vgf.EnergyBlast(7))
+    e3:SetCost(vgf.cost.EnergyBlast(7))
     e3:SetOperation(cm.op3)
     c:RegisterEffect(e3)
 end

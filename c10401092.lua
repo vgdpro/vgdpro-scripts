@@ -1,7 +1,7 @@
 local cm,m,o=GetID()
 function cm.initial_effect(c)
     vgd.VgCard(c)
-    vgd.Order(c,m,cm.operation,vgf.SoulBlast(1))
+    vgd.Order(c,m,cm.operation,vgf.cost.SoulBlast(1))
 end
 function cm.operation(e,tp,eg,ep,ev,re,r,rp)
     local c=e:GetHandler()

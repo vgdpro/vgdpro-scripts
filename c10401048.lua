@@ -1,7 +1,7 @@
 local cm,m,o=GetID()
 function cm.initial_effect(c)
 	vgd.VgCard(c)
-	vgd.AbilityAuto(c,m,LOCATION_CIRCLE,EFFECT_TYPE_FIELD,EVENT_MOVE,vgf.CounterCharge(1),vgf.SoulBlast(2),cm.con,nil,1)
+	vgd.AbilityAuto(c,m,LOCATION_CIRCLE,EFFECT_TYPE_FIELD,EVENT_MOVE,vgf.CounterCharge(1),vgf.cost.SoulBlast(2),cm.con,nil,1)
 end
 function cm.con(e,tp,eg,ep,ev,re,r,rp)
 	return vgf.RMonsterCondition(e) and eg:IsExists(cm.filter,1,nil,tp) and Duel.GetTurnPlayer()==tp and Duel.GetAttackTarget()

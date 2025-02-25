@@ -153,13 +153,13 @@ vgd.Order(c, m, op, con, cost)
 local cm,m,o=GetID()
 function cm.initial_effect(c)
 	vgf.VgCard(c)
-	vgd.Order(c,m,cm.operation,vgf.CounterBlast(1))
+	vgd.Order(c,m,cm.operation,vgf.cost.CounterBlast(1))
 end
 function cm.operation(e,tp,eg,ep,ev,re,r,rp)
 	local c=e:GetHandler()
 	local g=vgf.SelectMatchingCard(HINTMSG_ATKUP,e,tp,nil,tp,LOCATION_CIRCLE,0,1,1,nil)
 	vgf.AtkUp(c,g,5000,nil)
-	vgf.CardsFromTo(REASON_EFFECT,LOCATION_HAND,LOCATION_DROP,cm.filter)(e,tp,eg,ep,ev,re,r,rp)
+	vgf.op.CardsFromTo(REASON_EFFECT,LOCATION_HAND,LOCATION_DROP,cm.filter)(e,tp,eg,ep,ev,re,r,rp)
 end
 function cm.filter(c)
 	return c:IsCode(10101006)
@@ -184,7 +184,7 @@ vgd.BeRidedByCard(c, m[, code, op, cost, con, tg])
 local cm,m,o=GetID()
 function cm.initial_effect(c)
 	vgf.VgCard(c)
-	vgd.BeRidedByCard(c,m,10101002,vgf.CardsFromTo(REASON_EFFECT,LOCATION_CIRCLE,LOCATION_DECK,cm.filter))
+	vgd.BeRidedByCard(c,m,10101002,vgf.op.CardsFromTo(REASON_EFFECT,LOCATION_CIRCLE,LOCATION_DECK,cm.filter))
 end
 function cm.filter(c)
 	return c:IsCode(10101009)
@@ -261,7 +261,7 @@ VgD.AbilityAct(c, m[, loc, op, cost, con, tg, count, property])
 local cm,m,o=GetID()
 function cm.initial_effect(c)
 	vgf.VgCard(c)
-	vgd.AbilityAct(c,m,LOCATION_CIRCLE,vgf.CardsFromTo(REASON_EFFECT,LOCATION_HAND,LOCATION_CIRCLE,LOCATION_DROP,cm.filter),vgf.Discard(1),nil,nil,1)
+	vgd.AbilityAct(c,m,LOCATION_CIRCLE,vgf.op.CardsFromTo(REASON_EFFECT,LOCATION_HAND,LOCATION_CIRCLE,LOCATION_DROP,cm.filter),vgf.cost.Discard(1),nil,nil,1)
 end
 function cm.filter(c)
 	return c:IsLevel(0)
@@ -375,7 +375,7 @@ vgf.VgCard(c)
 ## 2.用于行为的封装函数（仅用于operation函数）：从X1处寻找卡送去X2处
 
 ```lua
-vgf.CardsFromTo(reason ,loc_to, loc_from, f[, int_max, int_min, ...])
+vgf.op.CardsFromTo(reason ,loc_to, loc_from, f[, int_max, int_min, ...])
 ```
 返回值：int 【具体操作的数量】
 

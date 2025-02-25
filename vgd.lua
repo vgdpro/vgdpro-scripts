@@ -241,7 +241,7 @@ function VgD.RideOperation(e, tp, eg, ep, ev, re, r, rp)
         local sc = sg:GetFirst()
         if sc:IsLocation(LOCATION_RIDE) then
             if Duel.IsPlayerAffectedByEffect(tp, AFFECT_CODE_OVERLAY_INSTEAD_WHEN_RIDE) and Duel.SelectYesNo(tp, VgF.Stringid(VgID, 14)) then
-                VgF.SoulBlast(1)(e, tp, eg, ep, ev, re, r, rp, 1)
+                vgf.cost.SoulBlast(1)(e, tp, eg, ep, ev, re, r, rp, 1)
             else
                 Duel.Hint(HINT_SELECTMSG, tp, HINTMSG_DISCARD)
                 local g = Duel.SelectMatchingCard(tp, VgD.DisCardRideFilter, tp, LOCATION_HAND, 0, 1, 1, nil, e, lv, code, rc)
@@ -1510,7 +1510,7 @@ end
 ---@param c Card 拥有这个效果的卡
 ---@return Effect 这个效果
 function VgD.Grade0BeRide(c)
-    return vgd.BeRidedByCard(c,nil,nil,VgF.Draw(),nil,VgD.Grade0BeRideCondition)
+    return vgd.BeRidedByCard(c,nil,nil,vgf.op.Draw(),nil,VgD.Grade0BeRideCondition)
 end
 function VgD.Grade0BeRideCondition(e,tp,eg,ep,ev,re,r,rp)
     return tp==1 and Duel.GetTurnPlayer()==tp
@@ -1823,16 +1823,16 @@ function VgD.CallInPrisonCondition(val)
         local eg, ep, ev, re, r, rp
         if Duel.GetTurnPlayer() == e:GetHandlerPlayer() then return false end
         if val == 1 then
-            return (VgF.SoulBlast(1)(e, tp, eg, ep, ev, re, r, rp, 0) and VgF.IsExistingMatchingCard(VgD.CallInPrisonFilter, tp, LOCATION_HAND, 0, 1, nil, e, tp))
+            return (vgf.cost.SoulBlast(1)(e, tp, eg, ep, ev, re, r, rp, 0) and VgF.IsExistingMatchingCard(VgD.CallInPrisonFilter, tp, LOCATION_HAND, 0, 1, nil, e, tp))
         elseif val == 2 then
-            return (VgF.CounterBlast(1)(e, tp, eg, ep, ev, re, r, rp, 0) and VgF.IsExistingMatchingCard(VgD.CallInPrisonFilter, tp, LOCATION_HAND, 0, 2, nil, e, tp))
+            return (vgf.cost.CounterBlast(1)(e, tp, eg, ep, ev, re, r, rp, 0) and VgF.IsExistingMatchingCard(VgD.CallInPrisonFilter, tp, LOCATION_HAND, 0, 2, nil, e, tp))
         end
     end
 end
 function VgD.CallInPrisonOperation(val)
     return function(e, tp, eg, ep, ev, re, r, rp, c, sg, og)
         if val == 1 then
-            VgF.SoulBlast(1)(e, tp, eg, ep, ev, re, r, rp, 1)
+            vgf.cost.SoulBlast(1)(e, tp, eg, ep, ev, re, r, rp, 1)
             local g = VgF.SelectMatchingCard(HINTMSG_CALL, e, tp, VgD.CallInPrisonFilter, tp, LOCATION_ORDER, 0, 1, 1, nil, e, tp)
             if g:GetFirst():IsType(TYPE_UNIT) then
                 VgF.Sendto(LOCATION_CIRCLE, g, 0, tp)
@@ -1840,7 +1840,7 @@ function VgD.CallInPrisonOperation(val)
                 VgF.Sendto(LOCATION_DROP, g, REASON_EFFECT)
             end
         elseif val == 2 then
-            VgF.CounterBlast(1)(e, tp, eg, ep, ev, re, r, rp, 1)
+            vgf.cost.CounterBlast(1)(e, tp, eg, ep, ev, re, r, rp, 1)
             local tg = VgF.SelectMatchingCard(HINTMSG_CALL, e, tp, VgD.CallInPrisonFilter, tp, LOCATION_ORDER, 0, 2, 2, nil, e, tp)
             local g = tg:Filter(Card.IsType, nil, TYPE_UNIT)
             if g:GetCount() > 0 then

@@ -12,7 +12,7 @@ end
 --效果二处理
 function cm.operation(e,tp,eg,ep,ev,re,r,rp)
 	local c=e:GetHandler()
-	vgf.CardsFromTo(REASON_EFFECT,LOCATION_CIRCLE,LOCATION_DROP,cm.filter2)(e,tp,eg,ep,ev,re,r,rp)
+	vgf.op.CardsFromTo(REASON_EFFECT,LOCATION_CIRCLE,LOCATION_DROP,cm.filter2)(e,tp,eg,ep,ev,re,r,rp)
 	local g=Duel.GetOperatedGroup()
 	vgf.AtkUp(c,g,5000)
 end
@@ -22,7 +22,7 @@ function cm.filter2(c)
 end
 --计数爆发1，灵魂爆发1
 function cm.cost(e,tp,eg,ep,ev,re,r,rp,chk)
-	if chk==0 then return vgf.CounterBlast(1)(e,tp,eg,ep,ev,re,r,rp,chk) and vgf.SoulBlast(1)(e,tp,eg,ep,ev,re,r,rp,chk) end
-vgf.CounterBlast(1)(e,tp,eg,ep,ev,re,r,rp,chk)
-vgf.SoulBlast(1)(e,tp,eg,ep,ev,re,r,rp,chk)
+	if chk==0 then return vgf.cost.CounterBlast(1)(e,tp,eg,ep,ev,re,r,rp,chk) and vgf.cost.SoulBlast(1)(e,tp,eg,ep,ev,re,r,rp,chk) end
+vgf.cost.CounterBlast(1)(e,tp,eg,ep,ev,re,r,rp,chk)
+vgf.cost.SoulBlast(1)(e,tp,eg,ep,ev,re,r,rp,chk)
 end

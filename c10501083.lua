@@ -14,5 +14,5 @@ end
 function cm.op(e,tp,eg,ep,ev,re,r,rp)
     local c=e:GetHandler()
     Duel.Draw(tp,1,REASON_EFFECT)
-    vgf.CardsFromTo(REASON_EFFECT,LOCATION_DROP,LOCATION_HAND,nil,1,1)(e,tp,eg,ep,ev,re,r,rp)
+    vgf.op.CardsFromTo(REASON_EFFECT,LOCATION_DROP,LOCATION_HAND,nil,1,1)(e,tp,eg,ep,ev,re,r,rp)
 end

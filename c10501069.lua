@@ -12,7 +12,7 @@ function cm.con(e,tp,eg,ep,ev,re,r,rp)
 end
 
 function cm.op(e,tp,eg,ep,ev,re,r,rp)
-    vgf.CardsFromTo(REASON_EFFECT,LOCATION_HAND,LOCATION_CIRCLE,cm.filter,0,1)(e,tp,eg,ep,ev,re,r,rp)
+    vgf.op.CardsFromTo(REASON_EFFECT,LOCATION_HAND,LOCATION_CIRCLE,cm.filter,0,1)(e,tp,eg,ep,ev,re,r,rp)
     -- local g = vgf.SelectMatchingCard(HINTMSG_ATOHAND,e,tp,cm.filter,tp,LOCATION_CIRCLE,0,0,1,nil)
     -- vgf.Sendto(LOCATION_HAND,g)
 end

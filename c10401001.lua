@@ -22,8 +22,8 @@ function cm.op(e,tp,eg,ep,ev,re,r,rp)
 end
 function cm.cost(e,tp,eg,ep,ev,re,r,rp,chk)
 	if chk==0 then
-		return vgf.CounterBlast(1)(e,tp,eg,ep,ev,re,r,rp,chk) and vgf.Discard(1)(e,tp,eg,ep,ev,re,r,rp,chk)
+		return vgf.cost.CounterBlast(1)(e,tp,eg,ep,ev,re,r,rp,chk) and vgf.cost.Discard(1)(e,tp,eg,ep,ev,re,r,rp,chk)
 	end
-	vgf.CounterBlast(1)(e,tp,eg,ep,ev,re,r,rp,chk)
-	vgf.Discard(1)(e,tp,eg,ep,ev,re,r,rp,chk)
+	vgf.cost.CounterBlast(1)(e,tp,eg,ep,ev,re,r,rp,chk)
+	vgf.cost.Discard(1)(e,tp,eg,ep,ev,re,r,rp,chk)
 end

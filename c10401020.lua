@@ -6,5 +6,5 @@ function cm.initial_effect(c)
 end
 function cm.op(e,tp,eg,ep,ev,re,r,rp)
 	vgf.CounterCharge(1)(e,tp,eg,ep,ev,re,r,rp)
-	vgf.SoulCharge(1)(e,tp,eg,ep,ev,re,r,rp)
+	vgf.op.SoulCharge(1)(e,tp,eg,ep,ev,re,r,rp)
 end

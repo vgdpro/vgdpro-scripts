@@ -1,6 +1,10 @@
 --VgF库
 VgF = {}
 vgf = VgF
+VgF.Operation = {}
+VgF.Cost = {}
+VgF.op = VgF.Operation
+VgF.cost = VgF.Cost
 bit = {}
 
 ---@class Card
@@ -567,30 +571,19 @@ function VgF.IsAbleToGCircle(c)
     end
     return false
 end
----用于效果的Operation。它返回一个执行“[计数回充val]”的函数。
----@param val number 计数回充的数量
----@return function 效果的Operation函数
-function VgF.CounterCharge(val)
-    return function (e, tp, eg, ep, ev, re, r, rp)
-        local c = e:GetHandler()
-        Duel.Hint(HINT_SELECTMSG, tp, HINTMSG_POSCHANGE)
-        local g = Duel.SelectMatchingCard(tp, Card.IsFacedown, tp, LOCATION_DAMAGE, 0, val, val, nil)
-        Duel.ChangePosition(g, POS_FACEUP_ATTACK)
-        return Duel.GetOperatedGroup():GetCount()
-    end
-end
 
----用于效果的Cost。它返回一个执行“【费用】[将这个单位放置到灵魂里]”的函数。
-function VgF.ToSoul(e,tp,eg,ep,ev,re,r,rp,chk)
-    return function ()
-        local c = e:GetHandler()
-        if chk == 0 then return c:IsRelateToEffect(e) end
-        VgF.Sendto(LOCATION_SOUL,c)
-    end
+--Cost函数----------------------------------------------------------------------------------------
+
+---用于效果的Cost。执行“[将这个单位放置到灵魂里]”的函数。
+---@return boolean|nil
+function VgF.Cost.ToSoul(e,tp,eg,ep,ev,re,r,rp,chk)
+    local c = e:GetHandler()
+    if chk == 0 then return c:IsRelateToEffect(e) end
+    VgF.Sendto(LOCATION_SOUL,c)
 end
 
 ---用于效果的Cost。它返回一个执行“【费用】[将手牌中的val张卡舍弃]”的函数。
-function VgF.CostAnd(...)
+function VgF.Cost.And(...)
     local funcs = {...}
     return function (e, tp, eg, ep, ev, re, r, rp, chk)
         for _, func in ipairs(funcs) do
@@ -604,26 +597,10 @@ function VgF.CostAnd(...)
     end
 end
 
-function VgF.Stand(c)
-    return function (e, tp, eg, ep, ev, re, r, rp, chk)
-        if VgF.GetValueType(c) ~= "Card" then c = e:GetHandler() end
-        if chk == 0 then return c:IsCanChangePosition() and c:IsPosition(POS_FACEUP_DEFENCE) and (c ~= e:GetHandler() or c:IsRelateToEffect(e)) end
-        Duel.ChangePosition(c, POS_FACEUP_ATTACK)
-    end
-end
-
-function VgF.Rest(c)
-    return function (e, tp, eg, ep, ev, re, r, rp, chk)
-        if VgF.GetValueType(c) ~= "Card" then c = e:GetHandler() end
-        if chk == 0 then return c:IsCanChangePosition() and c:IsPosition(POS_FACEUP_ATTACK) and (c ~= e:GetHandler() or c:IsRelateToEffect(e)) end
-        Duel.ChangePosition(c, POS_FACEUP_DEFENCE)
-    end
-end
-
 ---用于效果的Cost。它返回一个执行“【费用】[将手牌中的val张卡舍弃]”的函数。
 ---@param val number 要舍弃的卡的数量
 ---@return function 效果的Cost函数
-function VgF.Discard(val)
+function VgF.Cost.Discard(val)
     return function (e, tp, eg, ep, ev, re, r, rp, chk)
         if VgF.GetValueType(val) ~= "number" then return 0 end
         local c = e:GetHandler()
@@ -646,7 +623,7 @@ end
 ---用于效果的Cost。它返回一个执行“【费用】[能量爆发val]”的函数。
 ---@param val number 能量爆发的数量
 ---@return function 效果的Cost函数
-function VgF.EnergyBlast(val)
+function VgF.Cost.EnergyBlast(val)
     return function (e, tp, eg, ep, ev, re, r, rp, chk)
         if VgF.GetValueType(val) ~= "number" then return 0 end
         local c = e:GetHandler()
@@ -669,7 +646,7 @@ end
 ---用于效果的Cost。它返回一个执行“【费用】[灵魂爆发val]”的函数。
 ---@param val number 灵魂爆发的数量
 ---@return function 效果的Cost函数
-function VgF.SoulBlast(val)
+function VgF.Cost.SoulBlast(val)
     return function (e, tp, eg, ep, ev, re, r, rp, chk)
         if VgF.GetValueType(val) ~= "number" then return 0 end
         local c = e:GetHandler()
@@ -689,35 +666,11 @@ function VgF.SoulBlast(val)
         return VgF.Sendto(LOCATION_DROP, g, REASON_COST)
     end
 end
----用于效果的Cost或Operation。它返回一个执行“【费用】[灵魂填充val]”的函数。
----@param val number 灵魂填充的数量
----@return function 效果的Cost或Operation函数
-function VgF.SoulCharge(val)
-    return function (e, tp, eg, ep, ev, re, r, rp, chk)
-        if VgF.GetValueType(val) ~= "number" then return 0 end
-        local c = e:GetHandler()
-        local m = c:GetOriginalCode()
-        if chk == 0 then
-            if e:IsHasType(EFFECT_TYPE_ACTIVATE) then
-                VgF.AddAlchemagicFrom(c, m, "LOCATION_DECK")
-                VgF.AddAlchemagicTo(c, m, "LOCATION_SOUL")
-                VgF.AddAlchemagicFilter(c, m, nil)
-                VgF.AddAlchemagicCountMin(c, m, val)
-                VgF.AddAlchemagicCountMax(c, m, val)
-            end
-            return Duel.GetFieldGroupCount(tp, LOCATION_DECK, 0) >= val
-        end
-        local rc = Duel.GetMatchingGroup(VgF.VMonsterFilter, tp, LOCATION_CIRCLE, 0, nil):GetFirst()
-        local g = Duel.GetDecktopGroup(tp, val)
-        Duel.DisableShuffleCheck()
-        Duel.RaiseEvent(g, EVENT_CUSTOM + EVENT_OVERLAY_FILL, e, 0, tp, tp, val)
-        return VgF.Sendto(LOCATION_SOUL, g, rc)
-    end
-end
+
 ---用于效果的Cost。它返回一个执行“【费用】[计数爆发val]”的函数。
 ---@param val number 计数爆发的数量
 ---@return function 效果的Cost函数
-function VgF.CounterBlast(val)
+function VgF.Cost.CounterBlast(val)
     return function (e, tp, eg, ep, ev, re, r, rp, chk)
         if VgF.GetValueType(val) ~= "number" then return 0 end
         local c = e:GetHandler()
@@ -745,13 +698,13 @@ end
 ---@param except Card|nil 
 ---@param ... any 
 ---@return function 效果的Cost函数
-function VgF.LeaveFieldCost(card_code_func, max, min, except, ...)
+function VgF.Cost.Retire(card_code_func, max, min, except, ...)
     if not card_code_func then
-        return VgF.LeaveFieldCostGroup()
+        return VgF.Cost.RetireGroup()
     elseif VgF.GetValueType(card_code_func) == "Card" then
-        return VgF.LeaveFieldCostGroup(Group.FromCards(card_code_func))
+        return VgF.Cost.RetireGroup(Group.FromCards(card_code_func))
     elseif VgF.GetValueType(card_code_func) == "Group" then
-        return VgF.LeaveFieldCostGroup(card_code_func)
+        return VgF.Cost.RetireGroup(card_code_func)
     end
     local ex_params = {...}
     min, max = min or 1, max or 1
@@ -765,13 +718,13 @@ function VgF.LeaveFieldCost(card_code_func, max, min, except, ...)
     return function(e, tp, eg, ep, ev, re, r, rp, chk)
         leave_filter = function(c) return leave_filter(c, table.unpack(ex_params)) and c:IsAbleToGraveAsCost() end
         local g = VgF.GetMatchingGroup(leave_filter, tp, LOCATION_CIRCLE, 0, except)
-        if chk == 0 then return g:CheckSubGroup(VgF.LeaveFieldCostFilter, 1, max, min, e, tp) end
+        if chk == 0 then return g:CheckSubGroup(VgF.Cost.RetireFilter, 1, max, min, e, tp) end
         Duel.Hint(HINT_SELECTMSG, tp, HINTMSG_LEAVEFIELD)
-        g = g:SelectSubGroup(tp, VgF.LeaveFieldCostFilter, false, 1, max, min, e, tp)
+        g = g:SelectSubGroup(tp, VgF.Cost.RetireFilter, false, 1, max, min, e, tp)
         VgF.Sendto(LOCATION_DROP, g, REASON_COST)
     end
 end
-function VgF.LeaveFieldCostFilter(g, min, e, tp)
+function VgF.Cost.RetireFilter(g, min, e, tp)
     local fg = g:Filter(Card.IsHasEffect, nil, EFFECT_EXTRA_LEAVEFIELD_COUNT)
     if #fg == 0 then return #g >= min end
     local val_total = 0
@@ -791,7 +744,7 @@ function VgF.LeaveFieldCostFilter(g, min, e, tp)
     return #g >= min
 end
 ---将 自己/g 退场
-function VgF.LeaveFieldCostGroup(g)
+function VgF.Cost.RetireGroup(g)
     return function (e, tp, eg, ep, ev, re, r, rp, chk)
         g = g or Group.FromCards(e:GetHandler())
         local fg = g:Filter(function(c) return c:IsAbleToGraveAsCost() and (c ~= e:GetHandler() or c:IsRelateToEffect(e)) end, nil)
@@ -812,11 +765,89 @@ function VgF.IsCanBeCalled(c, e, tp, sumtype, pos, zone)
     end
     return z > 0 and c:IsCanBeSpecialSummoned(e, sumtype, tp, false, false, pos, tp, zone)
 end
+
+--Cost和Operation均可使用的函数------------------------------------------------------
+
+---它返回一个执行“[将单位横置]”的函数。
+---@param c Card 横置的卡
+---@return function 效果的Cost或Operation函数
+function VgF.Operation.Stand(c)
+    return function (e, tp, eg, ep, ev, re, r, rp, chk)
+        if VgF.GetValueType(c) ~= "Card" then c = e:GetHandler() end
+        if chk == 0 then return c:IsCanChangePosition() and c:IsPosition(POS_FACEUP_DEFENCE) and (c ~= e:GetHandler() or c:IsRelateToEffect(e)) end
+        Duel.ChangePosition(c, POS_FACEUP_ATTACK)
+    end
+end
+
+---它返回一个执行“[将单位横置]”的函数。
+---@param c Card 横置的卡
+---@return function 效果的Cost或Operation函数
+function VgF.Operation.Rest(c)
+    return function (e, tp, eg, ep, ev, re, r, rp, chk)
+        if VgF.GetValueType(c) ~= "Card" then c = e:GetHandler() end
+        if chk == 0 then return c:IsCanChangePosition() and c:IsPosition(POS_FACEUP_ATTACK) and (c ~= e:GetHandler() or c:IsRelateToEffect(e)) end
+        Duel.ChangePosition(c, POS_FACEUP_DEFENCE)
+    end
+end
+
+---用于效果的Cost或Operation。它返回一个执行“【费用】[灵魂填充val]”的函数。
+---@param val number 灵魂填充的数量
+---@return function 效果的Cost或Operation函数
+function VgF.Operation.SoulCharge(val)
+    return function (e, tp, eg, ep, ev, re, r, rp, chk)
+        if VgF.GetValueType(val) ~= "number" then return 0 end
+        local c = e:GetHandler()
+        local m = c:GetOriginalCode()
+        if chk == 0 then
+            if e:IsHasType(EFFECT_TYPE_ACTIVATE) then
+                VgF.AddAlchemagicFrom(c, m, "LOCATION_DECK")
+                VgF.AddAlchemagicTo(c, m, "LOCATION_SOUL")
+                VgF.AddAlchemagicFilter(c, m, nil)
+                VgF.AddAlchemagicCountMin(c, m, val)
+                VgF.AddAlchemagicCountMax(c, m, val)
+            end
+            return Duel.GetFieldGroupCount(tp, LOCATION_DECK, 0) >= val
+        end
+        local rc = Duel.GetMatchingGroup(VgF.VMonsterFilter, tp, LOCATION_CIRCLE, 0, nil):GetFirst()
+        local g = Duel.GetDecktopGroup(tp, val)
+        Duel.DisableShuffleCheck()
+        Duel.RaiseEvent(g, EVENT_CUSTOM + EVENT_OVERLAY_FILL, e, 0, tp, tp, val)
+        return VgF.Sendto(LOCATION_SOUL, g, rc)
+    end
+end
+
+--Operation函数------------------------------------------------------
+
+---用于效果的Operation。它返回一个执行“[计数回充val]”的函数。
+---@param val number 计数回充的数量
+---@return function 效果的Operation函数
+function VgF.CounterCharge(val)
+    return function (e, tp, eg, ep, ev, re, r, rp)
+        local c = e:GetHandler()
+        Duel.Hint(HINT_SELECTMSG, tp, HINTMSG_POSCHANGE)
+        local g = Duel.SelectMatchingCard(tp, Card.IsFacedown, tp, LOCATION_DAMAGE, 0, val, val, nil)
+        Duel.ChangePosition(g, POS_FACEUP_ATTACK)
+        return Duel.GetOperatedGroup():GetCount()
+    end
+end
+
+---玩家抽1张卡
+---@param p number 0：自己 1：对手 默认为0
+---@param count number 抽count数量的卡 默认为1
+function VgF.Operation.Draw(p, count)
+    p = (VgF.GetValueType(p) ~= "number" or p < 0 or p > 1) and 0 or p
+    count = VgF.GetValueType(count) ~= "number" and 1 or count
+    return function (e,tp,eg,ep,ev,re,r,rp)
+        local draw_player = p == 0 and tp or (1 - tp)
+	    Duel.Draw(draw_player, count, REASON_EFFECT)
+    end
+end
+
 ---用于效果的Operation。执行“从loc_from中选取最少int_min，最多int_max张满足f的卡，送去loc_to。”。
 ---@param loc_to number 要送去的区域。不填则返回0。
 ---@param loc_from number 要选取的区域。不填则返回0。
 ---@param f function|nil 卡片过滤的条件
-function VgF.CardsFromTo(reason ,loc_to, loc_from, f, int_max, int_min, ...)
+function VgF.Operation.CardsFromTo(reason ,loc_to, loc_from, f, int_max, int_min, ...)
     local ext_params = {...}
     return function (e, tp, eg, ep, ev, re, r, rp)
         if not loc_to or not loc_from then return 0 end
@@ -1482,18 +1513,6 @@ function VgF.PlayerEffect(e, tp, eg, ep, ev, re, r, rp)
     return true
 end
 
-
----玩家抽1张卡
----@param p number 0：自己 1：对手 默认为0
----@param count number 抽count数量的卡 默认为1
-function VgF.Draw(p, count)
-    p = (VgF.GetValueType(p) ~= "number" or p < 0 or p > 1) and 0 or p
-    count = VgF.GetValueType(count) ~= "number" and 1 or count
-    return function (e,tp,eg,ep,ev,re,r,rp)
-        local draw_player = p == 0 and tp or (1 - tp)
-	    Duel.Draw(draw_player, count, REASON_EFFECT)
-    end
-end
 ---创建一个函数检查器 检查func是否为nil或函数
 function VgF.IllegalFunctionCheck(name, c)
     if VgF.GetValueType(c) ~= "Card" then Debug.Message("VgD."..name.." param c isn't Card") end

@@ -1,7 +1,7 @@
 local cm,m,o=GetID()
 function cm.initial_effect(c)
 	vgd.VgCard(c)
-	vgd.AbilityAuto(c,m,LOCATION_CIRCLE,EFFECT_TYPE_SINGLE,EVENT_SPSUMMON_SUCCESS,cm.op,vgf.SoulBlast(1),cm.con)
+	vgd.AbilityAuto(c,m,LOCATION_CIRCLE,EFFECT_TYPE_SINGLE,EVENT_SPSUMMON_SUCCESS,cm.op,vgf.cost.SoulBlast(1),cm.con)
 end
 function cm.con(e,tp,eg,ep,ev,re,r,rp)
 	return vgf.RSummonCondition(e) and vgf.GetVMonster(tp):IsSetCard(0x78)
@@ -11,9 +11,9 @@ function cm.op(e,tp,eg,ep,ev,re,r,rp)
     if c:IsRelateToEffect(e) and c:IsFaceup() then
         vgf.AtkUp(c,c,10000,nil)
     end
-	if vgf.CostAnd(vgf.SoulBlast(1),vgf.LeaveFieldCost(vgf.RMonsterFilter,1,1,c))(e,tp,eg,ep,ev,re,r,rp,0) and Duel.SelectEffectYesNo(tp,vgf.stringid(VgID,10)) then
+	if vgf.cost.And(vgf.cost.SoulBlast(1),vgf.cost.Retire(vgf.RMonsterFilter,1,1,c))(e,tp,eg,ep,ev,re,r,rp,0) and Duel.SelectEffectYesNo(tp,vgf.stringid(VgID,10)) then
 		Duel.BreakEffect()
-		vgf.CostAnd(vgf.SoulBlast(1),vgf.LeaveFieldCost(vgf.RMonsterFilter,1,1,c))(e,tp,eg,ep,ev,re,r,rp,0)
+		vgf.cost.And(vgf.cost.SoulBlast(1),vgf.cost.Retire(vgf.RMonsterFilter,1,1,c))(e,tp,eg,ep,ev,re,r,rp,0)
 		local g=Duel.GetDecktopGroup(tp,5)
 		Duel.ConfirmCards(tp,g)
 		Duel.DisableShuffleCheck()

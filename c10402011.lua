@@ -8,14 +8,14 @@ function cm.op(e,tp,eg,ep,ev,re,r,rp)
 	vgf.Sendto(LOCATION_DROP,g,REASON_EFFECT)
 	Duel.BreakEffect()
 	if vgf.GetVMonster(tp):IsCode(10101001) then
-		vgf.CardsFromTo(REASON_EFFECT,LOCATION_CIRCLE,LOCATION_DROP,Card.IsLevel,1,0,0)(e,tp,eg,ep,ev,re,r,rp)
+		vgf.op.CardsFromTo(REASON_EFFECT,LOCATION_CIRCLE,LOCATION_DROP,Card.IsLevel,1,0,0)(e,tp,eg,ep,ev,re,r,rp)
 	end
 end
 function cm.filter(c)
 	return vgf.FrontFilter(c) and vgf.RMonsterFilter(c)
 end
 function cm.cost(e,tp,eg,ep,ev,re,r,rp,chk)
-	if chk==0 then return vgf.CounterBlast(1)(e,tp,eg,ep,ev,re,r,rp,chk) and vgf.SoulBlast(1)(e,tp,eg,ep,ev,re,r,rp,chk) end
-	vgf.CounterBlast(1)(e,tp,eg,ep,ev,re,r,rp,chk)
-	vgf.SoulBlast(1)(e,tp,eg,ep,ev,re,r,rp,chk)
+	if chk==0 then return vgf.cost.CounterBlast(1)(e,tp,eg,ep,ev,re,r,rp,chk) and vgf.cost.SoulBlast(1)(e,tp,eg,ep,ev,re,r,rp,chk) end
+	vgf.cost.CounterBlast(1)(e,tp,eg,ep,ev,re,r,rp,chk)
+	vgf.cost.SoulBlast(1)(e,tp,eg,ep,ev,re,r,rp,chk)
 end

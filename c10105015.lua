@@ -2,7 +2,7 @@ local cm,m,o=GetID()
 function cm.initial_effect(c)
 	vgd.VgCard(c)
 	vgd.SetOrder(c)
-	vgd.AbilityAuto(c,m,loc,EFFECT_TYPE_SINGLE,EVENT_MOVE,vgf.SoulCharge(3),nil,cm.con)
+	vgd.AbilityAuto(c,m,loc,EFFECT_TYPE_SINGLE,EVENT_MOVE,vgf.op.SoulCharge(3),nil,cm.con)
 	vgd.CallInPrison(c,m)
 end
 function cm.cost(e,tp,eg,ep,ev,re,r,rp,chk)

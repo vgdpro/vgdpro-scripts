@@ -5,10 +5,10 @@ function cm.initial_effect(c)
 end
 function cm.cost(e,tp,eg,ep,ev,re,r,rp,chk)
 	if chk==0 then
-		return vgf.CounterBlast(1)(e,tp,eg,ep,ev,re,r,rp,chk) and vgf.SoulBlast(1)(e,tp,eg,ep,ev,re,r,rp,chk)
+		return vgf.cost.CounterBlast(1)(e,tp,eg,ep,ev,re,r,rp,chk) and vgf.cost.SoulBlast(1)(e,tp,eg,ep,ev,re,r,rp,chk)
 	end
-	vgf.CounterBlast(1)(e,tp,eg,ep,ev,re,r,rp,chk)
-	vgf.SoulBlast(1)(e,tp,eg,ep,ev,re,r,rp,chk)
+	vgf.cost.CounterBlast(1)(e,tp,eg,ep,ev,re,r,rp,chk)
+	vgf.cost.SoulBlast(1)(e,tp,eg,ep,ev,re,r,rp,chk)
 end
 function cm.op(e,tp,eg,ep,ev,re,r,rp)
 	if not vgf.CheckPrison(tp) then return end
