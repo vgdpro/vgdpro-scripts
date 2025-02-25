@@ -3,7 +3,7 @@ local cm,m,o=GetID()
 function cm.initial_effect(c)
 	vgd.VgCard(c)
     -- 你的后防者在3张以上的话，这次战斗中，你所有的正在被攻击的单位的力量+15000。
-	vgd.QuickSpell(c,cm.op)
+	vgd.BlitzOrder(c,cm.op)
 end
 
 function cm.op(e,tp,eg,ep,ev,re,r,rp)

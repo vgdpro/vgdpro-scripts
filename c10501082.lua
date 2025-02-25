@@ -23,7 +23,7 @@ function cm.initial_effect(c)
 		return tc:IsLevelBelow(1) and vgf.RMonsterFilter(tc)
 	end)
     c:RegisterEffect(e2)
-	vgd.EffectTypeTrigger(c,m,nil,EFFECT_TYPE_SINGLE,EVENT_SPSUMMON_SUCCESS,cm.op,nil,vgf.VSummonCondition)
+	vgd.AbilityAuto(c,m,nil,EFFECT_TYPE_SINGLE,EVENT_SPSUMMON_SUCCESS,cm.op,nil,vgf.VSummonCondition)
 end
 function cm.op(e,tp,eg,ep,ev,re,r,rp)
 	local g=Duel.GetDecktopGroup(tp,1)

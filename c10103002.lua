@@ -4,7 +4,7 @@ function cm.initial_effect(c)
     vgd.VgCard(c)
     cm.is_has_continuous=true
     vgd.BeRidedByCard(c,m,10103001,cm.operation,cm.cost)
-    vgd.EffectTypeContinuousChangeAttack(c,m,LOCATION_MZONE,EFFECT_TYPE_SINGLE,5000,cm.condition)
+    vgd.AbilityContChangeAttack(c,m,LOCATION_MZONE,EFFECT_TYPE_SINGLE,5000,cm.condition)
     local e2=Effect.CreateEffect(c)
     e2:SetType(EFFECT_TYPE_SINGLE)
     e2:SetProperty(EFFECT_FLAG_SINGLE_RANGE)
@@ -25,5 +25,5 @@ function cm.cost(e,tp,eg,ep,ev,re,r,rp,chk)
 end
 function cm.condition(e,c)
     local tp=e:GetHandlerPlayer()
-    return vgf.RMonsterCondition(e) and vgf.IsExistingMatchingCard(Card.IsLevel,tp,LOCATION_MZONE+LOCATION_GZONE,0,3,nil,3) and Duel.GetTurnPlayer()==tp
+    return vgf.RMonsterCondition(e) and vgf.IsExistingMatchingCard(Card.IsLevel,tp,LOCATION_MZONE+LOCATION_GCIRCLE,0,3,nil,3) and Duel.GetTurnPlayer()==tp
 end

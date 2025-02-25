@@ -3,7 +3,7 @@ local cm,m,o=GetID()
 function cm.initial_effect(c)
 	vgd.VgCard(c)
     -- 你的单位在3个以上的话，选择你的1个单位，这次战斗中，力量+15000。
-	vgd.QuickSpell(c,cm.op,nil,cm.con)
+	vgd.BlitzOrder(c,cm.op,nil,cm.con)
 end
 function cm.con(e,tp,eg,ep,ev,re,r,rp)
     local c=e:GetHandler()

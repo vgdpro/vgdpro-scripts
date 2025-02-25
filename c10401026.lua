@@ -4,7 +4,7 @@ function cm.initial_effect(c)
 	vgd.VgCard(c)
 
 --【自】【R】：你的先导者攻击时，对手的后防者在2张以下的话，通过【费用】[将这个单位放置到灵魂里]，选择你的1张先导者，这次战斗中，☆+1。
-	vgd.EffectTypeTrigger(c,m,LOCATION_MZONE,EFFECT_TYPE_FIELD,EVENT_ATTACK_ANNOUNCE,cm.operation2,cm.cost,cm.condition2)
+	vgd.AbilityAuto(c,m,LOCATION_MZONE,EFFECT_TYPE_FIELD,EVENT_ATTACK_ANNOUNCE,cm.operation2,cm.cost,cm.condition2)
 end
 function cm.condition2(e,tp,eg,ep,ev,re,r,rp)
 	local c=Duel.GetAttacker()

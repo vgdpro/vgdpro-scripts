@@ -5,7 +5,7 @@ function cm.initial_effect(c)
     -- 【自】：这个单位被RIDE时，通过【费用】[将手牌中的1张卡放置到灵魂里]，从你的牌堆里探寻至多1张宝石卡，公开后加入手牌，然后牌堆洗切。
     vgd.BeRidedByCard(c,m,nil,vgf.CardsFromTo(REASON_EFFECT,LOCATION_HAND,LOCATION_DECK,cm.filter,1,0),cm.cost1)
     -- 【自】【R】：你施放指令卡时，通过【费用】[灵魂爆发1]，这个回合中，这个单位的力量+5000。
-    vgd.EffectTypeTrigger(c,m,LOCATION_MZONE,EFFECT_TYPE_FIELD,EVENT_CHAINING,cm.op,vgf.OverlayCost(1),cm.con)
+    vgd.AbilityAuto(c,m,LOCATION_MZONE,EFFECT_TYPE_FIELD,EVENT_CHAINING,cm.op,vgf.OverlayCost(1),cm.con)
 end
 function cm.op(e,tp,eg,ep,ev,re,r,rp)
     local c=e:GetHandler()

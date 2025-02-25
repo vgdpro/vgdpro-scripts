@@ -1,14 +1,14 @@
 local cm,m,o=GetID()
 function cm.initial_effect(c)
 	vgd.VgCard(c)
-	vgd.EffectTypeIgnition(c,m,LOCATION_MZONE,cm.op,cm.cost,cm.con)
-	vgd.EffectTypeTrigger(c,m,LOCATION_MZONE,EFFECT_TYPE_FIELD,EVENT_PHASE+PHASE_BATTLE_START,cm.op1,nil,cm.con1)
+	vgd.AbilityAct(c,m,LOCATION_MZONE,cm.op,cm.cost,cm.con)
+	vgd.AbilityAuto(c,m,LOCATION_MZONE,EFFECT_TYPE_FIELD,EVENT_PHASE+PHASE_BATTLE_START,cm.op1,nil,cm.con1)
 end
 function cm.cost(e,tp,eg,ep,ev,re,r,rp,chk)
 	local c=e:GetHandler()
-	if chk==0 then return vgf.ChangePosDefence(c)(e,tp,eg,ep,ev,re,r,rp,chk) and vgf.OverlayCost(1)(e,tp,eg,ep,ev,re,r,rp,chk) end
+	if chk==0 then return vgf.Rest(c)(e,tp,eg,ep,ev,re,r,rp,chk) and vgf.OverlayCost(1)(e,tp,eg,ep,ev,re,r,rp,chk) end
 	vgf.OverlayCost(1)(e,tp,eg,ep,ev,re,r,rp,chk)
-	vgf.ChangePosDefence(c)(e,tp,eg,ep,ev,re,r,rp,chk)
+	vgf.Rest(c)(e,tp,eg,ep,ev,re,r,rp,chk)
 end
 function cm.con(e,tp,eg,ep,ev,re,r,rp)
 	return vgf.RMonsterCondition(e) and vgf.GetVMonster(tp):IsCode(10401002)
@@ -19,7 +19,7 @@ function cm.op(e,tp,eg,ep,ev,re,r,rp)
 end
 function cm.op1(e,tp,eg,ep,ev,re,r,rp)
 	local c=e:GetHandler()
-	vgf.ChangePosAttack(c)(e,tp,eg,ep,ev,re,r,rp)
+	vgf.Stand(c)(e,tp,eg,ep,ev,re,r,rp)
 	vgf.AtkUp(c,c,5000)
 end
 function cm.con1(e,tp,eg,ep,ev,re,r,rp)

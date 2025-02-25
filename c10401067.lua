@@ -4,7 +4,7 @@ function cm.initial_effect(c)
 	vgd.VgCard(c)
 --通过【费用】[使用1张以上的你希望的张数的卡进行计数爆发]施放！
 --由于这个费用支付的计数爆发1每有1张，选择对手的1张后防者，退场。
-	vgd.SpellActivate(c,m,cm.op,cm.cost)
+	vgd.Order(c,m,cm.op,cm.cost)
 	vgf.AddMixCostGroupFrom(c,m,"LOCATION_DAMAGE")
 	vgf.AddMixCostGroupTo(c,m,"POSCHANGE")
 	vgf.AddMixCostGroupFilter(c,m,Card.IsFaceup)

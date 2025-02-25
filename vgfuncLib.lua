@@ -558,9 +558,9 @@ end
 ---判断c是否可以以规则的手段到G区域。
 ---@param c Card 要判断的卡
 ---@return boolean 指示c能否去到G区域。
-function VgF.IsAbleToGZone(c)
+function VgF.IsAbleToGcircle(c)
     if c:IsLocation(LOCATION_HAND) then
-        if Duel.IsPlayerAffectedByEffect(c:GetControler(), AFFECT_CODE_DEFENDER_CANNOT_TO_GZONE) and c:GetBaseDefense() == 0 then return false end
+        if Duel.IsPlayerAffectedByEffect(c:GetControler(), AFFECT_CODE_DEFENDER_CANNOT_TO_GCIRCLE) and c:GetBaseDefense() == 0 then return false end
         return c:IsType(TYPE_MONSTER)
     elseif c:IsLocation(LOCATION_MZONE) then
         return c:IsAttribute(SKILL_BLOCK) and VgF.IsSequence(c, 0, 4) and c:IsLocation(LOCATION_MZONE) and c:IsFaceup()
@@ -604,7 +604,7 @@ function VgF.CostAnd(...)
     end
 end
 
-function VgF.ChangePosAttack(c)
+function VgF.Stand(c)
     return function (e, tp, eg, ep, ev, re, r, rp, chk)
         if VgF.GetValueType(c) ~= "Card" then c = e:GetHandler() end
         if chk == 0 then return c:IsCanChangePosition() and c:IsPosition(POS_FACEUP_DEFENCE) and (c ~= e:GetHandler() or c:IsRelateToEffect(e)) end
@@ -612,7 +612,7 @@ function VgF.ChangePosAttack(c)
     end
 end
 
-function VgF.ChangePosDefence(c)
+function VgF.Rest(c)
     return function (e, tp, eg, ep, ev, re, r, rp, chk)
         if VgF.GetValueType(c) ~= "Card" then c = e:GetHandler() end
         if chk == 0 then return c:IsCanChangePosition() and c:IsPosition(POS_FACEUP_ATTACK) and (c ~= e:GetHandler() or c:IsRelateToEffect(e)) end
@@ -1537,7 +1537,7 @@ function VgF.EffectDamage(val, p)
         local c = e:GetHandler()
         c:RegisterFlagEffect(FLAG_DAMAGE_TRIGGER, RESET_EVENT + RESETS_STANDARD, 0, 1, val - 1)
         Duel.RegisterFlagEffect(p, FLAG_EFFECT_DAMAGE, 0, 0, 1)
-        VgD.TriggerCard(e, p, eg, ep, ev, re, r, rp)
+        VgD.Trigger(e, p, eg, ep, ev, re, r, rp)
         local e1 = Effect.CreateEffect(c)
         e1:SetType(EFFECT_TYPE_FIELD + EFFECT_TYPE_TRIGGER_F)
         e1:SetCode(EVENT_CUSTOM + EVENT_TRIGGER)
@@ -1546,7 +1546,7 @@ function VgF.EffectDamage(val, p)
         e1:SetCondition(function (te, ttp, teg, tep, tev, tre, tr, trp)
             return Duel.GetFlagEffect(p, FLAG_EFFECT_DAMAGE) > 0
         end)
-        e1:SetOperation(VgD.TriggerCard)
+        e1:SetOperation(VgD.Trigger)
         c:RegisterEffect(e1)
         if VgF.GetValueType(VgF.EffectDamageE) == "Effect" then
             VgF.EffectDamageE:Reset()

@@ -1,7 +1,7 @@
 local cm,m,o=GetID()
 function cm.initial_effect(c)
 	vgd.VgCard(c)
-	vgd.SpellActivate(c,m,cm.op,cm.cost)
+	vgd.Order(c,m,cm.op,cm.cost)
 	vgf.AddMixCostGroupFrom(c,m,"LOCATION_OVERLAY")
 	vgf.AddMixCostGroupTo(c,m,"LOCATION_DROP")
 	vgf.AddMixCostGroupFilter(c,m,function (tc) return tc:IsLevel(3) end)

@@ -2,8 +2,8 @@
 local cm,m,o=GetID()
 function cm.initial_effect(c)
 	vgd.VgCard(c)
-	vgd.EffectTypeIgnition(c,m,LOCATION_MZONE,vgf.CardsFromTo(REASON_EFFECT,LOCATION_MZONE,LOCATION_DROP,cm.filter),vgf.DisCardCost(1),vgf.VMonsterCondition,nil,1)
-	vgd.EffectTypeTrigger(c,m,LOCATION_MZONE,EFFECT_TYPE_SINGLE,EVENT_ATTACK_ANNOUNCE,cm.operation,vgf.DamageCost(1),vgf.VMonsterCondition)
+	vgd.AbilityAct(c,m,LOCATION_MZONE,vgf.CardsFromTo(REASON_EFFECT,LOCATION_MZONE,LOCATION_DROP,cm.filter),vgf.DisCardCost(1),vgf.VMonsterCondition,nil,1)
+	vgd.AbilityAuto(c,m,LOCATION_MZONE,EFFECT_TYPE_SINGLE,EVENT_ATTACK_ANNOUNCE,cm.operation,vgf.DamageCost(1),vgf.VMonsterCondition)
 end
 function cm.filter(c)
 	return c:IsLevel(0)

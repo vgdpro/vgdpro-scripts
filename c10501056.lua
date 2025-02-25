@@ -3,13 +3,13 @@ local cm,m,o=GetID()
 function cm.initial_effect(c)
 	vgd.VgCard(c)
 	-- （设置指令在施放后，放置到指令区。）
-	vgd.ContinuousSpell(c)
+	vgd.SetOrder(c)
 
 	-- 【自】：这张卡被放置到指令区时，对手有等级3以上的先导者的话，抽1张卡。
-	vgd.EffectTypeTrigger(c,m,loc,EFFECT_TYPE_SINGLE,EVENT_MOVE,vgf.Draw,nil,cm.con1)
+	vgd.AbilityAuto(c,m,loc,EFFECT_TYPE_SINGLE,EVENT_MOVE,vgf.Draw,nil,cm.con1)
 
 	-- 【自】【指令区】：这张歌曲卡被歌唱时，选择你的1张先导者，这个回合中，☆+1。
-	vgd.EffectTypeTrigger(c,m,LOCATION_ORDER,EFFECT_TYPE_FIELD,EVENT_CUSTOM+EVENT_SING,cm.op,nil,cm.con)
+	vgd.AbilityAuto(c,m,LOCATION_ORDER,EFFECT_TYPE_FIELD,EVENT_CUSTOM+EVENT_SING,cm.op,nil,cm.con)
 end
 function cm.con(e,tp,eg,ep,ev,re,r,rp)
 	return eg:IsContains(e:GetHandler())

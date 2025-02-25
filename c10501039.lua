@@ -3,9 +3,9 @@ local cm,m,o=GetID()
 function cm.initial_effect(c)
 	vgd.VgCard(c)
 	-- 【自】【V】【1回合1次】：你施放宝石卡时，抽1张卡。
-	vgd.EffectTypeTrigger(c,m,LOCATION_MZONE,EFFECT_TYPE_FIELD,EVENT_CHAINING,vgf.Draw,nil,cm.con1,nil,1)
+	vgd.AbilityAuto(c,m,LOCATION_MZONE,EFFECT_TYPE_FIELD,EVENT_CHAINING,vgf.Draw,nil,cm.con1,nil,1)
 -- 【永】【G】：你的弃牌区中的宝石卡每有2张，这个单位的盾护+5000。
-	vgd.EffectTypeContinuousChangeDefense(c,m,EFFECT_TYPE_SINGLE,cm.val,nil)
+	vgd.AbilityContChangeDefense(c,m,EFFECT_TYPE_SINGLE,cm.val,nil)
 end
 
 function cm.con1(e,tp,eg,ep,ev,re,r,rp)

@@ -1,7 +1,7 @@
 local cm,m,o=GetID()
 function cm.initial_effect(c)
 	vgd.VgCard(c)
-    vgd.EffectTypeTrigger(c,m,LOCATION_MZONE,EFFECT_TYPE_FIELD,EVENT_CUSTOM+EVENT_SUPPORT,cm.op,vgf.DamageCost(1),cm.con)
+    vgd.AbilityAuto(c,m,LOCATION_MZONE,EFFECT_TYPE_FIELD,EVENT_CUSTOM+EVENT_SUPPORT,cm.op,vgf.DamageCost(1),cm.con)
 end
 function cm.con(e,tp,eg,ep,ev,re,r,rp)
     local c=e:GetHandler()
@@ -25,13 +25,13 @@ function cm.op(e,tp,eg,ep,ev,re,r,rp)
 end
 function cm.costtg(e,re,tp)
     e:SetLabelObject(re:GetHandler())
-    return re:IsHasCategory(CATEGORY_DEFENDER) and re:GetHandler():IsLocation(LOCATION_HAND) and re:GetHandlerPlayer()==tp and not vgf.IsExistingMatchingCard(nil,tp,LOCATION_GZONE,0,1,nil) and Duel.GetAttacker()==e:GetHandler() and re:IsActiveType(TYPE_MONSTER)
+    return re:IsHasCategory(CATEGORY_DEFENDER) and re:GetHandler():IsLocation(LOCATION_HAND) and re:GetHandlerPlayer()==tp and not vgf.IsExistingMatchingCard(nil,tp,LOCATION_GCIRCLE,0,1,nil) and Duel.GetAttacker()==e:GetHandler() and re:IsActiveType(TYPE_MONSTER)
 end
 function cm.costchk(e,re,tp)
-    return vgf.IsExistingMatchingCard(vgf.IsAbleToGZone,tp,LOCATION_HAND,0,1,re:GetHandler(),LOCATION_HAND)
+    return vgf.IsExistingMatchingCard(vgf.IsAbleToGcircle,tp,LOCATION_HAND,0,1,re:GetHandler(),LOCATION_HAND)
 end
 function cm.costop(e,tp,eg,ep,ev,re,r,rp)
     local c=e:GetLabelObject()
-	local g=vgf.SelectMatchingCard(HINTMSG_TO_GZONE,e,tp,vgf.IsAbleToGZone,tp,LOCATION_HAND,0,1,1,c,LOCATION_HAND)
-    vgf.Sendto(LOCATION_GZONE,g,tp,POS_FACEUP,REASON_EFFECT)
+	local g=vgf.SelectMatchingCard(HINTMSG_TO_GCIRCLE,e,tp,vgf.IsAbleToGcircle,tp,LOCATION_HAND,0,1,1,c,LOCATION_HAND)
+    vgf.Sendto(LOCATION_GCIRCLE,g,tp,POS_FACEUP,REASON_EFFECT)
 end

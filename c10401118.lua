@@ -4,7 +4,7 @@ local cm,m,o=GetID()
 --抽1张卡，将这张卡放置到灵魂里，计数回充1。
 function cm.initial_effect(c)
 	vgd.VgCard(c)
-	vgd.SpellActivate(c,m,cm.op,vgf.LeaveFieldCost(vgf.RMonsterFilter,2,2))
+	vgd.Order(c,m,cm.op,vgf.LeaveFieldCost(vgf.RMonsterFilter,2,2))
 	vgf.AddMixCostGroupFrom(c,m,"LOCATION_MZONE")
 	vgf.AddMixCostGroupTo(c,m,"LOCATION_DROP")
 	vgf.AddMixCostGroupFilter(c,m,vgf.RMonsterFilter)

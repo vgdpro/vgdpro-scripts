@@ -140,7 +140,7 @@ end
 ## 1.指令卡的注册范例
 
 ```lua
-vgd.SpellActivate(c, m, op, con, cost)
+vgd.Order(c, m, op, con, cost)
 ```
 
 范例 : [骤阳之进化](c10101015.lua)
@@ -153,7 +153,7 @@ vgd.SpellActivate(c, m, op, con, cost)
 local cm,m,o=GetID()
 function cm.initial_effect(c)
 	vgf.VgCard(c)
-	vgd.SpellActivate(c,m,cm.operation,vgf.DamageCost(1))
+	vgd.Order(c,m,cm.operation,vgf.DamageCost(1))
 end
 function cm.operation(e,tp,eg,ep,ev,re,r,rp)
 	local c=e:GetHandler()
@@ -194,7 +194,7 @@ end
 ## 3.【自】能力范例的注册范例
 
 ```lua
-vgd.EffectTypeTrigger(c, m, loc, typ, code[, op, cost, con, tg, count, property])
+vgd.AbilityAuto(c, m, loc, typ, code[, op, cost, con, tg, count, property])
 ```
 
 参数注释
@@ -217,7 +217,7 @@ vgd.EffectTypeTrigger(c, m, loc, typ, code[, op, cost, con, tg, count, property]
 local cm,m,o=GetID()
 function cm.initial_effect(c)
 	vgf.VgCard(c)
-	vgd.EffectTypeTrigger(c,m,LOCATION_MZONE,EFFECT_TYPE_SINGLE,EVENT_ATTACK_ANNOUNCE,cm.operation,nil,cm.condition)
+	vgd.AbilityAuto(c,m,LOCATION_MZONE,EFFECT_TYPE_SINGLE,EVENT_ATTACK_ANNOUNCE,cm.operation,nil,cm.condition)
 end
 function cm.operation(e,tp,eg,ep,ev,re,r,rp)
 	local c=e:GetHandler()
@@ -239,55 +239,10 @@ function cm.condition(e,tp,eg,ep,ev,re,r,rp)
 end
 ```
 
-## 4.特别用于“攻击击中时”的【自】能力范例
+## 4.【起】能力注册范例
 
 ```lua
-vgd.EffectTypeTriggerWhenHitting(c, m, loc, typ[, op, cost, con, tg, count, p, property, stringid])
-```
-
-参数注释
-
-> **loc : 发动的区域（vg的描述中会在效果类型后描述这个效果在哪些区域适用） `填 nil 则默认为 LOCATION_MZONE`**
-> 
-> **typ : 自身状态变化触发/场上的卡状态变化触发 `填 nil 则填默认为 EFFECT_TYPE_SINGLE`**
-> 
-> **count : 效果的次数限制**
-> 
-> **p : 击中的卡的持有者 `填 nil 则填默认为 击中的卡的当前持有者`**
->
-> **property : 效果的性质**
-
-范例 : [瓦尔里纳·勇气](c10401001.lua)
-
-> **【自】【R】【1回合1次】：处于【超限舞装】状态的这个单位的攻击击中时，通过【费用】[计数爆发1，将手牌中的1张卡舍弃]，将这个单位重置。**
-
-```lua
-local cm,m,o=GetID()
-function cm.initial_effect(c)
-	vgf.VgCard(c)
-	vgd.EffectTypeTriggerWhenHitting(c,m,LOCATION_MZONE,EFFECT_TYPE_SINGLE,cm.op,cm.cost,cm.con)
-end
-function cm.con(e)
-	local c=e:GetHandler()
-	return c:GetFlagEffectLabel(FLAG_CONDITION)==201 and vgf.RMonsterCondition(e)
-end
-function cm.op(e,tp,eg,ep,ev,re,r,rp)
-	local c=e:GetHandler()
-	Duel.ChangePosition(c,POS_FACEUP_ATTACK)
-end
-function cm.cost(e,tp,eg,ep,ev,re,r,rp,chk)
-	if chk==0 then
-		return vgf.DamageCost(1)(e,tp,eg,ep,ev,re,r,rp,chk) and vgf.DisCardCost(1)(e,tp,eg,ep,ev,re,r,rp,chk)
-	end
-	vgf.DamageCost(1)(e,tp,eg,ep,ev,re,r,rp,chk)
-	vgf.DisCardCost(1)(e,tp,eg,ep,ev,re,r,rp,chk)
-end
-```
-
-## 5.【起】能力注册范例
-
-```lua
-VgD.EffectTypeIgnition(c, m[, loc, op, cost, con, tg, count, property])
+VgD.AbilityAct(c, m[, loc, op, cost, con, tg, count, property])
 ```
 
 参数注释
@@ -306,17 +261,17 @@ VgD.EffectTypeIgnition(c, m[, loc, op, cost, con, tg, count, property])
 local cm,m,o=GetID()
 function cm.initial_effect(c)
 	vgf.VgCard(c)
-	vgd.EffectTypeIgnition(c,m,LOCATION_MZONE,vgf.CardsFromTo(REASON_EFFECT,LOCATION_HAND,LOCATION_MZONE,LOCATION_DROP,cm.filter),vgf.DisCardCost(1),nil,nil,1)
+	vgd.AbilityAct(c,m,LOCATION_MZONE,vgf.CardsFromTo(REASON_EFFECT,LOCATION_HAND,LOCATION_MZONE,LOCATION_DROP,cm.filter),vgf.DisCardCost(1),nil,nil,1)
 end
 function cm.filter(c)
 	return c:IsLevel(0)
 end
 ```
 
-## 6.特别用于“力量上升”的【永】能力注册范例
+## 5.特别用于“力量上升”的【永】能力注册范例
 
 ```lua
-vgd.EffectTypeContinuousChangeAttack(c,m, loc, typ, val[, con, tg, loc_self, loc_op, reset, mc])
+vgd.AbilityContChangeAttack(c,m, loc, typ, val[, con, tg, loc_self, loc_op, reset, mc])
 ```
 
 参数注释
@@ -339,8 +294,8 @@ vgd.EffectTypeContinuousChangeAttack(c,m, loc, typ, val[, con, tg, loc_self, loc
 local cm,m,o=GetID()
 function cm.initial_effect(c)
 	vgf.VgCard(c)
-	vgd.EffectTypeContinuousChangeAttack(c,m,LOCATION_MZONE,EFFECT_TYPE_SINGLE,5000,function(e) return vgf.RMonsterCondition(e) and cm.con(e) end)
-	vgd.EffectTypeContinuousChangeDefense(c,m,EFFECT_TYPE_SINGLE,5000,cm.con)
+	vgd.AbilityContChangeAttack(c,m,LOCATION_MZONE,EFFECT_TYPE_SINGLE,5000,function(e) return vgf.RMonsterCondition(e) and cm.con(e) end)
+	vgd.AbilityContChangeDefense(c,m,EFFECT_TYPE_SINGLE,5000,cm.con)
 end
 function cm.con(e)
 	local tp=e:GetHandlerPlayer()
@@ -351,7 +306,7 @@ function cm.filter(c)
 end
 ```
 
-## 7.全局检测（用于检测本回合（或者更加时间）做过什么行为）
+## 6.全局检测（用于检测本回合（或者更加时间）做过什么行为）
 
 ```lua
 VgD..GlobalCheckEffect(c, m, typ, code, con[, op])
@@ -380,7 +335,7 @@ function cm.checkcon(e,tp,eg,ep,ev,re,r,rp)
 end
 ```
 
-## 8.其他效果注册
+## 7.其他效果注册
 
 说明：
 > 前面的卡片能力注册均是基于函数库"VgD.lua"的封装函数，但vg卡片能力种类繁多，并非所有能力都能为其封装，故有以下的基于原版ygopro写法的能力注册

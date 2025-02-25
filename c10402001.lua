@@ -1,10 +1,10 @@
 local cm,m,o=GetID()
 function cm.initial_effect(c)
 	vgd.VgCard(c)
-	vgd.CannotCallToGZoneWhenAttack(c, m, function (e,re,tp)
+	vgd.CannotCallToGcircleWhenAttack(c, m, function (e,re,tp)
 		return re:GetHandler():IsLocation(LOCATION_HAND)
 	end)
-	vgd.EffectTypeTriggerWhenHitting(c,m,LOCATION_MZONE,EFFECT_TYPE_SINGLE,cm.op,cm.cost,nil,nil,1)
+	vgd.AbilityAuto(c,m,LOCATION_MZONE,EFFECT_TYPE_SINGLE,EVENT_HITTING,cm.op,cm.cost,nil,nil,1)
 end
 function cm.op(e,tp,eg,ep,ev,re,r,rp)
 	local c=e:GetHandler()

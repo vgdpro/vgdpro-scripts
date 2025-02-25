@@ -1,7 +1,7 @@
 local cm,m,o=GetID()
 function cm.initial_effect(c)
 	vgd.VgCard(c)
-	vgd.EffectTypeIgnition(c,m,LOCATION_MZONE,cm.op,vgf.OverlayCost(2),cm.con)
+	vgd.AbilityAct(c,m,LOCATION_MZONE,cm.op,vgf.OverlayCost(2),cm.con)
 end
 function cm.op(e,tp,eg,ep,ev,re,r,rp)
 	local c=e:GetHandler()
@@ -18,5 +18,5 @@ function cm.op(e,tp,eg,ep,ev,re,r,rp)
 	end
 end
 function cm.con(e,tp,eg,ep,ev,re,r,rp)
-	return vgf.IsExistingMatchingCard(Card.IsLevel,tp,LOCATION_MZONE+LOCATION_GZONE,0,3,nil,3) and vgf.RMonsterCondition(e)
+	return vgf.IsExistingMatchingCard(Card.IsLevel,tp,LOCATION_MZONE+LOCATION_GCIRCLE,0,3,nil,3) and vgf.RMonsterCondition(e)
 end

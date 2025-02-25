@@ -3,9 +3,9 @@ local cm,m,o=GetID()
 function cm.initial_effect(c)
 	vgd.VgCard(c)
     -- 【永】【V】：你的回合中，你没有后防者的话，这个单位的力量+5000。
-	vgd.EffectTypeContinuousChangeAttack(c,m,LOCATION_MZONE,EFFECT_TYPE_SINGLE,5000,cm.con1)
+	vgd.AbilityContChangeAttack(c,m,LOCATION_MZONE,EFFECT_TYPE_SINGLE,5000,cm.con1)
     -- 【自】：通过在「凛然之志 克拉莉萨」上RIDE的方式将这个单位登场到V时，查看你的牌堆顶的7张卡，选择至多1张等级1以下的含有「诚意真心」的卡，公开后加入手牌，将其余的卡洗切后放置到牌堆底。
-    vgd.EffectTypeTrigger(c,m,LOCATION_MZONE,EFFECT_TYPE_SINGLE,EVENT_SPSUMMON_SUCCESS,cm.operation,nil,cm.con2,nil,1)
+    vgd.AbilityAuto(c,m,LOCATION_MZONE,EFFECT_TYPE_SINGLE,EVENT_SPSUMMON_SUCCESS,cm.operation,nil,cm.con2,nil,1)
 end
 function cm.con1(e)
 	local tp=e:GetHandlerPlayer()

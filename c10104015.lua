@@ -3,7 +3,7 @@ function cm.initial_effect(c)
 	vgd.VgCard(c)
 	--（闪现指令只能在你能将防卫者CALL出场的时段施放。）
 	--选择你的1个单位，这次战斗中，力量+5000。后列的你的后防者有3张以上的话，不+5000，而是+15000。
-	vgd.QuickSpell(c,cm.op)
+	vgd.BlitzOrder(c,cm.op)
 end
 function cm.op(e,tp,eg,ep,ev,re,r,rp)
 	local c=e:GetHandler()

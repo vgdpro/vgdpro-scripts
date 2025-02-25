@@ -2,7 +2,7 @@ local cm,m,o=GetID()
 function cm.initial_effect(c)
 	vgd.VgCard(c)
 	vgd.BeRidedByCard(c,m,10401027,vgf.OverlayFill(1))
-	vgd.EffectTypeTrigger(c,m,LOCATION_MZONE,EFFECT_TYPE_FIELD,EVENT_TO_GRAVE,cm.op,vgf.CostAnd(vgf.DamageCost(1),vgf.LeaveFieldCost()),cm.con)
+	vgd.AbilityAuto(c,m,LOCATION_MZONE,EFFECT_TYPE_FIELD,EVENT_TO_GRAVE,cm.op,vgf.CostAnd(vgf.DamageCost(1),vgf.LeaveFieldCost()),cm.con)
 end
 function cm.op(e,tp,eg,ep,ev,re,r,rp)
 	local g=vgf.SelectMatchingCard(HINTMSG_LEAVEFIELD,e,tp,vgf.RMonsterFilter,tp,0,LOCATION_MZONE,1,1,nil)
