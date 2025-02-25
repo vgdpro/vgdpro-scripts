@@ -781,7 +781,7 @@ function VgF.LeaveFieldCostFilter(g, min, e, tp)
             if not (val or type(val) == "number" or type(val) == "function") then 
                 Debug.Message("EFFECT_EXTRA_LEAVEFIELD_COUNT Value should be number or function")
             end
-            if type(val) == "function" then 
+            if type(val) == "function" then
                 val = val(g, e, tp)
             end
             val_total = val_total + val
