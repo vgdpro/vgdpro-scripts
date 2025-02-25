@@ -5,11 +5,11 @@ function cm.initial_effect(c)
 --通过【费用】[使用1张以上的你希望的张数的卡进行计数爆发]施放！
 --由于这个费用支付的计数爆发1每有1张，选择对手的1张后防者，退场。
 	vgd.Order(c,m,cm.op,cm.cost)
-	vgf.AddMixCostGroupFrom(c,m,"LOCATION_DAMAGE")
-	vgf.AddMixCostGroupTo(c,m,"POSCHANGE")
-	vgf.AddMixCostGroupFilter(c,m,Card.IsFaceup)
-	vgf.AddMixCostGroupCountMin(c,m,1)
-	vgf.AddMixCostGroupCountMax(c,m,100)
+	vgf.AddAlchemagicFrom(c,m,"LOCATION_DAMAGE")
+	vgf.AddAlchemagicTo(c,m,"POSCHANGE")
+	vgf.AddAlchemagicFilter(c,m,Card.IsFaceup)
+	vgf.AddAlchemagicCountMin(c,m,1)
+	vgf.AddAlchemagicCountMax(c,m,100)
 end
 function cm.cost(e,tp,eg,ep,ev,re,r,rp,chk)
 	local ct=vgf.GetMatchingGroupCount(Card.IsFaceup,tp,LOCATION_DAMAGE,0,nil)

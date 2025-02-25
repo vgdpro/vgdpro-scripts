@@ -630,11 +630,11 @@ function VgF.DisCardCost(val)
         local m = c:GetOriginalCode()
         if chk == 0 then
             if e:IsHasType(EFFECT_TYPE_ACTIVATE) then
-                VgF.AddMixCostGroupFrom(c, m, "LOCATION_HAND")
-                VgF.AddMixCostGroupTo(c, m, "LOCATION_DROP")
-                VgF.AddMixCostGroupFilter(c, m, nil)
-                VgF.AddMixCostGroupCountMin(c, m, val)
-                VgF.AddMixCostGroupCountMax(c, m, val)
+                VgF.AddAlchemagicFrom(c, m, "LOCATION_HAND")
+                VgF.AddAlchemagicTo(c, m, "LOCATION_DROP")
+                VgF.AddAlchemagicFilter(c, m, nil)
+                VgF.AddAlchemagicCountMin(c, m, val)
+                VgF.AddAlchemagicCountMax(c, m, val)
             end
             return VgF.IsExistingMatchingCard(nil, tp, LOCATION_HAND, 0, val, nil)
         end
@@ -653,11 +653,11 @@ function VgF.EnergyCost(val)
         local m = c:GetOriginalCode()
         if chk == 0 then
             if e:IsHasType(EFFECT_TYPE_ACTIVATE) then
-                VgF.AddMixCostGroupFrom(c, m, "LOCATION_EMBLEM")
-                VgF.AddMixCostGroupTo(c, m, "0")
-                VgF.AddMixCostGroupFilter(c, m, function(tc) tc:IsCode(CARD_ENERGY) end)
-                VgF.AddMixCostGroupCountMin(c, m, val)
-                VgF.AddMixCostGroupCountMax(c, m, val)
+                VgF.AddAlchemagicFrom(c, m, "LOCATION_EMBLEM")
+                VgF.AddAlchemagicTo(c, m, "0")
+                VgF.AddAlchemagicFilter(c, m, function(tc) tc:IsCode(CARD_ENERGY) end)
+                VgF.AddAlchemagicCountMin(c, m, val)
+                VgF.AddAlchemagicCountMax(c, m, val)
             end
             return VgF.IsExistingMatchingCard(Card.IsCode, tp, LOCATION_EMBLEM, 0, val, nil, CARD_ENERGY)
         end
@@ -676,11 +676,11 @@ function VgF.OverlayCost(val)
         local m = c:GetOriginalCode()
         if chk == 0 then
             if e:IsHasType(EFFECT_TYPE_ACTIVATE) then
-                VgF.AddMixCostGroupFrom(c, m, "LOCATION_OVERLAY")
-                VgF.AddMixCostGroupTo(c, m, "LOCATION_DROP")
-                VgF.AddMixCostGroupFilter(c, m, nil)
-                VgF.AddMixCostGroupCountMin(c, m, val)
-                VgF.AddMixCostGroupCountMax(c, m, val)
+                VgF.AddAlchemagicFrom(c, m, "LOCATION_OVERLAY")
+                VgF.AddAlchemagicTo(c, m, "LOCATION_DROP")
+                VgF.AddAlchemagicFilter(c, m, nil)
+                VgF.AddAlchemagicCountMin(c, m, val)
+                VgF.AddAlchemagicCountMax(c, m, val)
             end
             return Duel.GetMatchingGroup(VgF.VMonsterFilter, tp, LOCATION_MZONE, 0, nil, nil):GetFirst():GetOverlayCount() >= val
         end
@@ -699,11 +699,11 @@ function VgF.OverlayFill(val)
         local m = c:GetOriginalCode()
         if chk == 0 then
             if e:IsHasType(EFFECT_TYPE_ACTIVATE) then
-                VgF.AddMixCostGroupFrom(c, m, "LOCATION_DECK")
-                VgF.AddMixCostGroupTo(c, m, "LOCATION_OVERLAY")
-                VgF.AddMixCostGroupFilter(c, m, nil)
-                VgF.AddMixCostGroupCountMin(c, m, val)
-                VgF.AddMixCostGroupCountMax(c, m, val)
+                VgF.AddAlchemagicFrom(c, m, "LOCATION_DECK")
+                VgF.AddAlchemagicTo(c, m, "LOCATION_OVERLAY")
+                VgF.AddAlchemagicFilter(c, m, nil)
+                VgF.AddAlchemagicCountMin(c, m, val)
+                VgF.AddAlchemagicCountMax(c, m, val)
             end
             return Duel.GetFieldGroupCount(tp, LOCATION_DECK, 0) >= val
         end
@@ -724,11 +724,11 @@ function VgF.DamageCost(val)
         local m = c:GetOriginalCode()
         if chk == 0 then
             if e:IsHasType(EFFECT_TYPE_ACTIVATE) then
-                VgF.AddMixCostGroupFrom(c, m, "LOCATION_DAMAGE")
-                VgF.AddMixCostGroupTo(c, m, "POSCHANGE")
-                VgF.AddMixCostGroupFilter(c, m, Card.IsFaceup)
-                VgF.AddMixCostGroupCountMin(c, m, val)
-                VgF.AddMixCostGroupCountMax(c, m, val)
+                VgF.AddAlchemagicFrom(c, m, "LOCATION_DAMAGE")
+                VgF.AddAlchemagicTo(c, m, "POSCHANGE")
+                VgF.AddAlchemagicFilter(c, m, Card.IsFaceup)
+                VgF.AddAlchemagicCountMin(c, m, val)
+                VgF.AddAlchemagicCountMax(c, m, val)
             end
             return VgF.IsExistingMatchingCard(Card.IsFaceup, tp, LOCATION_DAMAGE, 0, val, nil)
         end
@@ -1430,35 +1430,35 @@ function VgF.AddRideMaterialCode(c, m, ...)
         table.insert(cm.ride_code, v)
     end
 end
-function VgF.AddMixCostGroupFrom(c, m, ...)
+function VgF.AddAlchemagicFrom(c, m, ...)
     local cm = _G["c"..m]
     if VgF.GetValueType(cm.cos_from) ~= "table" then cm.cos_from = {} end
     for i, v in ipairs({...}) do
         table.insert(cm.cos_from, v)
     end
 end
-function VgF.AddMixCostGroupTo(c, m, ...)
+function VgF.AddAlchemagicTo(c, m, ...)
     local cm = _G["c"..m]
     if VgF.GetValueType(cm.cos_to) ~= "table" then cm.cos_to = {} end
     for i, v in ipairs({...}) do
         table.insert(cm.cos_to, v)
     end
 end
-function VgF.AddMixCostGroupCountMin(c, m, ...)
+function VgF.AddAlchemagicCountMin(c, m, ...)
     local cm = _G["c"..m]
     if VgF.GetValueType(cm.cos_val) ~= "table" then cm.cos_val = {} end
     for i, v in ipairs({...}) do
         table.insert(cm.cos_val, v)
     end
 end
-function VgF.AddMixCostGroupCountMax(c, m, ...)
+function VgF.AddAlchemagicCountMax(c, m, ...)
     local cm = _G["c"..m]
     if VgF.GetValueType(cm.cos_val_max) ~= "table" then cm.cos_val_max = {} end
     for i, v in ipairs({...}) do
         table.insert(cm.cos_val_max, v)
     end
 end
-function VgF.AddMixCostGroupFilter(c, m, ...)
+function VgF.AddAlchemagicFilter(c, m, ...)
     local cm = _G["c"..m]
     if VgF.GetValueType(cm.cos_filter) ~= "table" then cm.cos_filter = {} end
     for i, v in ipairs({...}) do
