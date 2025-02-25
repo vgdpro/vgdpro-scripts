@@ -2,7 +2,7 @@ local cm,m,o=GetID()
 function cm.initial_effect(c)
 	vgd.VgCard(c)
 	vgd.AbilityAuto(c,m,nil,EFFECT_TYPE_SINGLE,EVENT_SPSUMMON_SUCCESS,vgf.CardsFromTo(REASON_EFFECT,LOCATION_HAND,LOCATION_DECK,Card.IsSetCard,1,0,0x5040),nil,vgf.VSummonCondition)
-	vgd.AbilityContChangeAttack(c,m,LOCATION_MZONE,EFFECT_TYPE_SINGLE,2000,cm.con)
+	vgd.AbilityCont(c, m, LOCATION_MZONE, EFFECT_TYPE_SINGLE, EFFECT_UPDATE_ATTACK, 2000, cm.con)
 end
 function cm.filter(c)
 	return c:IsSetCard(0x5040)

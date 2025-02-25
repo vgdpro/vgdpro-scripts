@@ -1,7 +1,7 @@
 local cm,m,o=GetID()
 function cm.initial_effect(c)
 	vgd.VgCard(c)
-	vgd.AbilityContChangeAttack(c,m,LOCATION_MZONE,EFFECT_TYPE_SINGLE,2000,cm.con)
+	vgd.AbilityCont(c, m, LOCATION_MZONE, EFFECT_TYPE_SINGLE, EFFECT_UPDATE_ATTACK, 2000, cm.con)
 end
 function cm.con(e,c)
 	local tp=e:GetHandlerPlayer()

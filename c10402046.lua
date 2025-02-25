@@ -3,7 +3,7 @@ function cm.initial_effect(c)
 	vgd.VgCard(c)
 	vgd.AbilityAuto(c,m,nil,EFFECT_TYPE_SINGLE,EVENT_SPSUMMON_SUCCESS,cm.op,vgf.CostAnd(vgf.DamageCost(1),vgf.LeaveFieldCost(vgf.RMonsterFilter,1,1,c)))
 	vgd.GlobalCheckEffect(c,m,EVENT_TO_GRAVE,cm.chkcon)
-	vgd.AbilityContChangeAttack(c,m,LOCATION_R_CIRCLE,EFFECT_TYPE_SINGLE,5000,cm.con)
+	vgd.AbilityCont(c, m, LOCATION_R_CIRCLE, EFFECT_TYPE_SINGLE, EFFECT_UPDATE_ATTACK, 5000, cm.con)
 end
 function cm.op(e,tp,eg,ep,ev,re,r,rp)
 	local c=e:GetHandler()

@@ -1,7 +1,7 @@
 local cm,m,o=GetID()
 function cm.initial_effect(c)
 	vgd.VgCard(c)
-	vgd.AbilityContChangeAttack(c,m,LOCATION_MZONE,EFFECT_TYPE_SINGLE,5000,cm.con)
+	vgd.AbilityCont(c, m, LOCATION_MZONE, EFFECT_TYPE_SINGLE, EFFECT_UPDATE_ATTACK, 5000, cm.con)
 	vgd.AbilityAct(c,m,LOCATION_MZONE,cm.op,vgf.DamageCost(2),cm.con1)
 end
 function cm.con(e,tp,eg,ep,ev,re,r,rp)

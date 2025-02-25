@@ -2,7 +2,7 @@ local cm,m,o=GetID()
 function cm.initial_effect(c)
 	vgd.VgCard(c)
 	vgd.OverDress(c,cm.filter)
-	vgd.AbilityContChangeAttack(c,m,LOCATION_MZONE,EFFECT_TYPE_SINGLE,cm.val,cm.con)
+	vgd.AbilityCont(c, m, LOCATION_MZONE, EFFECT_TYPE_SINGLE, EFFECT_UPDATE_ATTACK, cm.val, cm.con)
 	vgd.AbilityAuto(c,m,LOCATION_MZONE,EFFECT_TYPE_SINGLE,EVENT_HITTING,cm.op,cm.cost,cm.con)
 end
 function cm.filter(c)

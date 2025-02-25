@@ -2,7 +2,7 @@ local cm,m,o=GetID()
 function cm.initial_effect(c)
 	vgd.VgCard(c)
 	vgd.AbilityAuto(c,m,LOCATION_MZONE,EFFECT_TYPE_SINGLE,EVENT_SPSUMMON_SUCCESS,cm.op,nil,vgf.VSummonCondition)
-    vgd.AbilityContChangeAttack(c,m,LOCATION_MZONE,EFFECT_TYPE_SINGLE,5000,cm.con)
+	vgd.AbilityCont(c, m, LOCATION_MZONE, EFFECT_TYPE_SINGLE, EFFECT_UPDATE_ATTACK, 5000, cm.con)
 end
 function cm.con(e,tp,eg,ep,ev,re,r,rp)
 	local ct=Duel.GetFlagEffectLabel(tp,FLAG_CONDITION)

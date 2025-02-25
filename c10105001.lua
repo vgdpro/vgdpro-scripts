@@ -2,7 +2,7 @@ local cm,m,o=GetID()
 function cm.initial_effect(c)
 	vgd.VgCard(c)
 	vgd.AbilityAct(c,m,LOCATION_MZONE,cm.op1,vgf.DamageCost(1),nil,nil,1)
-	vgd.AbilityContChangeAttack(c,m,LOCATION_MZONE,EFFECT_TYPE_SINGLE,10000,cm.con)
+	vgd.AbilityCont(c, m, LOCATION_MZONE, EFFECT_TYPE_SINGLE, EFFECT_UPDATE_ATTACK, 10000, cm.con)
 	vgd.TriggerCountUp(c,m,1,cm.con2)
 end
 function cm.con(e,c)
