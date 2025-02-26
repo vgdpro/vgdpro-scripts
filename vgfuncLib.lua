@@ -1516,7 +1516,7 @@ function VgF.AddAlchemagic(m, from, to, min, max, filter)
         table.insert(cm.order_cost['from'], v)
         table.insert(cm.order_cost['to'], to[i])
         table.insert(cm.order_cost['min'], min[i] or 1)
-        table.insert(cm.order_cost['max'], (max[i] and max[i] >= min[i]) and max[i] or min[i])
+        table.insert(cm.order_cost['max'], (max[i] and max[i] >= min[i]) and max[i] or (min[i] or 1))
         table.insert(cm.order_cost['filter'], filter[i])
     end
 end
