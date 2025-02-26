@@ -575,24 +575,29 @@ function VgD.CardTriggerOperation(chkop)
 end
 
 function VgD.OperationWhenCardTrigger(e, tp, eg, ep, ev, re, r, rp, c, chk)
-    local effect_when_trigger = c.effect_when_trigger
-    local cost, con, tg = true, true, true
-    if not effect_when_trigger or #effect_when_trigger == 0 then return end
-    if (VgF.GetValueType(effect_when_trigger[5]) == "boolean" and not effect_when_trigger[5]) or (VgF.GetValueType(effect_when_trigger[5]) ~= "boolean" and Duel.GetTurnPlayer() ~= c:GetControler()) then return false end
-    if VgF.GetValueType(effect_when_trigger[2]) == "function" then cost = effect_when_trigger[2](e, tp, eg, ep, ev, re, r, rp, 0) end
-    if VgF.GetValueType(effect_when_trigger[3]) == "function" then con = effect_when_trigger[3](e, tp, eg, ep, ev, re, r, rp) end
-    if VgF.GetValueType(effect_when_trigger[4]) == "function" then tg = effect_when_trigger[4](e, tp, eg, ep, ev, re, r, rp, 0) end
-    if VgF.GetValueType(effect_when_trigger[1]) == "function" and cost and con and tg then
+    local additional_effect = c.additional_effect
+    if not additional_effect or #additional_effect == 0 then return end
+    if VgF.GetValueType(additional_effect['chk']) == "boolean" then
+        if not additional_effect['chk'] then
+            return false
+        end
+    else
+        if Duel.GetTurnPlayer() ~= c:GetControler() then return false end
+    end
+    local cost = type(additional_effect['cost']) == "function" and additional_effect['cost'](e, tp, eg, ep, ev, re, r, rp, c, 0) or true
+    local con = type(additional_effect['con']) == "function" and additional_effect['con'](e, tp, eg, ep, ev, re, r, rp, c) or true
+    local tg = type(additional_effect['tg']) == "function" and additional_effect['tg'](e, tp, eg, ep, ev, re, r, rp, c, 0) or true
+    if type(additional_effect['op']) == "function" and cost and con and tg then
         if chk == 0 then return true end
         local activate_chk = true
-        if VgF.GetValueType(effect_when_trigger[2]) == "function" then activate_chk = Duel.SelectYesNo(tp, VgF.Stringid(VgID, 15)) end
+        if type(additional_effect['cost']) == "function" then activate_chk = Duel.SelectYesNo(tp, VgF.Stringid(VgID, 15)) end
         if activate_chk then
             Duel.HintSelection(Group.FromCards(c))
             local _, m = c:GetOriginalCode()
             Duel.Hint(HINT_CARD, 0, m)
-            if VgF.GetValueType(effect_when_trigger[2]) == "function" then effect_when_trigger[2](e, tp, eg, ep, ev, re, r, rp, 1) end
-            if VgF.GetValueType(effect_when_trigger[4]) == "function" then effect_when_trigger[4](e, tp, eg, ep, ev, re, r, rp, 1) end
-            effect_when_trigger[1](e, tp, eg, ep, ev, re, r, rp)
+            if type(additional_effect['cost']) == "function" then additional_effect['cost'](e, tp, eg, ep, ev, re, r, rp, 1) end
+            if type(additional_effect['tg']) == "function" then additional_effect['tg'](e, tp, eg, ep, ev, re, r, rp, 1) end
+            additional_effect['op'](e, tp, eg, ep, ev, re, r, rp)
         end
     end
     return false
@@ -869,6 +874,13 @@ function VgD.Trigger(e, tp, eg, ep, ev, re, r, rp)
 end
 
 --起自永以外关键字----------------------------------------------------------------------------------------
+
+---超限触发的追加效果
+---
+function VgD.AdditionalEffect(c, m, op, cost, con, tg, chk)
+    local cm = _G["c"..m]
+    cm.additional_effect = {['op'] = op, ['cost'] = cost, ['con'] = con, ['tg'] = tg, ['chk'] = chk}
+end
 
 ---使卡片具有超限舞装的功能
 ---@param c Card 要注册超限舞装功能的卡

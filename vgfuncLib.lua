@@ -1521,11 +1521,6 @@ function VgF.AddAlchemagic(m, from, to, min, max, filter)
     end
 end
 
-function VgF.AddEffectWhenTrigger(c, m, op, cost, con, tg, chk)
-    local cm = _G["c"..m]
-    cm.effect_when_trigger = {op, cost, con, tg, chk}
-end
-
 ---创建一个函数检查器 检查func是否为nil或函数
 function VgF.IllegalFunctionCheck(name, c)
     if VgF.GetValueType(c) ~= "Card" then Debug.Message("VgD."..name.." param c isn't Card") end
