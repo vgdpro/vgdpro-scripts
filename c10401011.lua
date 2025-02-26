@@ -6,7 +6,7 @@ function cm.initial_effect(c)
 end
 function cm.con(e,tp,eg,ep,ev,re,r,rp)
 	local c=e:GetHandler()
-	return c:GetFlagEffectLabel(FLAG_CONDITION)==201 and vgf.RSummonCondition(e)
+	return c:GetFlagEffectLabel(FLAG_CONDITION)==201 and vgf.con.RideOnRCircle(e)
 end
 function cm.op(e,tp,eg,ep,ev,re,r,rp)
 	local c=e:GetHandler()

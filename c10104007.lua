@@ -2,7 +2,7 @@
 local cm,m,o=GetID()
 function cm.initial_effect(c)
 	vgd.VgCard(c)
-	vgd.AbilityAct(c,m,LOCATION_CIRCLE,cm.operation,cm.cost,vgf.RMonsterCondition,nil,1)
+	vgd.AbilityAct(c,m,LOCATION_CIRCLE,cm.operation,cm.cost,vgf.con.IsR,nil,1)
 end
 function cm.operation(e,tp,eg,ep,ev,re,r,rp)
 	local c=e:GetHandler()

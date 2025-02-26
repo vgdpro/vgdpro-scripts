@@ -21,5 +21,5 @@ function cm.operation(e,tp,eg,ep,ev,re,r,rp)
 	end
 end
 function cm.con(e)
-    return Duel.GetAttacker()==e:GetHandler() and vgf.IsSequence(c,1,2,3)
+    return Duel.GetAttacker()==e:GetHandler() and Card.IsSequence(c,1,2,3)
 end

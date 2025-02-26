@@ -23,10 +23,10 @@ function cm.operation2(e,tp,eg,ep,ev,re,r,rp)
 	local c=e:GetHandler()
 	if c:IsRelateToEffect(e) and c:IsFaceup() then
 		local e1=vgf.AtkUp(c,c,10000)
-		vgf.EffectReset(c,e1,EVENT_BATTLED)
+		vgf.effect.Reset(c,e1,EVENT_BATTLED)
 	end
 end
 function cm.condition(e,tp,eg,ep,ev,re,r,rp)
 	local c=e:GetHandler()
-	return vgf.IsSequence(c,1,2,3) and vgf.VMonsterFilter(Duel.GetAttackTarget())
+	return Card.IsSequence(c,1,2,3) and vgf.filter.IsV(Duel.GetAttackTarget())
 end

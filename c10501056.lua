@@ -22,7 +22,7 @@ function cm.op(e,tp,eg,ep,ev,re,r,rp)
 end
 
 function cm.filter(c)
-    return c:IsLevelAbove(3) and vgf.VMonsterFilter(c)
+    return c:IsLevelAbove(3) and vgf.filter.IsV(c)
 end
 
 function cm.con1(e,tp,eg,ep,ev,re,r,rp)

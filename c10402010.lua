@@ -3,13 +3,13 @@ function cm.initial_effect(c)
 	vgd.VgCard(c)
 	vgd.AbilityCont(c, m, LOCATION_CIRCLE, EFFECT_TYPE_SINGLE, EFFECT_UPDATE_ATTACK, 5000, cm.con)
 	vgd.GlobalCheckEffect(c,m,EVENT_CHAINING,cm.checkcon)
-	vgd.AbilityAuto(c,m,nil,EFFECT_TYPE_SINGLE,EVENT_SPSUMMON_SUCCESS,cm.operation,nil,vgf.RSummonCondition)
+	vgd.AbilityAuto(c,m,nil,EFFECT_TYPE_SINGLE,EVENT_SPSUMMON_SUCCESS,cm.operation,nil,vgf.con.RideOnRCircle)
 end
 function cm.checkcon(e,tp,eg,ep,ev,re,r,rp)
     return re:IsHasType(EFFECT_TYPE_ACTIVATE) and rp==tp
 end
 function cm.con(e,tp,eg,ep,ev,re,r,rp)
-	return Duel.GetFlagEffect(tp,m)>0 and vgf.RMonsterCondition(e)
+	return Duel.GetFlagEffect(tp,m)>0 and vgf.con.IsR(e)
 end
 function cm.operation(e,tp,eg,ep,ev,re,r,rp)
 	local ct=Duel.GetFlagEffectLabel(tp,m)

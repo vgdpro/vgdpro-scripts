@@ -9,7 +9,7 @@ function cm.initial_effect(c)
 end
 function cm.con1(e)
     local tp=e:GetHandlerPlayer()
-    return vgf.RMonsterCondition(e) and Duel.GetFlagEffect(tp,m)>0
+    return vgf.con.IsR(e) and Duel.GetFlagEffect(tp,m)>0
 end
 function cm.checkcon(e,tp,eg,ep,ev,re,r,rp)
     return re:IsHasType(EFFECT_TYPE_ACTIVATE) and rp==tp

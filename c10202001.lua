@@ -33,7 +33,7 @@ function cm.con(e,c)
 	return Duel.GetFlagEffect(tp,m)>0
 end
 function cm.condition(e,tp,eg,ep,ev,re,r,rp)
-	return vgf.VMonsterFilter(e:GetHandler()) and vgf.VMonsterFilter(Duel.GetAttackTarget())
+	return vgf.filter.IsV(e:GetHandler()) and vgf.filter.IsV(Duel.GetAttackTarget())
 end
 function cm.check(g)
 	return g:GetClassCount(Card.GetLevel)==#g
@@ -51,7 +51,7 @@ function cm.cost(e,tp,eg,ep,ev,re,r,rp,chk)
 end
 function cm.operation(e,tp,eg,ep,ev,re,r,rp)
 	local c=e:GetHandler()
-	local tc=vgf.SelectMatchingCard(HINTMSG_VMONSTER,e,tp,vgf.VMonsterFilter,tp,0,LOCATION_CIRCLE,1,1,nil):GetFirst()
+	local tc=vgf.SelectMatchingCard(HINTMSG_VMONSTER,e,tp,vgf.filter.IsV,tp,0,LOCATION_CIRCLE,1,1,nil):GetFirst()
 	if tc:GetAttack()>1 then
 		local atk=tc:GetAttack()-1
 		vgf.AtkUp(c,tc,-atk)
@@ -61,5 +61,5 @@ function cm.operation(e,tp,eg,ep,ev,re,r,rp)
 	end
 end
 function cm.filter(c)
-	return vgf.VMonsterFilter(c) and c:IsLevelAbove(3)
+	return vgf.filter.IsV(c) and c:IsLevelAbove(3)
 end

@@ -11,7 +11,7 @@ function cm.op(e,tp,eg,ep,ev,re,r,rp)
 	vgf.op.SoulCharge(num)(e,tp,eg,ep,ev,re,r,rp)
 end
 function cm.con1(e,tp,eg,ep,ev,re,r,rp)
-	return vgf.RMonsterCondition(e) and vgf.GetVMonster(tp):IsCode(10102001)
+	return vgf.con.IsR(e) and vgf.GetVMonster(tp):IsCode(10102001)
 end
 function cm.con2(e,tp,eg,ep,ev,re,r,rp)
 	return cm.con1(e,tp,eg,ep,ev,re,r,rp) and eg:GetFirst()==e:GetHandler()

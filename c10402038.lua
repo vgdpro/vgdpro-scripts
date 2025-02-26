@@ -8,7 +8,7 @@ function cm.op(e,tp,eg,ep,ev,re,r,rp)
 end
 function cm.con(e,tp,eg,ep,ev,re,r,rp)
 	local g=vgf.GetMatchingGroup(cm.filter,tp,LOCATION_CIRCLE,0,nil)
-	return g:GetCount()>0 and vgf.RMonsterCondition(e)
+	return g:GetCount()>0 and vgf.con.IsR(e)
 end
 function cm.filter(c)
 	return c:GetFlagEffect(FLAG_SUPPORT)>0 and c:IsCode(10000001)

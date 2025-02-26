@@ -6,7 +6,7 @@ function cm.initial_effect(c)
 	vgd.AbilityAuto(c,m,LOCATION_CIRCLE,EFFECT_TYPE_SINGLE,EVENT_SPSUMMON_SUCCESS,cm.operation,vgf.cost.SoulBlast(1),cm.condition)
 end
 function cm.condition(e,tp,eg,ep,ev,re,r,rp)
-	return vgf.GetVMonster(tp):IsSetCard(0xe8) and vgf.RMonsterFilter(e:GetHandler())
+	return vgf.GetVMonster(tp):IsSetCard(0xe8) and vgf.filter.IsR(e:GetHandler())
 end
 function cm.operation(e,tp,eg,ep,ev,re,r,rp)
 	local c=e:GetHandler()

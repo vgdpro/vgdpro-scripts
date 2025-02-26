@@ -8,7 +8,7 @@ function cm.initial_effect(c)
 end
 --你的主要阶段中对手的后防者退场时
 function cm.con(e,tp,eg,ep,re,r,rp)
-	return eg:IsExists(cm.filter,1,nil,tp) and Duel.GetCurrentPhase()==PHASE_MAIN1 and Duel.GetTurnPlayer()==tp and vgf.RMonsterCondition(e)
+	return eg:IsExists(cm.filter,1,nil,tp) and Duel.GetCurrentPhase()==PHASE_MAIN1 and Duel.GetTurnPlayer()==tp and vgf.con.IsR(e)
 end
 function cm.filter(c,tp)
 	return c:IsPreviousLocation(LOCATION_CIRCLE) and c:IsPreviousControler(1-tp) and c:IsPreviousPosition(POS_FACEUP)

@@ -1,7 +1,7 @@
 local cm,m,o=GetID()
 function cm.initial_effect(c)
 	vgd.VgCard(c)
-	vgd.AbilityAuto(c,m,nil,EFFECT_TYPE_SINGLE,EVENT_SPSUMMON_SUCCESS,cm.op,vgf.cost.And(vgf.cost.CounterBlast(1),vgf.cost.Retire(vgf.RMonsterFilter,1,1,c)))
+	vgd.AbilityAuto(c,m,nil,EFFECT_TYPE_SINGLE,EVENT_SPSUMMON_SUCCESS,cm.op,vgf.cost.And(vgf.cost.CounterBlast(1),vgf.cost.Retire(vgf.filter.IsR,1,1,c)))
 	vgd.GlobalCheckEffect(c,m,EVENT_TO_GRAVE,cm.chkcon)
 	vgd.AbilityCont(c, m, LOCATION_R_CIRCLE, EFFECT_TYPE_SINGLE, EFFECT_UPDATE_ATTACK, 5000, cm.con)
 end

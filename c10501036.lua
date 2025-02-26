@@ -10,12 +10,12 @@ end
 function cm.con1(e)
 	local c=e:GetHandler()
 	local tp=e:GetHandlerPlayer()
-	return vgf.VMonsterCondition(e) and not vgf.IsExistingMatchingCard(vgf.RMonsterFilter,tp,LOCATION_CIRCLE,0,1,nil) and Duel.GetTurnPlayer()==tp
+	return vgf.con.IsV(e) and not vgf.IsExistingMatchingCard(vgf.filter.IsR,tp,LOCATION_CIRCLE,0,1,nil) and Duel.GetTurnPlayer()==tp
 end
 function cm.con2(e)
     local c=e:GetHandler()
     local g=c:GetMaterial()
-	return vgf.VSummonCondition(e) and g:IsExists(Card.IsCode,1,nil,10501090)
+	return vgf.con.RideOnVCircle(e) and g:IsExists(Card.IsCode,1,nil,10501090)
 end
 function cm.operation(e,tp,eg,ep,ev,re,r,rp)
     local g=Duel.GetDecktopGroup(tp,7)

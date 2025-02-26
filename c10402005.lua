@@ -1,7 +1,7 @@
 local cm,m,o=GetID()
 function cm.initial_effect(c)
 	vgd.VgCard(c)
-	vgd.AbilityCont(c, m, LOCATION_CIRCLE, EFFECT_TYPE_SINGLE, EFFECT_UPDATE_ATTACK, cm.val, vgf.RMonsterCondition)
+	vgd.AbilityCont(c, m, LOCATION_CIRCLE, EFFECT_TYPE_SINGLE, EFFECT_UPDATE_ATTACK, cm.val, vgf.con.IsR)
 	vgd.AbilityAuto(c,m,LOCATION_CIRCLE,EFFECT_TYPE_SINGLE,EVENT_BATTLED,cm.op,vgf.cost.Retire(10000001),cm.con)
 end
 function cm.val(e)
@@ -13,9 +13,9 @@ function cm.val(e)
 	return val
 end
 function cm.con(e,tp,eg,ep,ev,re,r,rp)
-	return vgf.RMonsterCondition(e) and Duel.GetAttacker()==e:GetHandler()
+	return vgf.con.IsR(e) and Duel.GetAttacker()==e:GetHandler()
 end
 function cm.op(e,tp,eg,ep,ev,re,r,rp)
-	local g=vgf.SelectMatchingCard(HINTMSG_LEAVEONFIELD,e,tp,vgf.RMonsterFilter,tp,0,LOCATION_CIRCLE,0,1,nil)
+	local g=vgf.SelectMatchingCard(HINTMSG_LEAVEONFIELD,e,tp,vgf.filter.IsR,tp,0,LOCATION_CIRCLE,0,1,nil)
 	vgf.Sendto(LOCATION_DROP,g,REASON_EFFECT)
 end

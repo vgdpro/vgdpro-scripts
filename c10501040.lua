@@ -3,7 +3,7 @@ local cm,m,o=GetID()
 function cm.initial_effect(c)
 	vgd.VgCard(c)
 	-- 【自】：这个单位登场到R时，选择你的弃牌区中的相互同名的至多2张宝石卡，将1张放置到牌堆底，其余的卡放置到灵魂里。
-	vgd.AbilityAuto(c,m,LOCATION_CIRCLE,EFFECT_TYPE_SINGLE,EVENT_SPSUMMON_SUCCESS,cm.op,nil,vgf.RSummonCondition)
+	vgd.AbilityAuto(c,m,LOCATION_CIRCLE,EFFECT_TYPE_SINGLE,EVENT_SPSUMMON_SUCCESS,cm.op,nil,vgf.con.RideOnRCircle)
 end
 
 function cm.op(e,tp,eg,ep,ev,re,r,rp)

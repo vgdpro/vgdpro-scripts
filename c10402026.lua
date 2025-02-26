@@ -11,10 +11,10 @@ function cm.cost(e,tp,eg,ep,ev,re,r,rp,chk)
 	vgf.op.Rest(c)(e,tp,eg,ep,ev,re,r,rp,chk)
 end
 function cm.con(e,tp,eg,ep,ev,re,r,rp)
-	return vgf.RMonsterCondition(e) and vgf.GetVMonster(tp):IsCode(10401002)
+	return vgf.con.IsR(e) and vgf.GetVMonster(tp):IsCode(10401002)
 end
 function cm.op(e,tp,eg,ep,ev,re,r,rp)
-	local g=vgf.SelectMatchingCard(HINTMSG_LEAVEFIELD,e,tp,vgf.RMonsterFilter,tp,0,LOCATION_CIRCLE,1,1,nil)
+	local g=vgf.SelectMatchingCard(HINTMSG_LEAVEFIELD,e,tp,vgf.filter.IsR,tp,0,LOCATION_CIRCLE,1,1,nil)
 	vgf.Sendto(LOCATION_DROP,g,REASON_EFFECT)
 end
 function cm.op1(e,tp,eg,ep,ev,re,r,rp)
@@ -23,5 +23,5 @@ function cm.op1(e,tp,eg,ep,ev,re,r,rp)
 	vgf.AtkUp(c,c,5000)
 end
 function cm.con1(e,tp,eg,ep,ev,re,r,rp)
-	return vgf.GetMatchingGroupCount(vgf.VMonsterFilter,tp,0,LOCATION_CIRCLE,nil)<=1
+	return vgf.GetMatchingGroupCount(vgf.filter.IsV,tp,0,LOCATION_CIRCLE,nil)<=1
 end

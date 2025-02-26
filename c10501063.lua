@@ -15,12 +15,12 @@ function cm.op(e,tp,eg,ep,ev,re,r,rp)
         Duel.Hint(HINT_SELECTMSG,tp,HINTMSG_ATKUP)
         g=g:FilterSelect(tp,Card.IsCanBeEffectTarget,1,1,nil,e)
 		local e1=vgf.AtkUp(c,g,10000)
-		vgf.EffectReset(c,e1,EVENT_BATTLED)
+		vgf.effect.Reset(c,e1,EVENT_BATTLED)
 	end
 end
 
 function cm.con(e,tp,eg,ep,ev,re,r,rp)
 	local c=e:GetHandler()
 	local g=Group.FromCards(Duel.GetAttackTarget())
-	return vgf.RMonsterCondition(c) and g:IsExists(Card.IsSetCard,1,nil,0xb6)
+	return vgf.con.IsR(c) and g:IsExists(Card.IsSetCard,1,nil,0xb6)
 end

@@ -8,7 +8,7 @@ function cm.initial_effect(c)
 end
 
 function cm.con1(e)
-    return cm.con2(e) and vgf.RMonsterCondition(e)
+    return cm.con2(e) and vgf.con.IsR(e)
 end
 
 function cm.con2(e)
@@ -18,5 +18,5 @@ function cm.con2(e)
 end
 
 function cm.filter(c)
-    return c:IsSetCard(0xa013) and vgf.RMonsterFilter(c)
+    return c:IsSetCard(0xa013) and vgf.filter.IsR(c)
 end

@@ -2,12 +2,7 @@ local cm,m,o=GetID()
 function cm.initial_effect(c)
 	vgd.VgCard(c)
 	vgd.Order(c,m,cm.op,cm.cost)
-	vgf.AddAlchemagicFilter(c,m,cm.filter)
-	vgf.AddAlchemagicCountMin(c,m,1)
-	vgf.AddAlchemagicCountMax(c,m,1)
-	vgf.AddAlchemagicFrom(c,m,"LOCATION_HAND")
-	vgf.AddAlchemagicTo(c,m,"LOCATION_DROP")
-
+	VgF.AddAlchemagic(m,"LOCATION_HAND","LOCATION_DROP",1,1,cm.filter)
 end
 function cm.op(e,tp,eg,ep,ev,re,r,rp)
 	Duel.Draw(tp,2,REASON_EFFECT)

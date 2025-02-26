@@ -5,11 +5,11 @@ function cm.initial_effect(c)
 	vgd.AbilityAuto(c,m,LOCATION_CIRCLE,EFFECT_TYPE_SINGLE,EVENT_BECOME_TARGET,cm.op2,nil,cm.con2,nil,1)
 end
 function cm.con(e,tp,eg,ep,ev,re,r,rp)
-	return vgf.RSummonCondition(e) and vgf.GetVMonster(tp):IsCode(10104001)
+	return vgf.con.RideOnRCircle(e) and vgf.GetVMonster(tp):IsCode(10104001)
 end
 function cm.op(e,tp,eg,ep,ev,re,r,rp)
 	local c=e:GetHandler()
-	local g=vgf.SelectMatchingCard(HINTMSG_RMONSTER,e,tp,vgf.RMonsterFilter,tp,LOCATION_CIRCLE,0,1,1,nil)
+	local g=vgf.SelectMatchingCard(HINTMSG_RMONSTER,e,tp,vgf.filter.IsR,tp,LOCATION_CIRCLE,0,1,1,nil)
 	local tc=vgf.ReturnCard(g)
 	if tc then
 		vgf.AtkUp(c,tc,5000)
@@ -17,7 +17,7 @@ function cm.op(e,tp,eg,ep,ev,re,r,rp)
 	end
 end
 function cm.con2(e,tp,eg,ep,ev,re,r,rp)
-	return eg:IsContains(e:GetHandler()) and vgf.VMonsterFilter(re:GetHandler()) and vgf.RMonsterCondition(e)
+	return eg:IsContains(e:GetHandler()) and vgf.filter.IsV(re:GetHandler()) and vgf.con.IsR(e)
 end
 function cm.op(e,tp,eg,ep,ev,re,r,rp)
 	local c=e:GetHandler()

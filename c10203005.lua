@@ -31,13 +31,13 @@ function cm.checkop(e,tp,eg,ep,ev,re,r,rp)
     Duel.RegisterFlagEffect(tp,m,RESET_PHASE+PHASE_END,0,1)
 end
 function cm.con1(e,tp,eg,ep,ev,re,r,rp)
-	return Duel.GetTurnPlayer()==tp and vgf.RMonsterCondition(e)
+	return Duel.GetTurnPlayer()==tp and vgf.con.IsR(e)
 end
 function cm.op1(e,tp,eg,ep,ev,re,r,rp)
 	Duel.Hint(HINT_SELECTMSG,tp,HINTMSG_Call)
 	local g=vgf.GetVMonster(tp):GetOverlayGroup():FilterSelect(tp,cm.filter,1,1,nil,e,tp)
-	vgf.Sendto(LOCATION_CIRCLE,g,SUMMON_TYPE_RIDE,tp,"FromOverlayToV",POS_FACEDOWN_DEFENCE)
+	vgf.Sendto(LOCATION_CIRCLE,g,SUMMON_TYPE_RIDE,tp,"FromSouloV",POS_FACEDOWN_DEFENCE)
 end
 function cm.filter(c,e,tp)
-	return c:IsSetCard(0x202) and vgf.IsCanBeCalled(c,e,tp,SUMMON_TYPE_RIDE,POS_FACEDOWN_DEFENCE,"FromOverlayToV")
+	return c:IsSetCard(0x202) and vgf.IsCanBeCalled(c,e,tp,SUMMON_TYPE_RIDE,POS_FACEDOWN_DEFENCE,"FromSouloV")
 end

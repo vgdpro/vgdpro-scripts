@@ -8,7 +8,7 @@ function cm.initial_effect(c)
 end
 function cm.con(e,tp,eg,ep,ev,re,r,rp)
     local c=e:GetHandler()
-    return vgf.RMonsterFilter(c) and eg:IsContains(c)
+    return vgf.filter.IsR(c) and eg:IsContains(c)
 end
 function cm.op(e,tp,eg,ep,ev,re,r,rp)
     local c=e:GetHandler()

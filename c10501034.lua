@@ -14,7 +14,7 @@ end
 
 function cm.con1(e)
     local c=e:GetHandler()
-	return vgf.VSummonCondition(e)
+	return vgf.con.RideOnVCircle(e)
 end
 
 function cm.op1(e,tp,eg,ep,ev,re,r,rp)
@@ -29,12 +29,12 @@ end
 
 function cm.con2(e,tp,eg,ep,ev,re,r,rp)
 	local c=e:GetHandler()
-	return vgf.VMonsterCondition(e) and vgf.WhiteWings(e)
+	return vgf.con.IsV(e) and vgf.WhiteWings(e)
 end
 function cm.op2(e,tp,eg,ep,ev,re,r,rp)
 	local c=e:GetHandler()
 	vgf.StarUp(c,c,1)
 end
 function cm.con3(e)
-	return vgf.VMonsterCondition(e) and vgf.BlackWings(e)
+	return vgf.con.IsV(e) and vgf.BlackWings(e)
 end

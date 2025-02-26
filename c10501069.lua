@@ -18,5 +18,5 @@ function cm.op(e,tp,eg,ep,ev,re,r,rp)
 end
 
 function cm.filter(c)
-    return c:IsSetCard(0xb6) and vgf.RMonsterFilter(c)
+    return c:IsSetCard(0xb6) and vgf.filter.IsR(c)
 end

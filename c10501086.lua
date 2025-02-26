@@ -7,7 +7,7 @@ function cm.initial_effect(c)
 end
 function cm.con(e,tp,eg,ep,ev,re,r,rp)
     local c=e:GetHandler()
-    return vgf.RMonsterCondition(e) and eg:IsExists(cm.filter,1,nil,tp,c)
+    return vgf.con.IsR(e) and eg:IsExists(cm.filter,1,nil,tp,c)
 end
 function cm.op(e,tp,eg,ep,ev,re,r,rp)
 	local c=e:GetHandler()

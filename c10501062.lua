@@ -14,5 +14,5 @@ end
 function cm.con(e)
 	local c=e:GetHandler()
 	local tp=e:GetHandlerPlayer()
-	return vgf.RMonsterCondition(e) and Duel.GetTurnPlayer()==tp
+	return vgf.con.IsR(e) and Duel.GetTurnPlayer()==tp
 end

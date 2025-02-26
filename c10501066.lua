@@ -4,12 +4,12 @@ function cm.initial_effect(c)
 	vgd.AbilityAuto(c,m,LOCATION_CIRCLE,EFFECT_TYPE_SINGLE,EVENT_ATTACK_ANNOUNCE,cm.operation,vgf.cost.SoulBlast(1),cm.con)
 end
 function cm.con(e,tp,eg,ep,ev,re,r,rp)
-	return vgf.RMonsterCondition(e) and vgf.BlackWings(e)
+	return vgf.con.IsR(e) and vgf.BlackWings(e)
 end
 function cm.op(e,tp,eg,ep,ev,re,r,rp)
 	local c=e:GetHandler()
 	vgf.op.SoulCharge(1)(e,tp,eg,ep,ev,re,r,rp)
-	local g=vgf.SelectMatchingCard(HINTMSG_RMONSTER,e,tp,vgf.RMonsterFilter,tp,0,LOCATION_CIRCLE,1,1,nil)
+	local g=vgf.SelectMatchingCard(HINTMSG_RMONSTER,e,tp,vgf.filter.IsR,tp,0,LOCATION_CIRCLE,1,1,nil)
 	local tc=vgf.ReturnCard(g)
 	if tc then
 		local e1=Effect.CreateEffect(c)
@@ -19,7 +19,7 @@ function cm.op(e,tp,eg,ep,ev,re,r,rp)
 		e1:SetLabel(e:GetHandlerPlayer())
 		e1:SetCondition(cm.con1)
 		tc:RegisterEffect(e1)
-		vgf.EffectReset(c,e1,EVENT_PHASE+PHASE_DRAW,cm.con2,e:GetHandlerPlayer())
+		vgf.effect.Reset(c,e1,EVENT_PHASE+PHASE_DRAW,cm.con2,e:GetHandlerPlayer())
 	end
 end
 function cm.con1(e,tp,eg,ep,ev,re,r,rp)

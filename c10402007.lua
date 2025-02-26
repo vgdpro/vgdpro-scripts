@@ -17,7 +17,7 @@ function cm.checkcon(e,tp,eg,ep,ev,re,r,rp)
     return eg:IsExists(Card.IsSummonType,1,nil,SUMMON_TYPE_SELFRIDE)
 end
 function cm.condition(e,tp,eg,ep,ev,re,r,rp)
-	return Duel.GetFlagEffect(tp,m)>0 and vgf.RMonsterCondition(e)
+	return Duel.GetFlagEffect(tp,m)>0 and vgf.con.IsR(e)
 end
 function cm.con(e,tp,eg,ep,ev,re,r,rp)
 	local c=e:GetHandler()

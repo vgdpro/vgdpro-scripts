@@ -8,8 +8,8 @@ end
 function cm.con(e,tp,eg,ep,ev,re,r,rp)
     local c = e:GetHandler()
     local ph = Duel.GetCurrentPhase()
-    return vgf.BackFilter(c) and (ph>=PHASE_BATTLE_START and ph<=PHASE_BATTLE) and Duel.GetTurnPlayer() == tp and eg:IsExists(cm.filter,1,c,tp)
+    return vgf.filter.Back(c) and (ph>=PHASE_BATTLE_START and ph<=PHASE_BATTLE) and Duel.GetTurnPlayer() == tp and eg:IsExists(cm.filter,1,c,tp)
 end
 function cm.filter(c,tp)
-	return vgf.IsSummonTypeR(c) and c:IsControler(tp)
+	return vgf.filter.RideOnRCircle(c) and c:IsControler(tp)
 end

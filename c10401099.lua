@@ -8,7 +8,7 @@ function cm.operation(e,tp,eg,ep,ev,re,r,rp)
 	Duel.Draw(tp,1,REASON_EFFECT)
 end
 function cm.con(e,tp,eg,ep,ev,re,r,rp)
-	return vgf.RMonsterCondition(e) and eg:IsExists(cm.filter,1,nil,tp) and Duel.GetTurnPlayer()==tp and Duel.GetAttackTarget()
+	return vgf.con.IsR(e) and eg:IsExists(cm.filter,1,nil,tp) and Duel.GetTurnPlayer()==tp and Duel.GetAttackTarget()
 end
 function cm.filter(c,tp)
 	return c:IsTrigger(TRIGGER_CARDS) and c:IsLocation(LOCATION_TRIGGER) and c:IsControler(tp)
@@ -18,5 +18,5 @@ function cm.op(e,tp,eg,ep,ev,re,r,rp)
 	vgf.Sendto(LOCATION_DECK,g,tp,SEQ_DECKSHUFFLE,REASON_EFFECT)
 end
 function cm.filter2(c)
-	return vgf.FrontFilter(c) and vgf.RMonsterFilter(c)
+	return vgf.filter.Front(c) and vgf.filter.IsR(c)
 end

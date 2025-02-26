@@ -22,5 +22,5 @@ function cm.op1(e,tp,eg,ep,ev,re,r,rp)
 	vgf.AtkUp(c,g,5000)
 end
 function cm.con1(e,tp,eg,ep,ev,re,r,rp)
-	return vgf.RMonsterCondition(e) and vgf.GetVMonster(tp):IsSetCard(0x79)
+	return vgf.con.IsR(e) and vgf.GetVMonster(tp):IsSetCard(0x79)
 end

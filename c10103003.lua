@@ -3,7 +3,7 @@ local cm,m,o=GetID()
 function cm.initial_effect(c)
     vgd.VgCard(c)
     vgd.BeRidedByCard(c,m,10103002,cm.operation,cm.cost)
-    vgd.AbilityAct(c,m,LOCATION_CIRCLE,cm.operation2,vgf.cost.CounterBlast(1),vgf.RMonsterCondition,nil,1)
+    vgd.AbilityAct(c,m,LOCATION_CIRCLE,cm.operation2,vgf.cost.CounterBlast(1),vgf.con.IsR,nil,1)
 end
 function cm.cost(e,tp,eg,ep,ev,re,r,rp,chk)
     if chk==0 then return vgf.IsExistingMatchingCard(Card.IsLevel,tp,LOCATION_HAND,0,2,nil,3) end
@@ -30,5 +30,5 @@ function cm.operation2(e,tp,eg,ep,ev,re,r,rp)
     end
 end
 function cm.filter(c)
-    return c:IsLevel(3) and vgf.VMonsterFilter(c)
+    return c:IsLevel(3) and vgf.filter.IsV(c)
 end

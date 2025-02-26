@@ -8,7 +8,7 @@ end
 
 function cm.con(e,tp,eg,ep,ev,re,r,rp)
     local ca = Duel.GetAttacker()
-    return vgf.VMonsterFilter(ca) and eg:GetFirst()==e:GetHandler()
+    return vgf.filter.IsV(ca) and eg:GetFirst()==e:GetHandler()
 end
 
 function cm.op(e,tp,eg,ep,ev,re,r,rp)

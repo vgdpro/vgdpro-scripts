@@ -7,11 +7,11 @@ function cm.con(e,tp,eg,ep,ev,re,r,rp)
 	local c=e:GetHandler()
 	local ct=Duel.GetFlagEffectLabel(tp,FLAG_CONDITION)
 	if vgf.GetValueType(ct)~="number" or ct~=10102001 then return false end
-	return eg:GetFirst()==c and Duel.GetAttacker()==vgf.GetVMonster(tp) and vgf.RMonsterCondition(e)
+	return eg:GetFirst()==c and Duel.GetAttacker()==vgf.GetVMonster(tp) and vgf.con.IsR(e)
 end
 function cm.op(e,tp,eg,ep,ev,re,r,rp)
 	local c=e:GetHandler()
-	local tc=vgf.SelectMatchingCard(HINTMSG_VMONSTER,e,tp,vgf.VMonsterFilter,tp,LOCATION_CIRCLE,0,1,1,nil):GetFirst()
+	local tc=vgf.SelectMatchingCard(HINTMSG_VMONSTER,e,tp,vgf.filter.IsV,tp,LOCATION_CIRCLE,0,1,1,nil):GetFirst()
 	if tc:IsSkill(SKILL_TWINDRIVE) then
 		local e1=Effect.CreateEffect(c)
 		e1:SetType(EFFECT_TYPE_SINGLE)

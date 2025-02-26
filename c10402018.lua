@@ -5,7 +5,7 @@ function cm.initial_effect(c)
 end
 function cm.con(e,tp,eg,ep,ev,re,r,rp)
 	local c=e:GetHandler()
-	return eg:GetFirst()==c and Duel.GetAttacker():IsCode(10000001) and vgf.RMonsterCondition(e)
+	return eg:GetFirst()==c and Duel.GetAttacker():IsCode(10000001) and vgf.con.IsR(e)
 end
 function cm.op(e,tp,eg,ep,ev,re,r,rp)
 	local c=e:GetHandler()
@@ -29,5 +29,5 @@ function cm.op2(e,tp,eg,ep,ev,re,r,rp)
 	e:Reset()
 end
 function cm.filter(c,tp)
-	return c:IsControler(tp) and vgf.RMonsterFilter(c)
+	return c:IsControler(tp) and vgf.filter.IsR(c)
 end

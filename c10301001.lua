@@ -1,7 +1,7 @@
 local cm,m,o=GetID()
 function cm.initial_effect(c)
 	vgd.VgCard(c)
-	vgd.AbilityAuto(c,m,LOCATION_CIRCLE,EFFECT_TYPE_SINGLE,EVENT_ATTACK_ANNOUNCE,cm.operation,vgf.cost.SoulBlast(1),vgf.VMonsterCondition)
+	vgd.AbilityAuto(c,m,LOCATION_CIRCLE,EFFECT_TYPE_SINGLE,EVENT_ATTACK_ANNOUNCE,cm.operation,vgf.cost.SoulBlast(1),vgf.con.IsV)
 	vgd.AbilityAuto(c,m,LOCATION_CIRCLE,EFFECT_TYPE_SINGLE,EVENT_BATTLED,cm.operation1,nil,cm.condition1)
 	vgd.GlobalCheckEffect(c,m,EVENT_SPSUMMON_SUCCESS,cm.checkcon)
 end
@@ -14,10 +14,10 @@ function cm.operation(e,tp,eg,ep,ev,re,r,rp)
 	vgf.Sendto(LOCATION_HAND,g,nil,REASON_EFFECT)
 end
 function cm.filter(c)
-	return vgf.RMonsterFilter(c)
+	return vgf.filter.IsR(c)
 end
 function cm.condition1(e,tp,eg,ep,ev,re,r,rp)
-	return Duel.GetFlagEffect(tp,m)>0 and vgf.VMonsterCondition(e) and Duel.GetAttacker()==e:GetHandler()
+	return Duel.GetFlagEffect(tp,m)>0 and vgf.con.IsV(e) and Duel.GetAttacker()==e:GetHandler()
 end
 function cm.operation1(e,tp,eg,ep,ev,re,r,rp)
 	local c=e:GetHandler()

@@ -10,7 +10,7 @@ function cm.op(e,tp,eg,ep,ev,re,r,rp)
 	local ct=Duel.GetFlagEffectLabel(tp,FLAG_CONDITION)
 	if vgf.GetValueType(ct)=="number" and ct==10102001 then
 		Duel.BreakEffect()
-		local g=vgf.GetMatchingGroup(vgf.FrontFilter,tp,LOCATION_CIRCLE,0,nil)
+		local g=vgf.GetMatchingGroup(vgf.filter.Front,tp,LOCATION_CIRCLE,0,nil)
 		vgf.AtkUp(c,g,10000,nil)
 	end
 end

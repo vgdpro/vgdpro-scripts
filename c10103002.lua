@@ -25,5 +25,5 @@ function cm.cost(e,tp,eg,ep,ev,re,r,rp,chk)
 end
 function cm.condition(e,c)
     local tp=e:GetHandlerPlayer()
-    return vgf.RMonsterCondition(e) and vgf.IsExistingMatchingCard(Card.IsLevel,tp,LOCATION_CIRCLE+LOCATION_G_CIRCLE,0,3,nil,3) and Duel.GetTurnPlayer()==tp
+    return vgf.con.IsR(e) and vgf.IsExistingMatchingCard(Card.IsLevel,tp,LOCATION_CIRCLE+LOCATION_G_CIRCLE,0,3,nil,3) and Duel.GetTurnPlayer()==tp
 end

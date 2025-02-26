@@ -10,7 +10,7 @@ function cm.filter(c)
 end
 function cm.con(e)
 	local c=e:GetHandler()
-	return c:GetFlagEffectLabel(FLAG_CONDITION)==201 and vgf.RMonsterCondition(e)
+	return c:GetFlagEffectLabel(FLAG_CONDITION)==201 and vgf.con.IsR(e)
 end
 function cm.val(e)
 	local c=e:GetHandler()

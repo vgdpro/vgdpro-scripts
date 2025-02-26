@@ -6,7 +6,7 @@ end
 function cm.condition(e,tp,eg,ep,ev,re,r,rp)
 	local c=e:GetHandler()
 	local tc=vgf.GetVMonster(tp)
-	return vgf.RSummonCondition(e) and c:IsSummonLocation(LOCATION_HAND) and tc:IsCode(10401008,10401046)
+	return vgf.con.RideOnRCircle(e) and c:IsSummonLocation(LOCATION_HAND) and tc:IsCode(10401008,10401046)
 end
 function cm.operation(e,tp,eg,ep,ev,re,r,rp)
     local g=Duel.GetDecktopGroup(tp,2)

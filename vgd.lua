@@ -25,7 +25,7 @@ function VgD.Rule(c)
     e1:SetProperty(EFFECT_FLAG_CANNOT_DISABLE)
     e1:SetCountLimit(1, VgID + 2)
     e1:SetCondition(function (e, tp, eg, ep, ev, re, r, rp)
-        return VgF.RuleTurnCondtion(e) and VgF.RuleCardCondtion(e)
+        return VgF.Condition.FirstTurn(e) and VgF.Condition.FirstCard(e)
     end)
     e1:SetOperation(function (e, tp, eg, ep, ev, re, r, rp)
         local ct = Duel.GetFieldGroupCount(tp, LOCATION_HAND, 0)
@@ -61,7 +61,7 @@ function VgD.Rule(c)
     e3:SetProperty(EFFECT_FLAG_CANNOT_DISABLE)
     e3:SetRange(LOCATION_ALL)
     e3:SetCountLimit(1, VgID + 3)
-    e3:SetCondition(VgF.RuleCardCondtion)
+    e3:SetCondition(VgF.Condition.FirstCard)
     e3:SetOperation(function (e, tp, eg, ep, ev, re, r, rp)
         local tc = e:GetHandler()
         if Duel.GetTurnPlayer() == tp then
@@ -76,14 +76,14 @@ function VgD.Rule(c)
     e10:SetRange(LOCATION_ALL)
     e10:SetTargetRange(1, 0)
     e10:SetValue(100)
-    e10:SetCondition(VgF.RuleCardCondtion)
+    e10:SetCondition(VgF.Condition.FirstCard)
     c:RegisterEffect(e10)
     local e11 = Effect.CreateEffect(c)
     e11:SetType(EFFECT_TYPE_FIELD + EFFECT_TYPE_SET)
     e11:SetCode(EVENT_ADJUST)
     e11:SetRange(LOCATION_ALL)
     e11:SetProperty(EFFECT_FLAG_CANNOT_DISABLE)
-    e11:SetCondition(VgF.RuleCardCondtion)
+    e11:SetCondition(VgF.Condition.FirstCard)
     e11:SetOperation(function (e, tp, eg, ep, ev, re, r, rp)
         if Duel.GetCurrentChain() > 0 then return end
         local g1 = Duel.GetFieldGroupCount(tp, LOCATION_DECK, 0)
@@ -117,7 +117,7 @@ function VgD.Rule(c)
     e16:SetType(EFFECT_TYPE_FIELD)
     e16:SetCode(EFFECT_QP_ACT_IN_NTPHAND)
     e16:SetRange(LOCATION_ALL)
-    e16:SetCondition(VgF.RuleCardCondtion)
+    e16:SetCondition(VgF.Condition.FirstCard)
     e16:SetProperty(EFFECT_FLAG_CANNOT_DISABLE)
     e16:SetTargetRange(LOCATION_HAND, 0)
     c:RegisterEffect(e16)
@@ -203,7 +203,7 @@ function VgD.RideFilter2(c, lv, code, rc)
     return c:IsLevel(lv) and c:IsType(TYPE_UNIT) and c:IsCode(code) and rc:IsSkill(SKILL_PERSONA_RIDE)
 end
 function VgD.RideCondition(e, tp, eg, ep, ev, re, r, rp)
-    local rc = Duel.GetMatchingGroup(VgF.VMonsterFilter, tp, LOCATION_CIRCLE, 0, nil):GetFirst()
+    local rc = Duel.GetMatchingGroup(vgf.filter.IsV, tp, LOCATION_CIRCLE, 0, nil):GetFirst()
     if not rc then return false end
     local lv = rc:GetLevel()
     local code = rc:GetCode()
@@ -211,7 +211,7 @@ function VgD.RideCondition(e, tp, eg, ep, ev, re, r, rp)
     local rg2 = Duel.GetMatchingGroup(VgD.RideFilter2, tp, LOCATION_HAND, 0, nil, lv, code, rc)
     local a = rg1:GetCount() > 0
     local b = rg2:GetCount() > 0
-    return Duel.GetTurnPlayer() == tp and VgF.RuleCardCondtion(e) and (a or b)
+    return Duel.GetTurnPlayer() == tp and VgF.Condition.FirstCard(e) and (a or b)
 end
 function VgD.RideOperation(e, tp, eg, ep, ev, re, r, rp)
     local c = e:GetHandler()
@@ -277,7 +277,7 @@ function VgD.RideOperation(e, tp, eg, ep, ev, re, r, rp)
         e1:SetTargetRange(LOCATION_CIRCLE, 0)
         e1:SetValue(10000)
         e1:SetTarget(function (te, tc)
-            return VgF.FrontFilter(tc)
+            return vgf.filter.Front(tc)
         end)
         e1:SetReset(RESET_PHASE + PHASE_END)
         Duel.RegisterEffect(e1, tp)
@@ -285,10 +285,10 @@ function VgD.RideOperation(e, tp, eg, ep, ev, re, r, rp)
 end
 
 function VgD.RideCondition_lv0(e, tp, eg, ep, ev, re, r, rp)
-    local rc = Duel.GetMatchingGroup(VgF.VMonsterFilter, tp, LOCATION_CIRCLE, 0, nil):GetFirst()
+    local rc = Duel.GetMatchingGroup(vgf.filter.IsV, tp, LOCATION_CIRCLE, 0, nil):GetFirst()
     if rc then return false end
     local ct = Duel.GetMatchingGroupCount(Card.IsLevel, tp, LOCATION_RIDE, 0, nil, 0)
-    return VgF.RuleTurnCondtion(e) and ct > 0 and VgF.RuleCardCondtion(e)
+    return VgF.Condition.FirstTurn(e) and ct > 0 and VgF.Condition.FirstCard(e)
 end
 function VgD.RideOperation_lv0(e, tp, eg, ep, ev, re, r, rp)
     local g = Duel.GetMatchingGroup(Card.IsLevel, tp, LOCATION_RIDE, 0, nil, 0)
@@ -379,7 +379,7 @@ function VgD.CardTriggerOperation(chkop)
                 end
             end
         elseif c:IsTrigger(TRIGGER_ADVANCE) then
-            local g = Duel.GetMatchingGroup(VgF.IsSequence, tp, LOCATION_CIRCLE, 0, nil, 0, 4, 5)
+            local g = Duel.GetMatchingGroup(Card.IsSequence, tp, LOCATION_CIRCLE, 0, nil, 0, 4, 5)
             local atk_up = c.trigger_atk_up or 10000
             if c:IsHasEffect(EFFECT_CHANGE_TRIGGER_ATK) then
                 atk_up = c:IsHasEffect(EFFECT_CHANGE_TRIGGER_ATK):GetValue()
@@ -556,8 +556,8 @@ function VgD.CardTriggerOperation(chkop)
                     Duel.Damage(tp, 1, REASON_EFFECT)
                 end
             end
-            if VgF.GetValueType(VgF.EffectDamageE) ~= "Effect" then return end
-            local bc = VgF.EffectDamageE:GetHandler()
+            if VgF.GetValueType(vgf.effect.Damage) ~= "Effect" then return end
+            local bc = vgf.effect.Damage:GetHandler()
             local label = bc:GetFlagEffectLabel(FLAG_DAMAGE_TRIGGER)
             if not label then return end
             if label > 0 then
@@ -567,8 +567,8 @@ function VgD.CardTriggerOperation(chkop)
                 bc:RegisterFlagEffect(FLAG_DAMAGE_TRIGGER, 0, 0, 1, label)
             elseif label == 0 then
                 bc:ResetFlagEffect(FLAG_DAMAGE_TRIGGER)
-                VgF.EffectDamageE:Reset()
-                VgF.EffectDamageE = nil
+                vgf.effect.Damage:Reset()
+                vgf.effect.Damage = nil
             end
         end
     end
@@ -616,10 +616,10 @@ function VgD.CallCondition(e, c)
     if c == nil then return true end
     local tp = e:GetHandlerPlayer()
     if VgF.GetAvailableLocation(tp) <= 0 then return end
-    return VgF.LvCondition(e)
+    return VgF.Condition.Level(e)
 end
 function VgD.CallFilter(c, tp, zone)
-    return VgF.RMonsterFilter(c) and zone == VgF.SequenceToGlobal(tp, c:GetLocation(), c:GetSequence())
+    return vgf.filter.IsR(c) and zone == VgF.SequenceToGlobal(tp, c:GetLocation(), c:GetSequence())
 end
 function VgD.CallOperation(e)
     local c = e:GetHandler()
@@ -667,7 +667,7 @@ function VgD.MonsterBattle(c)
     e2:SetRange(LOCATION_ALL)
     e2:SetCountLimit(1, VgID + 4)
     e2:SetProperty(EFFECT_FLAG_CANNOT_DISABLE)
-    e2:SetCondition(VgF.RuleCardCondtion)
+    e2:SetCondition(VgF.Condition.FirstCard)
     e2:SetOperation(function (e, tp, eg, ep, ev, re, r, rp)
         local g = Duel.GetMatchingGroup(Card.IsPosition, tp, LOCATION_CIRCLE, 0, nil, POS_FACEUP_DEFENSE)
         if g:GetCount() > 0 and Duel.GetTurnPlayer() == tp then
@@ -690,7 +690,7 @@ function VgD.MonsterBattle(c)
         local def = tc:GetAttack()
         if Duel.GetAttackTarget():GetFlagEffect(FLAG_DEFENSE_ENTIRELY) > 0 and Duel.GetAttackTarget():GetFlagEffectLabel(FLAG_DEFENSE_ENTIRELY) == 10402017 and bc:IsLevelBelow(2) then return false end
         if Duel.GetAttackTarget():GetFlagEffect(FLAG_DEFENSE_ENTIRELY) > 0 and Duel.GetAttackTarget():GetFlagEffectLabel(FLAG_DEFENSE_ENTIRELY) == 0 then return false end
-        return VgF.VMonsterFilter(tc) and tc == Duel.GetAttackTarget() and atk >= def and bc:GetLeftScale() > 0
+        return vgf.filter.IsV(tc) and tc == Duel.GetAttackTarget() and atk >= def and bc:GetLeftScale() > 0
     end)
     e3:SetOperation(function (e, tp, eg, ep, ev, re, r, rp)
         local bc = Duel.GetAttacker()
@@ -707,7 +707,7 @@ function VgD.MonsterBattle(c)
     e4:SetProperty(EFFECT_FLAG_CANNOT_DISABLE)
     e4:SetCondition(function (e, tp, eg, ep, ev, re, r, rp)
         local tc = e:GetHandler()
-        if not VgF.VMonsterFilter(tc) and tc:GetFlagEffect(FLAG_ALSO_CAN_TRIGGER) == 0 then return false end
+        if not vgf.filter.IsV(tc) and tc:GetFlagEffect(FLAG_ALSO_CAN_TRIGGER) == 0 then return false end
         return tc:GetFlagEffectLabel(FLAG_ATTACK_TRIGGER) and tc:GetFlagEffectLabel(FLAG_ATTACK_TRIGGER) > 0 and Duel.GetAttacker() == tc
     end)
     e4:SetCost(function (e, tp, eg, ep, ev, re, r, rp, chk)
@@ -724,7 +724,7 @@ function VgD.MonsterBattle(c)
     e5:SetRange(LOCATION_CIRCLE)
     e5:SetProperty(EFFECT_FLAG_CANNOT_DISABLE)
     e5:SetCondition(function (e, tp, eg, ep, ev, re, r, rp)
-        return VgF.ReturnCard(eg):GetControler() == tp and VgF.VMonsterFilter(e:GetHandler()) and Duel.GetFlagEffect(tp, FLAG_EFFECT_DAMAGE) == 0
+        return VgF.ReturnCard(eg):GetControler() == tp and vgf.filter.IsV(e:GetHandler()) and Duel.GetFlagEffect(tp, FLAG_EFFECT_DAMAGE) == 0
     end)
     e5:SetOperation(VgD.Trigger)
     c:RegisterEffect(e5)
@@ -803,7 +803,7 @@ function VgD.MonsterBattle(c)
     e8:SetCode(EVENT_DAMAGE_STEP_END)
     e8:SetProperty(EFFECT_FLAG_DAMAGE_STEP + EFFECT_FLAG_CANNOT_DISABLE + EFFECT_FLAG_DELAY)
     e8:SetRange(LOCATION_ALL)
-    e8:SetCondition(VgF.RuleCardCondtion)
+    e8:SetCondition(VgF.Condition.FirstCard)
     e8:SetOperation(function (e, tp, eg, ep, ev, re, r, rp)
         local g = Duel.GetFieldGroup(tp, LOCATION_G_CIRCLE, 0)
         if g:GetCount() > 0 then VgF.Sendto(LOCATION_DROP, g, REASON_RULE) end
@@ -821,7 +821,7 @@ function VgD.MonsterBattle(c)
     e11:SetCode(EFFECT_CANNOT_ATTACK_ANNOUNCE)
     e11:SetProperty(EFFECT_FLAG_CANNOT_DISABLE)
     e11:SetCondition(function (e)
-        return e:GetHandler():IsPosition(POS_DEFENSE) or (VgF.BackFilter(e:GetHandler()) and e:GetHandler():GetFlagEffect(FLAG_ATTACK_AT_REAR) == 0)
+        return e:GetHandler():IsPosition(POS_DEFENSE) or (vgf.filter.Back(e:GetHandler()) and e:GetHandler():GetFlagEffect(FLAG_ATTACK_AT_REAR) == 0)
     end)
     c:RegisterEffect(e11)
     local e12 = Effect.CreateEffect(c)
@@ -841,7 +841,7 @@ function VgD.MonsterBattle(c)
     e14:SetRange(LOCATION_CIRCLE)
     e14:SetCode(EFFECT_INDESTRUCTABLE_BATTLE)
     e14:SetCondition(function (e)
-        return VgF.VMonsterFilter(e:GetHandler()) or Duel.GetAttacker() == e:GetHandler()
+        return vgf.filter.IsV(e:GetHandler()) or Duel.GetAttacker() == e:GetHandler()
     end)
     e14:SetValue(1)
     c:RegisterEffect(e14)
@@ -857,7 +857,7 @@ function VgD.MonsterBattle(c)
     e16:SetProperty(EFFECT_FLAG_SINGLE_RANGE + EFFECT_FLAG_CANNOT_DISABLE)
     e16:SetRange(LOCATION_CIRCLE)
     e16:SetCondition(function (e)
-        return VgF.BackFilter(e:GetHandler())
+        return vgf.filter.Back(e:GetHandler())
     end)
     e16:SetValue(VgF.True)
     c:RegisterEffect(e16)
@@ -899,7 +899,7 @@ function VgD.OverDressCondition(filter)
     return function (e, c)
         if c == nil then return true end
         local tp = e:GetHandlerPlayer()
-        return VgF.LvCondition(e) and VgF.IsExistingMatchingCard(VgD.OverDressFilter, tp, LOCATION_CIRCLE, 0, 1, nil, filter)
+        return VgF.Condition.Level(e) and VgF.IsExistingMatchingCard(VgD.OverDressFilter, tp, LOCATION_CIRCLE, 0, 1, nil, filter)
     end
 end
 function VgD.OverDressFilter(c, filter, tp, zone)
@@ -984,7 +984,7 @@ function VgD.Order(c, m, op, cost, con)
 end
 function VgD.OrderCondtion(con)
     return function(e, tp, eg, ep, ev, re, r, rp)
-        return VgF.LvCondition(e) and (not con or con(e, tp, eg, ep, ev, re, r, rp))
+        return VgF.Condition.Level(e) and (not con or con(e, tp, eg, ep, ev, re, r, rp))
     end
 end
 function VgD.AlchemagicCost(cost)
@@ -1009,19 +1009,19 @@ function VgD.AlchemagicCostFilter(c, e, tp, eg, ep, ev, re, r, rp, mc)
     if Duel.IsPlayerAffectedByEffect(tp, AFFECT_CODE_ALCHEMAGIC_DIFFERENT_NAME) and c:IsCode(mc:GetCode()) then return false end
     --得到需要支付的费用（从哪来，几张卡，什么卡）
     local cfrom, cval, cfilter, mcfrom, mcval, mcfilter
-    table.copy(cfrom, c.cos_from)
-    table.copy(cval, c.cos_val)
-    table.copy(cfilter, c.cos_filter)
-    table.copy(mcfrom, mc.cos_from)
-    table.copy(mcval, mc.cos_val)
-    table.copy(mcfilter, mc.cos_filter)
+    table.copy(cfrom, c.order_cost['from'])
+    table.copy(cval, c.order_cost['min'])
+    table.copy(cfilter, c.order_cost['filter'])
+    table.copy(mcfrom, mc.order_cost['from'])
+    table.copy(mcval, mc.order_cost['min'])
+    table.copy(mcfilter, mc.order_cost['filter'])
     --如果都有费用要付，则合成费用
     if #cfrom > 0 and #mcfrom > 0 then
         for cv = 1, #cfrom do
-            local c_cost_from = LOCATION_LIST[cfrom[cv]]
+            local c_cost_from = LOCATION_LIST[cfrom[cv]] or cfrom[cv]
             local pos = 0
             for mcv = 1, #mcfrom do
-                local mc_cost_from = LOCATION_LIST[mcfrom[mcv]]
+                local mc_cost_from = LOCATION_LIST[mcfrom[mcv]] or mcfrom[mcv]
                 if mc_cost_from == c_cost_from then
                     local mc_cos_val = mcval[mcv]
                     local c_cos_val = cval[cv]
@@ -1083,7 +1083,7 @@ function VgD.AlchemagicCostFilter(c, e, tp, eg, ep, ev, re, r, rp, mc)
     --如果本体需要支付而合成的卡不需要支付
     elseif #mcfrom > 0 then
         for mcv = 1, #mcfrom do
-            local mc_cost_from = LOCATION_LIST[mcfrom[mcv]]
+            local mc_cost_from = LOCATION_LIST[mcfrom[mcv]] or mcfrom[mcv]
             local mc_cos_val = mcval[mcv]
             if VgF.GetValueType(mc_cos_val) ~= "number" then mc_cos_val = 0 end
             --判断其他减少费用的效果
@@ -1101,7 +1101,7 @@ function VgD.AlchemagicCostFilter(c, e, tp, eg, ep, ev, re, r, rp, mc)
     --如果本体不需要支付而合成的卡需要支付
     elseif #cfrom > 0 then
         for cv = 1, #cfrom do
-            local c_cost_from = LOCATION_LIST[cfrom[cv]]
+            local c_cost_from = LOCATION_LIST[cfrom[cv]] or cfrom[cv]
             local c_cos_val = mcval[cv]
             if VgF.GetValueType(c_cos_val) ~= "number" then c_cos_val = 0 end
             --判断其他减少费用的效果
@@ -1119,21 +1119,21 @@ function VgD.AlchemagicCostFilter(c, e, tp, eg, ep, ev, re, r, rp, mc)
     --都不需要支付
     else return true
     end
-    return VgF.LvCondition(c)
+    return VgF.Condition.Level(c)
 end
 function VgD.AlchemagicCostOperation(c, bc, tp)
     --得到需要支付的费用（从哪来，到哪去，最少几张卡，最多几张卡，什么卡）
     local cfrom, cto, cval, cval_max, cfilter, bcfrom, bcto, bcval, bcval_max, bcfilter
-    table.copy(cfrom, c.cos_from)
-    table.copy(cto, c.cos_to)
-    table.copy(cval, c.cos_val)
-    table.copy(cval_max, c.cos_val_max)
-    table.copy(cfilter, bc.cos_filter)
-    table.copy(bcfrom, bc.cos_from)
-    table.copy(bcto, bc.cos_to)
-    table.copy(bcval, bc.cos_val)
-    table.copy(bcval_max, bc.cos_val_max)
-    table.copy(bcfilter, bc.cos_filter)
+    table.copy(cfrom, c.order_cost['from'])
+    table.copy(cto, c.order_cost['to'])
+    table.copy(cval, c.order_cost['min'])
+    table.copy(cval_max, c.order_cost['max'])
+    table.copy(cfilter, c.order_cost['filter'])
+    table.copy(bcfrom, bc.order_cost['from'])
+    table.copy(bcto, bc.order_cost['to'])
+    table.copy(bcval, bc.order_cost['min'])
+    table.copy(bcval_max, bc.order_cost['max'])
+    table.copy(bcfilter, bc.order_cost['filter'])
     local g_from = {}
     local g_to = {}
     local g_filter_c = {}
@@ -1146,11 +1146,11 @@ function VgD.AlchemagicCostOperation(c, bc, tp)
     --在这里合成
     if #bcfrom > 0 and #cfrom > 0 then
         for bcv = 1, #bcfrom do
-            local bc_cost_from = LOCATION_LIST[bcfrom[bcv]]
+            local bc_cost_from = LOCATION_LIST[bcfrom[bcv]] or bcfrom[bcv]
             local pos = 0
             for cv = 1, #cfrom do
-                local c_cost_from = LOCATION_LIST[cfrom[cv]]
-                if bc_cost_from == c_cost_from and LOCATION_LIST[cto[cv]] == LOCATION_LIST[bcto[bcv]] then
+                local c_cost_from = LOCATION_LIST[cfrom[cv]] or cfrom[cv]
+                if bc_cost_from == c_cost_from and (LOCATION_LIST[cto[cv]] or cto[cv]) == (LOCATION_LIST[bcto[bcv]] or bcto[bcv]) then
                     pos = bcv
                     table.insert(g_from, cfrom[cv])
                     table.insert(g_to, cto[cv])
@@ -1204,8 +1204,8 @@ function VgD.AlchemagicCostOperation(c, bc, tp)
     end
     --开始支付合成完的费用
     for i = 1, #g_from do
-        local tg_from = LOCATION_LIST[g_from[i]]
-        local tg_to = LOCATION_LIST[g_to[i]]
+        local tg_from = LOCATION_LIST[g_from[i]] or g_from[i]
+        local tg_to = LOCATION_LIST[g_to[i]] or g_to[i]
         local tg = VgF.GetMatchingGroup(nil, tp, tg_from, 0, except_group)
         local tg_filter_c = g_filter_c[i]
         local tg_filter_bc = g_filter_bc[i]
@@ -1394,7 +1394,7 @@ function VgD.AbilityAuto(c, m, loc, typ, code, op, cost, con, tg, count, propert
     elseif code == EVENT_TO_G_CIRCLE then
         typ = typ or (cost and EFFECT_TYPE_TRIGGER_O or EFFECT_TYPE_TRIGGER_F)
         op = op or function (e, tp, eg, ep, ev, re, r, rp)
-            if vgf.RMonsterFilter(Duel.GetAttackTarget()) then
+            if vgf.filter.IsR(Duel.GetAttackTarget()) then
                 local e1 = Effect.CreateEffect(e:GetHandler())
                 e1:SetType(EFFECT_TYPE_SINGLE)
                 e1:SetProperty(EFFECT_FLAG_SINGLE_RANGE)
@@ -1403,8 +1403,8 @@ function VgD.AbilityAuto(c, m, loc, typ, code, op, cost, con, tg, count, propert
                 e1:SetReset(RESET_EVENT + RESETS_STANDARD)
                 e1:SetValue(1)
                 Duel.GetAttackTarget():RegisterEffect(e1)
-                vgf.EffectReset(e:GetHandler(), e1, EVENT_BATTLED)
-            elseif vgf.VMonsterFilter(Duel.GetAttackTarget()) then
+                vgf.effect.Reset(e:GetHandler(), e1, EVENT_BATTLED)
+            elseif vgf.filter.IsV(Duel.GetAttackTarget()) then
                 Duel.GetAttackTarget():RegisterFlagEffect(FLAG_DEFENSE_ENTIRELY, RESET_EVENT + RESETS_STANDARD, 0, 1)
             end
         end

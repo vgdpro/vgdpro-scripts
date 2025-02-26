@@ -2,7 +2,7 @@
 local cm,m,o=GetID()
 function cm.initial_effect(c)
     vgd.VgCard(c)
-    vgd.AbilityAct(c,m,LOCATION_CIRCLE,cm.operation,cm.cost,vgf.RMonsterCondition)
+    vgd.AbilityAct(c,m,LOCATION_CIRCLE,cm.operation,cm.cost,vgf.con.IsR)
 end
 function cm.operation(e,tp,eg,ep,ev,re,r,rp)
     local c=e:GetHandler()
@@ -10,11 +10,11 @@ function cm.operation(e,tp,eg,ep,ev,re,r,rp)
     vgf.AtkUp(c,g,10000,nil)
 end
 function cm.filter(c)
-    return c:IsLevel(3) and vgf.RMonsterFilter(c)
+    return c:IsLevel(3) and vgf.filter.IsR(c)
 end
 function cm.cost(e,tp,eg,ep,ev,re,r,rp,chk)
     local c=e:GetHandler()
     if chk==0 then return c:IsRelateToEffect(e) end
-    local rc=vgf.GetMatchingGroup(vgf.VMonsterFilter,tp,LOCATION_CIRCLE,0,nil):GetFirst()
+    local rc=vgf.GetMatchingGroup(vgf.filter.IsV,tp,LOCATION_CIRCLE,0,nil):GetFirst()
 	vgf.Sendto(LOCATION_SOUL,c,rc)
 end

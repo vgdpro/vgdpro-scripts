@@ -5,7 +5,7 @@ function cm.initial_effect(c)
 	vgd.GlobalCheckEffect(c,m,EVENT_TO_GRAVE,cm.checkcon)
 end
 function cm.con(e,tp,eg,ep,ev,re,r,rp)
-	return vgf.RMonsterCondition(e) and Duel.GetFlagEffect(tp,m)>0
+	return vgf.con.IsR(e) and Duel.GetFlagEffect(tp,m)>0
 end
 function cm.op(e,tp,eg,ep,ev,re,r,rp)
 	local c=e:GetHandler()
@@ -24,5 +24,5 @@ function cm.checkcon(e,tp,eg,ep,ev,re,r,rp)
     return eg:IsExists(cm.checkfilter,1,nil,tp)
 end
 function cm.filter(c)
-	return vgf.RMonsterFilter(c) and c:IsLevelAbove(2)
+	return vgf.filter.IsR(c) and c:IsLevelAbove(2)
 end

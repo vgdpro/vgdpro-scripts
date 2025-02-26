@@ -6,21 +6,21 @@ function cm.initial_effect(c)
 	vgd.GlobalCheckEffect(c,m,EVENT_SPSUMMON_SUCCESS,cm.checkcon)
 end
 function cm.con(e,tp,eg,ep,ev,re,r,rp)
-	return vgf.VMonsterCondition(e) and eg:IsExists(cm.filter,1,nil,tp) and Duel.GetTurnPlayer()==tp and Duel.GetAttackTarget()
+	return vgf.con.IsV(e) and eg:IsExists(cm.filter,1,nil,tp) and Duel.GetTurnPlayer()==tp and Duel.GetAttackTarget()
 end
 function cm.filter(c,tp)
 	return c:IsTrigger(TRIGGER_CARDS) and c:IsLocation(LOCATION_TRIGGER) and c:IsControler(tp)
 end
 function cm.op(e,tp,eg,ep,ev,re,r,rp)
 	local c=e:GetHandler()
-	local g=vgf.SelectMatchingCard(HINTMSG_RMONSTER,e,tp,vgf.RMonsterFilter,tp,LOCATION_CIRCLE,0,1,1,nil)
+	local g=vgf.SelectMatchingCard(HINTMSG_RMONSTER,e,tp,vgf.filter.IsR,tp,LOCATION_CIRCLE,0,1,1,nil)
 	vgf.AtkUp(c,g,10000)
 end
 function cm.checkcon(e,tp,eg,ep,ev,re,r,rp)
 	return eg:IsExists(Card.IsSummonType,1,nil,SUMMON_TYPE_SELFRIDE)
 end
 function cm.con1(e,tp,eg,ep,ev,re,r,rp)
-	return Duel.GetFlagEffect(tp,m)>0 and vgf.VMonsterCondition(e)
+	return Duel.GetFlagEffect(tp,m)>0 and vgf.con.IsV(e)
 end
 function cm.cost1(e,tp,eg,ep,ev,re,r,rp,chk)
 	if chk==0 then

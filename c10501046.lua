@@ -12,5 +12,5 @@ function cm.filter(c)
 end
 
 function cm.con(e,tp,eg,ep,ev,re,r,rp)
-	return vgf.RSummonCondition(e) and vgf.WhiteWings(e)
+	return vgf.con.RideOnRCircle(e) and vgf.WhiteWings(e)
 end

@@ -8,5 +8,5 @@ end
 function cm.con1(e)
     local c= e:GetHandler()
     local tp=e:GetHandlerPlayer()
-    return vgf.RMonsterCondition(e) and vgf.IsExistingMatchingCard(vgf.RMonsterFilter,tp,LOCATION_CIRCLE,0,3,c)
+    return vgf.con.IsR(e) and vgf.IsExistingMatchingCard(vgf.filter.IsR,tp,LOCATION_CIRCLE,0,3,c)
 end

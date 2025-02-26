@@ -7,7 +7,7 @@ end
 function cm.op(e,tp,eg,ep,ev,re,r,rp)
 	local c=e:GetHandler()
 	Duel.Draw(tp,1,REASON_EFFECT)
-	local g=vgf.SelectMatchingCard(HINTMSG_ATKUP,e,tp,vgf.VMonsterFilter,tp,LOCATION_CIRCLE,0,1,1,nil)
+	local g=vgf.SelectMatchingCard(HINTMSG_ATKUP,e,tp,vgf.filter.IsV,tp,LOCATION_CIRCLE,0,1,1,nil)
 	vgf.AtkUp(c,g,5000)
 	Duel.ChangePosition(c,POS_FACEDOWN_ATTACK)
 end

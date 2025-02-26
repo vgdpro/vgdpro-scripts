@@ -17,11 +17,11 @@ end
 
 function cm.con1(e)
     local tp = e:GetHandlerPlayer()
-    return vgf.IsExistingMatchingCard(cm.filter2,tp,LOCATION_CIRCLE,0,3,nil) and vgf.RMonsterCondition(e) and Duel.GetTurnPlayer()==tp
+    return vgf.IsExistingMatchingCard(cm.filter2,tp,LOCATION_CIRCLE,0,3,nil) and vgf.con.IsR(e) and Duel.GetTurnPlayer()==tp
 end
 
 function cm.filter2(c)
-    return c:IsSetCard(0xa013) and vgf.RMonsterFilter(c)
+    return c:IsSetCard(0xa013) and vgf.filter.IsR(c)
 end
 
 function cm.filter3(c)

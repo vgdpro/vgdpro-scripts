@@ -11,7 +11,7 @@ function cm.operation(e,tp,eg,ep,ev,re,r,rp)
 	vgf.Sendto(LOCATION_DROP,g,REASON_EFFECT)
 end
 function cm.filter(c)
-	return vgf.RMonsterFilter(c) and vgf.FrontFilter(c)
+	return vgf.filter.IsR(c) and vgf.filter.Front(c)
 end
 function cm.condition(e,tp,eg,ep,ev,re,r,rp)
 	return e:GetHandler():IsLocation(LOCATION_ORDER)

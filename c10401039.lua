@@ -10,11 +10,11 @@ function cm.op(e,tp,eg,ep,ev,re,r,rp)
 	vgf.AtkUp(c,g,5000)
 end
 function cm.con(e,tp,eg,ep,ev,re,r,rp)
-	return vgf.VMonsterCondition(e) and eg:IsExists(cm.filter,1,nil,tp) and not eg:IsContains(e:GetHandler())
+	return vgf.con.IsV(e) and eg:IsExists(cm.filter,1,nil,tp) and not eg:IsContains(e:GetHandler())
 end
 function cm.filter(c,tp)
 	return c:IsSetCard(0x5040) and c:IsLocation(LOCATION_ORDER) and c:IsControler(tp)
 end
 function cm.con2(e,tp,eg,ep,ev,re,r,rp)
-	return vgf.RMonsterCondition(e) and Duel.IsPlayerAffectedByEffect(tp,AFFECT_CODE_ABYSSAL_DARK_NIGHT) and Duel.GetTurnPlayer()==tp
+	return vgf.con.IsR(e) and Duel.IsPlayerAffectedByEffect(tp,AFFECT_CODE_ABYSSAL_DARK_NIGHT) and Duel.GetTurnPlayer()==tp
 end

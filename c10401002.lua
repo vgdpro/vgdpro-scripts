@@ -1,7 +1,7 @@
 local cm,m,o=GetID()
 function cm.initial_effect(c)
 	vgd.VgCard(c)
-	vgd.AbilityAct(c,m,LOCATION_CIRCLE,cm.op,cm.cost,vgf.VMonsterCondition)
+	vgd.AbilityAct(c,m,LOCATION_CIRCLE,cm.op,cm.cost,vgf.con.IsV)
 	vgd.AbilityAct(c,m,LOCATION_CIRCLE,cm.op1,vgf.cost.SoulBlast(5),cm.con,nil,nil,nil,2)
 	vgd.GlobalCheckEffect(c,m,EVENT_TO_GRAVE,cm.checkcon)
 end
@@ -11,11 +11,11 @@ function cm.cost(e,tp,eg,ep,ev,re,r,rp,chk)
 	Duel.ChangePosition(g,POS_FACEUP_DEFENCE)
 end
 function cm.filter(c)
-	return c:IsCanChangePosition() and c:IsPosition(POS_FACEUP_ATTACK) and vgf.RMonsterFilter(c)
+	return c:IsCanChangePosition() and c:IsPosition(POS_FACEUP_ATTACK) and vgf.filter.IsR(c)
 end
 function cm.op(e,tp,eg,ep,ev,re,r,rp)
 	local c=e:GetHandler()
-	local g=vgf.SelectMatchingCard(HINTMSG_LEAVEFIELD,e,tp,vgf.VMonsterFilter,tp,0,LOCATION_CIRCLE,1,1,nil)
+	local g=vgf.SelectMatchingCard(HINTMSG_LEAVEFIELD,e,tp,vgf.filter.IsV,tp,0,LOCATION_CIRCLE,1,1,nil)
 	if g:GetCount()>0 then vgf.Sendto(LOCATION_DROP,g,REASON_EFFECT) end
 	if c:IsRelateToEffect(e) and c:IsFaceup() then
 		vgf.AtkUp(c,c,10000)

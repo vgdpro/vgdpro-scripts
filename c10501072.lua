@@ -8,5 +8,5 @@ end
 
 function cm.con(e,tp,eg,ep,ev,re,r,rp)
     local c = e:GetHandler()
-    return vgf.RSummonCondition(e) and c:IsPreviousLocation(LOCATION_HAND) and vgf.IsExistingMatchingCard(vgf.RMonsterFilter,tp,LOCATION_CIRCLE,0,3,c)
+    return vgf.con.RideOnRCircle(e) and c:IsPreviousLocation(LOCATION_HAND) and vgf.IsExistingMatchingCard(vgf.filter.IsR,tp,LOCATION_CIRCLE,0,3,c)
 end

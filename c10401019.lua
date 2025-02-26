@@ -5,7 +5,7 @@ function cm.initial_effect(c)
 end
 function cm.op(e,tp,eg,ep,ev,re,r,rp)
 	local c=e:GetHandler()
-	local g=vgf.GetMatchingGroup(vgf.FrontFilter,tp,LOCATION_CIRCLE,0,nil)
+	local g=vgf.GetMatchingGroup(vgf.filter.Front,tp,LOCATION_CIRCLE,0,nil)
 	vgf.AtkUp(c,g,"DOUBLE")
 	vgf.StarUp(c,g,"DOUBLE")
 end

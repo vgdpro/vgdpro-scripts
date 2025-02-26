@@ -23,5 +23,5 @@ function cm.cost1(e,tp,eg,ep,ev,re,r,rp,chk)
     vgf.Sendto(LOCATION_SOUL,g,rc)
 end
 function cm.con(e,tp,eg,ep,ev,re,r,rp)
-    return re:IsHasType(EFFECT_TYPE_ACTIVATE) and rp==tp and vgf.RMonsterCondition(e)
+    return re:IsHasType(EFFECT_TYPE_ACTIVATE) and rp==tp and vgf.con.IsR(e)
 end

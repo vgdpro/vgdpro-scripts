@@ -8,7 +8,7 @@ function cm.initial_effect(c)
 	vgd.BeRidedByCard(c,m,cm.filter,cm.operation)
 end
 function cm.condition(e,tp,eg,ep,ev,re,r,rp)
-	return vgf.VMonsterFilter(Duel.GetAttackTarget())
+	return vgf.filter.IsV(Duel.GetAttackTarget())
 end
 function cm.operation(e,tp,eg,ep,ev,re,r,rp)
 	local c=e:GetHandler()

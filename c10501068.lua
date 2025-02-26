@@ -21,5 +21,5 @@ function cm.op(e,tp,eg,ep,ev,re,r,rp)
 end
 
 function cm.con(e,tp,eg,ep,ev,re,r,rp)
-	return vgf.BlackWings(e) and vgf.RSummonCondition(e)
+	return vgf.BlackWings(e) and vgf.con.RideOnRCircle(e)
 end

@@ -1,7 +1,7 @@
 local cm,m,o=GetID()
 function cm.initial_effect(c)
 	vgd.VgCard(c)
-	vgd.AbilityAct(c,m,LOCATION_CIRCLE,cm.op,vgf.cost.CounterBlast(1),vgf.VMonsterCondition)
+	vgd.AbilityAct(c,m,LOCATION_CIRCLE,cm.op,vgf.cost.CounterBlast(1),vgf.con.IsV)
 	vgd.AbilityAuto(c,m,LOCATION_CIRCLE,EFFECT_TYPE_SINGLE,EVENT_ATTACK_ANNOUNCE,cm.op1,vgf.cost.EnergyBlast(4),cm.con)
 end
 function cm.op(e,tp,eg,ep,ev,re,r,rp)
@@ -15,7 +15,7 @@ function cm.filter(c)
 	return c:IsCode(m)
 end
 function cm.con(e,tp,eg,ep,ev,re,r,rp)
-	return vgf.VMonsterCondition(e) and vgf.VMonsterFilter(Duel.GetAttackTarget())
+	return vgf.con.IsV(e) and vgf.filter.IsV(Duel.GetAttackTarget())
 end
 function cm.op1(e,tp,eg,ep,ev,re,r,rp)
 	local c=e:GetHandler()

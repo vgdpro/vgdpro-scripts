@@ -9,7 +9,7 @@ function cm.initial_effect(c)
 end
 
 function cm.con1(e,tp,eg,ep,ev,re,r,rp)
-    return re:IsHasType(EFFECT_TYPE_ACTIVATE) and rp==tp and vgf.VMonsterCondition(e)
+    return re:IsHasType(EFFECT_TYPE_ACTIVATE) and rp==tp and vgf.con.IsV(e)
 end
 
 function cm.val(e)

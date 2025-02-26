@@ -14,6 +14,6 @@ function cm.op(e,tp,eg,ep,ev,re,r,rp)
 end
 
 function cm.con(e,tp,eg,ep,ev,re,r,rp)
-	return vgf.RMonsterCondition(e) and vgf.VMonsterFilter(Duel.GetAttacker())
+	return vgf.con.IsR(e) and vgf.filter.IsV(Duel.GetAttacker())
 end
 

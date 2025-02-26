@@ -5,11 +5,11 @@ function cm.initial_effect(c)
 end
 function cm.condition(e,tp,eg,ep,ev,re,r,rp)
 	local c=e:GetHandler()
-	return vgf.RMonsterFilter(c) and vgf.CheckPrison(tp)
+	return vgf.filter.IsR(c) and vgf.CheckPrison(tp)
 end 
 function cm.operation(e,tp,eg,ep,ev,re,r,rp)
 	local c=e:GetHandler()
 	if not vgf.CheckPrison(tp) then return end
-	local g=vgf.SelectMatchingCard(HINTMSG_IMPRISON,e,tp,vgf.RMonsterFilter,tp,0,LOCATION_CIRCLE,1,1,nil)
+	local g=vgf.SelectMatchingCard(HINTMSG_IMPRISON,e,tp,vgf.filter.IsR,tp,0,LOCATION_CIRCLE,1,1,nil)
 	vgf.SendtoPrison(g,tp)
 end

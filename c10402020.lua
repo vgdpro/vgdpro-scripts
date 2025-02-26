@@ -16,10 +16,10 @@ function cm.operation(e,tp,eg,ep,ev,re,r,rp)
 	if a==0 then Duel.Draw(tp,1,REASON_EFFECT) else vgf.AtkUp(c,c,5000) vgf.StarUp(c,c,1) end
 end
 function cm.filter(c)
-	return vgf.RMonsterFilter(c) and c:IsLevel(3)
+	return vgf.filter.IsR(c) and c:IsLevel(3)
 end
 function cm.con(e,tp,eg,ep,ev,re,r,rp)
-	return vgf.IsExistingMatchingCard(cm.filter,tp,LOCATION_CIRCLE,0,4,nil) and vgf.RMonsterCondition(e)
+	return vgf.IsExistingMatchingCard(cm.filter,tp,LOCATION_CIRCLE,0,4,nil) and vgf.con.IsR(e)
 end
 function cm.cost(e,tp,eg,ep,ev,re,r,rp,chk)
 	if chk==0 then

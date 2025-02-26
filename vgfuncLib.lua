@@ -3,8 +3,14 @@ VgF = {}
 vgf = VgF
 VgF.Operation = {}
 VgF.Cost = {}
+VgF.Condition = {}
+VgF.Filter = {}
+VgF.Effect = {}
 VgF.op = VgF.Operation
 VgF.cost = VgF.Cost
+VgF.con = VgF.Condition
+VgF.filter = VgF.Filter
+vgf.effect = VgF.Effect
 bit = {}
 
 ---@class Card
@@ -23,30 +29,19 @@ end
 function VgF.Stringid(code, id)
     return code * 16 + id
 end
----根据控制者，区域和编号获取zone；不合法的数据会返回0
----@param p number 控制者
----@param loc number 所在区域，若不是LOCATION_CIRCLE或LOCATION_SZONE则返回0
----@param seq number 编号
----@return number 卡片所在的zone
-function VgF.SequenceToGlobal(p, loc, seq)
-	if p ~= 0 and p ~= 1 then return 0 end
-	if loc==LOCATION_CIRCLE then
-		if seq <= 6 then return 0x0001 << (seq) end
-	elseif loc == LOCATION_SZONE then
-		if seq <= 4 then return 0x0100 << (16 * p + seq) end
-    end
-    return 0
-end
+
 ---一个总是返回true的函数。
 ---@return true
 function VgF.True()
     return true
 end
+
 ---一个总是返回false的函数。
 ---@return false
 function VgF.False()
     return false
 end
+
 ---返回g中的“下一张卡”。第一次调用会返回第一张卡。没有下一张卡会返回nil。
 ---@param g Group 要遍历的卡片组
 ---@return function 指示返回的卡的函数
@@ -57,6 +52,7 @@ function VgF.Next(g)
                 else return g:GetNext() end
             end
 end
+
 ---返回v在lua中的变量类型，以string方式呈现。
 ---@param v any 要获取类型的变量（或常量）
 ---@return string 以字符串形式呈现的类型
@@ -69,6 +65,7 @@ function VgF.GetValueType(v)
         else return "Card" end
     else return t end
 end
+
 ---如果g是Group的话，返回其第一张卡；如果g是Card的话，返回其本身；否则返回nil。
 ---@param g any 要操作的变量
 ---@return Card
@@ -87,7 +84,7 @@ function VgF.ReturnGroup(tc)
     if VgF.GetValueType(tc) == "Group" then
         return tc
     elseif VgF.GetValueType(g) == "Card" then
-        g.AddCard(tc)
+        g:AddCard(tc)
     end
     return g
 end
@@ -105,11 +102,20 @@ function VgF.GetCardsFromGroup(g, val)
         return sg
     end
 end
-function bit.ReturnCount(n)
-    if n == 0 then
-        return 0
+
+---根据控制者，区域和编号获取zone；不合法的数据会返回0
+---@param p number 控制者
+---@param loc number 所在区域，若不是LOCATION_CIRCLE或LOCATION_SZONE则返回0
+---@param seq number 编号
+---@return number 卡片所在的zone
+function VgF.SequenceToGlobal(p, loc, seq)
+	if p ~= 0 and p ~= 1 then return 0 end
+	if loc==LOCATION_CIRCLE then
+		if seq <= 6 then return 0x0001 << (seq) end
+	elseif loc == LOCATION_SZONE then
+		if seq <= 4 then return 0x0100 << (16 * p + seq) end
     end
-    return 1 + bit.ReturnCount(n & (n - 1))
+    return 0
 end
 
 function table.copy(copy, original)
@@ -118,6 +124,13 @@ function table.copy(copy, original)
     for i = 1, #original do
         table.insert(copy, original[i])
     end
+end
+
+function bit.ReturnCount(n)
+    if n == 0 then
+        return 0
+    end
+    return 1 + bit.ReturnCount(n & (n - 1))
 end
 
 ---返回对a和b进行按位与运算的结果。
@@ -161,72 +174,9 @@ end
 function bit.bnot(a)
     return ~a
 end
----返回c是不是先导者。
----@param c Card 要判断的卡
----@return boolean 指示是否是先导者
-function VgF.VMonsterFilter(c)
-    return VgF.IsSequence(c, 5)
-end
----返回c是不是后防者。
----@param c Card 要判断的卡
----@return boolean 指示是否是后防者
-function VgF.RMonsterFilter(c)
-    return c:GetSequence() < 5
-end
----用于效果的Condition，判断e是否以后防者发动。
----@param e Effect
----@return boolean
-function VgF.RMonsterCondition(e)
-    return VgF.RMonsterFilter(e:GetHandler())
-end
----用于效果的Condition，判断e是否以先导者发动。
----@param e Effect
----@return boolean
-function VgF.VMonsterCondition(e)
-    return VgF.VMonsterFilter(e:GetHandler())
-end
 
-function VgF.VSummonCondition(e)
-    local c = e:GetHandler()
-    return VgF.IsSummonTypeV(c)
-end
-
-function VgF.RSummonCondition(e)
-    return not VgF.VSummonCondition(e)
-end
-
-function VgF.IsSummonTypeV(c)
-    return c:IsSummonType(SUMMON_TYPE_RIDE) or c:IsSummonType(SUMMON_TYPE_SELFRIDE)
-end
-
-function VgF.IsSummonTypeR(c)
-    return not VgF.IsSummonTypeV(c)
-end
----判断c是否在当前区域的某（几）个编号上
----@param c Card 要判断的卡
----@param ... number 编号
----@return boolean 指示是否在给定编号上
-function VgF.IsSequence(c, ...)
-    for i, v in ipairs{...} do
-        if c:GetSequence() == v then
-            return true
-        end
-    end
-    return false
-end
-function VgF.RuleCardCondtion(e)
-    local tp = e:GetHandlerPlayer()
-    local g = Duel.GetMatchingGroup(nil, tp, LOCATION_ALL, 0, nil)
-    return e:GetHandler() == g:GetFirst()
-end
-function VgF.RuleTurnCondtion(e)
-    local tp = e:GetHandlerPlayer()
-    local a = Duel.GetTurnCount(tp)
-    local b = Duel.GetTurnCount(1 - tp)
-    return a + b == 1
-end
 ---返回函数，该函数与f的结果总是相反的。
----@param f 要操作的函数
+---@param f function<boolean> 要操作的bool函数
 ---@return function 经过操作的函数
 function VgF.Not(f)
     return  function(...)
@@ -240,140 +190,44 @@ function VgF.GetColumnGroup(c)
     local tp = c:GetControler()
     local g = Group.CreateGroup()
      if c:GetSequence() == 0 then
-        local sg1 = VgF.GetMatchingGroup(VgF.IsSequence, tp, LOCATION_CIRCLE, 0, nil, 1)
-        local sg2 = VgF.GetMatchingGroup(VgF.IsSequence, tp, 0, LOCATION_CIRCLE, nil, 3, 4)
+        local sg1 = VgF.GetMatchingGroup(Card.IsSequence, tp, LOCATION_CIRCLE, 0, nil, 1)
+        local sg2 = VgF.GetMatchingGroup(Card.IsSequence, tp, 0, LOCATION_CIRCLE, nil, 3, 4)
         if sg1:GetCount() > 0 then g:Merge(sg1) end
         if sg2:GetCount() > 0 then g:Merge(sg2) end
     end
     if c:GetSequence() == 1 then
-        local sg1 = VgF.GetMatchingGroup(VgF.IsSequence, tp, LOCATION_CIRCLE, 0, nil, 0)
-        local sg2 = VgF.GetMatchingGroup(VgF.IsSequence, tp, 0, LOCATION_CIRCLE, nil, 3, 4)
+        local sg1 = VgF.GetMatchingGroup(Card.IsSequence, tp, LOCATION_CIRCLE, 0, nil, 0)
+        local sg2 = VgF.GetMatchingGroup(Card.IsSequence, tp, 0, LOCATION_CIRCLE, nil, 3, 4)
         if sg1:GetCount() > 0 then g:Merge(sg1) end
         if sg2:GetCount() > 0 then g:Merge(sg2) end
     end
     if c:GetSequence() == 2 then
-        local sg1 = VgF.GetMatchingGroup(VgF.IsSequence, tp, LOCATION_CIRCLE, 0, nil, 5)
-        local sg2 = VgF.GetMatchingGroup(VgF.IsSequence, tp, 0, LOCATION_CIRCLE, nil, 2, 5)
+        local sg1 = VgF.GetMatchingGroup(Card.IsSequence, tp, LOCATION_CIRCLE, 0, nil, 5)
+        local sg2 = VgF.GetMatchingGroup(Card.IsSequence, tp, 0, LOCATION_CIRCLE, nil, 2, 5)
         if sg1:GetCount() > 0 then g:Merge(sg1) end
         if sg2:GetCount() > 0 then g:Merge(sg2) end
     end
     if c:GetSequence() == 3 then
-        local sg1 = VgF.GetMatchingGroup(VgF.IsSequence, tp, LOCATION_CIRCLE, 0, nil, 4)
-        local sg2 = VgF.GetMatchingGroup(VgF.IsSequence, tp, 0, LOCATION_CIRCLE, nil, 0, 1)
+        local sg1 = VgF.GetMatchingGroup(Card.IsSequence, tp, LOCATION_CIRCLE, 0, nil, 4)
+        local sg2 = VgF.GetMatchingGroup(Card.IsSequence, tp, 0, LOCATION_CIRCLE, nil, 0, 1)
         if sg1:GetCount() > 0 then g:Merge(sg1) end
         if sg2:GetCount() > 0 then g:Merge(sg2) end
     end
     if c:GetSequence() == 4 then
-        local sg1 = VgF.GetMatchingGroup(VgF.IsSequence, tp, LOCATION_CIRCLE, 0, nil, 3)
-        local sg2 = VgF.GetMatchingGroup(VgF.IsSequence, tp, 0, LOCATION_CIRCLE, nil, 0, 1)
+        local sg1 = VgF.GetMatchingGroup(Card.IsSequence, tp, LOCATION_CIRCLE, 0, nil, 3)
+        local sg2 = VgF.GetMatchingGroup(Card.IsSequence, tp, 0, LOCATION_CIRCLE, nil, 0, 1)
         if sg1:GetCount() > 0 then g:Merge(sg1) end
         if sg2:GetCount() > 0 then g:Merge(sg2) end
     end
     if c:GetSequence() == 5 then
-        local sg1 = VgF.GetMatchingGroup(VgF.IsSequence, tp, LOCATION_CIRCLE, 0, nil, 2)
-        local sg2 = VgF.GetMatchingGroup(VgF.IsSequence, tp, 0, LOCATION_CIRCLE, nil, 2, 5)
+        local sg1 = VgF.GetMatchingGroup(Card.IsSequence, tp, LOCATION_CIRCLE, 0, nil, 2)
+        local sg2 = VgF.GetMatchingGroup(Card.IsSequence, tp, 0, LOCATION_CIRCLE, nil, 2, 5)
         if sg1:GetCount() > 0 then g:Merge(sg1) end
         if sg2:GetCount() > 0 then g:Merge(sg2) end
     end
     return g
 end
 
-function VgF.GetAvailableLocation(tp, zone)
-    local z
-    if zone then z = zone else z = 0x1f end
-    local rg = Duel.GetMatchingGroup(Card.IsPosition, tp, LOCATION_CIRCLE, 0, nil, POS_FACEDOWN_ATTACK)
-    for tc in VgF.Next(rg) do
-        local szone = VgF.SequenceToGlobal(tp, tc:GetLocation(), tc:GetSequence())
-        z = bit.bxor(z, szone)
-    end
-    return z
-end
----将g（中的每一张卡）Call到单位区。返回Call成功的数量。
----@param g Card|Group 要Call的卡（片组）
----@param sumtype number Call的方式，默认填0
----@param tp number Call的玩家
----@param zone number|nil 指示要Call到的格子。<br>前列的R：17； 后列的R：14； 全部的R：31； V：32
----@param pos number|nil 表示形式
----@return number Call成功的数量
-function VgF.Call(g, sumtype, tp, zone, pos)
-    if (VgF.GetValueType(g) ~= "Card" and VgF.GetValueType(g) ~= "Group") or (VgF.GetValueType(g) == "Group" and g:GetCount() == 0) then return 0 end
-    if VgF.GetValueType(pos) ~= "number" then pos = POS_FACEUP_ATTACK end
-    if VgF.GetValueType(zone) == "string" and zone == "NoMonster" then
-        return Duel.SpecialSummon(g, sumtype, tp, tp, false, false, pos)
-    elseif VgF.GetValueType(zone) == "string" and zone == "FromOverlayToV" then
-        local tc = VgF.ReturnCard(g)
-        if not VgF.IsCanBeCalled(tc, nil, tp, sumtype, pos, "FromOverlayToV") then return 0 end
-        VgF.Sendto(0, tc, tp, POS_FACEUP, REASON_EFFECT)
-        local _, code = tc:GetOriginalCode()
-        local c = Duel.CreateToken(tp, code)
-        return VgF.Call(c, sumtype, tp, 0x20, pos)
-    elseif VgF.GetValueType(zone) == "number" and zone > 0 then
-        local sc = VgF.ReturnCard(g)
-        local z = VgF.GetAvailableLocation(tp, zone)
-        local ct = bit.ReturnCount(z)
-        local szone
-        if ct > 1 then
-            z = bit.bnot(z)
-            z = bit.bor(z, 0xffffff00)
-            Duel.Hint(HINT_SELECTMSG, tp, HINTMSG_CallZONE)
-            szone = Duel.SelectField(tp, 1, LOCATION_CIRCLE, 0, z)
-        else
-            szone = z
-        end
-        if szone == 0x20 then
-            if VgF.GetVMonster(tp) then
-                local tc = VgF.GetVMonster(tp)
-                local mg = tc:GetOverlayGroup()
-                if mg:GetCount() ~= 0 then
-                    VgF.Sendto(LOCATION_SOUL, mg, sc)
-                end
-                sc:SetMaterial(Group.FromCards(tc))
-                VgF.Sendto(LOCATION_SOUL, Group.FromCards(tc), sc)
-            end
-        elseif VgF.IsExistingMatchingCard(VgD.CallFilter, tp, LOCATION_CIRCLE, 0, 1, nil, tp, szone) then
-            local tc = Duel.GetMatchingGroup(VgD.CallFilter, tp, LOCATION_CIRCLE, 0, nil, tp, szone):GetFirst()
-            if bit.band(sumtype, SUMMON_VALUE_OVERDRESS) > 0 then VgF.Sendto(LOCATION_SOUL, Group.FromCards(tc), sc)
-            else VgF.Sendto(LOCATION_DROP, tc, REASON_COST)
-            end
-        end
-        return Duel.SpecialSummon(sc, sumtype, tp, tp, false, false, pos, szone)
-    else
-        local sg
-        local z = bit.bnot(VgF.GetAvailableLocation(tp))
-        z = bit.bor(z, 0xffffff00)
-        if VgF.GetValueType(g) == "Card" then sg = Group.FromCards(g) else sg = Group.Clone(g) end
-        for sc in VgF.Next(sg) do
-            if sc:IsLocation(LOCATION_RIDE) then
-                local rc = Duel.GetMatchingGroup(VgF.VMonsterFilter, tp, LOCATION_CIRCLE, 0, nil):GetFirst()
-                local mg = rc:GetOverlayGroup()
-                if mg:GetCount() ~= 0 then
-                    VgF.Sendto(LOCATION_SOUL, mg, sc)
-                end
-                sc:SetMaterial(Group.FromCards(rc))
-                VgF.Sendto(LOCATION_SOUL, Group.FromCards(rc), sc)
-                Duel.SpecialSummonStep(sc, sumtype, tp, tp, false, false, pos, 0x20)
-            else
-                Duel.Hint(HINT_SELECTMSG, tp, HINTMSG_CallZONE)
-                local szone = Duel.SelectField(tp, 1, LOCATION_CIRCLE, 0, z)
-                if VgF.IsExistingMatchingCard(VgD.CallFilter, tp, LOCATION_CIRCLE, 0, 1, nil, tp, szone) then
-                    local tc = Duel.GetMatchingGroup(VgD.CallFilter, tp, LOCATION_CIRCLE, 0, nil, tp, szone):GetFirst()
-                    VgF.Sendto(LOCATION_DROP, tc, REASON_COST)
-                end
-                Duel.SpecialSummonStep(sc, sumtype, tp, tp, false, false, pos, szone)
-                z = bit.bor(z, szone)
-            end
-        end
-        return Duel.SpecialSummonComplete()
-    end
-end
-function VgF.LvCondition(e_or_c)
-    local c = VgF.GetValueType(e_or_c) == "Effect" and e_or_c:GetHandler() or e_or_c
-    local tp, lv = c:GetControler(), c:GetLevel()
-    return VgF.IsExistingMatchingCard(VgF.LvConditionFilter, tp, LOCATION_CIRCLE, 0, 1, nil, lv)
-end
-function VgF.LvConditionFilter(c, lv)
-    return VgF.VMonsterFilter(c) and c:IsLevelAbove(lv)
-end
 ---以c的名义，使g（中的每一张卡）的攻击力上升val，并在reset时重置。
 ---@param c Card 要使卡上升攻击力的卡
 ---@param g Card|Group 要被上升攻击力的卡
@@ -463,7 +317,7 @@ function VgF.DefUp(c, g, val, reset, resetcount)
 end
 ---以c的名义，使g（中的每一张卡）的☆上升val，并在reset时重置。
 ---@param c Card 要使卡上升☆的卡
----@param g Card|Group 要被上升☆的卡
+---@param g Card|Group 要被上升☆的卡 
 ---@param val number|string 要上升的☆（可以为负）
 ---@param reset number|nil 指示重置的时点，默认为“回合结束时”。无论如何，都会在离场时重置。
 function VgF.StarUp(c, g, val, reset, resetcount)
@@ -567,11 +421,133 @@ function VgF.IsAbleToGCircle(c)
         if Duel.IsPlayerAffectedByEffect(c:GetControler(), AFFECT_CODE_DEFENDER_CANNOT_TO_G_CIRCLE) and c:GetBaseDefense() == 0 then return false end
         return c:IsType(TYPE_UNIT)
     elseif c:IsLocation(LOCATION_CIRCLE) then
-        return c:IsSkill(SKILL_INTERCEPT) and VgF.IsSequence(c, 0, 4) and c:IsLocation(LOCATION_CIRCLE) and c:IsFaceup()
+        return c:IsSkill(SKILL_INTERCEPT) and Card.IsSequence(c, 0, 4) and c:IsLocation(LOCATION_CIRCLE) and c:IsFaceup()
     end
     return false
 end
 
+--Effect类函数-------------------------------------------------------------------------------
+
+VgF.Effect.Damage = nil
+
+function VgF.Effect.Reset(c, e, code, con)
+    if VgF.GetValueType(e) == "Effect" then
+        local e1 = Effect.CreateEffect(c)
+        e1:SetType(EFFECT_TYPE_FIELD + EFFECT_TYPE_SET)
+        e1:SetCode(code)
+        e1:SetProperty(EFFECT_FLAG_CANNOT_DISABLE)
+        e1:SetRange(LOCATION_ALL)
+        e1:SetLabelObject(e)
+        if VgF.GetValueType(con) == "function" then e1:SetCondition(con) end
+        e1:SetOperation(VgF.Effect.ResetOperation)
+        c:RegisterEffect(e1)
+    elseif VgF.GetValueType(e) == "table" then
+        for i, v in ipairs(e) do
+            local e1 = Effect.CreateEffect(c)
+            e1:SetType(EFFECT_TYPE_FIELD + EFFECT_TYPE_SET)
+            e1:SetCode(code)
+            e1:SetProperty(EFFECT_FLAG_CANNOT_DISABLE)
+            e1:SetRange(LOCATION_ALL)
+            e1:SetLabelObject(v)
+            if VgF.GetValueType(con) == "function" then e1:SetCondition(con) end
+            e1:SetOperation(VgF.Effect.ResetOperation)
+            c:RegisterEffect(e1)
+        end
+    end
+end
+function VgF.Effect.ResetOperation(e, tp, eg, ep, ev, re, r, rp)
+    local e1 = e:GetLabelObject()
+    if VgF.GetValueType(e1) == "Effect" then e1:Reset() end
+    e:Reset()
+end
+
+--Filter函数---------------------------------------------------------------------------------------
+
+---返回c是不是先导者。
+---@param c Card 要判断的卡
+---@return boolean 指示是否是先导者
+function VgF.Filter.IsV(c)
+    return Card.IsSequence(c, 5)
+end
+
+---返回c是不是后防者。
+---@param c Card 要判断的卡
+---@return boolean 指示是否是后防者
+function VgF.Filter.IsR(c)
+    return c:GetSequence() < 5
+end
+
+function VgF.Filter.RideOnVCircle(c)
+    return c:IsSummonType(SUMMON_TYPE_RIDE) or c:IsSummonType(SUMMON_TYPE_SELFRIDE)
+end
+
+function VgF.Filter.RideOnRCircle(c)
+    return not VgF.Filter.RideOnVCircle(c)
+end
+
+---判断c是否在前列。
+---@param c Card 要判断的卡
+---@return boolean 指示c是否是前列的单位
+function VgF.Filter.Front(c)
+    return Card.IsSequence(c, 0, 4, 5) and c:IsLocation(LOCATION_CIRCLE)
+end
+
+---判断c是否在后列。
+---@param c Card 要判断的卡
+---@return boolean 指示c是否是后列的单位
+function VgF.Filter.Back(c)
+    return Card.IsSequence(c, 1, 2, 3) and c:IsLocation(LOCATION_CIRCLE)
+end
+
+--Condition函数------------------------------------------------------------------------------------
+
+function VgF.Condition.FirstCard(e)
+    local tp = e:GetHandlerPlayer()
+    local g = Duel.GetMatchingGroup(nil, tp, LOCATION_ALL, 0, nil)
+    return e:GetHandler() == g:GetFirst()
+end
+function VgF.Condition.FirstTurn(e)
+    local tp = e:GetHandlerPlayer()
+    local a = Duel.GetTurnCount(tp)
+    local b = Duel.GetTurnCount(1 - tp)
+    return a + b == 1
+end
+
+function VgF.Condition.Level(e_or_c)
+    local c = VgF.GetValueType(e_or_c) == "Effect" and e_or_c:GetHandler() or e_or_c
+    local tp, lv = c:GetControler(), c:GetLevel()
+    return VgF.IsExistingMatchingCard(function (tc)
+        return VgF.Filter.IsV(tc) and tc:IsLevelAbove(lv)
+    end, tp, LOCATION_CIRCLE, 0, 1, nil)
+end
+
+---用于效果的Condition，判断e是否以后防者发动。
+---@param e Effect
+---@return boolean
+function VgF.Condition.IsR(e)
+    return VgF.Filter.IsR(e:GetHandler())
+end
+---用于效果的Condition，判断e是否以先导者发动。
+---@param e Effect
+---@return boolean
+function VgF.Condition.IsV(e)
+    return VgF.Filter.IsV(e:GetHandler())
+end
+
+function VgF.Condition.RideOnVCircle(e)
+    local c = e:GetHandler()
+    return VgF.Filter.RideOnVCircle(c)
+end
+
+function VgF.Condition.RideOnRCircle(e)
+    return not VgF.Condition.RideOnVCircle(e)
+end
+
+---用于效果的Condition，判断对玩家效果e是否受影响于零之命运者。
+---@return boolean
+function VgF.Condition.PlayerEffect(e, tp, eg, ep, ev, re, r, rp)
+    return true
+end
 --Cost函数----------------------------------------------------------------------------------------
 
 ---用于效果的Cost。执行“[将这个单位放置到灵魂里]”的函数。
@@ -607,11 +583,7 @@ function VgF.Cost.Discard(val)
         local m = c:GetOriginalCode()
         if chk == 0 then
             if e:IsHasType(EFFECT_TYPE_ACTIVATE) then
-                VgF.AddAlchemagicFrom(c, m, "LOCATION_HAND")
-                VgF.AddAlchemagicTo(c, m, "LOCATION_DROP")
-                VgF.AddAlchemagicFilter(c, m, nil)
-                VgF.AddAlchemagicCountMin(c, m, val)
-                VgF.AddAlchemagicCountMax(c, m, val)
+                VgF.AddAlchemagic(m, "LOCATION_HAND", "LOCATION_DROP", val, val)
             end
             return VgF.IsExistingMatchingCard(nil, tp, LOCATION_HAND, 0, val, nil)
         end
@@ -630,11 +602,7 @@ function VgF.Cost.EnergyBlast(val)
         local m = c:GetOriginalCode()
         if chk == 0 then
             if e:IsHasType(EFFECT_TYPE_ACTIVATE) then
-                VgF.AddAlchemagicFrom(c, m, "LOCATION_CREST")
-                VgF.AddAlchemagicTo(c, m, "0")
-                VgF.AddAlchemagicFilter(c, m, function(tc) tc:IsCode(CARD_ENERGY) end)
-                VgF.AddAlchemagicCountMin(c, m, val)
-                VgF.AddAlchemagicCountMax(c, m, val)
+                VgF.AddAlchemagic(m, "LOCATION_CREST", "0", val, val, function(tc) tc:IsCode(CARD_ENERGY) end)
             end
             return VgF.IsExistingMatchingCard(Card.IsCode, tp, LOCATION_CREST, 0, val, nil, CARD_ENERGY)
         end
@@ -653,16 +621,12 @@ function VgF.Cost.SoulBlast(val)
         local m = c:GetOriginalCode()
         if chk == 0 then
             if e:IsHasType(EFFECT_TYPE_ACTIVATE) then
-                VgF.AddAlchemagicFrom(c, m, "LOCATION_SOUL")
-                VgF.AddAlchemagicTo(c, m, "LOCATION_DROP")
-                VgF.AddAlchemagicFilter(c, m, nil)
-                VgF.AddAlchemagicCountMin(c, m, val)
-                VgF.AddAlchemagicCountMax(c, m, val)
+                VgF.AddAlchemagic(m, "LOCATION_SOUL", "LOCATION_DROP", val, val)
             end
-            return Duel.GetMatchingGroup(VgF.VMonsterFilter, tp, LOCATION_CIRCLE, 0, nil, nil):GetFirst():GetOverlayCount() >= val
+            return Duel.GetMatchingGroup(VgF.Filter.IsV, tp, LOCATION_CIRCLE, 0, nil, nil):GetFirst():GetOverlayCount() >= val
         end
         Duel.Hint(HINT_SELECTMSG, tp, HINTMSG_REMOVEXYZ)
-        local g = Duel.GetMatchingGroup(VgF.VMonsterFilter, tp, LOCATION_CIRCLE, 0, nil):GetFirst():GetOverlayGroup():Select(tp, nil, val, val, nil)
+        local g = Duel.GetMatchingGroup(VgF.Filter.IsV, tp, LOCATION_CIRCLE, 0, nil):GetFirst():GetOverlayGroup():Select(tp, nil, val, val, nil)
         return VgF.Sendto(LOCATION_DROP, g, REASON_COST)
     end
 end
@@ -677,11 +641,7 @@ function VgF.Cost.CounterBlast(val)
         local m = c:GetOriginalCode()
         if chk == 0 then
             if e:IsHasType(EFFECT_TYPE_ACTIVATE) then
-                VgF.AddAlchemagicFrom(c, m, "LOCATION_DAMAGE")
-                VgF.AddAlchemagicTo(c, m, "POSCHANGE")
-                VgF.AddAlchemagicFilter(c, m, Card.IsFaceup)
-                VgF.AddAlchemagicCountMin(c, m, val)
-                VgF.AddAlchemagicCountMax(c, m, val)
+                VgF.AddAlchemagic(m, "LOCATION_DAMAGE", "POSCHANGE", val, val, Card.IsFaceup)
             end
             return VgF.IsExistingMatchingCard(Card.IsFaceup, tp, LOCATION_DAMAGE, 0, val, nil)
         end
@@ -759,7 +719,7 @@ function VgF.IsCanBeCalled(c, e, tp, sumtype, pos, zone)
     else z = VgF.GetAvailableLocation(tp) zone = 0xff end
     if VgF.GetValueType(sumtype) ~= "number" then sumtype = 0 end
     if VgF.GetValueType(pos) ~= "number" then pos = POS_FACEUP_ATTACK end
-    if VgF.GetValueType(zone) == "string" and zone == "FromOverlayToV" then
+    if VgF.GetValueType(zone) == "string" and zone == "FromSouloV" then
         local _, code = c:GetOriginalCode()
         return Duel.IsPlayerCanSpecialSummonMonster(tp, code, nil, TYPE_UNIT + TYPE_NORMAL, c:GetBaseAttack(), c:GetBaseDefense(), c:GetOriginalLevel(), c:GetOriginalRace(), c:GetOriginalAttribute())
     end
@@ -800,15 +760,11 @@ function VgF.Operation.SoulCharge(val)
         local m = c:GetOriginalCode()
         if chk == 0 then
             if e:IsHasType(EFFECT_TYPE_ACTIVATE) then
-                VgF.AddAlchemagicFrom(c, m, "LOCATION_DECK")
-                VgF.AddAlchemagicTo(c, m, "LOCATION_SOUL")
-                VgF.AddAlchemagicFilter(c, m, nil)
-                VgF.AddAlchemagicCountMin(c, m, val)
-                VgF.AddAlchemagicCountMax(c, m, val)
+                VgF.AddAlchemagic(m, "LOCATION_DECK", "LOCATION_SOUL", val, val)
             end
             return Duel.GetFieldGroupCount(tp, LOCATION_DECK, 0) >= val
         end
-        local rc = Duel.GetMatchingGroup(VgF.VMonsterFilter, tp, LOCATION_CIRCLE, 0, nil):GetFirst()
+        local rc = Duel.GetMatchingGroup(VgF.Filter.IsV, tp, LOCATION_CIRCLE, 0, nil):GetFirst()
         local g = Duel.GetDecktopGroup(tp, val)
         Duel.DisableShuffleCheck()
         Duel.RaiseEvent(g, EVENT_CUSTOM + EVENT_OVERLAY_FILL, e, 0, tp, tp, val)
@@ -867,7 +823,7 @@ function VgF.Operation.CardsFromTo(reason ,loc_to, loc_from, f, int_max, int_min
                 return VgF.GetValueType(f) ~= "function" or f(c, table.unpack(ext_params))
             end, tp, loc_from, 0, int_min, int_max, nil)
             if g:GetCount() > 0 then
-                if loc_from == LOCATION_SOUL then return VgF.Sendto(loc_to, g, 0, tp, "FromOverlayToV")
+                if loc_from == LOCATION_SOUL then return VgF.Sendto(loc_to, g, 0, tp, "FromSouloV")
                 else return VgF.Sendto(loc_to, g, 0, tp, 0x20)
                 end
             end
@@ -921,6 +877,48 @@ function VgF.Operation.CardsFromTo(reason ,loc_to, loc_from, f, int_max, int_min
     end
 end
 
+---效果伤害的operation函数
+---@param val number 伤害的数值
+---@param p number 受伤的玩家
+function VgF.Operation.Damage(val, p)
+    return function (e, tp, eg, ep, ev, re, r, rp)
+        local c = e:GetHandler()
+        c:RegisterFlagEffect(FLAG_DAMAGE_TRIGGER, RESET_EVENT + RESETS_STANDARD, 0, 1, val - 1)
+        Duel.RegisterFlagEffect(p, FLAG_EFFECT_DAMAGE, 0, 0, 1)
+        VgD.Trigger(e, p, eg, ep, ev, re, r, rp)
+        local e1 = Effect.CreateEffect(c)
+        e1:SetType(EFFECT_TYPE_FIELD + EFFECT_TYPE_TRIGGER_F)
+        e1:SetCode(EVENT_CUSTOM + EVENT_TRIGGER)
+        e1:SetRange(LOCATION_ALL)
+        e1:SetProperty(EFFECT_FLAG_CANNOT_DISABLE)
+        e1:SetCondition(function (te, ttp, teg, tep, tev, tre, tr, trp)
+            return Duel.GetFlagEffect(p, FLAG_EFFECT_DAMAGE) > 0
+        end)
+        e1:SetOperation(VgD.Trigger)
+        c:RegisterEffect(e1)
+        if VgF.GetValueType(VgF.Effect.Damage) == "Effect" then
+            VgF.Effect.Damage:Reset()
+            VgF.Effect.Damage = nil
+        end
+        VgF.Effect.Damage = e1
+    end
+end
+
+--Card库自定义函数-----------------------------------------------------------------------
+
+---判断c是否在当前区域的某（几）个编号上
+---@param c Card 要判断的卡
+---@param ... number 编号
+---@return boolean 指示是否在给定编号上
+function Card.IsSequence(c, ...)
+    for i, v in ipairs{...} do
+        if c:GetSequence() == v then
+            return true
+        end
+    end
+    return false
+end
+
 function Card.IsSkill(c, skill)
     return c:IsAttribute(skill)
 end
@@ -928,6 +926,8 @@ end
 function Card.IsTrigger(c, skill)
     return c:IsRace(skill)
 end
+
+--Group库自定义函数-----------------------------------------------------------------------
 
 function Group.ForEach(g, f, ...)
     local ext_params = {...}
@@ -1056,69 +1056,35 @@ function Group.SelectDoubleSubGroup(g, p, f1, int_min1, int_max1, f2, int_min2, 
     result = Group.__add(result1, result2)
     return result
 end
+
+--Other--------------------------------------------------------------------------------------
+
 ---返回p场上的先导者。
 ---@param p number 要获取先导者的玩家。不合法则返回nil。
 ---@return Card|nil p场上的先导者
 function VgF.GetVMonster(p)
     if p ~= 0 and p ~= 1 then return end
-    return Duel.GetMatchingGroup(VgF.VMonsterFilter, p, LOCATION_CIRCLE, 0, nil):GetFirst()
+    return Duel.GetMatchingGroup(VgF.Filter.IsV, p, LOCATION_CIRCLE, 0, nil):GetFirst()
 end
----判断c是否在前列。
----@param c Card 要判断的卡
----@return boolean 指示c是否是前列的单位
-function VgF.FrontFilter(c)
-    return vgf.IsSequence(c, 0, 4, 5) and c:IsLocation(LOCATION_CIRCLE)
-end
----判断c是否在后列。
----@param c Card 要判断的卡
----@return boolean 指示c是否是后列的单位
-function VgF.BackFilter(c)
-    return vgf.IsSequence(c, 1, 2, 3) and c:IsLocation(LOCATION_CIRCLE)
-end
-function VgF.PrisonFilter(c, ct)
-    return c:GetSequence() == ct - 1
-end
+
 ---收容g（中的每一张卡）到p的监狱。没有监狱时，不操作。
 ---@param g Card|Group
 ---@param p number
 function VgF.SendtoPrison(g, p)
     if not VgF.CheckPrison(p) or not g then return end
     local og = Duel.GetFieldGroup(p, LOCATION_ORDER, 0)
-    local oc = og:Filter(VgF.PrisonFilter, nil, og:GetCount()):GetFirst()
+    local oc = og:Filter(Card.IsSequence, nil, og:GetCount() - 1):GetFirst()
     if VgF.GetValueType(g) == "Card" then
-        VgF.Sendto(LOCATION_ORDER, g, p, POS_FACEUP_ATTACK, REASON_EFFECT)
+        VgF.Sendto(LOCATION_ORDER, g, p, POS_FACEUP_ATTACK, REASON_EFFECT, oc:GetSequence() - 1)
         g:RegisterFlagEffect(FLAG_IMPRISON, RESET_EVENT + RESETS_STANDARD, EFFECT_FLAG_CLIENT_HINT, 1, 0, VgF.Stringid(10105015, 0))
     elseif VgF.GetValueType(g) == "Group" then
         for tc in VgF.Next(g) do
-            VgF.Sendto(LOCATION_ORDER, tc, p, POS_FACEUP_ATTACK, REASON_EFFECT)
+            VgF.Sendto(LOCATION_ORDER, tc, p, POS_FACEUP_ATTACK, REASON_EFFECT, oc:GetSequence() - 1)
             tc:RegisterFlagEffect(FLAG_IMPRISON, RESET_EVENT + RESETS_STANDARD, EFFECT_FLAG_CLIENT_HINT, 1, 0, VgF.Stringid(10105015, 0))
         end
     end
-    Duel.MoveSequence(oc, og:GetCount() - 1)
 end
---[[
-function VgF.PrisonFilter(c, tp)
-    return c:IsSetCard(0x3040) and not VgF.IsExistingMatchingCard(function (tc)
-        return tc:GetSequence() < c:GetSequence()
-    end, tp, LOCATION_ORDER, 0, 1, c)
-end
----收容g（中的每一张卡）到p的监狱。没有监狱时，不操作。
----@param g Card|Group
----@param p number
-function VgF.SendtoPrison(g, p)
-    if not VgF.CheckPrison(p) or not g then return end
-    local og = Duel.GetFieldGroup(p, LOCATION_ORDER, 0)
-    local oc = og:Filter(VgF.PrisonFilter, nil, p):GetFirst()
-    if VgF.GetValueType(g) == "Card" then
-        Duel.Sendto(g, p, LOCATION_ORDER, POS_FACEUP_ATTACK, REASON_EFFECT, 1)
-        g:RegisterFlagEffect(FLAG_IMPRISON, RESET_EVENT + RESETS_STANDARD, EFFECT_FLAG_CLIENT_HINT, 1, 0, VgF.Stringid(10105015, 0))
-    elseif VgF.GetValueType(g) == "Group" then
-        for tc in VgF.Next(g) do
-            Duel.Sendto(tc, p, LOCATION_ORDER, POS_FACEUP_ATTACK, REASON_EFFECT, 1)
-            tc:RegisterFlagEffect(FLAG_IMPRISON, RESET_EVENT + RESETS_STANDARD, EFFECT_FLAG_CLIENT_HINT, 1, 0, VgF.Stringid(10105015, 0))
-        end
-    end
-end]]
+
 ---检测p场上有没有监狱。
 ---@param p number
 ---@return boolean 指示p场上有没有监狱。
@@ -1126,37 +1092,7 @@ function VgF.CheckPrison(p)
     local og = Duel.GetFieldGroup(p, LOCATION_ORDER, 0)
     return og:IsExists(Card.IsSetCard, 1, nil, 0x3040)
 end
---重置Effect
-function VgF.EffectReset(c, e, code, con)
-    if VgF.GetValueType(e) == "Effect" then
-        local e1 = Effect.CreateEffect(c)
-        e1:SetType(EFFECT_TYPE_FIELD + EFFECT_TYPE_SET)
-        e1:SetCode(code)
-        e1:SetProperty(EFFECT_FLAG_CANNOT_DISABLE)
-        e1:SetRange(LOCATION_ALL)
-        e1:SetLabelObject(e)
-        if VgF.GetValueType(con) == "function" then e1:SetCondition(con) end
-        e1:SetOperation(VgF.EffectResetOperation)
-        c:RegisterEffect(e1)
-    elseif VgF.GetValueType(e) == "table" then
-        for i, v in ipairs(e) do
-            local e1 = Effect.CreateEffect(c)
-            e1:SetType(EFFECT_TYPE_FIELD + EFFECT_TYPE_SET)
-            e1:SetCode(code)
-            e1:SetProperty(EFFECT_FLAG_CANNOT_DISABLE)
-            e1:SetRange(LOCATION_ALL)
-            e1:SetLabelObject(v)
-            if VgF.GetValueType(con) == "function" then e1:SetCondition(con) end
-            e1:SetOperation(VgF.EffectResetOperation)
-            c:RegisterEffect(e1)
-        end
-    end
-end
-function VgF.EffectResetOperation(e, tp, eg, ep, ev, re, r, rp)
-    local e1 = e:GetLabelObject()
-    if VgF.GetValueType(e1) == "Effect" then e1:Reset() end
-    e:Reset()
-end
+
 function VgF.IsExistingMatchingCard(f, tp, loc_self, loc_op, int, except_g, ...)
     return VgF.GetMatchingGroupCount(f, tp, loc_self, loc_op, except_g, ...) >= int
 end
@@ -1178,13 +1114,13 @@ function VgF.SelectMatchingCard(hintmsg, e, select_tp, f, tp, loc_self, loc_op, 
         end
     elseif bit.band(loc_self, LOCATION_V_CIRCLE) > 0 then
         loc_self = loc_self - LOCATION_V_CIRCLE
-        loc_self_f = VgF.VMonsterFilter
+        loc_self_f = VgF.Filter.IsV
         if bit.band(loc_self, LOCATION_CIRCLE) == 0 then
             loc_self = loc_self + LOCATION_CIRCLE
         end
     elseif bit.band(loc_self, LOCATION_R_CIRCLE) > 0 then
         loc_self = loc_self - LOCATION_R_CIRCLE
-        loc_self_f = VgF.RMonsterFilter
+        loc_self_f = VgF.Filter.IsR
         if bit.band(loc_self, LOCATION_CIRCLE) == 0 then
             loc_self = loc_self + LOCATION_CIRCLE
         end
@@ -1196,13 +1132,13 @@ function VgF.SelectMatchingCard(hintmsg, e, select_tp, f, tp, loc_self, loc_op, 
         end
     elseif bit.band(loc_op, LOCATION_V_CIRCLE) > 0 then
         loc_op = loc_op - LOCATION_V_CIRCLE
-        loc_op_f = VgF.VMonsterFilter
+        loc_op_f = VgF.Filter.IsV
         if bit.band(loc_op, LOCATION_CIRCLE) == 0 then
             loc_op = loc_op + LOCATION_CIRCLE
         end
     elseif bit.band(loc_op, LOCATION_R_CIRCLE) > 0 then
         loc_op = loc_op - LOCATION_R_CIRCLE
-        loc_op_f = VgF.RMonsterFilter
+        loc_op_f = VgF.Filter.IsR
         if bit.band(loc_op, LOCATION_CIRCLE) == 0 then
             loc_op = loc_op + LOCATION_CIRCLE
         end
@@ -1266,13 +1202,13 @@ function VgF.GetMatchingGroup(f, tp, loc_self, loc_op, except_g, ...)
         end
     elseif bit.band(loc_self, LOCATION_V_CIRCLE) > 0 then
         loc_self = loc_self - LOCATION_V_CIRCLE
-        loc_self_f = VgF.VMonsterFilter
+        loc_self_f = VgF.Filter.IsV
         if bit.band(loc_self, LOCATION_CIRCLE) == 0 then
             loc_self = loc_self + LOCATION_CIRCLE
         end
     elseif bit.band(loc_self, LOCATION_R_CIRCLE) > 0 then
         loc_self = loc_self - LOCATION_R_CIRCLE
-        loc_self_f = VgF.RMonsterFilter
+        loc_self_f = VgF.Filter.IsR
         if bit.band(loc_self, LOCATION_CIRCLE) == 0 then
             loc_self = loc_self + LOCATION_CIRCLE
         end
@@ -1284,13 +1220,13 @@ function VgF.GetMatchingGroup(f, tp, loc_self, loc_op, except_g, ...)
         end
     elseif bit.band(loc_op, LOCATION_V_CIRCLE) > 0 then
         loc_op = loc_op - LOCATION_V_CIRCLE
-        loc_op_f = VgF.VMonsterFilter
+        loc_op_f = VgF.Filter.IsV
         if bit.band(loc_op, LOCATION_CIRCLE) == 0 then
             loc_op = loc_op + LOCATION_CIRCLE
         end
     elseif bit.band(loc_op, LOCATION_R_CIRCLE) > 0 then
         loc_op = loc_op - LOCATION_R_CIRCLE
-        loc_op_f = VgF.RMonsterFilter
+        loc_op_f = VgF.Filter.IsR
         if bit.band(loc_op, LOCATION_CIRCLE) == 0 then
             loc_op = loc_op + LOCATION_CIRCLE
         end
@@ -1418,6 +1354,95 @@ function VgF.Sendto(loc, sg, ...)
     return 0
 end
 
+function VgF.GetAvailableLocation(tp, zone)
+    local z
+    if zone then z = zone else z = 0x1f end
+    local rg = Duel.GetMatchingGroup(Card.IsPosition, tp, LOCATION_CIRCLE, 0, nil, POS_FACEDOWN_ATTACK)
+    for tc in VgF.Next(rg) do
+        local szone = VgF.SequenceToGlobal(tp, tc:GetLocation(), tc:GetSequence())
+        z = bit.bxor(z, szone)
+    end
+    return z
+end
+---将g（中的每一张卡）Call到单位区。返回Call成功的数量。
+---@param g Card|Group 要Call的卡（片组）
+---@param sumtype number Call的方式，默认填0
+---@param tp number Call的玩家
+---@param zone number|string|nil 指示要Call到的格子。<br>前列的R：17； 后列的R：14； 全部的R：31； V：32
+---@param pos number|nil 表示形式
+---@return number Call成功的数量
+function VgF.Call(g, sumtype, tp, zone, pos)
+    if (VgF.GetValueType(g) ~= "Card" and VgF.GetValueType(g) ~= "Group") or (VgF.GetValueType(g) == "Group" and g:GetCount() == 0) then return 0 end
+    if VgF.GetValueType(pos) ~= "number" then pos = POS_FACEUP_ATTACK end
+    if VgF.GetValueType(zone) == "string" and zone == "NoMonster" then
+        return Duel.SpecialSummon(g, sumtype, tp, tp, false, false, pos)
+    elseif VgF.GetValueType(zone) == "string" and zone == "FromSouloV" then
+        local tc = VgF.ReturnCard(g)
+        if not VgF.IsCanBeCalled(tc, nil, tp, sumtype, pos, "FromSouloV") then return 0 end
+        VgF.Sendto(0, tc, tp, POS_FACEUP, REASON_EFFECT)
+        local _, code = tc:GetOriginalCode()
+        local c = Duel.CreateToken(tp, code)
+        return VgF.Call(c, sumtype, tp, 0x20, pos)
+    elseif VgF.GetValueType(zone) == "number" and zone > 0 then
+        local sc = VgF.ReturnCard(g)
+        local z = VgF.GetAvailableLocation(tp, zone)
+        local ct = bit.ReturnCount(z)
+        local szone
+        if ct > 1 then
+            z = bit.bnot(z)
+            z = bit.bor(z, 0xffffff00)
+            Duel.Hint(HINT_SELECTMSG, tp, HINTMSG_CallZONE)
+            szone = Duel.SelectField(tp, 1, LOCATION_CIRCLE, 0, z)
+        else
+            szone = z
+        end
+        if szone == 0x20 then
+            if VgF.GetVMonster(tp) then
+                local tc = VgF.GetVMonster(tp)
+                local mg = tc:GetOverlayGroup()
+                if mg:GetCount() ~= 0 then
+                    VgF.Sendto(LOCATION_SOUL, mg, sc)
+                end
+                sc:SetMaterial(Group.FromCards(tc))
+                VgF.Sendto(LOCATION_SOUL, Group.FromCards(tc), sc)
+            end
+        elseif VgF.IsExistingMatchingCard(VgD.CallFilter, tp, LOCATION_CIRCLE, 0, 1, nil, tp, szone) then
+            local tc = Duel.GetMatchingGroup(VgD.CallFilter, tp, LOCATION_CIRCLE, 0, nil, tp, szone):GetFirst()
+            if bit.band(sumtype, SUMMON_VALUE_OVERDRESS) > 0 then VgF.Sendto(LOCATION_SOUL, Group.FromCards(tc), sc)
+            else VgF.Sendto(LOCATION_DROP, tc, REASON_COST)
+            end
+        end
+        return Duel.SpecialSummon(sc, sumtype, tp, tp, false, false, pos, szone)
+    else
+        local sg
+        local z = bit.bnot(VgF.GetAvailableLocation(tp))
+        z = bit.bor(z, 0xffffff00)
+        if VgF.GetValueType(g) == "Card" then sg = Group.FromCards(g) else sg = Group.Clone(g) end
+        for sc in VgF.Next(sg) do
+            if sc:IsLocation(LOCATION_RIDE) then
+                local rc = Duel.GetMatchingGroup(VgF.Filter.IsV, tp, LOCATION_CIRCLE, 0, nil):GetFirst()
+                local mg = rc:GetOverlayGroup()
+                if mg:GetCount() ~= 0 then
+                    VgF.Sendto(LOCATION_SOUL, mg, sc)
+                end
+                sc:SetMaterial(Group.FromCards(rc))
+                VgF.Sendto(LOCATION_SOUL, Group.FromCards(rc), sc)
+                Duel.SpecialSummonStep(sc, sumtype, tp, tp, false, false, pos, 0x20)
+            else
+                Duel.Hint(HINT_SELECTMSG, tp, HINTMSG_CallZONE)
+                local szone = Duel.SelectField(tp, 1, LOCATION_CIRCLE, 0, z)
+                if VgF.IsExistingMatchingCard(VgD.CallFilter, tp, LOCATION_CIRCLE, 0, 1, nil, tp, szone) then
+                    local tc = Duel.GetMatchingGroup(VgD.CallFilter, tp, LOCATION_CIRCLE, 0, nil, tp, szone):GetFirst()
+                    VgF.Sendto(LOCATION_DROP, tc, REASON_COST)
+                end
+                Duel.SpecialSummonStep(sc, sumtype, tp, tp, false, false, pos, szone)
+                z = bit.bor(z, szone)
+            end
+        end
+        return Duel.SpecialSummonComplete()
+    end
+end
+
 -- 白翼能力在你的封锁区中的卡只有奇数的等级的场合有效
 function VgF.WhiteWings(e)
     local tp = e:GetHandlerPlayer()
@@ -1469,48 +1494,36 @@ function VgF.AddRideMaterialCode(c, m, ...)
         table.insert(cm.ride_code, v)
     end
 end
-function VgF.AddAlchemagicFrom(c, m, ...)
+
+---魔合成所用的cost记录
+---@param m number 所记录的卡的卡号
+---@param from table|string|number 费用的卡属于哪个区域
+---@param to table|string|number 费用的卡送去哪个区域
+---@param min table|number|nil 费用的卡的最少数量
+---@param max table|number|nil 费用的卡的最多数量
+---@param filter table<function<boolean>>|function<boolean>|nil 费用的卡的过滤函数
+function VgF.AddAlchemagic(m, from, to, min, max, filter)
     local cm = _G["c"..m]
-    if VgF.GetValueType(cm.cos_from) ~= "table" then cm.cos_from = {} end
-    for i, v in ipairs({...}) do
-        table.insert(cm.cos_from, v)
+    if #from ~= #to then return end
+    if #from == 0 or #to == 0  then return end
+    cm.order_cost = cm.order_cost or {['from'] = {}, ['to'] = {}, ['min'] = {}, ['max'] = {}, ['filter'] = {}}
+    from = type(from) == "table" and from or { from }
+    to = type(to) == "table" and to or { to }
+    min = type(min) == "table" and min or { min }
+    max = type(max) == "table" and max or { max }
+    filter = type(filter) == "table" and filter or { filter }
+    for i, v in ipairs(type(from) == "table" and from or { from }) do
+        table.insert(cm.order_cost['from'], v)
+        table.insert(cm.order_cost['to'], to[i])
+        table.insert(cm.order_cost['min'], min[i] or 1)
+        table.insert(cm.order_cost['max'], (max[i] and max[i] >= min[i]) and max[i] or min[i])
+        table.insert(cm.order_cost['filter'], filter[i])
     end
 end
-function VgF.AddAlchemagicTo(c, m, ...)
-    local cm = _G["c"..m]
-    if VgF.GetValueType(cm.cos_to) ~= "table" then cm.cos_to = {} end
-    for i, v in ipairs({...}) do
-        table.insert(cm.cos_to, v)
-    end
-end
-function VgF.AddAlchemagicCountMin(c, m, ...)
-    local cm = _G["c"..m]
-    if VgF.GetValueType(cm.cos_val) ~= "table" then cm.cos_val = {} end
-    for i, v in ipairs({...}) do
-        table.insert(cm.cos_val, v)
-    end
-end
-function VgF.AddAlchemagicCountMax(c, m, ...)
-    local cm = _G["c"..m]
-    if VgF.GetValueType(cm.cos_val_max) ~= "table" then cm.cos_val_max = {} end
-    for i, v in ipairs({...}) do
-        table.insert(cm.cos_val_max, v)
-    end
-end
-function VgF.AddAlchemagicFilter(c, m, ...)
-    local cm = _G["c"..m]
-    if VgF.GetValueType(cm.cos_filter) ~= "table" then cm.cos_filter = {} end
-    for i, v in ipairs({...}) do
-        table.insert(cm.cos_filter, v)
-    end
-end
+
 function VgF.AddEffectWhenTrigger(c, m, op, cost, con, tg, chk)
     local cm = _G["c"..m]
     cm.effect_when_trigger = {op, cost, con, tg, chk}
-end
-
-function VgF.PlayerEffect(e, tp, eg, ep, ev, re, r, rp)
-    return true
 end
 
 ---创建一个函数检查器 检查func是否为nil或函数
@@ -1531,42 +1544,13 @@ end
 function VgF.GetLocCondition(loc, con)
     local con_exf = VgF.True
     if loc == LOCATION_R_CIRCLE then
-        loc, con_exf = LOCATION_CIRCLE, VgF.RMonsterCondition
-    elseif loc == LOCATION_V_CIRCLE then 
-        loc, con_exf = LOCATION_CIRCLE, VgF.VMonsterCondition
+        loc, con_exf = LOCATION_CIRCLE, VgF.Condition.IsR
+    elseif loc == LOCATION_V_CIRCLE then
+        loc, con_exf = LOCATION_CIRCLE, VgF.Condition.IsV
     end
     loc = loc or LOCATION_CIRCLE
     local condition = function(e, tp, eg, ep, ev, re, r, rp)
         return (not con or con(e, tp, eg, ep, ev, re, r, rp)) and con_exf(e)
     end
     return loc, condition
-end
-
-VgF.EffectDamageE = nil
-
----效果伤害的operation函数
----@param val number 伤害的数值
----@param p number 受伤的玩家
-function VgF.EffectDamage(val, p)
-    return function (e, tp, eg, ep, ev, re, r, rp)
-        local c = e:GetHandler()
-        c:RegisterFlagEffect(FLAG_DAMAGE_TRIGGER, RESET_EVENT + RESETS_STANDARD, 0, 1, val - 1)
-        Duel.RegisterFlagEffect(p, FLAG_EFFECT_DAMAGE, 0, 0, 1)
-        VgD.Trigger(e, p, eg, ep, ev, re, r, rp)
-        local e1 = Effect.CreateEffect(c)
-        e1:SetType(EFFECT_TYPE_FIELD + EFFECT_TYPE_TRIGGER_F)
-        e1:SetCode(EVENT_CUSTOM + EVENT_TRIGGER)
-        e1:SetRange(LOCATION_ALL)
-        e1:SetProperty(EFFECT_FLAG_CANNOT_DISABLE)
-        e1:SetCondition(function (te, ttp, teg, tep, tev, tre, tr, trp)
-            return Duel.GetFlagEffect(p, FLAG_EFFECT_DAMAGE) > 0
-        end)
-        e1:SetOperation(VgD.Trigger)
-        c:RegisterEffect(e1)
-        if VgF.GetValueType(VgF.EffectDamageE) == "Effect" then
-            VgF.EffectDamageE:Reset()
-            VgF.EffectDamageE = nil
-        end
-        VgF.EffectDamageE = e1
-    end
 end

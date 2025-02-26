@@ -15,5 +15,5 @@ function cm.op(e,tp,eg,ep,ev,re,r,rp)
 end
 function cm.con(e,tp,eg,ep,ev,re,r,rp)
     local c=e:GetHandler()
-    return eg:IsContains(c) and vgf.WhiteWings(e) and vgf.RMonsterCondition(e)
+    return eg:IsContains(c) and vgf.WhiteWings(e) and vgf.con.IsR(e)
 end

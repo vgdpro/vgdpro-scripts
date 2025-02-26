@@ -10,7 +10,7 @@ function cm.con(e)
     local c=e:GetHandler()
 	local tp=e:GetHandlerPlayer()
     local a=vgf.IsExistingMatchingCard(cm.filter,tp,LOCATION_CIRCLE,0,1)
-	return vgf.RMonsterCondition(e) and a and Duel.GetTurnPlayer()==tp
+	return vgf.con.IsR(e) and a and Duel.GetTurnPlayer()==tp
 end
 
 function cm.filter(c)

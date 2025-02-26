@@ -15,7 +15,7 @@ function cm.checkcon(e,tp,eg,ep,ev,re,r,rp)
     return Duel.GetAttackTarget() and Duel.GetAttacker() and eg:IsExists(cm.checkfilter,1,nil,Duel.GetAttacker():GetControler())
 end
 function cm.filter(c)
-    return vgf.RMonsterFilter(c) and c:IsDefensePos()
+    return vgf.filter.IsR(c) and c:IsDefensePos()
 end
 function cm.operation(e,tp,eg,ep,ev,re,r,rp)
     local c=e:GetHandler()
@@ -27,16 +27,16 @@ function cm.operation(e,tp,eg,ep,ev,re,r,rp)
 end
 function cm.condition(e,tp,eg,ep,ev,re,r,rp)
     local c=e:GetHandler()
-    return vgf.VMonsterCondition(e) and Duel.GetFlagEffect(tp,m)>0
+    return vgf.con.IsV(e) and Duel.GetFlagEffect(tp,m)>0
 end
 function cm.target(e,c)
     return c:IsLevel(3) and Duel.GetTurnPlayer()==e:GetHandlerPlayer()
 end
 function cm.con(e)
     local tp=e:GetHandlerPlayer()
-    return vgf.VMonsterCondition(e) and Duel.GetTurnPlayer()==tp
+    return vgf.con.IsV(e) and Duel.GetTurnPlayer()==tp
 end
 function cm.checkop(e,tp,eg,ep,ev,re,r,rp)
     local e1=Duel.RegisterFlagEffect(Duel.GetAttacker():GetControler(),m,RESET_PHASE+PHASE_END,0,1)
-    vgf.EffectReset(e:GetHandler(),e1,EVENT_BATTLED)
+    vgf.effect.Reset(e:GetHandler(),e1,EVENT_BATTLED)
 end

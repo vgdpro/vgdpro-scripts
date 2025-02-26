@@ -8,10 +8,10 @@ end
 
 function cm.op(e,tp,eg,ep,ev,re,r,rp)
     local c=e:GetHandler()
-    if vgf.IsExistingMatchingCard(vgf.RMonsterFilter,tp,LOCATION_CIRCLE,0,3,nil) then
+    if vgf.IsExistingMatchingCard(vgf.filter.IsR,tp,LOCATION_CIRCLE,0,3,nil) then
         local ac=Duel.GetAttackTarget()
         local e1=vgf.AtkUp(c,ac,15000,nil)
-        vgf.EffectReset(c,e1,EVENT_BATTLED)
+        vgf.effect.Reset(c,e1,EVENT_BATTLED)
     end
 end
 

@@ -20,9 +20,9 @@ function cm.operation1(e,tp,eg,ep,ev,re,r,rp)
 	vgf.op.SoulCharge(1)(e,tp,eg,ep,ev,re,r,rp,chk)
 	if c:IsRelateToEffect(e) and c:IsFaceup() then
 		local e1=vgf.AtkUp(c,c,5000)
-		vgf.EffectReset(c,e1,EVENT_BATTLED)
+		vgf.effect.Reset(c,e1,EVENT_BATTLED)
 	end
 end
 function cm.condition (e,tp,eg,ep,ev,re,r,rp)
-	return vgf.GetMatchingGroupCount(vgf.RMonsterFilter,tp,0,LOCATION_CIRCLE,nil)<=2
+	return vgf.GetMatchingGroupCount(vgf.filter.IsR,tp,0,LOCATION_CIRCLE,nil)<=2
 end

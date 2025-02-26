@@ -11,7 +11,7 @@ function cm.operation(e,tp,eg,ep,ev,re,r,rp)
     end
 end
 function cm.con(e,tp,eg,ep,ev,re,r,rp)
-	return vgf.RSummonCondition(e) and vgf.GetVMonster(tp):IsCode(10401008)
+	return vgf.con.RideOnRCircle(e) and vgf.GetVMonster(tp):IsCode(10401008)
 end
 function cm.op(e,tp,eg,ep,ev,re,r,rp)
 	local g=Duel.GetDecktopGroup(tp,2)

@@ -9,14 +9,14 @@ vgd.AbilityAct(c,m,LOCATION_CIRCLE,cm.operation,vgf.cost.CounterBlast(2),cm.cond
 end
 function cm.condition(e,tp,eg,ep,ev,re,r,rp)
 	local c=e:GetHandler()
-	return vgf.RMonsterCondition(e) and vgf.GetVMonster(tp):IsCode(10401003)
+	return vgf.con.IsR(e) and vgf.GetVMonster(tp):IsCode(10401003)
 end
 function cm.condition1(e,tp,eg,ep,ev,re,r,rp)
 	local c=e:GetHandler()
-	return vgf.RMonsterCondition(e) and vgf.GetVMonster(tp):GetOverlayCount()>=10
+	return vgf.con.IsR(e) and vgf.GetVMonster(tp):GetOverlayCount()>=10
 end
 function cm.operation(e,tp,eg,ep,ev,re,r,rp)
 	local c=e:GetHandler()
-	local g=vgf.GetMatchingGroup(vgf.FrontFilter,tp,LOCATION_CIRCLE,0,nil)
+	local g=vgf.GetMatchingGroup(vgf.filter.Front,tp,LOCATION_CIRCLE,0,nil)
     vgf.AtkUp(c,g,5000,nil)
 end

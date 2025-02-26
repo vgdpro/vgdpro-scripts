@@ -5,7 +5,7 @@ function cm.initial_effect(c)
 end
 function cm.con(e,tp,eg,ep,ev,re,r,rp)
     local c=e:GetHandler()
-    return vgf.RMonsterFilter(c) and eg:IsContains(c) and vgf.GetVMonster(tp):GetOverlayCount()>=5
+    return vgf.filter.IsR(c) and eg:IsContains(c) and vgf.GetVMonster(tp):GetOverlayCount()>=5
 end
 --对手要从手牌将卡CALL到G上之际，不将2张以上同时CALL的话则不能CALL出场。
 function cm.op(e,tp,eg,ep,ev,re,r,rp)
@@ -21,7 +21,7 @@ function cm.op(e,tp,eg,ep,ev,re,r,rp)
     e1:SetOperation(cm.costop)
 	e1:SetReset(RESET_EVENT+RESETS_STANDARD)
     c:RegisterEffect(e1)
-	vgf.EffectReset(c,e1,EVENT_BATTLED)
+	vgf.effect.Reset(c,e1,EVENT_BATTLED)
 end
 function cm.costtg(e,re,tp)
     e:SetLabelObject(re:GetHandler())

@@ -22,5 +22,5 @@ function cm.filter(c)
 end
 
 function cm.filter1(c)
-    return c:IsSetCard(0xa013) and vgf.RMonsterFilter(c)
+    return c:IsSetCard(0xa013) and vgf.filter.IsR(c)
 end

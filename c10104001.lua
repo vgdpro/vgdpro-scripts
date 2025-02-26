@@ -9,7 +9,7 @@ function cm.operation(e,tp,eg,ep,ev,re,r,rp)
 	local c=e:GetHandler()
 	local ct=1
 	if c:IsSummonType(SUMMON_TYPE_SELFRIDE) then ct=3 end
-    local g=vgf.SelectMatchingCard(HINTMSG_ATKUP,e,tp,vgf.RMonsterFilter,tp,LOCATION_CIRCLE,0,1,ct,nil)
+    local g=vgf.SelectMatchingCard(HINTMSG_ATKUP,e,tp,vgf.filter.IsR,tp,LOCATION_CIRCLE,0,1,ct,nil)
     if g then
 		Duel.Hintselectgion(g)
 		for tc in vgf.Next(g) do
@@ -19,5 +19,5 @@ function cm.operation(e,tp,eg,ep,ev,re,r,rp)
 	end
 end
 function cm.condition(e,tp,eg,ep,ev,re,r,rp)
-	return vgf.VMonsterCondition(e) and Duel.GetAttacker()==e:GetHandler()
+	return vgf.con.IsV(e) and Duel.GetAttacker()==e:GetHandler()
 end

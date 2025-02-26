@@ -9,7 +9,7 @@ function cm.operation(e,tp,eg,ep,ev,re,r,rp)
 	local c=e:GetHandler()
 	if c:IsRelateToEffect(e) and c:IsFaceup() then
 		local e2=vgf.AtkUp(c,c,10000)
-		vgf.EffectReset(c,e2,EVENT_BATTLED)
+		vgf.effect.Reset(c,e2,EVENT_BATTLED)
 		local e1=Effect.CreateEffect(c)
 		e1:SetType(EFFECT_TYPE_FIELD+EFFECT_TYPE_SET)
 		e1:SetCode(EVENT_BATTLED)
@@ -21,7 +21,7 @@ function cm.operation(e,tp,eg,ep,ev,re,r,rp)
 	end
 end
 function cm.condition(e,tp,eg,ep,ev,re,r,rp)
-	return vgf.RMonsterFilter(e:GetHandler()) and vgf.GetVMonster(tp):IsSetCard(0xe8)
+	return vgf.filter.IsR(e:GetHandler()) and vgf.GetVMonster(tp):IsSetCard(0xe8)
 end
 function cm.operation2(e,tp,eg,ep,ev,re,r,rp)
 	vgf.Sendto(LOCATION_SOUL,e:GetHandler(),vgf.GetVMonster(tp))

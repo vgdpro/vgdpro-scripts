@@ -225,17 +225,17 @@ function cm.operation(e,tp,eg,ep,ev,re,r,rp)
 		local e1=vgf.AtkUp(c,c,5000,nil)
 		vgf.EffectReset(c,e1,EVENT_BATTLED)
 	end
-	if vgf.GetMatchingGroup(vgf.VMonsterFilter,tp,LOCATION_CIRCLE,0,nil,nil):GetFirst():GetOverlayCount()>=2 and Duel.SelectEffectYesNo(tp,vgf.stringid(VgID,10)) then
-		local cg=vgf.GetMatchingGroup(vgf.VMonsterFilter,tp,LOCATION_CIRCLE,0,nil):GetFirst():GetOverlayGroup():Select(tp,2,2,nil)
+	if vgf.GetMatchingGroup(vgf.filter.IsV,tp,LOCATION_CIRCLE,0,nil,nil):GetFirst():GetOverlayCount()>=2 and Duel.SelectEffectYesNo(tp,vgf.stringid(VgID,10)) then
+		local cg=vgf.GetMatchingGroup(vgf.filter.IsV,tp,LOCATION_CIRCLE,0,nil):GetFirst():GetOverlayGroup():Select(tp,2,2,nil)
         if vgf.Sendto(LOCATION_DROP,cg,REASON_COST)==2 then
-			local g=vgf.SelectMatchingCard(HINTMSG_LEAVEFIELD,e,tp,vgf.RMonsterFilter,tp,0,LOCATION_CIRCLE,1,1,nil)
+			local g=vgf.SelectMatchingCard(HINTMSG_LEAVEFIELD,e,tp,vgf.filter.IsR,tp,0,LOCATION_CIRCLE,1,1,nil)
 			vgf.Sendto(LOCATION_DROP,g,REASON_EFFECT)
 		end
 	end
 end
 function cm.condition(e,tp,eg,ep,ev,re,r,rp)
 	local c=e:GetHandler()
-	return vgf.RMonsterCondition(e) and c:GetFlagEffectLabel(FLAG_CONDITION)==201 and vgf.VMonsterFilter(Duel.GetAttackTarget())
+	return vgf.con.IsR(e) and c:GetFlagEffectLabel(FLAG_CONDITION)==201 and vgf.filter.IsV(Duel.GetAttackTarget())
 end
 ```
 
@@ -294,7 +294,7 @@ vgd.AbilityContChangeAttack(c,m, loc, typ, val[, con, tg, loc_self, loc_op, rese
 local cm,m,o=GetID()
 function cm.initial_effect(c)
 	vgf.VgCard(c)
-	vgd.AbilityContChangeAttack(c,m,LOCATION_CIRCLE,EFFECT_TYPE_SINGLE,5000,function(e) return vgf.RMonsterCondition(e) and cm.con(e) end)
+	vgd.AbilityContChangeAttack(c,m,LOCATION_CIRCLE,EFFECT_TYPE_SINGLE,5000,function(e) return vgf.con.IsR(e) and cm.con(e) end)
 	vgd.AbilityContChangeDefense(c,m,EFFECT_TYPE_SINGLE,5000,cm.con)
 end
 function cm.con(e)
@@ -358,7 +358,7 @@ function cm.initial_effect(c)
     c:RegisterEffect(e2)
 end
 function cm.condition(e,tp,eg,ep,ev,re,r,rp)
-    return vgf.VMonsterCondition(e) and vgf.IsExistingMatchingCard(Card.IsLevel,tp,LOCATION_CIRCLE,0,3,nil,3)
+    return vgf.con.IsV(e) and vgf.IsExistingMatchingCard(Card.IsLevel,tp,LOCATION_CIRCLE,0,3,nil,3)
 end
 ```
 

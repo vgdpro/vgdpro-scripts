@@ -13,5 +13,5 @@ function cm.op(e,tp,eg,ep,ev,re,r,rp)
     local c=e:GetHandler()
     local g=vgf.SelectMatchingCard(HINTMSG_ATKUP,tp,nil,tp,LOCATION_CIRCLE,0,1,1,nil)
     local e1=vgf.AtkUp(c,g,15000,EVENT_BATTLED)
-    vgf.EffectReset(c,e1,EVENT_BATTLED)
+    vgf.effect.Reset(c,e1,EVENT_BATTLED)
 end

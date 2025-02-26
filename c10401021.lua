@@ -8,5 +8,5 @@ function cm.op(e,tp,eg,ep,ev,re,r,rp)
 end
 function cm.con(e,tp,eg,ep,ev,re,r,rp)
 	local c=e:GetHandler()
-	return c:GetFlagEffect(FLAG_SUPPORT)>0 and vgf.RMonsterCondition(e)
+	return c:GetFlagEffect(FLAG_SUPPORT)>0 and vgf.con.IsR(e)
 end

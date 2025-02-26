@@ -14,5 +14,5 @@ function cm.op(e,tp,eg,ep,ev,re,r,rp)
 end
 
 function cm.filter(c)
-    return c:IsPosition(POS_FACEUP_ATTACK) and vgf.BackFilter(c)
+    return c:IsPosition(POS_FACEUP_ATTACK) and vgf.filter.Back(c)
 end

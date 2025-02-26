@@ -9,7 +9,7 @@ end
 function cm.con(e,tp,eg,ep,ev,re,r,rp)
     local c = e:GetHandler()
     local ph = Duel.GetCurrentPhase()
-    return vgf.RSummonCondition(e) and (ph>=PHASE_BATTLE_START and ph<=PHASE_BATTLE) and Duel.GetTurnPlayer() == tp
+    return vgf.con.RideOnRCircle(e) and (ph>=PHASE_BATTLE_START and ph<=PHASE_BATTLE) and Duel.GetTurnPlayer() == tp
 end
 
 function cm.op(e,tp,eg,ep,ev,re,r,rp)

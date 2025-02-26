@@ -16,7 +16,7 @@ end
 
 function cm.con(e)
     local tp=e:GetHandlerPlayer()
-    return vgf.RMonsterCondition(e) and Duel.GetFlagEffect(tp,m)>0
+    return vgf.con.IsR(e) and Duel.GetFlagEffect(tp,m)>0
 end
 
 function cm.checkcon(e,tp,eg,ep,ev,re,r,rp)

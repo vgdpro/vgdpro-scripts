@@ -20,12 +20,12 @@ function cm.op(e,tp,eg,ep,ev,re,r,rp)
 	vgf.op.SoulCharge(1)(e,tp,eg,ep,ev,re,r,rp)
 end
 function cm.filter(c)
-	return c:IsCode(10101009) and vgf.RMonsterFilter(c)
+	return c:IsCode(10101009) and vgf.filter.IsR(c)
 end
 function cm.con(e,tp,eg,ep,ev,re,r,rp)
 	return Duel.GetAttacker():IsCode(10101009) and vgf.GetVMonster(tp):IsCode(10101001)
 end
 function cm.con2(e,tp,eg,ep,ev,re,r,rp)
 	local c=e:GetHandler()
-	return c:GetFlagEffectLabel(FLAG_CONDITION)==201 and (vgf.RMonsterCondition(e) or not c:IsLocation(LOCATION_CIRCLE))
+	return c:GetFlagEffectLabel(FLAG_CONDITION)==201 and (vgf.con.IsR(e) or not c:IsLocation(LOCATION_CIRCLE))
 end

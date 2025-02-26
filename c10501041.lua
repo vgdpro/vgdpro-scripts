@@ -6,7 +6,7 @@ function cm.initial_effect(c)
 	vgd.CannotBeAttackTarget(c, m, LOCATION_V_CIRCLE, EFFECT_TYPE_SINGLE, cm.val, vgf.BlackWings)
 end
 function cm.val(e,c)
-	return vgf.RMonsterFilter(c)
+	return vgf.filter.IsR(c)
 end
 function cm.op(e,tp,eg,ep,ev,re,r,rp)
 	local c=e:GetHandler()
