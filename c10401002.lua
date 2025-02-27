@@ -10,8 +10,7 @@ function cm.cost(e,tp,eg,ep,ev,re,r,rp,chk)
 	Duel.ChangePosition(g,POS_FACEUP_DEFENCE)
 end
 function cm.filter(c)
-	return c:IsCanChangePosition() and c:IsPosition(POS_FACEUP_ATTACK) and vgf.filter.IsR(c)
-end
+	return c:IsCanChangePosition() and c:IsPosition(POS_FACEUP_ATTACK) and c:IsRearguard()end
 function cm.op(e,tp,eg,ep,ev,re,r,rp)
 	local c=e:GetHandler()
 	local g=vgf.SelectMatchingCard(HINTMSG_LEAVEFIELD,e,tp,vgf.filter.IsV,tp,0,LOCATION_CIRCLE,1,1,nil)

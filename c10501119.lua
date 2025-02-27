@@ -13,4 +13,3 @@ function cm.op(e,tp,eg,ep,ev,re,r,rp)
         vgf.effect.Reset(c,e1,EVENT_BATTLED)
     end
 end
-

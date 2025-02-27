@@ -25,5 +25,3 @@ function cm.op(e,tp,eg,ep,re,r,rp)
 		vgf.Sendto(LOCATION_SOUL,g,tc)
 	end
 end
-
-

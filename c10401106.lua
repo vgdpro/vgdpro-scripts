@@ -4,13 +4,11 @@ function cm.initial_effect(c)
 	VgF.AddAlchemagic(m,"LOCATION_SOUL","LOCATION_DROP",1,1,function (tc) return tc:IsLevel(3) end)
 end
 function cm.filter(c,p)
-	return c:IsControler(p) and vgf.filter.IsR(c)
-end
+	return c:IsControler(p) and c:IsRearguard()end
 function cm.op(e,tp,eg,ep,ev,re,r,rp)
 	local g=vgf.SelectMatchingCard(HINTMSG_OPPO,e,tp,vgf.filter.IsR,tp,0,LOCATION_CIRCLE,1,1,nil)
 	if g:GetCount()==0 then return end
-	local sg=Card.GetColumnGroup(g:GetFirst()):Filter(cm.filter,nil,1-tp)
-	if sg:GetCount()>0 then g:Sub(sg) end
+	local g:GetFirst()):Filter(cm.filter,nil,1-tp:GetColumnGroup()	if sg:GetCount()>0 then g:Sub(sg) end
 	vgf.Sendto(LOCATION_DECK,g,nil,0,REASON_EFFECT)
 	local og=Duel.GetOperatedGroup()
 	if #og>1 then

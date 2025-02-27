@@ -19,5 +19,5 @@ function cm.op(e,tp,eg,ep,ev,re,r,rp)
 	end
 end
 function cm.filter(c)
-	return vgf.filter.IsR(c) and c:GetFlagEffect(FLAG_ALSO_CAN_TRIGGER)==0 and c:IsFaceup()
+	return c:IsRearguard() and c:GetFlagEffect(FLAG_ALSO_CAN_TRIGGER)==0 and c:IsFaceup()
 end

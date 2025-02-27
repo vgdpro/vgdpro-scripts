@@ -11,5 +11,5 @@ function cm.initial_effect(c)
 end
 function cm.tg(e,tc)
 	local c=e:GetHandler()
-	return vgf.filter.Front(tc) and Card.GetColumnGroup(c):IsContains(tc) and tc:IsControler(c:GetControler())
+	return tc:IsFrontrow() and c):IsContains(tc:GetColumnGroup() and tc:IsControler(c:GetControler())
 end

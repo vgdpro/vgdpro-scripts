@@ -22,6 +22,4 @@ function cm.operation1(e,tp,eg,ep,ev,re,r,rp)
 end
 
 function cm.filter1(c)
-    return c:IsSetCard(0xb6) and vgf.filter.IsR(c)
-end
-
+    return c:IsSetCard(0xb6) and c:IsRearguard()end

@@ -15,4 +15,3 @@ end
 function cm.con(e,tp,eg,ep,ev,re,r,rp)
     return Duel.GetTurnPlayer()==tp
 end
-

@@ -4,7 +4,7 @@ function cm.initial_effect(c)
 end
 function cm.condition(e,tp,eg,ep,ev,re,r,rp)
 	local c=e:GetHandler()
-	return vgf.filter.IsR(c) and Card.IsSequence(Duel.GetAttackTarget(),5)
+	return c:IsRearguard() and Card.IsSequence(Duel.GetAttackTarget(),5)
 end
 function cm.operation(e,tp,eg,ep,ev,re,r,rp)
 	local c=e:GetHandler()

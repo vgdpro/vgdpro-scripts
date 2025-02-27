@@ -9,8 +9,7 @@ function cm.operation(e,tp,eg,ep,ev,re,r,rp)
     vgf.AtkUp(c,g,10000,nil)
 end
 function cm.filter(c)
-    return c:IsLevel(3) and vgf.filter.IsR(c)
-end
+    return c:IsLevel(3) and c:IsRearguard()end
 function cm.cost(e,tp,eg,ep,ev,re,r,rp,chk)
     local c=e:GetHandler()
     if chk==0 then return c:IsRelateToEffect(e) end

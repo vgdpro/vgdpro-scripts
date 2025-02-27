@@ -27,5 +27,4 @@ function cm.operation2(e,tp,eg,ep,ev,re,r,rp)
 end
 function cm.condition(e,tp,eg,ep,ev,re,r,rp)
 	local c=e:GetHandler()
-	return Card.IsSequence(c,1,2,3) and vgf.filter.IsV(Duel.GetAttackTarget())
-end
+	return Card.IsSequence(c,1,2,3) and Duel.GetAttackTarget():IsVanguard()end

@@ -10,4 +10,3 @@ function cm.con1(e)
 	local tp=e:GetHandlerPlayer()
 	return vgf.con.IsR(e) and vgf.IsExistingMatchingCard(nil,tp,LOCATION_ORDER,0,2,nil) and Duel.GetTurnPlayer()==tp
 end
-

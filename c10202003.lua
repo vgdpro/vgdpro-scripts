@@ -30,7 +30,7 @@ function cm.operation2(e,tp,eg,ep,ev,re,r,rp)
 	end
 end
 function cm.condition2(e,tp,eg,ep,ev,re,r,rp)
-	return vgf.filter.IsR(e:GetHandler()) and Duel.GetAttacker()==e:GetHandler()
+	return e:GetHandler():IsRearguard() and Duel.GetAttacker()==e:GetHandler()
 end
 function cm.condition3(e,tp,eg,ep,ev,re,r,rp)
 	return eg:GetFirst()==e:GetHandler()

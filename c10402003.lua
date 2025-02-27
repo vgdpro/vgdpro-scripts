@@ -4,8 +4,7 @@ function cm.initial_effect(c)
 	vgd.action.AbilityAct(c,m,LOCATION_SOUL,cm.op,cm.cost)
 end
 function cm.con(e,tp,eg,ep,ev,re,r,rp)
-	return vgf.filter.IsV(Duel.GetAttackTarget())
-end
+	return Duel.GetAttackTarget():IsVanguard()end
 function cm.cost(e,tp,eg,ep,ev,re,r,rp,chk)
 	if chk==0 then return vgf.cost.CounterBlast(1)(e,tp,eg,ep,ev,re,r,rp,chk) and vgf.cost.Retire(e:GetHandler())(e,tp,eg,ep,ev,re,r,rp,chk) end
 	vgf.cost.CounterBlast(1)(e,tp,eg,ep,ev,re,r,rp,chk)

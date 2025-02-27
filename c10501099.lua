@@ -10,4 +10,3 @@ end
 function cm.condition(e,tp,eg,ep,ev,re,r,rp)
     return tp==1 and Duel.GetTurnPlayer()==tp
 end
-

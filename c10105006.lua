@@ -4,7 +4,7 @@ function cm.initial_effect(c)
 end
 function cm.condition(e,tp,eg,ep,ev,re,r,rp)
 	local c=e:GetHandler()
-	return vgf.filter.IsR(c) and vgf.CheckPrison(tp)
+	return c:IsRearguard() and vgf.CheckPrison(tp)
 end 
 function cm.operation(e,tp,eg,ep,ev,re,r,rp)
 	local c=e:GetHandler()

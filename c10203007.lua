@@ -4,10 +4,10 @@ function cm.initial_effect(c)
 end
 function cm.condition(e,tp,eg,ep,ev,re,r,rp)
 	local c=e:GetHandler()
-	return vgf.filter.IsR(c) and eg:IsExists(cm.filter,1,nil,tp)
+	return c:IsRearguard() and eg:IsExists(cm.filter,1,nil,tp)
 end
 function cm.filter(c,tp)
-	return c:IsSummonType(SUMMON_VALUE_REVOLT) and vgf.filter.IsV(c) and c:IsControler(tp)
+	return c:IsSummonType(SUMMON_VALUE_REVOLT) and c:IsVanguard() and c:IsControler(tp)
 end
 function cm.operation(e,tp,eg,ep,ev,re,r,rp)
 	local c=e:GetHandler()

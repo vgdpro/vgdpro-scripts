@@ -28,7 +28,7 @@ function cm.filter(c,e,tp)
 	return c:IsSetCard(0x76) and vgf.IsCanBeCalled(c,e,tp)
 end
 function cm.checkfilter(c)
-	return vgf.filter.RideOnVCircle(c) and c:IsLevelAbove(3)
+	return c:IsRideOnVCircle() and c:IsLevelAbove(3)
 end
 function cm.checkcon(e,tp,eg,ep,ev,re,r,rp)
 	return eg:IsExists(cm.checkfilter,1,nil)

@@ -5,8 +5,7 @@ function cm.initial_effect(c)
 	vgd.action.AbilityAuto(c,m,LOCATION_CIRCLE,EFFECT_TYPE_SINGLE,EVENT_SPSUMMON_SUCCESS,cm.operation,vgf.cost.SoulBlast(1),cm.condition)
 end
 function cm.condition(e,tp,eg,ep,ev,re,r,rp)
-	return vgf.GetVMonster(tp):IsSetCard(0xe8) and vgf.filter.IsR(e:GetHandler())
-end
+	return vgf.GetVMonster(tp):IsSetCard(0xe8) and e:GetHandler():IsRearguard()end
 function cm.operation(e,tp,eg,ep,ev,re,r,rp)
 	local c=e:GetHandler()
 	local g=vgf.SelectMatchingCard(HINTMSG_XMATERIAL,e,tp,nil,tp,LOCATION_DROP,0,1,1,nil)

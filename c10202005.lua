@@ -20,7 +20,7 @@ function cm.operation(e,tp,eg,ep,ev,re,r,rp)
 	end
 end
 function cm.condition(e,tp,eg,ep,ev,re,r,rp)
-	return vgf.filter.IsR(e:GetHandler()) and vgf.GetVMonster(tp):IsSetCard(0xe8)
+	return e:GetHandler():IsRearguard() and vgf.GetVMonster(tp):IsSetCard(0xe8)
 end
 function cm.operation2(e,tp,eg,ep,ev,re,r,rp)
 	vgf.Sendto(LOCATION_SOUL,e:GetHandler(),vgf.GetVMonster(tp))

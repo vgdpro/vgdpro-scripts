@@ -35,5 +35,3 @@ end
 function cm.filter(c)
 	return c:IsSetCard(0xb6) and c:IsLevelBelow(2)
 end
-
-

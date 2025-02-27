@@ -8,7 +8,7 @@ function cm.op(e,tp,eg,ep,ev,re,r,rp)
 	local g=vgf.SelectMatchingCard(HINTMSG_MONSTER,e,tp,Card.IsFaceup,tp,LOCATION_CIRCLE,0,1,1,nil)
 	if g:GetCount()>0 then
 		local tc=g:GetFirst()
-		if vgf.filter.IsR(tc) then
+		if tc:IsRearguard() then
 			local e1=Effect.CreateEffect(c)
 			e1:SetType(EFFECT_TYPE_SINGLE)
 			e1:SetProperty(EFFECT_FLAG_SINGLE_RANGE)
@@ -18,7 +18,7 @@ function cm.op(e,tp,eg,ep,ev,re,r,rp)
 			e1:SetValue(1)
 			tc:RegisterEffect(e1)
 			vgf.effect.Reset(c,e1,EVENT_BATTLED)
-		elseif vgf.filter.IsV(tc) then
+		elseif tc:IsVanguard() then
 			tc:RegisterFlagEffect(FLAG_SENTINEL,RESET_EVENT+RESETS_STANDARD,0,1)
 		end
 	end

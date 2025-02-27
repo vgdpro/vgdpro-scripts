@@ -26,5 +26,3 @@ end
 function cm.con(e,tp,eg,ep,ev,re,r,rp)
 	return eg:IsContains(e:GetHandler())
 end
-
-

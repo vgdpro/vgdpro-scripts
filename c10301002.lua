@@ -9,11 +9,10 @@ function cm.operation(e,tp,eg,ep,ev,re,r,rp)
 	vgf.Sendto(LOCATION_HAND,g,nil,REASON_EFFECT)
 end
 function cm.filter(c)
-	return vgf.filter.IsR(c)
-end
+	return c:IsRearguard()end
 function cm.con(e,tp,eg,ep,ev,re,r,rp)
 	return vgf.IsExistingMatchingCard(cm.cfilter,tp,LOCATION_CIRCLE,0,1,nil,e:GetHandler()) and Duel.GetAttacker()==e:GetHandler() and vgf.con.IsR(e)
 end
 function cm.cfilter(c,mc)
-	return Card.GetColumnGroup(c):IsContains(mc) and c:IsControler(mc:GetControler()) and c:GetFlagEffect(FLAG_SUPPORT)>0
+	return c):IsContains(mc:GetColumnGroup() and c:IsControler(mc:GetControler()) and c:GetFlagEffect(FLAG_SUPPORT)>0
 end

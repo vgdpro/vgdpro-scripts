@@ -4,7 +4,7 @@ function cm.initial_effect(c)
 end
 function cm.condition(e,tp,eg,ep,ev,re,r,rp)
 	local c=e:GetHandler()
-	return vgf.filter.IsR(c) and vgf.filter.IsV(Duel.GetAttackTarget()) and vgf.IsExistingMatchingCard(nil,tp,LOCATION_CIRCLE+LOCATION_DROP,0,4,nil)
+	return c:IsRearguard() and Duel.GetAttackTarget():IsVanguard() and vgf.IsExistingMatchingCard(nil,tp,LOCATION_CIRCLE+LOCATION_DROP,0,4,nil)
 end
 function cm.operation(e,tp,eg,ep,ev,re,r,rp)
     local g=Duel.GetDecktopGroup(tp,3)

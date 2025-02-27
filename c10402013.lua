@@ -23,5 +23,5 @@ function cm.checkcon(e,tp,eg,ep,ev,re,r,rp)
     return eg:IsExists(cm.checkfilter,1,nil,tp)
 end
 function cm.filter(c)
-	return vgf.filter.IsR(c) and c:IsLevelAbove(2)
+	return c:IsRearguard() and c:IsLevelAbove(2)
 end

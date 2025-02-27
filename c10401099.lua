@@ -17,5 +17,4 @@ function cm.op(e,tp,eg,ep,ev,re,r,rp)
 	vgf.Sendto(LOCATION_DECK,g,tp,SEQ_DECKSHUFFLE,REASON_EFFECT)
 end
 function cm.filter2(c)
-	return vgf.filter.Front(c) and vgf.filter.IsR(c)
-end
+	return c:IsFrontrow() and c:IsRearguard()end

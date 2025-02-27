@@ -7,8 +7,7 @@ function cm.initial_effect(c)
 end
 function cm.condition2(e,tp,eg,ep,ev,re,r,rp)
 	local c=Duel.GetAttacker()
-	return vgf.con.IsR(e) and vgf.GetMatchingGroupCount(vgf.filter.IsR,tp,0,LOCATION_CIRCLE,nil)<=2 and vgf.filter.IsV(c)
-end
+	return vgf.con.IsR(e) and vgf.GetMatchingGroupCount(vgf.filter.IsR,tp,0,LOCATION_CIRCLE,nil)<=2 and c:IsVanguard()end
 function cm.cost(e,tp,eg,ep,ev,re,r,rp,chk)
     local c=e:GetHandler()
     if chk==0 then return c:IsRelateToEffect(e) end

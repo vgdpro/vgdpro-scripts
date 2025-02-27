@@ -12,7 +12,7 @@ end
 function cm.con(e)
 	local c=e:GetHandler()
 	local tp=e:GetHandlerPlayer()
-	return vgf.filter.IsR(c) and vgf.IsExistingMatchingCard(cm.filter,tp,LOCATION_ORDER,0,1,nil)
+	return c:IsRearguard() and vgf.IsExistingMatchingCard(cm.filter,tp,LOCATION_ORDER,0,1,nil)
 end
 function cm.filter(c)
 	return c:GetFlagEffect(FLAG_IMPRISON)>0

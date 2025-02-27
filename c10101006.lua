@@ -18,5 +18,4 @@ function cm.operation(e,tp,eg,ep,ev,re,r,rp)
 end
 function cm.condition(e,tp,eg,ep,ev,re,r,rp)
 	local c=e:GetHandler()
-	return vgf.con.IsR(e) and c:GetFlagEffectLabel(FLAG_CONDITION)==201 and vgf.filter.IsV(Duel.GetAttackTarget())
-end
+	return vgf.con.IsR(e) and c:GetFlagEffectLabel(FLAG_CONDITION)==201 and Duel.GetAttackTarget():IsVanguard()end

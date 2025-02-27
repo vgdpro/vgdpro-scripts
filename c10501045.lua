@@ -27,4 +27,3 @@ end
 function cm.filter(c)
 	return c:IsType(TYPE_NORMAL+TYPE_UNIT)
 end
-

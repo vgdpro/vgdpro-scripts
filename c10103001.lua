@@ -14,7 +14,7 @@ function cm.checkcon(e,tp,eg,ep,ev,re,r,rp)
     return Duel.GetAttackTarget() and Duel.GetAttacker() and eg:IsExists(cm.checkfilter,1,nil,Duel.GetAttacker():GetControler())
 end
 function cm.filter(c)
-    return vgf.filter.IsR(c) and c:IsDefensePos()
+    return c:IsRearguard() and c:IsDefensePos()
 end
 function cm.operation(e,tp,eg,ep,ev,re,r,rp)
     local c=e:GetHandler()

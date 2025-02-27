@@ -19,5 +19,5 @@ function cm.operation(e,tp,eg,ep,ev,re,r,rp)
 	end
 end	
 function cm.filter(c)
-	return vgf.filter.IsR(c) and c:IsLevelAbove(2)
+	return c:IsRearguard() and c:IsLevelAbove(2)
 end

@@ -9,5 +9,4 @@ function cm.operation(e,tp,eg,ep,ev,re,r,rp)
 	vgd.action.AbilityCont(c, m, LOCATION_CIRCLE, EFFECT_TYPE_FIELD, EFFECT_UPDATE_ATTACK, 5000, nil, cm.tg, LOCATION_CIRCLE, 0, RESET_PHASE+PHASE_END, g:GetFirst()
 end
 function cm.tg(e,c)
-	return vgf.filter.IsR(c)
-end
+	return c:IsRearguard()end

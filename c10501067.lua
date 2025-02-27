@@ -17,5 +17,4 @@ function cm.con2(e)
 end
 
 function cm.filter(c)
-    return c:IsSetCard(0xa013) and vgf.filter.IsR(c)
-end
+    return c:IsSetCard(0xa013) and c:IsRearguard()end

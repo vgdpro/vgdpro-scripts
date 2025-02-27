@@ -13,8 +13,7 @@ function cm.operation(e,tp,eg,ep,ev,re,r,rp)
 	vgf.Sendto(LOCATION_HAND,g,nil,REASON_EFFECT)
 end
 function cm.filter(c)
-	return vgf.filter.IsR(c)
-end
+	return c:IsRearguard()end
 function cm.condition1(e,tp,eg,ep,ev,re,r,rp)
 	return Duel.GetFlagEffect(tp,m)>0 and vgf.con.IsV(e) and Duel.GetAttacker()==e:GetHandler()
 end

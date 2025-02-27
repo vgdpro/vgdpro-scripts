@@ -637,7 +637,7 @@ function VgD.Register.CallCondition(e, c)
     return VgF.Condition.Level(e)
 end
 function VgD.Register.CallFilter(c, tp, zone)
-    return VgF.Filter.IsR(c) and zone == VgF.SequenceToGlobal(tp, c:GetLocation(), c:GetSequence())
+    return c:IsRearguard() and zone == VgF.SequenceToGlobal(tp, c:GetLocation(), c:GetSequence())
 end
 function VgD.Register.CallOperation(e)
     local c = e:GetHandler()
@@ -785,7 +785,7 @@ function VgD.Register.MonsterBattle(c)
                         local flag_sentinel_label = Duel.GetAttackTarget():GetFlagEffectLabel(FLAG_SENTINEL)
                         if flag_sentinel_label and (flag_sentinel_label == 0 or (flag_sentinel_label == 10402017 and bc:IsLevelBelow(2))) then goto continue end
                         local def = tc:GetAttack()
-                        if not VgF.Filter.IsV(tc) or atk < def or tc:GetLeftScale() == 0 then goto continue end
+                        if not tc:IsVanguard() or atk < def or tc:GetLeftScale() == 0 then goto continue end
                         tc:RegisterFlagEffect(FLAG_DAMAGE_TRIGGER, RESET_EVENT + RESETS_STANDARD, 0, 1, tc:GetLeftScale() - 1)
                         VgD.Register.Trigger(bc:GetControler())
                         ::continue::
@@ -801,7 +801,7 @@ function VgD.Register.MonsterBattle(c)
                 e:SetOperation(function ()
                     local tc = Duel.GetAttacker()
                     local tp = tc:GetControler()
-                    if not tc:GetFlagEffectLabel(FLAG_ATTACK_TRIGGER) or tc:GetFlagEffectLabel(FLAG_ATTACK_TRIGGER) == 0 or (VgF.Filter.IsR(tc) and tc:GetFlagEffect(FLAG_ALSO_CAN_TRIGGER) == 0) then return end
+                    if not tc:GetFlagEffectLabel(FLAG_ATTACK_TRIGGER) or tc:GetFlagEffectLabel(FLAG_ATTACK_TRIGGER) == 0 or VgF.Filter.IsR(tc:IsRearguard() and tc:GetFlagEffect(FLAG_ALSO_CAN_TRIGGER) == 0) then return end
                     VgD.Register.Trigger(tp)
                 end)
                 Duel.RegisterEffect(e, 0)
@@ -877,7 +877,7 @@ function VgD.Register.MonsterBattle(c)
         e1:SetProperty(EFFECT_FLAG_CANNOT_DISABLE)
         e1:SetCondition(function (e, tp, eg, ep, ev, re, r, rp)
             local tc = e:GetHandler()
-            if not tc:IsSkill(SKILL_BOOST) or Duel.GetTurnPlayer() ~= tp or not Card.GetColumnGroup(Duel.GetAttacker()):IsContains(tc) then return false end
+            if not tc:IsSkill(SKILL_BOOST) or Duel.GetTurnPlayer() ~= tp or not Duel.GetAttacker():GetColumnGroup():IsContains(tc) then return false end
             return true
         end)
         e1:SetTarget(function (e, tp, eg, ep, ev, re, r, rp, chk)
@@ -1453,7 +1453,7 @@ function VgD.Action.AbilityAuto(c, m, loc, typ, code, op, cost, con, tg, count, 
     elseif code == EVENT_TO_G_CIRCLE then
         typ = typ or (cost and EFFECT_TYPE_TRIGGER_O or EFFECT_TYPE_TRIGGER_F)
         op = op or function (e, tp, eg, ep, ev, re, r, rp)
-            if VgF.Filter.IsR(Duel.GetAttackTarget()) then
+            if Duel.GetAttackTarget():IsRearguard() then
                 local e1 = Effect.CreateEffect(e:GetHandler())
                 e1:SetType(EFFECT_TYPE_SINGLE)
                 e1:SetProperty(EFFECT_FLAG_SINGLE_RANGE)
@@ -1463,7 +1463,7 @@ function VgD.Action.AbilityAuto(c, m, loc, typ, code, op, cost, con, tg, count, 
                 e1:SetValue(1)
                 Duel.GetAttackTarget():RegisterEffect(e1)
                 VgF.Effect.Reset(e:GetHandler(), e1, EVENT_BATTLED)
-            elseif VgF.Filter.IsV(Duel.GetAttackTarget()) then
+            elseif Duel.GetAttackTarget():IsVanguard() then
                 VgF.Effect.Reset(Duel.GetAttackTarget(), Duel.GetAttackTarget():RegisterFlagEffect(FLAG_SENTINEL, RESET_EVENT + RESETS_STANDARD, 0, 1), EVENT_BATTLED)
             end
         end

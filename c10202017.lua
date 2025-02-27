@@ -5,8 +5,7 @@ function cm.initial_effect(c)
 	vgd.action.AbilityAuto(c,m,LOCATION_CIRCLE,EFFECT_TYPE_SINGLE,EVENT_SPSUMMON_SUCCESS,cm.operation,nil,cm.condition)
 end
 function cm.condition(e,tp,eg,ep,ev,re,r,rp)
-	return vgf.filter.IsR(e:GetHandler())
-end
+	return e:GetHandler():IsRearguard()end
 function cm.operation(e,tp,eg,ep,ev,re,r,rp)
 	local g=Duel.GetDecktopGroup(tp,2)
 	Duel.ConfirmCards(tp,g)

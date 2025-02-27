@@ -13,6 +13,4 @@ function cm.op(e,tp,eg,ep,ev,re,r,rp)
 end
 
 function cm.con(e,tp,eg,ep,ev,re,r,rp)
-	return vgf.con.IsR(e) and vgf.filter.IsV(Duel.GetAttacker())
-end
-
+	return vgf.con.IsR(e) and Duel.GetAttacker():IsVanguard()end

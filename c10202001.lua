@@ -32,8 +32,7 @@ function cm.con(e,c)
 	return Duel.GetFlagEffect(tp,m)>0
 end
 function cm.condition(e,tp,eg,ep,ev,re,r,rp)
-	return vgf.filter.IsV(e:GetHandler()) and vgf.filter.IsV(Duel.GetAttackTarget())
-end
+	return e:GetHandler():IsVanguard() and Duel.GetAttackTarget():IsVanguard()end
 function cm.check(g)
 	return g:GetClassCount(Card.GetLevel)==#g
 end
@@ -60,5 +59,5 @@ function cm.operation(e,tp,eg,ep,ev,re,r,rp)
 	end
 end
 function cm.filter(c)
-	return vgf.filter.IsV(c) and c:IsLevelAbove(3)
+	return c:IsVanguard() and c:IsLevelAbove(3)
 end

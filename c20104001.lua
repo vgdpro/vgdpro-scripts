@@ -21,8 +21,7 @@ end
 --效果二检测被打的是v
 function cm.condition(e,tp,eg,ep,ev,re,r,rp)
 	local c=e:GetHandler()
-	return vgf.filter.IsV(c) and vgf.filter.IsV(Duel.GetAttackTarget())
-end
+	return c:IsVanguard() and Duel.GetAttackTarget():IsVanguard()end
 --效果二处理
 function cm.operation2(e,tp,eg,ep,ev,re,r,rp)
 	local c=e:GetHandler()

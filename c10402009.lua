@@ -16,7 +16,7 @@ function cm.op(e,tp,eg,ep,ev,re,r,rp)
 	end
 end
 function cm.con2(e,tp,eg,ep,ev,re,r,rp)
-	return eg:IsContains(e:GetHandler()) and vgf.filter.IsV(re:GetHandler()) and vgf.con.IsR(e)
+	return eg:IsContains(e:GetHandler()) and re:GetHandler():IsVanguard() and vgf.con.IsR(e)
 end
 function cm.op(e,tp,eg,ep,ev,re,r,rp)
 	local c=e:GetHandler()

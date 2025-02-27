@@ -7,8 +7,7 @@ function cm.initial_effect(c)
 	vgd.action.AbilityAutoRided(c,m,cm.filter,cm.operation)
 end
 function cm.condition(e,tp,eg,ep,ev,re,r,rp)
-	return vgf.filter.IsV(Duel.GetAttackTarget())
-end
+	return Duel.GetAttackTarget():IsVanguard()end
 function cm.operation(e,tp,eg,ep,ev,re,r,rp)
 	local c=e:GetHandler()
 	vgf.op.SoulCharge(1)(e,tp,eg,ep,ev,re,r,rp)

@@ -17,5 +17,4 @@ function cm.op(e,tp,eg,ep,ev,re,r,rp)
 	Duel.RegisterEffect(e2,tp)
 end
 function cm.tg(e,c)
-	return vgf.filter.IsV(c)
-end
+	return c:IsVanguard()end

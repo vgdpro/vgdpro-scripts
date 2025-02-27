@@ -20,8 +20,7 @@ function cm.con1(e)
 end
 
 function cm.filter2(c)
-    return c:IsSetCard(0xa013) and vgf.filter.IsR(c)
-end
+    return c:IsSetCard(0xa013) and c:IsRearguard()end
 
 function cm.filter3(c)
     return c:IsSetCard(0xa013) and c:IsType(TYPE_NORMAL+TYPE_UNIT)

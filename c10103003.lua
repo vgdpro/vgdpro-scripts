@@ -29,5 +29,4 @@ function cm.operation2(e,tp,eg,ep,ev,re,r,rp)
     end
 end
 function cm.filter(c)
-    return c:IsLevel(3) and vgf.filter.IsV(c)
-end
+    return c:IsLevel(3) and c:IsVanguard()end

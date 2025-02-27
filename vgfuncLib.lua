@@ -280,44 +280,6 @@ function VgF.Effect.ResetOperation(e, tp, eg, ep, ev, re, r, rp)
     e:Reset()
 end
 
---Filter函数---------------------------------------------------------------------------------------
-
----返回c是不是先导者。
----@param c Card 要判断的卡
----@return boolean 指示是否是先导者
-function VgF.Filter.IsV(c)
-    return Card.IsSequence(c, 5)
-end
-
----返回c是不是后防者。
----@param c Card 要判断的卡
----@return boolean 指示是否是后防者
-function VgF.Filter.IsR(c)
-    return c:GetSequence() < 5
-end
-
-function VgF.Filter.RideOnVCircle(c)
-    return c:IsSummonType(SUMMON_TYPE_RIDE) or c:IsSummonType(SUMMON_TYPE_SELFRIDE)
-end
-
-function VgF.Filter.RideOnRCircle(c)
-    return not VgF.Filter.RideOnVCircle(c)
-end
-
----判断c是否在前列。
----@param c Card 要判断的卡
----@return boolean 指示c是否是前列的单位
-function VgF.Filter.Front(c)
-    return Card.IsSequence(c, 0, 4, 5) and c:IsLocation(LOCATION_CIRCLE)
-end
-
----判断c是否在后列。
----@param c Card 要判断的卡
----@return boolean 指示c是否是后列的单位
-function VgF.Filter.Back(c)
-    return Card.IsSequence(c, 1, 2, 3) and c:IsLocation(LOCATION_CIRCLE)
-end
-
 --Condition函数------------------------------------------------------------------------------------
 
 function VgF.Condition.FirstCard(e)
@@ -495,7 +457,7 @@ function VgF.Cost.Retire(card_code_func, max, min, except, ...)
     end
     return function(e, tp, eg, ep, ev, re, r, rp, chk)
         leave_filter = function(c) return leave_filter(c, table.unpack(ex_params)) and c:IsAbleToGraveAsCost() end
-        local g = VgF.(leave_filter, tp, LOCATION_CIRCLE, 0, except)
+        local g = VgF.GetMatchingGroup(leave_filter, tp, LOCATION_CIRCLE, 0, except)
         if chk == 0 then return g:CheckSubGroup(VgF.Cost.RetireFilter, 1, max, min, e, tp) end
         Duel.Hint(HINT_SELECTMSG, tp, HINTMSG_LEAVEFIELD)
         g = g:SelectSubGroup(tp, VgF.Cost.RetireFilter, false, 1, max, min, e, tp)
@@ -766,7 +728,7 @@ Card.IsAbleToBindAsCost = Card.IsAbleToRemoveAsCost
 ---@param c Card 要判断的卡
 ---@return boolean 指示是否是先导者
 function Card.IsVanguard(c)
-    return c:GetSequence() == 5
+    return c:IsSequence(5)
 end
 ---返回卡片 c 是不是后防者。
 ---@param c Card 要判断的卡
@@ -775,12 +737,12 @@ function Card.IsRearguard(c)
     return c:GetSequence() < 5
 end
 ---返回卡片 c 召唤类型是不是V
-function Card.IsSummonTypeV(c)
+function Card.IsRideOnVCircle(c)
     return c:IsSummonType(SUMMON_TYPE_RIDE) or c:IsSummonType(SUMMON_TYPE_SELFRIDE)
 end
 ---返回卡片 c 召唤类型是不是R
-function Card.IsSummonTypeR(c)
-    return not c:IsSummonTypeV()
+function Card.IsRideOnRCircle(c)
+    return not c:IsRideOnVCircle()
 end
 ---返回卡片 c 是否在当前区域的某（几）个编号上
 ---@param c Card 要判断的卡
@@ -794,6 +756,7 @@ function Card.IsSequence(c, ...)
     end
     return false
 end
+
 ---返回卡片 c 是否在前列。
 ---@param c Card 要判断的卡
 ---@return boolean 指示c是否是前列的单位

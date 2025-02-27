@@ -14,8 +14,7 @@ function cm.filter(c)
 	return c:IsCode(m)
 end
 function cm.con(e,tp,eg,ep,ev,re,r,rp)
-	return vgf.con.IsV(e) and vgf.filter.IsV(Duel.GetAttackTarget())
-end
+	return vgf.con.IsV(e) and Duel.GetAttackTarget():IsVanguard()end
 function cm.op1(e,tp,eg,ep,ev,re,r,rp)
 	local c=e:GetHandler()
 	local g=vgf.SelectMatchingCard(HINTMSG_RMONSTER,e,tp,cm.filter,tp,LOCATION_CIRCLE,0,1,1,nil)

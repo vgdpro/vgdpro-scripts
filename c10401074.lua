@@ -4,7 +4,7 @@ function cm.initial_effect(c)
 end
 function cm.con(e,tp,eg,ep,ev,re,r,rp)
     local c=e:GetHandler()
-    return vgf.filter.IsR(c) and eg:IsContains(c) and vgf.GetVMonster(tp):GetOverlayCount()>=5
+    return c:IsRearguard() and eg:IsContains(c) and vgf.GetVMonster(tp):GetOverlayCount()>=5
 end
 --对手要从手牌将卡CALL到G上之际，不将2张以上同时CALL的话则不能CALL出场。
 function cm.op(e,tp,eg,ep,ev,re,r,rp)

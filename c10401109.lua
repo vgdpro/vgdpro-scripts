@@ -7,7 +7,7 @@ function cm.initial_effect(c)
 end
 function cm.condition(e,tp,eg,ep,ev,re,r,rp)
 	local c=e:GetHandler()
-	return vgf.con.IsR and vgf.filter.IsV(Duel.GetAttackTarget()) and vgf.IsExistingMatchingCard(cm.filter,tp,LOCATION_BIND,0,1,nil,TYPE_ORDER)
+	return vgf.con.IsR and Duel.GetAttackTarget():IsVanguard() and vgf.IsExistingMatchingCard(cm.filter,tp,LOCATION_BIND,0,1,nil,TYPE_ORDER)
 end
 function cm.operation(e,tp,eg,ep,ev,re,r,rp)
     local c=e:GetHandler()

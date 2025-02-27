@@ -24,5 +24,4 @@ function cm.op(e,tp,eg,ep,ev,re,r,rp)
     Duel.RaiseEvent(g,EVENT_CUSTOM+EVENT_SUPPORT,e,0,tp,tp,0)
 end
 function cm.filter(c)
-	return c:IsPosition(POS_FACEUP_ATTACK) and c:IsSkill(SKILL_BOOST) and vgf.filter.IsR(c)
-end
+	return c:IsPosition(POS_FACEUP_ATTACK) and c:IsSkill(SKILL_BOOST) and c:IsRearguard()end

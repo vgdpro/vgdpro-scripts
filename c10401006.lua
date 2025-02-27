@@ -18,5 +18,4 @@ function cm.op(e,tp,eg,ep,ev,re,r,rp)
 	end
 end
 function cm.filter1(c)
-	return vgf.filter.IsR(c) and vgf.filter.Front(c)
-end
+	return c:IsRearguard() and c:IsFrontrow()end

@@ -14,5 +14,4 @@ function cm.con(e,tp,eg,ep,ev,re,r,rp)
     return vgf.con.RideOnRCircle(e) and vgf.IsExistingMatchingCard(cm.filter,tp,LOCATION_CIRCLE,0,1,c)
 end
 function cm.filter(c)
-    return c:IsSetCard(0xa013) and vgf.filter.IsR(c)
-end
+    return c:IsSetCard(0xa013) and c:IsRearguard()end

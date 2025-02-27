@@ -21,8 +21,7 @@ function cm.op(e,tp,eg,ep,ev,re,r,rp)
 end
 
 function cm.filter(c)
-    return c:IsLevelAbove(3) and vgf.filter.IsV(c)
-end
+    return c:IsLevelAbove(3) and c:IsVanguard()end
 
 function cm.con1(e,tp,eg,ep,ev,re,r,rp)
 	return cm.con(e,tp,eg,ep,ev,re,r,rp) and Duel.IsExistingMatchingCard(cm.filter,tp,0,LOCATION_CIRCLE,1,nil)

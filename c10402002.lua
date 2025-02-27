@@ -19,8 +19,7 @@ function cm.op(e,tp,eg,ep,ev,re,r,rp)
 	vgf.op.SoulCharge(1)(e,tp,eg,ep,ev,re,r,rp)
 end
 function cm.filter(c)
-	return c:IsCode(10101009) and vgf.filter.IsR(c)
-end
+	return c:IsCode(10101009) and c:IsRearguard()end
 function cm.con(e,tp,eg,ep,ev,re,r,rp)
 	return Duel.GetAttacker():IsCode(10101009) and vgf.GetVMonster(tp):IsCode(10101001)
 end

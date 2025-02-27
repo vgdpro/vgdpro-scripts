@@ -16,7 +16,7 @@ function cm.filter(c)
 end
 function cm.con2(e,tp,eg,ep,ev,re,r,rp)
 	local c=e:GetHandler()
-	return vgf.filter.IsR(c) and vgf.IsExistingMatchingCard(Card.IsPosition,tp,LOCATION_ORDER,0,2,nil,POS_FACEDOWN)
+	return c:IsRearguard() and vgf.IsExistingMatchingCard(Card.IsPosition,tp,LOCATION_ORDER,0,2,nil,POS_FACEDOWN)
 end
 function cm.op2(e,tp,eg,ep,ev,re,r,rp)
 	local c=e:GetHandler()
