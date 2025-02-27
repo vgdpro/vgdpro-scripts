@@ -1,7 +1,6 @@
 --恐怖人偶 谢丝汀
 local cm,m,o=GetID()
 function cm.initial_effect(c)
-	vgd.VgCard(c)
 	--【起】【R】【1回合1次】：你有等级3以上的先导者的话，通过【费用】[计数爆发2]，抽1张卡。
 	vgd.AbilityAct(c,m,LOCATION_CIRCLE,cm.operation,vgf.cost.CounterBlast(2),cm.condition,nil,1)
 end

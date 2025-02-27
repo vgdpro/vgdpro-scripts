@@ -1,7 +1,6 @@
 -- 涛声之夕暮
 local cm,m,o=GetID()
 function cm.initial_effect(c)
-	vgd.VgCard(c)
 
 -- （设置指令在施放后，放置到指令区。）
 	vgd.SetOrder(c)

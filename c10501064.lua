@@ -1,7 +1,6 @@
 --午夜课程 凡努
 local cm,m,o=GetID()
 function cm.initial_effect(c)
-    vgd.VgCard(c)
     -- 【自】：这个单位登场到R时，通过【费用】[计数爆发2]，查看你的牌堆顶的5张卡，选择至多2张触发单位卡，CALL到不存在单位的R上，然后牌堆洗切。
     vgd.AbilityAuto(c,m,LOCATION_CIRCLE,EFFECT_TYPE_SINGLE,EVENT_SPSUMMON_SUCCESS,cm.op,vgf.cost.CounterBlast(2),cm.con)
 end

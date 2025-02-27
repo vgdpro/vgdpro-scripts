@@ -1,6 +1,5 @@
 local cm,m,o=GetID()
 function cm.initial_effect(c)
-	vgd.VgCard(c)
 	vgd.AbilityAuto(c,m,LOCATION_CIRCLE,EFFECT_TYPE_SINGLE,EVENT_ATTACK_ANNOUNCE,cm.op,cm.cost,cm.con)
 	vgd.AbilityAuto(c,m,LOCATION_CIRCLE,EFFECT_TYPE_FIELD,EVENT_CUSTOM+EVENT_SUPPORT,cm.op,cm.cost,cm.con1)
 end

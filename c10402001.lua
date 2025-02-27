@@ -1,6 +1,5 @@
 local cm,m,o=GetID()
 function cm.initial_effect(c)
-	vgd.VgCard(c)
 	vgd.CannotCallToGCircleWhenAttack(c, m, function (e,re,tp)
 		return re:GetHandler():IsLocation(LOCATION_HAND)
 	end)

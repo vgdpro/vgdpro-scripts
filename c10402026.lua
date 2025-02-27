@@ -1,6 +1,5 @@
 local cm,m,o=GetID()
 function cm.initial_effect(c)
-	vgd.VgCard(c)
 	vgd.AbilityAct(c,m,LOCATION_CIRCLE,cm.op,cm.cost,cm.con)
 	vgd.AbilityAuto(c,m,LOCATION_CIRCLE,EFFECT_TYPE_FIELD,EVENT_PHASE+PHASE_BATTLE_START,cm.op1,nil,cm.con1)
 end

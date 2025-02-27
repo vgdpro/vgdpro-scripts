@@ -1,6 +1,5 @@
 local cm,m,o=GetID()
 function cm.initial_effect(c)
-	vgd.VgCard(c)
 	vgd.BeRidedByCard(c,m,10401027,vgf.op.SoulCharge(1))
 	vgd.AbilityAuto(c,m,LOCATION_CIRCLE,EFFECT_TYPE_FIELD,EVENT_TO_GRAVE,cm.op,vgf.cost.And(vgf.cost.CounterBlast(1),vgf.cost.Retire()),cm.con)
 end

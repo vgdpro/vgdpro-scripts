@@ -1,7 +1,6 @@
 --激发之泉
 local cm,m,o=GetID()
 function cm.initial_effect(c)
-	vgd.VgCard(c)
     -- 你的后防者在3张以上的话，这次战斗中，你所有的正在被攻击的单位的力量+15000。
 	vgd.BlitzOrder(c,cm.op)
 end

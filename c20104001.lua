@@ -1,7 +1,6 @@
 --救翼天使 扎雷乌萨耶尔
 local cm,m,o=GetID()
 function cm.initial_effect(c)
-	vgd.VgCard(c)
 	--【起】【V】【1回合1次】：通过【费用】[计数爆发1]，从你的牌堆里探寻至多1张与这个单位同名的卡，公开后加入手牌，然后牌堆洗切，这个回合中，这个单位的力量+10000。
 	vgd.AbilityAct(c,m,LOCATION_CIRCLE,cm.operation,vgf.cost.CounterBlast(1),vgf.con.IsV,nil,1)
 	--【自】【V】：这个单位攻击先导者时，通过【费用】[能量爆发4]，选择你的弃牌区中的1张等级3以下的普通单位卡，CALL到R上，这个回合中，那个单位的力量+10000。

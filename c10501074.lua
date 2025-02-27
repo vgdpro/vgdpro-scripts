@@ -1,7 +1,6 @@
 --最不服输 托蕾因
 local cm,m,o=GetID()
 function cm.initial_effect(c)
-    vgd.VgCard(c)
     -- 【永】【后列的R】：这个单位的获得『支援』的技能，力量-2000。
     -- 支援
     cm.is_has_continuous=true

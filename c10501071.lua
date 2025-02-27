@@ -1,7 +1,6 @@
 --倾注感情 艾贝莉娜
 local cm,m,o=GetID()
 function cm.initial_effect(c)
-    vgd.VgCard(c)
     -- 【自】：这个单位被放置到G时，通过【费用】[灵魂爆发1]，选择你的1个含有「诚意真心」的单位，这次战斗中，力量+10000。
     vgd.AbilityAuto(c,m,nil,EFFECT_TYPE_SINGLE,EVENT_MOVE,cm.op,vgf.cost.SoulBlast(1),cm.con)
 end

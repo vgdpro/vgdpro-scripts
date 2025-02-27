@@ -1,7 +1,6 @@
 --在地上爬行吧，“下等生物”！
 local cm,m,o=GetID()
 function cm.initial_effect(c)
-	vgd.VgCard(c)
 --通过【费用】[计数爆发1]施放！灵魂填充1。这之后，选择你的1个单位，你的灵魂里的卡每有5张，这个回合中，力量+10000。你的灵魂在10张以上的话，抽1张卡。
 	vgd.Order(c,m,cm.operation,vgf.cost.CounterBlast(1))
 end

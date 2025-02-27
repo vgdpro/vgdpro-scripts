@@ -1,7 +1,6 @@
 -- 满载甜品 安泽尔玛
 local cm,m,o=GetID()
 function cm.initial_effect(c)
-	vgd.VgCard(c)
 	-- 【自】【后列的R】【1回合1次】：你的战斗阶段中你其他的单位登场到R时，通过【费用】[灵魂爆发2]，抽1张卡。
 	VgD.AbilityAuto(c,m,LOCATION_CIRCLE,EFFECT_TYPE_FIELD,EVENT_SPSUMMON_SUCCESS,vgf.op.Draw,vgf.cost.SoulBlast(2),cm.con,nil,1)
 end

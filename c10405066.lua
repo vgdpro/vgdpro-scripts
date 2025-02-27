@@ -1,6 +1,5 @@
 local cm,m,o=GetID()
 function cm.initial_effect(c)
-	vgd.VgCard(c)
 	vgd.BeRidedByCard(c,m,nil,cm.operation,nil,cm.condition)
 end
 function cm.operation(e,tp,eg,ep,ev,re,r,rp)

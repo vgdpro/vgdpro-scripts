@@ -1,7 +1,6 @@
 --努力的证明 维莉丝塔
 local cm,m,o=GetID()
 function cm.initial_effect(c)
-    vgd.VgCard(c)
     -- 【自】：这个单位被RIDE时，通过【费用】[将手牌中的1张卡放置到灵魂里]，从你的牌堆里探寻至多1张宝石卡，公开后加入手牌，然后牌堆洗切。
     vgd.BeRidedByCard(c,m,nil,vgf.op.CardsFromTo(REASON_EFFECT,LOCATION_HAND,LOCATION_DECK,cm.filter,1,0),cm.cost1)
     -- 【自】【R】：你施放指令卡时，通过【费用】[灵魂爆发1]，这个回合中，这个单位的力量+5000。

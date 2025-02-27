@@ -1,6 +1,5 @@
 local cm,m,o=GetID()
 function cm.initial_effect(c)
-	vgd.VgCard(c)
 	vgd.Order(c,m,cm.op,vgf.cost.SoulBlast(2))
 end
 function cm.op(e,tp,eg,ep,ev,re,r,rp,chk)

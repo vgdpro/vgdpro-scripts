@@ -1,7 +1,6 @@
 local cm,m,o=GetID()
 --怨念锁
 function cm.initial_effect(c)
-	vgd.VgCard(c)
 	--【起】【V】【1回合1次】：通过【费用】[灵魂爆发1]，抽2张卡，
 	--选择你的手牌中的至多1张指令卡，舍弃，没有舍弃的话，选择手牌中的的2张卡舍弃。
 	vgd.AbilityAct(c,m,LOCATION_CIRCLE,cm.operation,vgf.cost.SoulBlast(1),vgf.con.IsV,nil,1)

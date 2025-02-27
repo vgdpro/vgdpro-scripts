@@ -1,6 +1,5 @@
 local cm,m,o=GetID()
 function cm.initial_effect(c)
-	vgd.VgCard(c)
 	--【永】：这张卡将要被RIDE之际，这张卡也当做「朱斯贝克 “破天黎骑”」使用。
 	vgf.AddRideMaterialCode(c,m,10406010)
 	vgf.AddRideMaterialSetCard(c,m,0x300d,0x77,0x8a,0x202)

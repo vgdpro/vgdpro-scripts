@@ -1,7 +1,6 @@
 -- 真实的闪耀 阿蕾斯缇耶尔
 local cm,m,o=GetID()
 function cm.initial_effect(c)
-	vgd.VgCard(c)
 	-- 【自】：这个单位登场到V时，选择你的封锁区中的1张卡，放置到牌堆底，放置了的话，将你的牌堆顶的1张卡正面封锁。
 	vgd.AbilityAuto(c,m,LOCATION_CIRCLE,EFFECT_TYPE_SINGLE,EVENT_SPSUMMON_SUCCESS,cm.op1,nil,cm.con1)
 	-- 白翼-【起】【V】【1回合1次】：通过【费用】[计数爆发1]，这个回合中，这个单位的☆+1。

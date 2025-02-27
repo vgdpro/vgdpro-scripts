@@ -1,7 +1,6 @@
 --鞭挞的少女 伊蕾尼娅
 local cm,m,o=GetID()
 function cm.initial_effect(c)
-	vgd.VgCard(c)
 	--【自】：这个单位从手牌登场到R时，通过【费用】[计数爆发1，灵魂爆发1]，选择你的弃牌区中的1张等级2以下的卡，CALL到R上，这个回合中，那个单位的力量+5000。
 	vgd.AbilityAuto(c,m,LOCATION_CIRCLE,EFFECT_TYPE_SINGLE,EVENT_SPSUMMON_SUCCESS,cm.operation,cm.cost,cm.condition)
 end

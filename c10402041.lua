@@ -1,6 +1,5 @@
 local cm,m,o=GetID()
 function cm.initial_effect(c)
-	vgd.VgCard(c)
     vgd.AbilityAct(c,m,LOCATION_CIRCLE,cm.operation,vgf.op.Rest(),cm.con)
 end
 function cm.con(e,tp,eg,ep,ev,re,r,rp)

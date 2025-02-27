@@ -1,6 +1,5 @@
 local cm,m,o=GetID()
 function cm.initial_effect(c)
-	vgd.VgCard(c)
 	vgd.BeRidedByCard(c,m,10401046,cm.operation,vgf.cost.CounterBlast(1))
 	vgd.AbilityAuto(c,m,LOCATION_CIRCLE,EFFECT_TYPE_FIELD,EVENT_MOVE,cm.op,vgf.cost.CounterBlast(1),cm.con,nil,1)
 end

@@ -1,7 +1,6 @@
 --天剑的骑士 福特
 local cm,m,o=GetID()
 function cm.initial_effect(c)
-    vgd.VgCard(c)
     vgd.BeRidedByCard(c,m,10103002,cm.operation,cm.cost)
     vgd.AbilityAct(c,m,LOCATION_CIRCLE,cm.operation2,vgf.cost.CounterBlast(1),vgf.con.IsR,nil,1)
 end

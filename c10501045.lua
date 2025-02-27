@@ -1,7 +1,6 @@
 -- 壮丽音调 琉蒂娅
 local cm,m,o=GetID()
 function cm.initial_effect(c)
-	vgd.VgCard(c)
 	-- 【自】：这个单位登场到R时，通过【费用】[计数爆发1，将手牌中的2张普通单位卡公开，按希望的顺序放置到牌堆底]，选择你的1张先导者，从牌堆里探寻至多1张与那个单位同名的卡，公开后加入手牌，然后牌堆洗切。
 	vgd.AbilityAuto(c,m,LOCATION_CIRCLE,EFFECT_TYPE_SINGLE,EVENT_SPSUMMON_SUCCESS,cm.op,cm.cost,vgf.con.RideOnRCircle)
 end

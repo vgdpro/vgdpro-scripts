@@ -1,7 +1,6 @@
 -- 不移之绯红
 local cm,m,o=GetID()
 function cm.initial_effect(c)
-    vgd.VgCard(c)
 -- 通过【费用】[计数爆发1]施放！
 -- 抽2张卡，选择你的手牌的1张卡，舍弃。将这张卡放置到灵魂里。
     vgd.Order(c,m,cm.operation,vgf.cost.CounterBlast(1))

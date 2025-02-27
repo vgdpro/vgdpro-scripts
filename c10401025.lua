@@ -1,7 +1,6 @@
 --天惠之源龙王 恩宠吐息
 local cm,m,o=GetID()
 function cm.initial_effect(c)
-	vgd.VgCard(c)
 	--追加效果——抽1张卡！选择你的1个单位，这个回合中，☆+1！将当前存在于前列的你所有的单位的力量+10000！你的伤害区中的卡的张数在对手的伤害区中的卡的张数以上的话，选择你的伤害区中的1张卡，回复！
 	vgd.AdditionalEffect(c,m,cm.operation)
 end

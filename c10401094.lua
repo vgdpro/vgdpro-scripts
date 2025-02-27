@@ -1,7 +1,6 @@
 -- 《于无人知晓的黑暗之中》
 local cm,m,o=GetID()
 function cm.initial_effect(c)
-	vgd.VgCard(c)
 	vgd.SetOrder(c,vgf.cost.SoulBlast(1))
 	vgd.AbilityAuto(c,m,nil,EFFECT_TYPE_SINGLE,EVENT_MOVE,cm.operation,nil,cm.condition)
 	vgd.DarkNight(c,m)

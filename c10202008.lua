@@ -1,7 +1,6 @@
 --贪欲堆积者
 local cm,m,o=GetID()
 function cm.initial_effect(c)
-	vgd.VgCard(c)
 	--【自】【R】：这个单位支援等级2以上的单位时，你可以灵魂填充1。
 	--时点需要改成支援时
 	vgd.AbilityAuto(c,m,LOCATION_CIRCLE,EFFECT_TYPE_FIELD,EVENT_CUSTOM+EVENT_SUPPORT,vgf.op.SoulCharge(1),vgf.True,cm.condition)

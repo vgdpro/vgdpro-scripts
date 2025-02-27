@@ -1,7 +1,6 @@
 --圣裁之刻，来临
 local cm,m,o=GetID()
 function cm.initial_effect(c)
-    vgd.VgCard(c)
     vgd.Order(c,m,cm.operation)
 end
 function cm.operation(e,tp,eg,ep,ev,re,r,rp)

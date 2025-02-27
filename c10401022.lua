@@ -1,6 +1,5 @@
 local cm,m,o=GetID()
 function cm.initial_effect(c)
-	vgd.VgCard(c)
 	vgd.AdditionalEffect(c,m,cm.operation)
 end
 function cm.operation(e,tp,eg,ep,ev,re,r,rp)

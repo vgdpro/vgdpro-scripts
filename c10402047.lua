@@ -1,6 +1,5 @@
 local cm,m,o=GetID()
 function cm.initial_effect(c)
-	vgd.VgCard(c)
 	cm.is_has_continuous = true
 	local loc, con = vgf.GetLocCondition(LOCATION_R_CIRCLE,cm.con)
 	local e1 = Effect.CreateEffect(c)

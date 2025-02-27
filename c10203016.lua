@@ -1,6 +1,5 @@
 local cm,m,o=GetID()
 function cm.initial_effect(c)
-	vgd.VgCard(c)
 	vgd.AbilityAuto(c,m,LOCATION_CIRCLE,EFFECT_TYPE_SINGLE,EVENT_BATTLED,cm.operation,vgf.cost.And(vgf.cost.SoulBlast(1),vgf.cost.Retire()),cm.condition)
 end
 function cm.condition(e,tp,eg,ep,ev,re,r,rp)

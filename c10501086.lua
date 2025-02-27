@@ -1,7 +1,6 @@
 --虚梦少女 汉内洛蕾
 local cm,m,o=GetID()
 function cm.initial_effect(c)
-    vgd.VgCard(c)
     -- 【自】【R】：你其他的后防者登场到这个单位的同纵列时，这个回合中，这个单位的力量+2000。
     vgd.AbilityAuto(c,m,LOCATION_CIRCLE,EFFECT_TYPE_FIELD,EVENT_SPSUMMON_SUCCESS,cm.op,nil,cm.con)
 end

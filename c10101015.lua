@@ -1,7 +1,6 @@
 --
 local cm,m,o=GetID()
 function cm.initial_effect(c)
-	vgd.VgCard(c)
 	vgd.Order(c,m,cm.operation,vgf.cost.CounterBlast(1))
 end
 function cm.operation(e,tp,eg,ep,ev,re,r,rp)

@@ -1,6 +1,5 @@
 local cm,m,o=GetID()
 function cm.initial_effect(c)
-	vgd.VgCard(c)
 	vgd.SetOrder(c)
 	vgd.AbilityAct(c,m,LOCATION_ORDER,cm.operation,vgf.cost.CounterBlast(2),nil,nil,1)
 end
