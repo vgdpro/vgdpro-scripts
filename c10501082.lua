@@ -22,7 +22,7 @@ function cm.initial_effect(c)
 		return tc:IsLevelBelow(1) and vgf.filter.IsR(tc)
 	end)
     c:RegisterEffect(e2)
-	vgd.AbilityAuto(c,m,nil,EFFECT_TYPE_SINGLE,EVENT_SPSUMMON_SUCCESS,cm.op,nil,vgf.con.RideOnVCircle)
+	vgd.action.AbilityAuto(c,m,nil,EFFECT_TYPE_SINGLE,EVENT_SPSUMMON_SUCCESS,cm.op,nil,vgf.con.RideOnVCircle)
 end
 function cm.op(e,tp,eg,ep,ev,re,r,rp)
 	local g=Duel.GetDecktopGroup(tp,1)

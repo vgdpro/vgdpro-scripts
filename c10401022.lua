@@ -1,6 +1,6 @@
 local cm,m,o=GetID()
 function cm.initial_effect(c)
-	vgd.AdditionalEffect(c,m,cm.operation)
+	vgd.action.AdditionalEffect(c,m,cm.operation)
 end
 function cm.operation(e,tp,eg,ep,ev,re,r,rp)
 	local c=e:GetHandler()

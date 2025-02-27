@@ -2,8 +2,8 @@
 local cm,m,o=GetID()
 function cm.initial_effect(c)
     cm.is_has_continuous=true
-    vgd.BeRidedByCard(c,m,10103001,cm.operation,cm.cost)
-	vgd.AbilityCont(c, m, LOCATION_CIRCLE, EFFECT_TYPE_SINGLE, EFFECT_UPDATE_ATTACK, 5000, cm.condition)
+    vgd.action.AbilityAutoRided(c,m,10103001,cm.operation,cm.cost)
+	vgd.action.AbilityCont(c, m, LOCATION_CIRCLE, EFFECT_TYPE_SINGLE, EFFECT_UPDATE_ATTACK, 5000, cm.condition)
     local e2=Effect.CreateEffect(c)
     e2:SetType(EFFECT_TYPE_SINGLE)
     e2:SetProperty(EFFECT_FLAG_SINGLE_RANGE)

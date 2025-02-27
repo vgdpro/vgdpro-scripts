@@ -4,10 +4,10 @@ function cm.initial_effect(c)
 	vgf.AddRideMaterialCode(c,m,10406010)
 	vgf.AddRideMaterialSetCard(c,m,0x300d,0x77,0x8a,0x202)
 	--【反抗舞装】
-	vgd.AbilityAuto(c,m,LOCATION_CIRCLE,EFFECT_TYPE_SINGLE,EVENT_BATTLED,cm.operation,nil,cm.condition)
+	vgd.action.AbilityAuto(c,m,LOCATION_CIRCLE,EFFECT_TYPE_SINGLE,EVENT_BATTLED,cm.operation,nil,cm.condition)
 	--【永】【R】：这个回合中曾有你的等级3以上的先导者登场过的话，这个单位的力量+5000。
-	vgd.AbilityCont(c, m, LOCATION_CIRCLE, EFFECT_TYPE_SINGLE, EFFECT_UPDATE_ATTACK, 5000, cm.con)
-	vgd.GlobalCheckEffect(c,m,EVENT_SPSUMMON_SUCCESS,cm.checkcon)
+	vgd.action.AbilityCont(c, m, LOCATION_CIRCLE, EFFECT_TYPE_SINGLE, EFFECT_UPDATE_ATTACK, 5000, cm.con)
+	vgd.action.GlobalCheckEffect(c,m,EVENT_SPSUMMON_SUCCESS,cm.checkcon)
 end
 function cm.con(e,tp,eg,ep,ev,re,r,rp)
 	return Duel.GetFlagEffect(tp,m)>0
@@ -17,7 +17,7 @@ function cm.operation(e,tp,eg,ep,ev,re,r,rp)
 	local g=vgf.SelectMatchingCard(HINTMSG_CALL,e,tp,cm.filter,tp,LOCATION_HAND,0,1,1,nil,e,tp)
 	if vgf.Sendto(LOCATION_CIRCLE,g,SUMMON_VALUE_REVOLT,tp,0x20)>0 then
 		local mg=Duel.GetOperatedGroup()
-		vgd.DriveUp(c,m,-2,nil,RESET_PHASE+PHASE_END,mg)
+		vgd.action.DriveUp(c,m,-2,nil,RESET_PHASE+PHASE_END,mg)
 	end
 end
 function cm.condition(e,tp,eg,ep,ev,re,r,rp)

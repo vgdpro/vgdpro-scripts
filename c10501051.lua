@@ -1,7 +1,7 @@
 -- 私底下是冷漠回应 迪谢尔
 local cm,m,o=GetID()
 function cm.initial_effect(c)
-	vgd.AbilityAuto(c, m,nil,nil,EVENT_TO_G_CIRCLE,cm.op)
+	vgd.action.AbilityAuto(c, m,nil,nil,EVENT_TO_G_CIRCLE,cm.op)
 end
 function cm.op(e,tp,eg,ep,ev,re,r,rp)
 	local c=e:GetHandler()

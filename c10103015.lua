@@ -1,7 +1,7 @@
 --圣裁之刻，来临
 local cm,m,o=GetID()
 function cm.initial_effect(c)
-    vgd.Order(c,m,cm.operation)
+    vgd.action.Order(c,m,cm.operation)
 end
 function cm.operation(e,tp,eg,ep,ev,re,r,rp)
     Duel.Draw(tp,2,REASON_EFFECT)

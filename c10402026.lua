@@ -1,7 +1,7 @@
 local cm,m,o=GetID()
 function cm.initial_effect(c)
-	vgd.AbilityAct(c,m,LOCATION_CIRCLE,cm.op,cm.cost,cm.con)
-	vgd.AbilityAuto(c,m,LOCATION_CIRCLE,EFFECT_TYPE_FIELD,EVENT_PHASE+PHASE_BATTLE_START,cm.op1,nil,cm.con1)
+	vgd.action.AbilityAct(c,m,LOCATION_CIRCLE,cm.op,cm.cost,cm.con)
+	vgd.action.AbilityAuto(c,m,LOCATION_CIRCLE,EFFECT_TYPE_FIELD,EVENT_PHASE+PHASE_BATTLE_START,cm.op1,nil,cm.con1)
 end
 function cm.cost(e,tp,eg,ep,ev,re,r,rp,chk)
 	local c=e:GetHandler()

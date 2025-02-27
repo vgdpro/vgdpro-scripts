@@ -3,7 +3,7 @@
 -- 选择你的1张先导者，这次战斗中，力量+30000。
 local cm,m,o=GetID()
 function cm.initial_effect(c)
-    vgd.Order(c,m,cm.operation,vgf.cost.CounterBlast(2))
+    vgd.action.Order(c,m,cm.operation,vgf.cost.CounterBlast(2))
 end
 function cm.operation(e,tp,eg,ep,ev,re,r,rp)
     local c=e:GetHandler()

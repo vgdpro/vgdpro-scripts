@@ -1,6 +1,6 @@
 local cm,m,o=GetID()
 function cm.initial_effect(c)
-	vgd.AbilityAuto(c,m,nil,EFFECT_TYPE_SINGLE,EVENT_DISCARD,cm.op,cm.cost,cm.con)
+	vgd.action.AbilityAuto(c,m,nil,EFFECT_TYPE_SINGLE,EVENT_DISCARD,cm.op,cm.cost,cm.con)
 end
 function cm.op(e,tp,eg,ep,ev,re,r,rp)
 	Duel.Draw(tp,1,REASON_EFFECT)

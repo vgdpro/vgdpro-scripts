@@ -1,8 +1,8 @@
 local cm,m,o=GetID()
 function cm.initial_effect(c)
-	vgd.AbilityAuto(c,m,LOCATION_CIRCLE,EFFECT_TYPE_FIELD,EVENT_MOVE,cm.op,nil,cm.con)
-	vgd.AbilityAct(c,m,LOCATION_CIRCLE,cm.op1,cm.cost1,cm.con1,nil,1)
-	vgd.GlobalCheckEffect(c,m,EVENT_SPSUMMON_SUCCESS,cm.checkcon)
+	vgd.action.AbilityAuto(c,m,LOCATION_CIRCLE,EFFECT_TYPE_FIELD,EVENT_MOVE,cm.op,nil,cm.con)
+	vgd.action.AbilityAct(c,m,LOCATION_CIRCLE,cm.op1,cm.cost1,cm.con1,nil,1)
+	vgd.action.GlobalCheckEffect(c,m,EVENT_SPSUMMON_SUCCESS,cm.checkcon)
 end
 function cm.con(e,tp,eg,ep,ev,re,r,rp)
 	return vgf.con.IsV(e) and eg:IsExists(cm.filter,1,nil,tp) and Duel.GetTurnPlayer()==tp and Duel.GetAttackTarget()
@@ -35,5 +35,5 @@ function cm.op1(e,tp,eg,ep,ev,re,r,rp)
 		Duel.ConfirmCards(1-tp,g)
 		vgf.Sendto(LOCATION_DECK,g,tp,SEQ_DECKTOP,REASON_EFFECT)
 	end
-	vgd.DriveUp(c,m,1,nil,RESET_PHASE+PHASE_END)
+	vgd.action.DriveUp(c,m,1,nil,RESET_PHASE+PHASE_END)
 end

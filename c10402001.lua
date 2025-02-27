@@ -1,15 +1,15 @@
 local cm,m,o=GetID()
 function cm.initial_effect(c)
-	vgd.CannotCallToGCircleWhenAttack(c, m, function (e,re,tp)
+	vgd.action.CannotCallToGCircleWhenAttack(c, m, function (e,re,tp)
 		return re:GetHandler():IsLocation(LOCATION_HAND)
 	end)
-	vgd.AbilityAuto(c,m,LOCATION_CIRCLE,EFFECT_TYPE_SINGLE,EVENT_HITTING,cm.op,cm.cost,nil,nil,1)
+	vgd.action.AbilityAuto(c,m,LOCATION_CIRCLE,EFFECT_TYPE_SINGLE,EVENT_HITTING,cm.op,cm.cost,nil,nil,1)
 end
 function cm.op(e,tp,eg,ep,ev,re,r,rp)
 	local c=e:GetHandler()
 	if c:IsRelateToEffect(e) and c:IsFaceup() then
 		Duel.ChangePosition(c,POS_FACEUP_ATTACK)
-		vgd.DriveUp(c,m,-1,nil,RESET_PHASE+PHASE_END)
+		vgd.action.DriveUp(c,m,-1,nil,RESET_PHASE+PHASE_END)
 	end
 end
 function cm.cost(e,tp,eg,ep,ev,re,r,rp,chk)

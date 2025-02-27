@@ -2,7 +2,7 @@
 local cm,m,o=GetID()
 function cm.initial_effect(c)
     -- 【自】：这个单位被放置到G时，选择你的至多1张含有「诚意真心」的后防者，返回手牌。（即使被攻击的单位离场，发起攻击的单位的玩家也要正常进行驱动判定以及结算战斗结束时的能力。）
-    vgd.AbilityAuto(c,m,nil,EFFECT_TYPE_SINGLE,EVENT_MOVE,cm.op,nil,cm.con)
+    vgd.action.AbilityAuto(c,m,nil,EFFECT_TYPE_SINGLE,EVENT_MOVE,cm.op,nil,cm.con)
 
 end
 function cm.con(e,tp,eg,ep,ev,re,r,rp)

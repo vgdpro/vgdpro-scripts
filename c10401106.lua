@@ -1,6 +1,6 @@
 local cm,m,o=GetID()
 function cm.initial_effect(c)
-	vgd.Order(c,m,cm.op,cm.cost)
+	vgd.action.Order(c,m,cm.op,cm.cost)
 	VgF.AddAlchemagic(m,"LOCATION_SOUL","LOCATION_DROP",1,1,function (tc) return tc:IsLevel(3) end)
 end
 function cm.filter(c,p)

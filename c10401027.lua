@@ -2,9 +2,9 @@
 local cm,m,o=GetID()
 function cm.initial_effect(c)
 	--【自】：这个单位被「沙尘之重炮 尤金」RIDE时，抽1张卡，选择你的弃牌区中的至多1张卡，放置到灵魂里。
-	vgd.BeRidedByCard(c,m,10401002,cm.operation)
+	vgd.action.AbilityAutoRided(c,m,10401002,cm.operation)
 	--【自】【V/R】：这个单位攻击时，对手的后防者在2张以下的话，通过【费用】[计数爆发1]，灵魂填充1，这次战斗中，这个单位的力量+5000。
-	vgd.AbilityAuto(c,m,LOCATION_CIRCLE,EFFECT_TYPE_SINGLE,EVENT_ATTACK_ANNOUNCE,cm.operation1,vgf.cost.CounterBlast(1),cm.condition)
+	vgd.action.AbilityAuto(c,m,LOCATION_CIRCLE,EFFECT_TYPE_SINGLE,EVENT_ATTACK_ANNOUNCE,cm.operation1,vgf.cost.CounterBlast(1),cm.condition)
 
 end
 function cm.operation(e,tp,eg,ep,ev,re,r,rp)

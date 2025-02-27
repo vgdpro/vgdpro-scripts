@@ -2,7 +2,7 @@
 local cm,m,o=GetID()
 function cm.initial_effect(c)
 	-- 【自】【R】：你的含有「诚意真心」的单位被攻击时，通过【费用】[将这个单位退场]，选择1张正在被攻击的单位，这次战斗中，力量+10000。
-	vgd.AbilityAuto(c,m,LOCATION_CIRCLE,EFFECT_TYPE_FIELD,EVENT_BE_BATTLE_TARGET,cm.op,vgf.cost.Retire,cm.con)
+	vgd.action.AbilityAuto(c,m,LOCATION_CIRCLE,EFFECT_TYPE_FIELD,EVENT_BE_BATTLE_TARGET,cm.op,vgf.cost.Retire,cm.con)
 	-- EFFECT_TYPE_FIELD
 	-- EVENT_BE_BATTLE_TARGET
 end

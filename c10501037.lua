@@ -3,7 +3,7 @@ local cm,m,o=GetID()
 function cm.initial_effect(c)
 	-- 黑翼（你的封锁区中的卡只有偶数的等级的场合才有效）
 	-- 【自】【R】：被支援的这个单位攻击的战斗结束时，你可以选择你的后防者中或灵魂里的1张卡，返回手牌。从灵魂里选择了的话，将这个单位放置到灵魂里。(FLAG_SUPPORTED)
-	vgd.AbilityAuto(c,m,LOCATION_CIRCLE,EFFECT_TYPE_FIELD,EVENT_BATTLED,cm.op,nil,cm.con)
+	vgd.action.AbilityAuto(c,m,LOCATION_CIRCLE,EFFECT_TYPE_FIELD,EVENT_BATTLED,cm.op,nil,cm.con)
 end
 
 function cm.con(e,tp,eg,ep,ev,re,r,rp)

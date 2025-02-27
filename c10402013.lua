@@ -1,7 +1,7 @@
 local cm,m,o=GetID()
 function cm.initial_effect(c)
-    vgd.AbilityAct(c,m,LOCATION_CIRCLE,cm.op,vgf.cost.CounterBlast(1),cm.con)
-	vgd.GlobalCheckEffect(c,m,EVENT_TO_GRAVE,cm.checkcon)
+    vgd.action.AbilityAct(c,m,LOCATION_CIRCLE,cm.op,vgf.cost.CounterBlast(1),cm.con)
+	vgd.action.GlobalCheckEffect(c,m,EVENT_TO_GRAVE,cm.checkcon)
 end
 function cm.con(e,tp,eg,ep,ev,re,r,rp)
 	return vgf.con.IsR(e) and Duel.GetFlagEffect(tp,m)>0

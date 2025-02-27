@@ -1,6 +1,6 @@
 local cm,m,o=GetID()
 function cm.initial_effect(c)
-    vgd.AbilityAct(c,m,LOCATION_CIRCLE,vgf.CounterCharge(1),cm.cost,vgf.con.IsR,nil,1)
+    vgd.action.AbilityAct(c,m,LOCATION_CIRCLE,vgf.CounterCharge(1),cm.cost,vgf.con.IsR,nil,1)
 end
 function cm.cost(e,tp,eg,ep,ev,re,r,rp,chk)
 	if chk==0 then

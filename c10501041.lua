@@ -1,8 +1,8 @@
 local cm,m,o=GetID()
 function cm.initial_effect(c)
-	vgd.AbilityAct(c,m,LOCATION_R_CIRCLE,cm.op,vgf.cost.And(vgf.cost.CounterBlast(1), vgf.cost.ToSoul))
-	vgd.CannotBeTarget(c, m, LOCATION_V_CIRCLE, EFFECT_TYPE_SINGLE, nil, vgf.BlackWings)
-	vgd.CannotBeAttackTarget(c, m, LOCATION_V_CIRCLE, EFFECT_TYPE_SINGLE, cm.val, vgf.BlackWings)
+	vgd.action.AbilityAct(c,m,LOCATION_R_CIRCLE,cm.op,vgf.cost.And(vgf.cost.CounterBlast(1), vgf.cost.ToSoul))
+	vgd.action.CannotBeTarget(c, m, LOCATION_V_CIRCLE, EFFECT_TYPE_SINGLE, nil, vgf.BlackWings)
+	vgd.action.CannotBeAttackTarget(c, m, LOCATION_V_CIRCLE, EFFECT_TYPE_SINGLE, cm.val, vgf.BlackWings)
 end
 function cm.val(e,c)
 	return vgf.filter.IsR(c)

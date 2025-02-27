@@ -1,7 +1,7 @@
 --斧钺的骑士 拉夫尔克
 local cm,m,o=GetID()
 function cm.initial_effect(c)
-    vgd.AbilityAct(c,m,LOCATION_CIRCLE,cm.operation,cm.cost,vgf.con.IsR)
+    vgd.action.AbilityAct(c,m,LOCATION_CIRCLE,cm.operation,cm.cost,vgf.con.IsR)
 end
 function cm.operation(e,tp,eg,ep,ev,re,r,rp)
     local c=e:GetHandler()

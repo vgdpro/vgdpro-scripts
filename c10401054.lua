@@ -1,6 +1,6 @@
 local cm,m,o=GetID()
 function cm.initial_effect(c)
-	vgd.Order(c,m,cm.op,vgf.cost.CounterBlast(1),cm.con)
+	vgd.action.Order(c,m,cm.op,vgf.cost.CounterBlast(1),cm.con)
 end
 function cm.op(e,tp,eg,ep,ev,re,r,rp,chk)
 	local c=e:GetHandler()

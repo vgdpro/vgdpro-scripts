@@ -2,8 +2,8 @@
 local cm,m,o=GetID()
 function cm.initial_effect(c)--这个函数下面用于注册效果
     -- 这个回合中你的先导者被攻击击中过的话，选择1个被攻击的单位，这次战斗中，力量+30000。
-    vgd.BlitzOrder(c,cm.op,nil,cm.con)
-    vgd.GlobalCheckEffect(c,m,EVENT_CUSTOM+EVENT_DAMAGE_TRIGGER,cm.checkcon)
+    vgd.action.BlitzOrder(c,cm.op,nil,cm.con)
+    vgd.action.GlobalCheckEffect(c,m,EVENT_CUSTOM+EVENT_DAMAGE_TRIGGER,cm.checkcon)
 end
 function cm.op(e,tp,eg,ep,ev,re,r,rp)
     local c=e:GetHandler()

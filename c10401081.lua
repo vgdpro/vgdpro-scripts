@@ -1,6 +1,6 @@
 local cm,m,o=GetID()
 function cm.initial_effect(c)
-	vgd.BlitzOrder(c,cm.op,nil,cm.con)
+	vgd.action.BlitzOrder(c,cm.op,nil,cm.con)
 end
 function cm.con(e,tp,eg,ep,ev,re,r,rp)
 	return vgf.cost.SoulBlast(5)(e,tp,eg,ep,ev,re,r,rp,0)

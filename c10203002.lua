@@ -1,7 +1,7 @@
 local cm,m,o=GetID()
 function cm.initial_effect(c)
-	vgd.BeRidedByCard(c,m,cm.filter,vgf.op.CardsFromTo(REASON_EFFECT,LOCATION_HAND,LOCATION_DROP,cm.filter1),vgf.cost.CounterBlast(1))
-	vgd.AbilityAuto(c,m,LOCATION_CIRCLE,EFFECT_TYPE_FIELD,EVENT_CUSTOM+EVENT_SUPPORT,cm.operation1,vgf.cost.SoulBlast(1),cm.condition1)
+	vgd.action.AbilityAutoRided(c,m,cm.filter,vgf.op.CardsFromTo(REASON_EFFECT,LOCATION_HAND,LOCATION_DROP,cm.filter1),vgf.cost.CounterBlast(1))
+	vgd.action.AbilityAuto(c,m,LOCATION_CIRCLE,EFFECT_TYPE_FIELD,EVENT_CUSTOM+EVENT_SUPPORT,cm.operation1,vgf.cost.SoulBlast(1),cm.condition1)
 end
 function cm.filter(c)
 	return c:IsSetCard(0x202)

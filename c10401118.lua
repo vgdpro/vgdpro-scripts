@@ -3,7 +3,7 @@ local cm,m,o=GetID()
 --通过【费用】[将你的2张后防者退场]施放！
 --抽1张卡，将这张卡放置到灵魂里，计数回充1。
 function cm.initial_effect(c)
-	vgd.Order(c,m,cm.op,vgf.cost.Retire(vgf.filter.IsR,2,2))
+	vgd.action.Order(c,m,cm.op,vgf.cost.Retire(vgf.filter.IsR,2,2))
 	VgF.AddAlchemagic(m,"LOCATION_CIRCLE","LOCATION_DROP",2,2,vgf.filter.IsR)
 end
 function cm.op(e,tp,eg,ep,ev,re,r,rp)

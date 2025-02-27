@@ -1,6 +1,6 @@
 local cm,m,o=GetID()
 function cm.initial_effect(c)
-	vgd.Order(c,m,cm.op,vgf.cost.And(vgf.cost.CounterBlast(1),vgf.cost.SoulBlast(1)))
+	vgd.action.Order(c,m,cm.op,vgf.cost.And(vgf.cost.CounterBlast(1),vgf.cost.SoulBlast(1)))
 end
 function cm.op(e,tp,eg,ep,ev,re,r,rp,chk)
 	local g=vgf.SelectMatchingCard(HINTMSG_LEAVEFIELD,e,tp,vgf.filter.IsR,tp,LOCATION_CIRCLE,LOCATION_CIRCLE,1,1,nil)

@@ -1,8 +1,8 @@
 --
 local cm,m,o=GetID()
 function cm.initial_effect(c)
-	vgd.AbilityAct(c,m,LOCATION_CIRCLE,vgf.op.CardsFromTo(REASON_EFFECT,LOCATION_CIRCLE,LOCATION_DROP,cm.filter),vgf.cost.Discard(1),vgf.con.IsV,nil,1)
-	vgd.AbilityAuto(c,m,LOCATION_CIRCLE,EFFECT_TYPE_SINGLE,EVENT_ATTACK_ANNOUNCE,cm.operation,vgf.cost.CounterBlast(1),vgf.con.IsV)
+	vgd.action.AbilityAct(c,m,LOCATION_CIRCLE,vgf.op.CardsFromTo(REASON_EFFECT,LOCATION_CIRCLE,LOCATION_DROP,cm.filter),vgf.cost.Discard(1),vgf.con.IsV,nil,1)
+	vgd.action.AbilityAuto(c,m,LOCATION_CIRCLE,EFFECT_TYPE_SINGLE,EVENT_ATTACK_ANNOUNCE,cm.operation,vgf.cost.CounterBlast(1),vgf.con.IsV)
 end
 function cm.filter(c)
 	return c:IsLevel(0)

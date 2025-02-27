@@ -2,9 +2,9 @@
 local cm,m,o=GetID()
 function cm.initial_effect(c)
 	-- 【自】：这个单位登场到V时，选择你的封锁区中的1张卡，放置到牌堆底，放置了的话，将你的牌堆顶的1张卡正面封锁。
-	vgd.AbilityAuto(c,m,LOCATION_CIRCLE,EFFECT_TYPE_SINGLE,EVENT_SPSUMMON_SUCCESS,cm.op1,nil,cm.con1)
+	vgd.action.AbilityAuto(c,m,LOCATION_CIRCLE,EFFECT_TYPE_SINGLE,EVENT_SPSUMMON_SUCCESS,cm.op1,nil,cm.con1)
 	-- 白翼-【起】【V】【1回合1次】：通过【费用】[计数爆发1]，这个回合中，这个单位的☆+1。
-	vgd.AbilityAct(c,m,LOCATION_CIRCLE,cm.op2,vgf.cost.CounterBlast(1),cm.con2,nil,1)
+	vgd.action.AbilityAct(c,m,LOCATION_CIRCLE,cm.op2,vgf.cost.CounterBlast(1),cm.con2,nil,1)
 	-- 黑翼-【永】【V】：这个单位攻击的战斗中，对手不能将触发单位卡从手牌CALL到G上。
 	VgD.CannotCallToGCircleWhenAttack(c,m,function (e,re,tp)
 		return re:GetHandler():IsType(TYPE_TRIGGER) and re:GetHandler():IsLocation(LOCATION_HAND)

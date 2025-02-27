@@ -1,9 +1,9 @@
 local cm,m,o=GetID()
 function cm.initial_effect(c)
-	vgd.OverDress(c,10101009)
-	vgd.AbilityAuto(c,m,LOCATION_HAND,EFFECT_TYPE_FIELD,EVENT_BATTLED,cm.op,vgf.cost.SoulBlast(2),cm.con)
-	vgd.AbilityCont(c, m, LOCATION_CIRCLE, EFFECT_TYPE_SINGLE, EFFECT_UPDATE_ATTACK, 10000, cm.con2)
-	vgd.AbilityCont(c, m, LOCATION_G_CIRCLE, EFFECT_TYPE_SINGLE, 10000, EFFECT_UPDATE_DEFENSE, cm.con2)
+	vgd.action.OverDress(c,10101009)
+	vgd.action.AbilityAuto(c,m,LOCATION_HAND,EFFECT_TYPE_FIELD,EVENT_BATTLED,cm.op,vgf.cost.SoulBlast(2),cm.con)
+	vgd.action.AbilityCont(c, m, LOCATION_CIRCLE, EFFECT_TYPE_SINGLE, EFFECT_UPDATE_ATTACK, 10000, cm.con2)
+	vgd.action.AbilityCont(c, m, LOCATION_G_CIRCLE, EFFECT_TYPE_SINGLE, 10000, EFFECT_UPDATE_DEFENSE, cm.con2)
 end
 function cm.op(e,tp,eg,ep,ev,re,r,rp)
 	local c=e:GetHandler()

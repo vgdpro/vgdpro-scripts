@@ -1,6 +1,6 @@
 local cm,m,o=GetID()
 function cm.initial_effect(c)
-	vgd.CannotBeTarget(c,m,LOCATION_R_CIRCLE,EFFECT_TYPE_FIELD,nil,nil,cm.tg)
+	vgd.action.CannotBeTarget(c,m,LOCATION_R_CIRCLE,EFFECT_TYPE_FIELD,nil,nil,cm.tg)
 	local e1=Effect.CreateEffect(c)
 	e1:SetType(EFFECT_TYPE_FIELD)
 	e1:SetCode(EFFECT_CANMOVE_PARALLEL)

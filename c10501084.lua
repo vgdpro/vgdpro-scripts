@@ -3,7 +3,7 @@ local cm,m,o=GetID()
 
 function cm.initial_effect(c)
     -- 【自】：这个单位被RIDE时，选择你的牌堆或手牌中的至多1张等级1的歌曲卡，公开后放置到指令区，从牌堆探寻了的话，牌堆洗切。从手牌放置了的话，抽卡1张。
-    vgd.BeRidedByCard(c,m,nil,cm.operation,nil,nil)
+    vgd.action.AbilityAutoRided(c,m,nil,cm.operation,nil,nil)
 end
 function cm.operation(e,tp,eg,ep,ev,re,r,rp)
     local g=vgf.SelectMatchingCard(HINTMSG_TOFIELD,e,tp,cm.filter,tp,LOCATION_HAND+LOCATION_DECK,0,0,1,nil)

@@ -1,8 +1,12 @@
 --VgD库
 VgD = {}
-vgd = VgD
 
 VgD.Register = {}
+VgD.Action = {}
+VgD.Presets = {}
+VgD.action = VgD.Action
+VgD.preset = VgD.Presets
+vgd = VgD
 
 function VgD.PreloadUds()
     VgD.Register.VgCard()
@@ -33,7 +37,7 @@ function VgD.Register.VgCard()
 	Duel.RegisterEffect(e,0)
 end
 
----使卡片遵守VG的规则，已包含在 vgd.VgCard 内
+---使卡片遵守VG的规则，已包含在 vgd.action.VgCard 内
 function VgD.Register.Rule()
     --回合开始时选择把卡放回卡组并重新抽卡
     if true then
@@ -140,7 +144,7 @@ function VgD.Register.Rule()
     end
 end
 
----使卡片具有骑升的功能，已包含在 vgd.VgCard 内
+---使卡片具有骑升的功能，已包含在 vgd.action.VgCard 内
 function VgD.Register.Ride()
     --游戏开始时从ride卡组将等级0的卡放到场上
     if true then
@@ -586,7 +590,7 @@ function VgD.Register.CardTriggerOperation(chkop)
     end
 end
 
-function VgD.Register.Register.ActiviteAdditionalEffect(e, tp, eg, ep, ev, re, r, rp, c, chk)
+function VgD.Register.ActiviteAdditionalEffect(e, tp, eg, ep, ev, re, r, rp, c, chk)
     local additional_effect = c.additional_effect
     if not additional_effect or #additional_effect == 0 then return end
     if VgF.GetValueType(additional_effect['chk']) == "boolean" then
@@ -612,7 +616,7 @@ function VgD.Register.Register.ActiviteAdditionalEffect(e, tp, eg, ep, ev, re, r
     return false
 end
 
----使卡片具有Call到R位的功能，已包含在 vgd.VgCard 内
+---使卡片具有Call到R位的功能，已包含在 vgd.action.VgCard 内
 ---@param c Card 要注册Call到R位功能的卡
 function VgD.Register.CallToR(c)
     local e = Effect.CreateEffect(c)
@@ -653,7 +657,7 @@ function VgD.Register.CallOperation(e)
     e:SetValue(function () return SUMMON_VALUE_CALL, zone end)
 end
 
----使卡片遵守VG的战斗规则，已包含在 vgd.VgCard 内
+---使卡片遵守VG的战斗规则，已包含在 vgd.action.VgCard 内
 function VgD.Register.MonsterBattle(c)
     if not c then
         --横置攻击
@@ -920,7 +924,7 @@ end
 
 ---超限触发的追加效果
 ---
-function VgD.AdditionalEffect(c, m, op, cost, con, tg, chk)
+function VgD.Action.AdditionalEffect(c, m, op, cost, con, tg, chk)
     local cm = _G["c"..m]
     cm.additional_effect = {['op'] = op, ['cost'] = cost, ['con'] = con, ['tg'] = tg, ['chk'] = chk}
 end
@@ -929,7 +933,7 @@ end
 ---@param c Card 要注册超限舞装功能的卡
 ---@param filter number 卡名为 filter 的后防者，或符合 filter 的后防者等
 ---@return Effect 这个效果
-function VgD.OverDress(c, filter)
+function VgD.Action.OverDress(c, filter)
     local e1 = Effect.CreateEffect(c)
     e1:SetDescription(VgF.Stringid(VgID, 9))
     e1:SetType(EFFECT_TYPE_FIELD)
@@ -1000,7 +1004,7 @@ end
 ---@param c Card 要注册舞装加身功能的卡
 ---@param code number 指定卡的卡号
 ---@return Effect 这个效果
-function VgD.DressUp(c, code)
+function VgD.Action.DressUp(c, code)
     local e = Effect.CreateEffect(c)
     e:SetType(EFFECT_TYPE_SINGLE)
     e:SetCode(EFFECT_ADD_CODE)
@@ -1019,7 +1023,7 @@ end
 ---@param cost function|nil 作为指令卡的发动费用
 ---@param con function|nil 作为指令卡的发动条件
 ---@return Effect|nil 这个效果
-function VgD.Order(c, m, op, cost, con)
+function VgD.Action.Order(c, m, op, cost, con)
     -- check func
     local fchk = VgF.IllegalFunctionCheck("Order", c)
     if fchk.con(con) or fchk.cost(cost) or fchk.op(op) then return end
@@ -1362,7 +1366,7 @@ end
 ---@param con function|nil 作为指令卡的发动条件
 ---@param tg function|nil 作为指令卡的发动检查
 ---@return Effect|nil 这个效果
-function VgD.BlitzOrder(c, op, cost, con, tg)
+function VgD.Action.BlitzOrder(c, op, cost, con, tg)
     -- check func
     local fchk = VgF.IllegalFunctionCheck("BlitzOrder", c)
     if fchk.con(con) or fchk.cost(cost) or fchk.tg(tg) or fchk.op(op) then return end
@@ -1389,7 +1393,7 @@ end
 ---@param con function|nil 作为指令卡的发动条件
 ---@param tg function|nil 作为指令卡的发动检查
 ---@return Effect|nil 这个效果
-function VgD.SetOrder(c, cost, con, tg)
+function VgD.Action.SetOrder(c, cost, con, tg)
     -- check func
     local fchk = VgF.IllegalFunctionCheck("SetOrder", c)
     if fchk.con(con) or fchk.cost(cost) or fchk.tg(tg) then return end
@@ -1426,7 +1430,7 @@ end
 ---@param property number|nil 这个效果的特殊属性。
 ---@param id number|nil 提示脚本的卡号索引
 ---@return Effect|nil, Effect|nil 这个效果
-function VgD.AbilityAuto(c, m, loc, typ, code, op, cost, con, tg, count, property, id)
+function VgD.Action.AbilityAuto(c, m, loc, typ, code, op, cost, con, tg, count, property, id)
     -- check func
     local fchk = VgF.IllegalFunctionCheck("AbilityAuto", c)
     -- set param
@@ -1496,7 +1500,7 @@ function VgD.AbilityAuto(c, m, loc, typ, code, op, cost, con, tg, count, propert
     return e
 end
 
----【自】这个单位被 Ride 时触发
+---【自】这个单位被 Ride 时触发（待更改）
 ---@param c Card 被Ride的卡
 ---@param m number|nil 指示脚本的整数。cxxx的脚本应填入xxx。cm的脚本应填入m。
 ---@param filter number|nil Ride c 的卡
@@ -1505,10 +1509,10 @@ end
 ---@param con function|nil 这个效果的条件函数
 ---@param tg function|nil 这个效果的检查函数
 ---@param id number|nil 提示脚本的卡号索引
----@return Effect 这个效果
-function VgD.BeRidedByCard(c, m, filter, op, cost, con, tg, id)
+---@return Effect|nil 这个效果
+function VgD.Action.AbilityAutoRided(c, m, filter, op, cost, con, tg, id)
     -- check func
-    local fchk = VgF.IllegalFunctionCheck("BeRidedByCard", c)
+    local fchk = VgF.IllegalFunctionCheck("AbilityAutoRided", c)
     if fchk.con(con) or fchk.cost(cost) or fchk.tg(tg) or fchk.op(op) then return end
     -- set param
     m = m or c:GetOriginalCode()
@@ -1519,12 +1523,12 @@ function VgD.BeRidedByCard(c, m, filter, op, cost, con, tg, id)
     e:SetType(EFFECT_TYPE_SINGLE + EFFECT_TYPE_CONTINUOUS)
     e:SetCode(EVENT_BE_MATERIAL)
     e:SetProperty(EFFECT_FLAG_EVENT_PLAYER)
-    e:SetCondition(VgD.BeRidedByCardCondition(con, filter))
-    e:SetOperation(VgD.BeRidedByCardOperation(desc, op, cost, tg))
+    e:SetCondition(VgD.AbilityAutoRidedCondition(con, filter))
+    e:SetOperation(VgD.AbilityAutoRidedOperation(desc, op, cost, tg))
     c:RegisterEffect(e)
     return e
 end
-function VgD.BeRidedByCardCondition(con, filter)
+function VgD.AbilityAutoRidedCondition(con, filter)
     return function (e, tp, eg, ep, ev, re, r, rp)
         if r ~= REASON_RIDEUP or (con and not con(e, tp, eg, ep, ev, re, r, rp)) then return false end
         local c, rc = e:GetHandler(), e:GetHandler():GetReasonCard()
@@ -1535,7 +1539,7 @@ function VgD.BeRidedByCardCondition(con, filter)
         return filter(rc, c)
     end
 end
-function VgD.BeRidedByCardOperation(desc, op, cost, tg)
+function VgD.AbilityAutoRidedOperation(desc, op, cost, tg)
     return function(e, tp, eg, ep, ev, re, r, rp)
         local c = e:GetHandler()
         local rc = c:GetReasonCard()
@@ -1548,7 +1552,7 @@ function VgD.BeRidedByCardOperation(desc, op, cost, tg)
         e1:SetCountLimit(1)
         e1:SetLabelObject(c)
         e1:SetRange(LOCATION_CIRCLE)
-        e1:SetCondition(VgD.BeRidedByCardOpCondtion)
+        e1:SetCondition(VgD.AbilityAutoRidedOpCondtion)
         if cost then e1:SetCost(cost) end
         if tg then e1:SetTarget(tg) end
         if op then e1:SetOperation(op) end
@@ -1556,20 +1560,11 @@ function VgD.BeRidedByCardOperation(desc, op, cost, tg)
         rc:RegisterEffect(e1)
     end
 end
-function VgD.BeRidedByCardOpCondtion(e, tp, eg, ep, ev, re, r, rp)
+function VgD.AbilityAutoRidedOpCondtion(e, tp, eg, ep, ev, re, r, rp)
     local c = e:GetLabelObject()
     return eg:GetFirst() == e:GetHandler() and e:GetHandler():GetOverlayGroup():IsContains(c)
 end
 
----【自】这个单位被RIDE时，你是后攻的话，抽1张卡。
----@param c Card 拥有这个效果的卡
----@return Effect 这个效果
-function VgD.Grade0BeRide(c)
-    return vgd.BeRidedByCard(c,nil,nil,VgF.Operation.Draw(),nil,VgD.Grade0BeRideCondition)
-end
-function VgD.Grade0BeRideCondition(e,tp,eg,ep,ev,re,r,rp)
-    return tp==1 and Duel.GetTurnPlayer()==tp
-end
 --起相关----------------------------------------------------------------------------------------
 
 ---【起】效果模板：当单位在loc时，可以发动的【起】效果
@@ -1584,7 +1579,7 @@ end
 ---@param property number|nil 这个效果的特殊属性。
 ---@param id number|nil 提示脚本的卡号索引
 ---@return Effect|nil 这个效果
-function VgD.AbilityAct(c, m, loc, op, cost, con, tg, count, property, id)
+function VgD.Action.AbilityAct(c, m, loc, op, cost, con, tg, count, property, id)
     -- check func
     local fchk = VgF.IllegalFunctionCheck("AbilityAct", c)
     if fchk.con(con) or fchk.cost(cost) or fchk.tg(tg) or fchk.op(op) then return end
@@ -1623,7 +1618,7 @@ end
 ---@param reset number|nil 效果的重置条件
 ---@param hc Card|nil 效果的拥有者, 没有则为 c
 ---@return Effect|nil, Effect|nil 这个效果
-function VgD.AbilityCont(c, m, loc, typ, code, val, con, tg, loc_self, loc_op, reset, hc)
+function VgD.Action.AbilityCont(c, m, loc, typ, code, val, con, tg, loc_self, loc_op, reset, hc)
     -- check func
     local fchk = VgF.IllegalFunctionCheck("AbilityCont", c)
     if fchk.con(con) or fchk.tg(tg) then return end
@@ -1661,7 +1656,7 @@ end
 ---@param reset number|nil 效果的重置条件
 ---@param hc Card|nil 效果的拥有者, 没有则为 c
 ---@return Effect|nil 这个效果
-function VgD.DriveUp(c, m, num, con, reset, hc)
+function VgD.Action.DriveUp(c, m, num, con, reset, hc)
     -- check func
     if VgF.IllegalFunctionCheck("DriveUp", c).con(con) then return end
     -- set param
@@ -1705,7 +1700,7 @@ end
 ---@param tg function|nil 这个效果的影响目标，影响全域范围才需填
 ---@param loc_self number|nil 这个效果影响的自己区域，影响全域范围才需填
 ---@return Effect|nil 这个效果
-function VgD.CannotBeAttackTarget(c, m, loc, typ, val, con, tg, loc_self)
+function VgD.Action.CannotBeAttackTarget(c, m, loc, typ, val, con, tg, loc_self)
     -- check func
     local fchk = VgF.IllegalFunctionCheck("CannotBeAttackTarget", c)
     if fchk.con(con) or fchk.tg(tg) then return end
@@ -1743,7 +1738,7 @@ end
 ---@param tg function|nil 这个效果的影响目标，影响全域范围才需填
 ---@param loc_self number|nil 这个效果影响的自己区域，影响全域范围才需填
 ---@return Effect|nil 这个效果
-function VgD.CannotBeTarget(c, m, loc, typ, val, con, tg, loc_self)
+function VgD.Action.CannotBeTarget(c, m, loc, typ, val, con, tg, loc_self)
     -- check func
     local fchk = VgF.IllegalFunctionCheck("CannotBeTarget", c)
     if fchk.con(con) or fchk.tg(tg) then return end
@@ -1780,7 +1775,7 @@ end
 ---@param reset number|nil 效果的重置条件
 ---@param hc Card|nil 效果的拥有者, 没有则为 c
 ---@return Effect|nil 这个效果
-function VgD.CannotCallToGCircleWhenAttack(c, m, val, condition, reset, hc)
+function VgD.Action.CannotCallToGCircleWhenAttack(c, m, val, condition, reset, hc)
     -- set param
     local cm = _G["c"..(m or c:GetOriginalCode())]
     cm.is_has_continuous = cm.is_has_continuous or not reset
@@ -1814,7 +1809,7 @@ end
 ---@param c Card 要注册以上功能的卡
 ---@param m number|nil 效果的创建者的卡号
 ---@return Effect, Effect 两个效果
-function VgD.DarkNight(c, m)
+function VgD.Action.DarkNight(c, m)
     -- set param
     local cm = _G["c"..(m or c:GetOriginalCode())]
     cm.is_has_continuous = true
@@ -1851,7 +1846,7 @@ end
 ---@param c Card 要注册以上功能的卡
 ---@param m number|nil 效果的创建者的卡号
 ---@return Effect 两个效果
-function VgD.CallInPrison(c, m)
+function VgD.Action.CallInPrison(c, m)
     -- set param
     local cm = _G["c"..(m or c:GetOriginalCode())]
     cm.is_has_continuous = true
@@ -1873,7 +1868,7 @@ function VgD.CallInPrison(c, m)
     return e1, e2
 end
 function VgD.CallInPrisonCondition(val)
-    return function (e, c, og)
+    return function (e)
         local tp = 1 - e:GetHandlerPlayer()
         local eg, ep, ev, re, r, rp
         if Duel.GetTurnPlayer() == e:GetHandlerPlayer() then return false end
@@ -1885,7 +1880,7 @@ function VgD.CallInPrisonCondition(val)
     end
 end
 function VgD.CallInPrisonOperation(val)
-    return function(e, tp, eg, ep, ev, re, r, rp, c, sg, og)
+    return function(e, tp, eg, ep, ev, re, r, rp)
         if val == 1 then
             VgF.Cost.SoulBlast(1)(e, tp, eg, ep, ev, re, r, rp, 1)
             local g = VgF.SelectMatchingCard(HINTMSG_CALL, e, tp, VgD.CallInPrisonFilter, tp, LOCATION_ORDER, 0, 1, 1, nil, e, tp)
@@ -1922,7 +1917,7 @@ end
 ---@param code number 触发的时点
 ---@param op function|nil 这个效果的处理函数
 ---@param con function|nil 这个效果的条件函数
-function VgD.GlobalCheckEffect(c, m, code, con, op)
+function VgD.Action.GlobalCheckEffect(c, m, code, con, op)
     -- check func
     local fchk = VgF.IllegalFunctionCheck("GlobalCheckEffect", c)
     if fchk.con(con) or fchk.op(op) then return end

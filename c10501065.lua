@@ -2,9 +2,9 @@
 local cm,m,o=GetID()
 function cm.initial_effect(c)
     -- 【永】【R】：这个回合中你施放了「不移之绯红」和「无尽之苍蓝」的话，这个单位的力量+10000。
-    vgd.GlobalCheckEffect(c,m,EVENT_CHAIN_SOLVING,cm.checkcon1)
-    vgd.GlobalCheckEffect(c,m,EVENT_CHAIN_SOLVING,cm.checkcon2,cm.checkop)
-	vgd.AbilityCont(c, m, LOCATION_CIRCLE, EFFECT_TYPE_SINGLE, EFFECT_UPDATE_ATTACK, 10000, cm.con)
+    vgd.action.GlobalCheckEffect(c,m,EVENT_CHAIN_SOLVING,cm.checkcon1)
+    vgd.action.GlobalCheckEffect(c,m,EVENT_CHAIN_SOLVING,cm.checkcon2,cm.checkop)
+	vgd.action.AbilityCont(c, m, LOCATION_CIRCLE, EFFECT_TYPE_SINGLE, EFFECT_UPDATE_ATTACK, 10000, cm.con)
 end
 
 function cm.con(e)

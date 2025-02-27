@@ -1,6 +1,6 @@
 local cm,m,o=GetID()
 function cm.initial_effect(c)
-	vgd.AbilityAct(c,m,LOCATION_CIRCLE,cm.operation,vgf.cost.CounterBlast(2),cm.condition,nil,1)
+	vgd.action.AbilityAct(c,m,LOCATION_CIRCLE,cm.operation,vgf.cost.CounterBlast(2),cm.condition,nil,1)
 end
 function cm.operation(e,tp,eg,ep,ev,re,r,rp)
 	local c=e:GetHandler()

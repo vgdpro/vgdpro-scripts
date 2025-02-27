@@ -1,7 +1,7 @@
 local cm,m,o=GetID()
 function cm.initial_effect(c)
-	vgd.AbilityAuto(c,m,LOCATION_CIRCLE,EFFECT_TYPE_SINGLE,EVENT_ATTACK_ANNOUNCE,vgf.op.SoulCharge(1),nil,cm.con)
-	vgd.AbilityAct(c,m,LOCATION_SOUL,cm.op,cm.cost)
+	vgd.action.AbilityAuto(c,m,LOCATION_CIRCLE,EFFECT_TYPE_SINGLE,EVENT_ATTACK_ANNOUNCE,vgf.op.SoulCharge(1),nil,cm.con)
+	vgd.action.AbilityAct(c,m,LOCATION_SOUL,cm.op,cm.cost)
 end
 function cm.con(e,tp,eg,ep,ev,re,r,rp)
 	return vgf.filter.IsV(Duel.GetAttackTarget())

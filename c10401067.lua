@@ -3,7 +3,7 @@ local cm,m,o=GetID()
 function cm.initial_effect(c)
 --通过【费用】[使用1张以上的你希望的张数的卡进行计数爆发]施放！
 --由于这个费用支付的计数爆发1每有1张，选择对手的1张后防者，退场。
-	vgd.Order(c,m,cm.op,cm.cost)
+	vgd.action.Order(c,m,cm.op,cm.cost)
 	VgF.AddAlchemagic(m,"LOCATION_DAMAGE","POSCHANGE",1,100,Card.IsFaceup)
 end
 function cm.cost(e,tp,eg,ep,ev,re,r,rp,chk)

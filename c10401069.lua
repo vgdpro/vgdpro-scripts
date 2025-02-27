@@ -2,9 +2,9 @@
 local cm,m,o=GetID()
 function cm.initial_effect(c)
 --	【自】【R】：这个单位的攻击击中时，灵魂填充1。
-	vgd.AbilityAuto(c,m,LOCATION_CIRCLE,EFFECT_TYPE_SINGLE,EVENT_HITTING,vgf.op.SoulCharge(1),nil,vgf.con.IsR)
+	vgd.action.AbilityAuto(c,m,LOCATION_CIRCLE,EFFECT_TYPE_SINGLE,EVENT_HITTING,vgf.op.SoulCharge(1),nil,vgf.con.IsR)
 --	【自】【R】：这个单位攻击的战斗结束时，你的灵魂在10张以上的话，通过【费用】[将这个单位放置到灵魂里]，计数回充1
-	vgd.AbilityAuto(c,m,LOCATION_CIRCLE,EFFECT_TYPE_SINGLE,EVENT_BATTLED,vgf.CounterCharge(1),cm.cost,cm.con)
+	vgd.action.AbilityAuto(c,m,LOCATION_CIRCLE,EFFECT_TYPE_SINGLE,EVENT_BATTLED,vgf.CounterCharge(1),cm.cost,cm.con)
 end
 function cm.cost(e,tp,eg,ep,ev,re,r,rp,chk)
 	local c=e:GetHandler()

@@ -1,8 +1,8 @@
 local cm,m,o=GetID()
 function cm.initial_effect(c)
-	vgd.AbilityAct(c,m,LOCATION_CIRCLE,cm.op,cm.cost,vgf.con.IsV)
-	vgd.AbilityAct(c,m,LOCATION_CIRCLE,cm.op1,vgf.cost.SoulBlast(5),cm.con,nil,nil,nil,2)
-	vgd.GlobalCheckEffect(c,m,EVENT_TO_GRAVE,cm.checkcon)
+	vgd.action.AbilityAct(c,m,LOCATION_CIRCLE,cm.op,cm.cost,vgf.con.IsV)
+	vgd.action.AbilityAct(c,m,LOCATION_CIRCLE,cm.op1,vgf.cost.SoulBlast(5),cm.con,nil,nil,nil,2)
+	vgd.action.GlobalCheckEffect(c,m,EVENT_TO_GRAVE,cm.checkcon)
 end
 function cm.cost(e,tp,eg,ep,ev,re,r,rp,chk)
 	if chk==0 then return vgf.IsExistingMatchingCard(cm.filter,tp,LOCATION_CIRCLE,0,2,nil) end

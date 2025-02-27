@@ -1,8 +1,8 @@
 local cm,m,o=GetID()
 function cm.initial_effect(c)
-	vgd.AbilityAct(c,m,LOCATION_CIRCLE,cm.op1,vgf.cost.CounterBlast(1),nil,nil,1)
-	vgd.AbilityCont(c, m, LOCATION_CIRCLE, EFFECT_TYPE_SINGLE, EFFECT_UPDATE_ATTACK, 10000, cm.con)
-	vgd.DriveUp(c,m,1,cm.con2)
+	vgd.action.AbilityAct(c,m,LOCATION_CIRCLE,cm.op1,vgf.cost.CounterBlast(1),nil,nil,1)
+	vgd.action.AbilityCont(c, m, LOCATION_CIRCLE, EFFECT_TYPE_SINGLE, EFFECT_UPDATE_ATTACK, 10000, cm.con)
+	vgd.action.DriveUp(c,m,1,cm.con2)
 end
 function cm.con(e,c)
 	local tp=e:GetHandlerPlayer()

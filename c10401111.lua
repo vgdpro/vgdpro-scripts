@@ -3,10 +3,10 @@ local cm,m,o=GetID()
 function cm.initial_effect(c)
 	--【起】【V】【1回合1次】：通过【费用】[灵魂爆发1]，抽2张卡，
 	--选择你的手牌中的至多1张指令卡，舍弃，没有舍弃的话，选择手牌中的的2张卡舍弃。
-	vgd.AbilityAct(c,m,LOCATION_CIRCLE,cm.operation,vgf.cost.SoulBlast(1),vgf.con.IsV,nil,1)
+	vgd.action.AbilityAct(c,m,LOCATION_CIRCLE,cm.operation,vgf.cost.SoulBlast(1),vgf.con.IsV,nil,1)
 	--【永】【R】：这个回合中你施放过指令卡的话，这个单位的力量+2000。
-	vgd.AbilityCont(c, m, LOCATION_CIRCLE, EFFECT_TYPE_SINGLE, EFFECT_UPDATE_ATTACK, 2000, cm.con)
-	vgd.GlobalCheckEffect(c,m,EVENT_CHAINING,cm.checkcon)
+	vgd.action.AbilityCont(c, m, LOCATION_CIRCLE, EFFECT_TYPE_SINGLE, EFFECT_UPDATE_ATTACK, 2000, cm.con)
+	vgd.action.GlobalCheckEffect(c,m,EVENT_CHAINING,cm.checkcon)
 end
 function cm.operation(e,tp,eg,ep,ev,re,r,rp)
     local c=e:GetHandler()

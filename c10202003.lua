@@ -2,10 +2,10 @@
 local cm,m,o=GetID()
 function cm.initial_effect(c)
 	--【自】：这个单位被「魔石龙 珠艾尼尔」骑升时，将这张卡召唤到R上。
-	vgd.BeRidedByCard(c,m,10202002,cm.operation)
+	vgd.action.AbilityAutoRided(c,m,10202002,cm.operation)
 	--【自】【R】：这个单位攻击或支援时，这次战斗中，这个单位的力量+5000。这次战斗结束时，将这个单位放置到灵魂里。（这个效果为强制执行。）
-	vgd.AbilityAuto(c,m,LOCATION_CIRCLE,EFFECT_TYPE_SINGLE,EVENT_ATTACK_ANNOUNCE,cm.operation2,nil,cm.condition2)
-	vgd.AbilityAuto(c,m,LOCATION_CIRCLE,EFFECT_TYPE_FIELD,EVENT_CUSTOM+EVENT_SUPPORT,cm.operation2,nil,cm.condition3)
+	vgd.action.AbilityAuto(c,m,LOCATION_CIRCLE,EFFECT_TYPE_SINGLE,EVENT_ATTACK_ANNOUNCE,cm.operation2,nil,cm.condition2)
+	vgd.action.AbilityAuto(c,m,LOCATION_CIRCLE,EFFECT_TYPE_FIELD,EVENT_CUSTOM+EVENT_SUPPORT,cm.operation2,nil,cm.condition3)
 end
 
 function cm.operation(e,tp,eg,ep,ev,re,r,rp)
