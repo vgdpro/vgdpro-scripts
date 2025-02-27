@@ -167,12 +167,12 @@ function VgD.Register.Ride()
         e:SetType(EFFECT_TYPE_FIELD + EFFECT_TYPE_CONTINUOUS)
         e:SetCode(EVENT_PHASE + PHASE_STANDBY)
         e:SetCountLimit(1, VgID + 1)
-        e:SetCondition(VgD.RideCondition)
-        e:SetOperation(VgD.RideOperation)
+        e:SetCondition(VgD.Register.RideCondition)
+        e:SetOperation(VgD.Register.RideOperation)
         Duel.RegisterEffect(e, 0)
     end
 end
-function VgD.RideMaterialCheck(c, rc)
+function VgD.Register.RideMaterialCheck(c, rc)
     if VgF.GetValueType(c.ride_material_code_chk) == "nil" and VgF.GetValueType(c.ride_material_setcard_chk) == "nil" then return true end
     if VgF.GetValueType(c.ride_material_code_chk) == "number" then
         if VgF.GetValueType(rc.ride_code) == "number" and c.ride_material_code_chk == rc.ride_code then return true
@@ -214,39 +214,39 @@ function VgD.RideMaterialCheck(c, rc)
     end
     return false
 end
-function VgD.RideFilter1(c, lv, code, rc)
+function VgD.Register.RideFilter1(c, lv, code, rc)
     local tp = c:GetControler()
     if not c:IsType(TYPE_UNIT) then return false end
     if rc:IsSkill(SKILL_PERSONA_RIDE) and c:IsCode(code) then return false end
-    if (c:IsLevel(lv, lv + 1) and c:IsLocation(LOCATION_HAND)) then return VgD.RideMaterialCheck(c, rc) end
-    if (c:IsLevel(lv + 1) and c:IsLocation(LOCATION_RIDE) and (VgF.IsExistingMatchingCard(nil, tp, LOCATION_HAND, 0, 1, nil) or (Duel.IsPlayerAffectedByEffect(tp, AFFECT_CODE_OVERLAY_INSTEAD_WHEN_RIDE) and VgF.GetVMonster(tp):GetOverlayCount() > 0))) then return VgD.RideMaterialCheck(c, rc) end
+    if (c:IsLevel(lv, lv + 1) and c:IsLocation(LOCATION_HAND)) then return VgD.Register.RideMaterialCheck(c, rc) end
+    if (c:IsLevel(lv + 1) and c:IsLocation(LOCATION_RIDE) and (VgF.IsExistingMatchingCard(nil, tp, LOCATION_HAND, 0, 1, nil) or (Duel.IsPlayerAffectedByEffect(tp, AFFECT_CODE_OVERLAY_INSTEAD_WHEN_RIDE) and VgF.GetVMonster(tp):GetOverlayCount() > 0))) then return VgD.Register.RideMaterialCheck(c, rc) end
     return false
 end
-function VgD.DisCardRideFilter(c, e, lv, code, rc)
+function VgD.Register.DisCardRideFilter(c, e, lv, code, rc)
     local tp = c:GetControler()
-    return c:IsDiscardable() and VgF.IsExistingMatchingCard(VgD.RideFilter1, tp, LOCATION_HAND + LOCATION_RIDE, 0, 1, c, lv, code, rc)
+    return c:IsDiscardable() and VgF.IsExistingMatchingCard(VgD.Register.RideFilter1, tp, LOCATION_HAND + LOCATION_RIDE, 0, 1, c, lv, code, rc)
 end
-function VgD.RideFilter2(c, lv, code, rc)
+function VgD.Register.RideFilter2(c, lv, code, rc)
     return c:IsLevel(lv) and c:IsType(TYPE_UNIT) and c:IsCode(code) and rc:IsSkill(SKILL_PERSONA_RIDE)
 end
-function VgD.RideCondition()
+function VgD.Register.RideCondition()
     local tp = Duel.GetTurnPlayer()
     local rc = Duel.GetMatchingGroup(VgF.Filter.IsV, tp, LOCATION_CIRCLE, 0, nil):GetFirst()
     if not rc then return false end
     local lv = rc:GetLevel()
     local code = rc:GetCode()
-    local rg1 = Duel.GetMatchingGroup(VgD.RideFilter1, tp, LOCATION_HAND + LOCATION_RIDE, 0, nil, lv, code, rc)
-    local rg2 = Duel.GetMatchingGroup(VgD.RideFilter2, tp, LOCATION_HAND, 0, nil, lv, code, rc)
+    local rg1 = Duel.GetMatchingGroup(VgD.Register.RideFilter1, tp, LOCATION_HAND + LOCATION_RIDE, 0, nil, lv, code, rc)
+    local rg2 = Duel.GetMatchingGroup(VgD.Register.RideFilter2, tp, LOCATION_HAND, 0, nil, lv, code, rc)
     return rg1:GetCount() > 0 or rg2:GetCount() > 0
 end
-function VgD.RideOperation()
+function VgD.Register.RideOperation()
     local tp = Duel.GetTurnPlayer()
     local rc = VgF.GetVMonster(tp)
     if not rc then return end
     local lv = rc:GetLevel()
     local code = rc:GetCode()
-    local rg1 = Duel.GetMatchingGroup(VgD.RideFilter1, tp, LOCATION_HAND + LOCATION_RIDE, 0, nil, lv, code, rc)
-    local rg2 = Duel.GetMatchingGroup(VgD.RideFilter2, tp, LOCATION_HAND, 0, nil, lv, code, rc)
+    local rg1 = Duel.GetMatchingGroup(VgD.Register.RideFilter1, tp, LOCATION_HAND + LOCATION_RIDE, 0, nil, lv, code, rc)
+    local rg2 = Duel.GetMatchingGroup(VgD.Register.RideFilter2, tp, LOCATION_HAND, 0, nil, lv, code, rc)
     local a = rg1:GetCount() > 0
     local b = rg2:GetCount() > 0
     local off = 1
@@ -271,7 +271,7 @@ function VgD.RideOperation()
                 VgF.Cost.SoulBlast(1)(e, tp, eg, ep, ev, re, r, rp, 1)
             else
                 Duel.Hint(HINT_SELECTMSG, tp, HINTMSG_DISCARD)
-                local g = Duel.SelectMatchingCard(tp, VgD.DisCardRideFilter, tp, LOCATION_HAND, 0, 1, 1, nil, e, lv, code, rc)
+                local g = Duel.SelectMatchingCard(tp, VgD.Register.DisCardRideFilter, tp, LOCATION_HAND, 0, 1, 1, nil, e, lv, code, rc)
                 VgF.Sendto(LOCATION_DROP, g, REASON_COST + REASON_DISCARD)
             end
         end
@@ -429,10 +429,10 @@ function VgD.Register.CardTriggerOperation(chkop)
                         VgF.AtkUp(c, g, atk_up, nil)
                     end)
                 end
-                if VgD.ActiviteAdditionalEffect(e, tp, eg, ep, ev, re, r, rp, c, 0) then
+                if VgD.Register.ActiviteAdditionalEffect(e, tp, eg, ep, ev, re, r, rp, c, 0) then
                     table.insert(ops, VgF.Stringid(VgID + 5, 5))
                     table.insert(sel, function ()
-                        VgD.ActiviteAdditionalEffect(e, tp, eg, ep, ev, re, r, rp, c, 1)
+                        VgD.Register.ActiviteAdditionalEffect(e, tp, eg, ep, ev, re, r, rp, c, 1)
                     end)
                 end
                 while #ops > 0 do
@@ -442,7 +442,7 @@ function VgD.Register.CardTriggerOperation(chkop)
                     table.remove(sel, i)
                 end
             else
-                if VgD.ActiviteAdditionalEffect(e, tp, eg, ep, ev, re, r, rp, c, 0) then VgD.ActiviteAdditionalEffect(e, tp, eg, ep, ev, re, r, rp, c, 1) end
+                if VgD.Register.ActiviteAdditionalEffect(e, tp, eg, ep, ev, re, r, rp, c, 0) then VgD.Register.ActiviteAdditionalEffect(e, tp, eg, ep, ev, re, r, rp, c, 1) end
                 if c:IsLocation(LOCATION_TRIGGER) then
                     VgF.Sendto(LOCATION_DAMAGE, c, tp, POS_FACEUP_ATTACK, REASON_EFFECT)
                     Duel.Damage(tp, 1, REASON_TRIGGER)
@@ -491,10 +491,10 @@ function VgD.Register.CardTriggerOperation(chkop)
                         VgF.AtkUp(c, g, atk_up, nil)
                     end)
                 end
-                if VgD.ActiviteAdditionalEffect(e, tp, eg, ep, ev, re, r, rp, c, 0) then
+                if VgD.Register.ActiviteAdditionalEffect(e, tp, eg, ep, ev, re, r, rp, c, 0) then
                     table.insert(ops, VgF.Stringid(VgID + 5, 6))
                     table.insert(sel, function ()
-                    return VgD.ActiviteAdditionalEffect(e, tp, eg, ep, ev, re, r, rp, c, 1)
+                    return VgD.Register.ActiviteAdditionalEffect(e, tp, eg, ep, ev, re, r, rp, c, 1)
                 end)
                 end
                 while #ops > 0 do
@@ -504,7 +504,7 @@ function VgD.Register.CardTriggerOperation(chkop)
                     table.remove(sel, i)
                 end
             else
-                if VgD.ActiviteAdditionalEffect(e, tp, eg, ep, ev, re, r, rp, c, 0) then VgD.ActiviteAdditionalEffect(e, tp, eg, ep, ev, re, r, rp, c, 1) end
+                if VgD.Register.ActiviteAdditionalEffect(e, tp, eg, ep, ev, re, r, rp, c, 0) then VgD.Register.ActiviteAdditionalEffect(e, tp, eg, ep, ev, re, r, rp, c, 1) end
                 if c:IsLocation(LOCATION_TRIGGER) then VgF.Sendto(LOCATION_HAND, c, nil, REASON_TRIGGER) end
             end
             local bc = Duel.GetAttacker()
@@ -549,10 +549,10 @@ function VgD.Register.CardTriggerOperation(chkop)
                         VgF.AtkUp(c, g, atk_up, nil)
                     end)
                 end
-                if VgD.ActiviteAdditionalEffect(e, tp, eg, ep, ev, re, r, rp, c, 0) then
+                if VgD.Register.ActiviteAdditionalEffect(e, tp, eg, ep, ev, re, r, rp, c, 0) then
                     table.insert(ops, VgF.Stringid(VgID + 5, 5))
                     table.insert(sel, function ()
-                        VgD.ActiviteAdditionalEffect(e, tp, eg, ep, ev, re, r, rp, c, 1)
+                        VgD.Register.ActiviteAdditionalEffect(e, tp, eg, ep, ev, re, r, rp, c, 1)
                     end)
                 end
                 while #ops > 0 do
@@ -562,14 +562,14 @@ function VgD.Register.CardTriggerOperation(chkop)
                     table.remove(sel, i)
                 end
             else
-                if VgD.ActiviteAdditionalEffect(e, tp, eg, ep, ev, re, r, rp, c, 0) then VgD.ActiviteAdditionalEffect(e, tp, eg, ep, ev, re, r, rp, c, 1) end
+                if VgD.Register.ActiviteAdditionalEffect(e, tp, eg, ep, ev, re, r, rp, c, 0) then VgD.Register.ActiviteAdditionalEffect(e, tp, eg, ep, ev, re, r, rp, c, 1) end
                 if c:IsLocation(LOCATION_TRIGGER) then
                     VgF.Sendto(LOCATION_DAMAGE, c, tp, POS_FACEUP_ATTACK, REASON_EFFECT)
                     Duel.Damage(tp, 1, REASON_EFFECT)
                 end
             end
-            if VgF.GetValueType(vgf.effect.Damage) ~= "Effect" then return end
-            local bc = vgf.effect.Damage:GetHandler()
+            if VgF.GetValueType(VgF.Effect.Damage) ~= "Effect" then return end
+            local bc = VgF.Effect.Damage:GetHandler()
             local label = bc:GetFlagEffectLabel(FLAG_DAMAGE_TRIGGER)
             if not label then return end
             if label > 0 then
@@ -579,14 +579,14 @@ function VgD.Register.CardTriggerOperation(chkop)
                 bc:RegisterFlagEffect(FLAG_DAMAGE_TRIGGER, 0, 0, 1, label)
             elseif label == 0 then
                 bc:ResetFlagEffect(FLAG_DAMAGE_TRIGGER)
-                vgf.effect.Damage:Reset()
-                vgf.effect.Damage = nil
+                VgF.Effect.Damage:Reset()
+                VgF.Effect.Damage = nil
             end
         end
     end
 end
 
-function VgD.ActiviteAdditionalEffect(e, tp, eg, ep, ev, re, r, rp, c, chk)
+function VgD.Register.Register.ActiviteAdditionalEffect(e, tp, eg, ep, ev, re, r, rp, c, chk)
     local additional_effect = c.additional_effect
     if not additional_effect or #additional_effect == 0 then return end
     if VgF.GetValueType(additional_effect['chk']) == "boolean" then
@@ -622,20 +622,20 @@ function VgD.Register.CallToR(c)
     e:SetRange(LOCATION_HAND)
     e:SetProperty(EFFECT_FLAG_SPSUM_PARAM)
     e:SetTargetRange(POS_FACEUP_ATTACK, 0)
-    e:SetCondition(VgD.CallCondition)
-    e:SetOperation(VgD.CallOperation)
+    e:SetCondition(VgD.Register.CallCondition)
+    e:SetOperation(VgD.Register.CallOperation)
     c:RegisterEffect(e)
 end
-function VgD.CallCondition(e, c)
+function VgD.Register.CallCondition(e, c)
     if c == nil then return true end
     local tp = e:GetHandlerPlayer()
     if VgF.GetAvailableLocation(tp) <= 0 then return end
     return VgF.Condition.Level(e)
 end
-function VgD.CallFilter(c, tp, zone)
+function VgD.Register.CallFilter(c, tp, zone)
     return VgF.Filter.IsR(c) and zone == VgF.SequenceToGlobal(tp, c:GetLocation(), c:GetSequence())
 end
-function VgD.CallOperation(e)
+function VgD.Register.CallOperation(e)
     local c = e:GetHandler()
     local tp = e:GetHandlerPlayer()
     local z = bit.bnot(VgF.GetAvailableLocation(tp))
@@ -646,8 +646,8 @@ function VgD.CallOperation(e)
     end
     Duel.Hint(HINT_SELECTMSG, tp, HINTMSG_CallZONE)
     local zone = Duel.SelectField(tp, 1, LOCATION_CIRCLE, 0, z)
-    if VgF.IsExistingMatchingCard(VgD.CallFilter, tp, LOCATION_CIRCLE, 0, 1, nil, tp, zone) then
-        local tc = Duel.GetMatchingGroup(VgD.CallFilter, tp, LOCATION_CIRCLE, 0, nil, tp, zone):GetFirst()
+    if VgF.IsExistingMatchingCard(VgD.Register.CallFilter, tp, LOCATION_CIRCLE, 0, 1, nil, tp, zone) then
+        local tc = Duel.GetMatchingGroup(VgD.Register.CallFilter, tp, LOCATION_CIRCLE, 0, nil, tp, zone):GetFirst()
         VgF.Sendto(LOCATION_DROP, tc, REASON_COST)
     end
     e:SetValue(function () return SUMMON_VALUE_CALL, zone end)
@@ -678,7 +678,7 @@ function VgD.Register.MonsterBattle(c)
                     local e2 = e1:Clone()
                     e2:SetCondition(VgF.Condition.IsV)
                     Duel.GetAttackTarget():RegisterEffect(e2)
-                    vgf.effect.Reset(tc,{e1, e2},EVENT_BATTLED)
+                    VgF.Effect.Reset(tc,{e1, e2},EVENT_BATTLED)
                     local label = 1
                     if tc:IsSkill(SKILL_TWINDRIVE) then
                         label = label + 1
@@ -783,7 +783,7 @@ function VgD.Register.MonsterBattle(c)
                         local def = tc:GetAttack()
                         if not VgF.Filter.IsV(tc) or atk < def or tc:GetLeftScale() == 0 then goto continue end
                         tc:RegisterFlagEffect(FLAG_DAMAGE_TRIGGER, RESET_EVENT + RESETS_STANDARD, 0, 1, tc:GetLeftScale() - 1)
-                        VgD.Trigger(bc:GetControler())
+                        VgD.Register.Trigger(bc:GetControler())
                         ::continue::
                     end
                 end)
@@ -798,7 +798,7 @@ function VgD.Register.MonsterBattle(c)
                     local tc = Duel.GetAttacker()
                     local tp = tc:GetControler()
                     if not tc:GetFlagEffectLabel(FLAG_ATTACK_TRIGGER) or tc:GetFlagEffectLabel(FLAG_ATTACK_TRIGGER) == 0 or (VgF.Filter.IsR(tc) and tc:GetFlagEffect(FLAG_ALSO_CAN_TRIGGER) == 0) then return end
-                    VgD.Trigger(tp)
+                    VgD.Register.Trigger(tp)
                 end)
                 Duel.RegisterEffect(e, 0)
             end
@@ -810,7 +810,7 @@ function VgD.Register.MonsterBattle(c)
                 e:SetOperation(function (_, _, eg, ep, ev, re, r, rp)
                     local tc = VgF.ReturnCard(eg)
                     local tp = tc:GetControler()
-                    VgD.Trigger(tp)
+                    VgD.Register.Trigger(tp)
                 end)
                 Duel.RegisterEffect(e, 0)
             end
@@ -910,7 +910,7 @@ function VgD.Register.MonsterBattle(c)
         c:RegisterEffect(e2)
     end
 end
-function VgD.Trigger(tp)
+function VgD.Register.Trigger(tp)
     local tg = Duel.GetDecktopGroup(tp, 1)
     Duel.DisableShuffleCheck()
     VgF.Sendto(LOCATION_TRIGGER, tg:GetFirst())
@@ -1458,7 +1458,7 @@ function VgD.AbilityAuto(c, m, loc, typ, code, op, cost, con, tg, count, propert
                 e1:SetReset(RESET_EVENT + RESETS_STANDARD)
                 e1:SetValue(1)
                 Duel.GetAttackTarget():RegisterEffect(e1)
-                vgf.effect.Reset(e:GetHandler(), e1, EVENT_BATTLED)
+                VgF.Effect.Reset(e:GetHandler(), e1, EVENT_BATTLED)
             elseif VgF.Filter.IsV(Duel.GetAttackTarget()) then
                 VgF.Effect.Reset(Duel.GetAttackTarget(), Duel.GetAttackTarget():RegisterFlagEffect(FLAG_SENTINEL, RESET_EVENT + RESETS_STANDARD, 0, 1), EVENT_BATTLED)
             end
@@ -1528,7 +1528,7 @@ function VgD.BeRidedByCardCondition(con, filter)
     return function (e, tp, eg, ep, ev, re, r, rp)
         if r ~= REASON_RIDEUP or (con and not con(e, tp, eg, ep, ev, re, r, rp)) then return false end
         local c, rc = e:GetHandler(), e:GetHandler():GetReasonCard()
-        filter = filter or vgf.True
+        filter = filter or VgF.True
         if type(filter) == "number" then
             return rc:IsCode(filter)
         end
@@ -1565,7 +1565,7 @@ end
 ---@param c Card 拥有这个效果的卡
 ---@return Effect 这个效果
 function VgD.Grade0BeRide(c)
-    return vgd.BeRidedByCard(c,nil,nil,vgf.op.Draw(),nil,VgD.Grade0BeRideCondition)
+    return vgd.BeRidedByCard(c,nil,nil,VgF.Operation.Draw(),nil,VgD.Grade0BeRideCondition)
 end
 function VgD.Grade0BeRideCondition(e,tp,eg,ep,ev,re,r,rp)
     return tp==1 and Duel.GetTurnPlayer()==tp
@@ -1820,7 +1820,7 @@ function VgD.DarkNight(c, m)
     cm.is_has_continuous = true
     local condition = function(equl_one)
         return function(e)
-            local og = vgf.GetMatchingGroup(nil, e:GetHandlerPlayer(), LOCATION_ORDER, 0, nil)
+            local og = VgF.GetMatchingGroup(nil, e:GetHandlerPlayer(), LOCATION_ORDER, 0, nil)
             if og:IsExists(VgD.NightFilter, 1, nil) then return false end
             if equl_one then return #og == 1 end
             return #og >= 2
@@ -1911,7 +1911,7 @@ function VgD.CallInPrisonOperation(val)
     end
 end
 function VgD.CallInPrisonFilter(c, e, tp)
-    return c:GetFlagEffect(FLAG_IMPRISON) > 0 and (vgf.IsCanBeCalled(c, e, tp) or not c:IsType(TYPE_UNIT))
+    return c:GetFlagEffect(FLAG_IMPRISON) > 0 and (VgF.IsCanBeCalled(c, e, tp) or not c:IsType(TYPE_UNIT))
 end
 
 --其他----------------------------------------------------------------------------------------
