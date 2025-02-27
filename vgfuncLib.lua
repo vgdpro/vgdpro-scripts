@@ -755,7 +755,7 @@ function Card.GetColumnGroup(c)
         g1 = VgF.GetMatchingGroup(Card.IsSequence, tp, LOCATION_MZONE, 0, nil, 3, 4)
         g2 = VgF.GetMatchingGroup(Card.IsSequence, tp, 0, LOCATION_MZONE, nil, 0, 1)
     end
-    return (g1 + g2):Filter(nil, c)
+    return Group.__add(g1, g2):Filter(nil, c)
 end
 
 ---判断c是否可以以规则的手段到G区域。
