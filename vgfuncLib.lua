@@ -1,6 +1,5 @@
 --VgF库
 VgF = {}
-vgf = VgF
 VgF.Operation = {}
 VgF.Cost = {}
 VgF.Condition = {}
@@ -10,7 +9,8 @@ VgF.op = VgF.Operation
 VgF.cost = VgF.Cost
 VgF.con = VgF.Condition
 VgF.filter = VgF.Filter
-vgf.effect = VgF.Effect
+VgF.effect = VgF.Effect
+vgf = VgF
 bit = {}
 
 ---@class Card
@@ -584,8 +584,8 @@ function VgF.CounterCharge(val)
 end
 
 ---玩家抽1张卡
----@param p number 0：自己 1：对手 默认为0
----@param count number 抽count数量的卡 默认为1
+---@param p number|nil 0：自己 1：对手 默认为0
+---@param count number|nil 抽count数量的卡 默认为1
 function VgF.Operation.Draw(p, count)
     p = (VgF.GetValueType(p) ~= "number" or p < 0 or p > 1) and 0 or p
     count = VgF.GetValueType(count) ~= "number" and 1 or count
@@ -910,7 +910,7 @@ function Group.SelectDoubleSubGroup(g, p, f1, int_min1, int_max1, f2, int_min2, 
     if g3:GetCount() == g2:GetCount() and g3:GetCount() == g1:GetCount() then
         local min = int_min1 + int_min2
         local max = int_max1 + int_max2
-        return g3:SelectSubGroup(p, vgf.True, false, min, max)
+        return g3:SelectSubGroup(p, VgF.True, false, min, max)
     end
     local result1 = Group.CreateGroup()
     local result2 = Group.CreateGroup()
@@ -1110,7 +1110,8 @@ function VgF.GetMatchingGroup(f, tp, loc_self, loc_op, except_g, ...)
         local g1 = Duel.GetMatchingGroup(nil, tp, loc_self, loc_op, nil)
         if g1:GetCount() > 0 then g:Merge(g1) end
     end
-    if g:GetCount() > 0 and VgF.GetValueType(f) == "function" then
+    if g:GetCount() > 0 then
+        f = f or VgF.True
         g = g:Filter(f, except_g, ...)
     end
     return g
@@ -1508,10 +1509,10 @@ end
 -- 白翼能力在你的封锁区中的卡只有奇数的等级的场合有效
 function VgF.WhiteWings(e)
     local tp = e:GetHandlerPlayer()
-    local a = vgf.IsExistingMatchingCard(function (c)
+    local a = VgF.IsExistingMatchingCard(function (c)
         return c:GetLevel()%2 == 1
     end, tp, LOCATION_BIND, 0, 1, nil)
-    local b = vgf.IsExistingMatchingCard(function (c)
+    local b = VgF.IsExistingMatchingCard(function (c)
         return c:GetLevel()%2 == 0
     end, tp, LOCATION_BIND, 0, 1, nil)
     return (a and not b) or Duel.IsPlayerAffectedByEffect(tp, AFFECT_CODE_BOTH_WINGS)
@@ -1519,10 +1520,10 @@ end
 -- 黑翼能力在你的封锁区中的卡只有偶数的等级的场合有效
 function VgF.BlackWings(e)
     local tp = e:GetHandlerPlayer()
-    local a = vgf.IsExistingMatchingCard(function (c)
+    local a = VgF.IsExistingMatchingCard(function (c)
         return c:GetLevel()%2 == 1
     end, tp, LOCATION_BIND, 0, 1, nil)
-    local b = vgf.IsExistingMatchingCard(function (c)
+    local b = VgF.IsExistingMatchingCard(function (c)
         return c:GetLevel()%2 == 0
     end, tp, LOCATION_BIND, 0, 1, nil)
     return (not a and b) or Duel.IsPlayerAffectedByEffect(tp, AFFECT_CODE_BOTH_WINGS)
