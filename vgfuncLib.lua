@@ -126,6 +126,15 @@ function table.copy(copy, original)
     end
 end
 
+function table.indexOf(table, element)
+    for i, value in ipairs(table) do
+        if value == element then
+            return i
+        end
+    end
+    return -1
+end
+
 function bit.ReturnCount(n)
     if n == 0 then
         return 0
@@ -176,7 +185,7 @@ function bit.bnot(a)
 end
 
 ---返回函数，该函数与f的结果总是相反的。
----@param f function<boolean> 要操作的bool函数
+---@param f function 要操作的bool函数
 ---@return function 经过操作的函数
 function VgF.Not(f)
     return  function(...)
@@ -433,7 +442,7 @@ VgF.Effect.Damage = nil
 function VgF.Effect.Reset(c, e, code, con)
     if VgF.GetValueType(e) == "Effect" then
         local e1 = Effect.CreateEffect(c)
-        e1:SetType(EFFECT_TYPE_FIELD + EFFECT_TYPE_SET)
+        e1:SetType(EFFECT_TYPE_FIELD + EFFECT_TYPE_CONTINUOUS)
         e1:SetCode(code)
         e1:SetProperty(EFFECT_FLAG_CANNOT_DISABLE)
         e1:SetRange(LOCATION_ALL)
@@ -444,7 +453,7 @@ function VgF.Effect.Reset(c, e, code, con)
     elseif VgF.GetValueType(e) == "table" then
         for i, v in ipairs(e) do
             local e1 = Effect.CreateEffect(c)
-            e1:SetType(EFFECT_TYPE_FIELD + EFFECT_TYPE_SET)
+            e1:SetType(EFFECT_TYPE_FIELD + EFFECT_TYPE_CONTINUOUS)
             e1:SetCode(code)
             e1:SetProperty(EFFECT_FLAG_CANNOT_DISABLE)
             e1:SetRange(LOCATION_ALL)
@@ -506,10 +515,9 @@ function VgF.Condition.FirstCard(e)
     local g = Duel.GetMatchingGroup(nil, tp, LOCATION_ALL, 0, nil)
     return e:GetHandler() == g:GetFirst()
 end
-function VgF.Condition.FirstTurn(e)
-    local tp = e:GetHandlerPlayer()
-    local a = Duel.GetTurnCount(tp)
-    local b = Duel.GetTurnCount(1 - tp)
+function VgF.Condition.FirstTurn()
+    local a = Duel.GetTurnCount(0)
+    local b = Duel.GetTurnCount(1)
     return a + b == 1
 end
 
@@ -579,10 +587,10 @@ end
 function VgF.Cost.Discard(val)
     return function (e, tp, eg, ep, ev, re, r, rp, chk)
         if VgF.GetValueType(val) ~= "number" then return 0 end
-        local c = e:GetHandler()
-        local m = c:GetOriginalCode()
         if chk == 0 then
             if e:IsHasType(EFFECT_TYPE_ACTIVATE) then
+                local c = e:GetHandler()
+                local m = c:GetOriginalCode()
                 VgF.AddAlchemagic(m, "LOCATION_HAND", "LOCATION_DROP", val, val)
             end
             return VgF.IsExistingMatchingCard(nil, tp, LOCATION_HAND, 0, val, nil)
@@ -598,11 +606,11 @@ end
 function VgF.Cost.EnergyBlast(val)
     return function (e, tp, eg, ep, ev, re, r, rp, chk)
         if VgF.GetValueType(val) ~= "number" then return 0 end
-        local c = e:GetHandler()
-        local m = c:GetOriginalCode()
         if chk == 0 then
             if e:IsHasType(EFFECT_TYPE_ACTIVATE) then
-                VgF.AddAlchemagic(m, "LOCATION_CREST", "0", val, val, function(tc) tc:IsCode(CARD_ENERGY) end)
+                local c = e:GetHandler()
+                local m = c:GetOriginalCode()
+                VgF.AddAlchemagic(m, "LOCATION_CREST", "0", val, val, function(tc) return tc:IsCode(CARD_ENERGY) end)
             end
             return VgF.IsExistingMatchingCard(Card.IsCode, tp, LOCATION_CREST, 0, val, nil, CARD_ENERGY)
         end
@@ -617,10 +625,10 @@ end
 function VgF.Cost.SoulBlast(val)
     return function (e, tp, eg, ep, ev, re, r, rp, chk)
         if VgF.GetValueType(val) ~= "number" then return 0 end
-        local c = e:GetHandler()
-        local m = c:GetOriginalCode()
         if chk == 0 then
             if e:IsHasType(EFFECT_TYPE_ACTIVATE) then
+                local c = e:GetHandler()
+                local m = c:GetOriginalCode()
                 VgF.AddAlchemagic(m, "LOCATION_SOUL", "LOCATION_DROP", val, val)
             end
             return Duel.GetMatchingGroup(VgF.Filter.IsV, tp, LOCATION_CIRCLE, 0, nil, nil):GetFirst():GetOverlayCount() >= val
@@ -637,10 +645,10 @@ end
 function VgF.Cost.CounterBlast(val)
     return function (e, tp, eg, ep, ev, re, r, rp, chk)
         if VgF.GetValueType(val) ~= "number" then return 0 end
-        local c = e:GetHandler()
-        local m = c:GetOriginalCode()
         if chk == 0 then
             if e:IsHasType(EFFECT_TYPE_ACTIVATE) then
+                local c = e:GetHandler()
+                local m = c:GetOriginalCode()
                 VgF.AddAlchemagic(m, "LOCATION_DAMAGE", "POSCHANGE", val, val, Card.IsFaceup)
             end
             return VgF.IsExistingMatchingCard(Card.IsFaceup, tp, LOCATION_DAMAGE, 0, val, nil)
@@ -756,10 +764,10 @@ end
 function VgF.Operation.SoulCharge(val)
     return function (e, tp, eg, ep, ev, re, r, rp, chk)
         if VgF.GetValueType(val) ~= "number" then return 0 end
-        local c = e:GetHandler()
-        local m = c:GetOriginalCode()
         if chk == 0 then
             if e:IsHasType(EFFECT_TYPE_ACTIVATE) then
+                local c = e:GetHandler()
+                local m = c:GetOriginalCode()
                 VgF.AddAlchemagic(m, "LOCATION_DECK", "LOCATION_SOUL", val, val)
             end
             return Duel.GetFieldGroupCount(tp, LOCATION_DECK, 0) >= val
@@ -1501,7 +1509,7 @@ end
 ---@param to table|string|number 费用的卡送去哪个区域
 ---@param min table|number|nil 费用的卡的最少数量
 ---@param max table|number|nil 费用的卡的最多数量
----@param filter table<function<boolean>>|function<boolean>|nil 费用的卡的过滤函数
+---@param filter table|function|nil 费用的卡的过滤函数
 function VgF.AddAlchemagic(m, from, to, min, max, filter)
     local cm = _G["c"..m]
     if #from ~= #to then return end

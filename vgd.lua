@@ -1,149 +1,176 @@
 --VgD库
 VgD = {}
-vgd, vgf = VgD, VgF
+vgd = VgD
 
---
+VgD.Register = {}
+
+function VgD.PreloadUds()
+    VgD.Register.VgCard()
+end
+
+VgD.Register.CardList = {}
 ---初始化卡片，使卡片具有基本的功能。
----@param c Card 要初始化的卡
-function vgd.VgCard(c)
-    VgD.Rule(c)
-    VgD.Ride(c)
-    VgD.CardTrigger(c)
-    if c:IsType(TYPE_UNIT) then
-        VgD.CallToR(c)
-        VgD.MonsterBattle(c)
+function VgD.Register.VgCard()
+    VgD.Register.Rule()
+    VgD.Register.Ride()
+    VgD.Register.MonsterBattle()
+    local e=Effect.GlobalEffect()
+	e:SetType(EFFECT_TYPE_FIELD+EFFECT_TYPE_CONTINUOUS)
+	e:SetProperty(EFFECT_FLAG_IGNORE_IMMUNE)
+	e:SetCode(EVENT_ADJUST)
+	e:SetOperation(function ()
+        for c in VgF.Next(Duel.GetFieldGroup(0, LOCATION_ALL, LOCATION_ALL)) do
+            if table.indexOf(VgD.Register.CardList, c) > 0 then goto continue end
+            VgD.Register.CardTrigger(c)
+            VgD.Register.MonsterBattle(c)
+            if c:IsType(TYPE_UNIT) then
+                VgD.Register.CallToR(c)
+            end
+            table.insert(VgD.Register.CardList, c)
+            :: continue ::
+        end
+    end)
+	Duel.RegisterEffect(e,0)
+end
+
+---使卡片遵守VG的规则，已包含在 vgd.VgCard 内
+function VgD.Register.Rule()
+    --回合开始时选择把卡放回卡组并重新抽卡
+    if true then
+        local e = Effect.GlobalEffect()
+        e:SetType(EFFECT_TYPE_FIELD + EFFECT_TYPE_CONTINUOUS)
+        e:SetCode(EVENT_PHASE + PHASE_DRAW)
+        e:SetCountLimit(1, VgID + 2)
+        e:SetCondition(VgF.Condition.FirstTurn)
+        e:SetOperation(function ()
+            for tp = 0, 1 do
+                local ct = Duel.GetFieldGroupCount(tp, LOCATION_HAND, 0)
+                Duel.Hint(HINT_SELECTMSG, tp, HINTMSG_TODECK)
+                local g = Duel.GetFieldGroup(tp, LOCATION_HAND, 0):Select(tp, 0, ct, nil)
+                if g:GetCount() > 0 then
+                    ct = Duel.SendtoDeck(g, tp, SEQ_DECKBOTTOM, REASON_PHASEDRAW)
+                    if Duel.GetTurnPlayer() == tp then ct = ct + 1 end
+                    Duel.Draw(tp, ct, REASON_PHASEDRAW)
+                    Duel.ShuffleDeck(tp)
+                end
+            end
+        end)
+        Duel.RegisterEffect(e, 0)
+    end
+
+    --触发骑升时点
+    if true then
+        local e = Effect.GlobalEffect()
+        e:SetType(EFFECT_TYPE_FIELD + EFFECT_TYPE_CONTINUOUS)
+        e:SetCode(EVENT_PHASE_START + PHASE_STANDBY)
+        e:SetCountLimit(1, VgID + 3)
+        e:SetOperation(function ()
+            local tp = Duel.GetTurnPlayer()
+            Duel.RaiseEvent(VgF.GetVMonster(tp), EVENT_CUSTOM + EVENT_RIDE_START, e, 0, tp, tp, 0)
+        end)
+        Duel.RegisterEffect(e, 0)
+    end
+
+    --设置不会弃牌
+    if true then
+        local e = Effect.GlobalEffect()
+        e:SetType(EFFECT_TYPE_FIELD)
+        e:SetCode(EFFECT_HAND_LIMIT)
+        e:SetProperty(EFFECT_FLAG_PLAYER_TARGET)
+        e:SetTargetRange(1, 1)
+        e:SetValue(MAX_ID)
+        Duel.RegisterEffect(e, 0)
+    end
+
+    --vg胜利规则
+    if true then
+        local e = Effect.GlobalEffect()
+        e:SetType(EFFECT_TYPE_FIELD + EFFECT_TYPE_CONTINUOUS)
+        e:SetCode(EVENT_ADJUST)
+        e:SetProperty(EFFECT_FLAG_IGNORE_IMMUNE)
+        e:SetOperation(function ()
+            local tp = 0
+            if Duel.GetCurrentChain() > 0 then return end
+            local g1 = Duel.GetFieldGroupCount(tp, LOCATION_DECK, 0)
+            local g2 = Duel.GetFieldGroupCount(tp, 0, LOCATION_DECK)
+            if g1 == 0 and g2 == 0 then
+                Duel.Win(PLAYER_NONE, 0x2)
+            elseif g1 == 0 then
+                Duel.Win(1 - tp, 0x2)
+            elseif g2 == 0 then
+                Duel.Win(tp, 0x2)
+            end
+        end)
+        Duel.RegisterEffect(e, 0)
+    end
+
+    --跳过主二
+    if true then
+        local e = Effect.GlobalEffect()
+        e:SetType(EFFECT_TYPE_FIELD)
+        e:SetCode(EFFECT_SKIP_M2)
+        e:SetProperty(EFFECT_FLAG_PLAYER_TARGET)
+        e:SetTargetRange(1, 1)
+        Duel.RegisterEffect(e, 0)
+    end
+
+    --不能通常召唤、盖放
+    if true then
+        local e = Effect.GlobalEffect()
+        e:SetType(EFFECT_TYPE_FIELD)
+        e:SetCode(EFFECT_CANNOT_SUMMON)
+        e:SetProperty(EFFECT_FLAG_PLAYER_TARGET)
+        e:SetTargetRange(1, 1)
+        Duel.RegisterEffect(e, 0)
+        local e1 = e:Clone()
+        e1:SetCode(EFFECT_CANNOT_MSET)
+        Duel.RegisterEffect(e1, 0)
+        local e2 = e:Clone()
+        e2:SetCode(EFFECT_CANNOT_SSET)
+        Duel.RegisterEffect(e2, 0)
+    end
+
+    --闪现指令的发动
+    if true then
+        local e = Effect.GlobalEffect()
+        e:SetType(EFFECT_TYPE_FIELD)
+        e:SetCode(EFFECT_QP_ACT_IN_NTPHAND)
+        e:SetTargetRange(LOCATION_HAND, LOCATION_HAND)
+        Duel.RegisterEffect(e, 0)
     end
 end
 
----使卡片遵守VG的规则，已包含在 vgd.VgCard(c) 内
----@param c Card 要注册规则的卡
-function VgD.Rule(c)
-    local e1 = Effect.CreateEffect(c)
-    e1:SetType(EFFECT_TYPE_FIELD + EFFECT_TYPE_SET)
-    e1:SetCode(EVENT_PHASE + PHASE_DRAW)
-    e1:SetRange(LOCATION_ALL)
-    e1:SetProperty(EFFECT_FLAG_CANNOT_DISABLE)
-    e1:SetCountLimit(1, VgID + 2)
-    e1:SetCondition(function (e, tp, eg, ep, ev, re, r, rp)
-        return VgF.Condition.FirstTurn(e) and VgF.Condition.FirstCard(e)
-    end)
-    e1:SetOperation(function (e, tp, eg, ep, ev, re, r, rp)
-        local ct = Duel.GetFieldGroupCount(tp, LOCATION_HAND, 0)
-        Duel.Hint(HINT_SELECTMSG, tp, HINTMSG_TODECK)
-        local g = Duel.GetFieldGroup(tp, LOCATION_HAND, 0):Select(tp, 0, ct, nil)
-        if g:GetCount() > 0 then
-            ct = Duel.SendtoDeck(g, tp, 1, REASON_PHASEDRAW)
-            Duel.Draw(tp, ct, REASON_PHASEDRAW)
-            Duel.ShuffleDeck(tp)
-        end
-        if Duel.GetTurnPlayer() == tp then
-            Duel.Draw(tp, 1, REASON_PHASEDRAW)
-        end
-    end)
-    c:RegisterEffect(e1)
-    local e2 = Effect.CreateEffect(c)
-    e2:SetType(EFFECT_TYPE_FIELD + EFFECT_TYPE_SET)
-    e2:SetCode(EVENT_BATTLED)
-    e2:SetProperty(EFFECT_FLAG_CANNOT_DISABLE)
-    e2:SetRange(LOCATION_ALL)
-    e2:SetOperation(function (e, tp, eg, ep, ev, re, r, rp)
-        local tc = e:GetHandler()
-        if tc:GetFlagEffect(FLAG_SUPPORT) > 0 then tc:ResetFlagEffect(FLAG_SUPPORT) end
-        if tc:GetFlagEffect(FLAG_SUPPORTED) > 0 then tc:ResetFlagEffect(FLAG_SUPPORTED) end
-        if tc:GetFlagEffect(FLAG_DEFENSE_ENTIRELY) > 0 then tc:ResetFlagEffect(FLAG_DEFENSE_ENTIRELY) end
-        if tc:GetFlagEffect(FLAG_ATTACK_TRIGGER) > 0 then tc:ResetFlagEffect(FLAG_ATTACK_TRIGGER) end
-        if tc:GetFlagEffect(FLAG_DAMAGE_TRIGGER) > 0 then tc:ResetFlagEffect(FLAG_DAMAGE_TRIGGER) end
-    end)
-    c:RegisterEffect(e2)
-    local e3 = Effect.CreateEffect(c)
-    e3:SetType(EFFECT_TYPE_FIELD + EFFECT_TYPE_SET)
-    e3:SetCode(EVENT_PHASE_START + PHASE_STANDBY)
-    e3:SetProperty(EFFECT_FLAG_CANNOT_DISABLE)
-    e3:SetRange(LOCATION_ALL)
-    e3:SetCountLimit(1, VgID + 3)
-    e3:SetCondition(VgF.Condition.FirstCard)
-    e3:SetOperation(function (e, tp, eg, ep, ev, re, r, rp)
-        local tc = e:GetHandler()
-        if Duel.GetTurnPlayer() == tp then
-            Duel.RaiseEvent(tc, EVENT_CUSTOM + EVENT_RIDE_START, e, 0, tp, tp, 0)
-        end
-    end)
-    c:RegisterEffect(e3)
-    local e10 = Effect.CreateEffect(c)
-    e10:SetType(EFFECT_TYPE_FIELD)
-    e10:SetCode(EFFECT_HAND_LIMIT)
-    e10:SetProperty(EFFECT_FLAG_PLAYER_TARGET + EFFECT_FLAG_CANNOT_DISABLE)
-    e10:SetRange(LOCATION_ALL)
-    e10:SetTargetRange(1, 0)
-    e10:SetValue(100)
-    e10:SetCondition(VgF.Condition.FirstCard)
-    c:RegisterEffect(e10)
-    local e11 = Effect.CreateEffect(c)
-    e11:SetType(EFFECT_TYPE_FIELD + EFFECT_TYPE_SET)
-    e11:SetCode(EVENT_ADJUST)
-    e11:SetRange(LOCATION_ALL)
-    e11:SetProperty(EFFECT_FLAG_CANNOT_DISABLE)
-    e11:SetCondition(VgF.Condition.FirstCard)
-    e11:SetOperation(function (e, tp, eg, ep, ev, re, r, rp)
-        if Duel.GetCurrentChain() > 0 then return end
-        local g1 = Duel.GetFieldGroupCount(tp, LOCATION_DECK, 0)
-        local g2 = Duel.GetFieldGroupCount(tp, 0, LOCATION_DECK)
-        if g1 == 0 and g2 == 0 then
-            Duel.Win(PLAYER_NONE, 0x2)
-        elseif g1 == 0 then
-            Duel.Win(1 - tp, 0x2)
-        elseif g2 == 0 then
-            Duel.Win(tp, 0x2)
-         end
-    end)
-    c:RegisterEffect(e11)
-    local e12 = Effect.CreateEffect(c)
-    e12:SetType(EFFECT_TYPE_FIELD)
-    e12:SetCode(EFFECT_SKIP_M2)
-    e12:SetRange(LOCATION_ALL)
-    e12:SetProperty(EFFECT_FLAG_PLAYER_TARGET + EFFECT_FLAG_CANNOT_DISABLE)
-    e12:SetTargetRange(1, 0)
-    c:RegisterEffect(e12)
-    local e13 = e12:Clone()
-    e13:SetCode(EFFECT_CANNOT_SUMMON)
-    c:RegisterEffect(e13)
-    local e14 = e12:Clone()
-    e14:SetCode(EFFECT_CANNOT_MSET)
-    c:RegisterEffect(e14)
-    local e15 = e12:Clone()
-    e15:SetCode(EFFECT_CANNOT_SSET)
-    c:RegisterEffect(e15)
-    local e16 = Effect.CreateEffect(c)
-    e16:SetType(EFFECT_TYPE_FIELD)
-    e16:SetCode(EFFECT_QP_ACT_IN_NTPHAND)
-    e16:SetRange(LOCATION_ALL)
-    e16:SetCondition(VgF.Condition.FirstCard)
-    e16:SetProperty(EFFECT_FLAG_CANNOT_DISABLE)
-    e16:SetTargetRange(LOCATION_HAND, 0)
-    c:RegisterEffect(e16)
-end
+---使卡片具有骑升的功能，已包含在 vgd.VgCard 内
+function VgD.Register.Ride()
+    --游戏开始时从ride卡组将等级0的卡放到场上
+    if true then
+        local e = Effect.GlobalEffect()
+        e:SetType(EFFECT_TYPE_FIELD + EFFECT_TYPE_CONTINUOUS)
+        e:SetCode(EVENT_PREDRAW)
+        e:SetCountLimit(1, VgID)
+        e:SetCondition(VgF.Condition.FirstTurn)
+        e:SetOperation(function ()
+            for tp = 0, 1 do
+                if VgF.GetVMonster(tp) then goto continue end
+                local g = Duel.GetMatchingGroup(Card.IsLevel, tp, LOCATION_RIDE, 0, nil, 0)
+                if g:GetCount() > 0 then
+                    VgF.Sendto(LOCATION_CIRCLE, g, SUMMON_TYPE_RIDE, tp, 0x20)
+                end
+                ::continue::
+            end
+        end)
+        Duel.RegisterEffect(e, 0)
+    end
 
----使卡片具有骑升的功能，已包含在 vgd.VgCard(c) 内
----@param c Card 要注册骑升功能的卡
-function VgD.Ride(c)
-    local e1 = Effect.CreateEffect(c)
-    e1:SetType(EFFECT_TYPE_FIELD + EFFECT_TYPE_SET)
-    e1:SetCode(EVENT_PREDRAW)
-    e1:SetCountLimit(1, VgID)
-    e1:SetRange(LOCATION_ALL)
-    e1:SetProperty(EFFECT_FLAG_CANNOT_DISABLE)
-    e1:SetCondition(VgD.RideCondition_lv0)
-    e1:SetOperation(VgD.RideOperation_lv0)
-    c:RegisterEffect(e1)
-    local e2 = Effect.CreateEffect(c)
-    e2:SetType(EFFECT_TYPE_FIELD + EFFECT_TYPE_SET)
-    e2:SetCode(EVENT_PHASE + PHASE_STANDBY)
-    e2:SetRange(LOCATION_ALL)
-    e2:SetCountLimit(1, VgID + 1)
-    e2:SetProperty(EFFECT_FLAG_CANNOT_DISABLE)
-    e2:SetCondition(VgD.RideCondition)
-    e2:SetOperation(VgD.RideOperation)
-    c:RegisterEffect(e2)
+    if true then
+        local e = Effect.GlobalEffect()
+        e:SetType(EFFECT_TYPE_FIELD + EFFECT_TYPE_CONTINUOUS)
+        e:SetCode(EVENT_PHASE + PHASE_STANDBY)
+        e:SetCountLimit(1, VgID + 1)
+        e:SetCondition(VgD.RideCondition)
+        e:SetOperation(VgD.RideOperation)
+        Duel.RegisterEffect(e, 0)
+    end
 end
 function VgD.RideMaterialCheck(c, rc)
     if VgF.GetValueType(c.ride_material_code_chk) == "nil" and VgF.GetValueType(c.ride_material_setcard_chk) == "nil" then return true end
@@ -202,19 +229,18 @@ end
 function VgD.RideFilter2(c, lv, code, rc)
     return c:IsLevel(lv) and c:IsType(TYPE_UNIT) and c:IsCode(code) and rc:IsSkill(SKILL_PERSONA_RIDE)
 end
-function VgD.RideCondition(e, tp, eg, ep, ev, re, r, rp)
-    local rc = Duel.GetMatchingGroup(vgf.filter.IsV, tp, LOCATION_CIRCLE, 0, nil):GetFirst()
+function VgD.RideCondition()
+    local tp = Duel.GetTurnPlayer()
+    local rc = Duel.GetMatchingGroup(VgF.Filter.IsV, tp, LOCATION_CIRCLE, 0, nil):GetFirst()
     if not rc then return false end
     local lv = rc:GetLevel()
     local code = rc:GetCode()
     local rg1 = Duel.GetMatchingGroup(VgD.RideFilter1, tp, LOCATION_HAND + LOCATION_RIDE, 0, nil, lv, code, rc)
     local rg2 = Duel.GetMatchingGroup(VgD.RideFilter2, tp, LOCATION_HAND, 0, nil, lv, code, rc)
-    local a = rg1:GetCount() > 0
-    local b = rg2:GetCount() > 0
-    return Duel.GetTurnPlayer() == tp and VgF.Condition.FirstCard(e) and (a or b)
+    return rg1:GetCount() > 0 or rg2:GetCount() > 0
 end
-function VgD.RideOperation(e, tp, eg, ep, ev, re, r, rp)
-    local c = e:GetHandler()
+function VgD.RideOperation()
+    local tp = Duel.GetTurnPlayer()
     local rc = VgF.GetVMonster(tp)
     if not rc then return end
     local lv = rc:GetLevel()
@@ -241,7 +267,8 @@ function VgD.RideOperation(e, tp, eg, ep, ev, re, r, rp)
         local sc = sg:GetFirst()
         if sc:IsLocation(LOCATION_RIDE) then
             if Duel.IsPlayerAffectedByEffect(tp, AFFECT_CODE_OVERLAY_INSTEAD_WHEN_RIDE) and Duel.SelectYesNo(tp, VgF.Stringid(VgID, 14)) then
-                vgf.cost.SoulBlast(1)(e, tp, eg, ep, ev, re, r, rp, 1)
+                local e, eg, ep, ev, re, r, rp
+                VgF.Cost.SoulBlast(1)(e, tp, eg, ep, ev, re, r, rp, 1)
             else
                 Duel.Hint(HINT_SELECTMSG, tp, HINTMSG_DISCARD)
                 local g = Duel.SelectMatchingCard(tp, VgD.DisCardRideFilter, tp, LOCATION_HAND, 0, 1, 1, nil, e, lv, code, rc)
@@ -271,41 +298,24 @@ function VgD.RideOperation(e, tp, eg, ep, ev, re, r, rp)
         VgF.Sendto(LOCATION_SOUL, Group.FromCards(rc), sc)
         VgF.Sendto(LOCATION_CIRCLE, sc, SUMMON_TYPE_SELFRIDE, tp, 0x20)
         Duel.Draw(tp, 1, REASON_EFFECT)
-        local e1 = Effect.CreateEffect(c)
+        local e1 = Effect.CreateEffect(sc)
         e1:SetType(EFFECT_TYPE_FIELD)
         e1:SetCode(EFFECT_UPDATE_ATTACK)
         e1:SetTargetRange(LOCATION_CIRCLE, 0)
         e1:SetValue(10000)
         e1:SetTarget(function (te, tc)
-            return vgf.filter.Front(tc)
+            return VgF.Filter.Front(tc)
         end)
         e1:SetReset(RESET_PHASE + PHASE_END)
         Duel.RegisterEffect(e1, tp)
     end
 end
 
-function VgD.RideCondition_lv0(e, tp, eg, ep, ev, re, r, rp)
-    local rc = Duel.GetMatchingGroup(vgf.filter.IsV, tp, LOCATION_CIRCLE, 0, nil):GetFirst()
-    if rc then return false end
-    local ct = Duel.GetMatchingGroupCount(Card.IsLevel, tp, LOCATION_RIDE, 0, nil, 0)
-    return VgF.Condition.FirstTurn(e) and ct > 0 and VgF.Condition.FirstCard(e)
-end
-function VgD.RideOperation_lv0(e, tp, eg, ep, ev, re, r, rp)
-    local g = Duel.GetMatchingGroup(Card.IsLevel, tp, LOCATION_RIDE, 0, nil, 0)
-    if g:GetCount() > 0 then
-        Duel.Hint(HINT_SELECTMSG, tp, HINTMSG_CALL)
-        g = g:Select(tp, 1, 1, nil)
-    end
-    VgF.Sendto(LOCATION_CIRCLE, g, SUMMON_TYPE_RIDE, tp, 0x20)
-end
-
----使卡片具有触发卡的功能，已包含在 vgd.VgCard(c) 内
----@param c Card 要注册触发功能的卡
-function VgD.CardTrigger(c)
+function VgD.Register.CardTrigger(c)
     local e1 = Effect.CreateEffect(c)
-    e1:SetType(EFFECT_TYPE_SINGLE + EFFECT_TYPE_TRIGGER_F)
-    e1:SetProperty(EFFECT_FLAG_DELAY + EFFECT_CANNOT_DISABLE + EFFECT_FLAG_DAMAGE_STEP)
+    e1:SetType(EFFECT_TYPE_SINGLE + EFFECT_TYPE_CONTINUOUS)
     e1:SetCode(EVENT_MOVE)
+    e1:SetProperty(EFFECT_FLAG_DELAY)
     e1:SetCondition(VgD.CardTriggerCondtion('Damage'))
     e1:SetOperation(VgD.CardTriggerOperation('Damage'))
     c:RegisterEffect(e1)
@@ -334,6 +344,8 @@ end
 function VgD.CardTriggerOperation(chkop)
     return function (e, tp, eg, ep, ev, re, r, rp)
         local c = e:GetHandler()
+        local _, m = c:GetOriginalCode()
+        Duel.Hint(HINT_CARD, 0, m)
         if c:IsTrigger(TRIGGER_CRITICAL_STRIKE) then
             local g1 = VgF.SelectMatchingCard(HINTMSG_CRITICAL_STRIKE, e, tp, nil, tp, LOCATION_CIRCLE, 0, 1, 1, nil)
             local star_up = c.trigger_star_up or 1
@@ -390,7 +402,7 @@ function VgD.CardTriggerOperation(chkop)
             if c:IsTrigger(TRIGGER_SUPER) then
                 local ops = {}
                 local sel = {}
-                if c:IsRelateToEffect(e) then
+                if c:IsLocation(LOCATION_TRIGGER) then
                     table.insert(ops, VgF.Stringid(VgID + 5, 3))
                     table.insert(sel, function ()
                         VgF.Sendto(LOCATION_REMOVED, c, REASON_TRIGGER)
@@ -417,10 +429,10 @@ function VgD.CardTriggerOperation(chkop)
                         VgF.AtkUp(c, g, atk_up, nil)
                     end)
                 end
-                if VgD.OperationWhenCardTrigger(e, tp, eg, ep, ev, re, r, rp, c, 0) then
+                if VgD.ActiviteAdditionalEffect(e, tp, eg, ep, ev, re, r, rp, c, 0) then
                     table.insert(ops, VgF.Stringid(VgID + 5, 5))
                     table.insert(sel, function ()
-                        VgD.OperationWhenCardTrigger(e, tp, eg, ep, ev, re, r, rp, c, 1)
+                        VgD.ActiviteAdditionalEffect(e, tp, eg, ep, ev, re, r, rp, c, 1)
                     end)
                 end
                 while #ops > 0 do
@@ -430,8 +442,8 @@ function VgD.CardTriggerOperation(chkop)
                     table.remove(sel, i)
                 end
             else
-                if VgD.OperationWhenCardTrigger(e, tp, eg, ep, ev, re, r, rp, c, 0) then VgD.OperationWhenCardTrigger(e, tp, eg, ep, ev, re, r, rp, c, 1) end
-                if c:IsRelateToEffect(e) then
+                if VgD.ActiviteAdditionalEffect(e, tp, eg, ep, ev, re, r, rp, c, 0) then VgD.ActiviteAdditionalEffect(e, tp, eg, ep, ev, re, r, rp, c, 1) end
+                if c:IsLocation(LOCATION_TRIGGER) then
                     VgF.Sendto(LOCATION_DAMAGE, c, tp, POS_FACEUP_ATTACK, REASON_EFFECT)
                     Duel.Damage(tp, 1, REASON_TRIGGER)
                 end
@@ -452,7 +464,7 @@ function VgD.CardTriggerOperation(chkop)
             if c:IsTrigger(TRIGGER_SUPER) then
                 local ops = {}
                 local sel = {}
-                if c:IsRelateToEffect(e) then
+                if c:IsLocation(LOCATION_TRIGGER) then
                     table.insert(ops, VgF.Stringid(VgID + 5, 3))
                     table.insert(sel, function ()
                         VgF.Sendto(LOCATION_REMOVED, c, REASON_TRIGGER)
@@ -479,10 +491,10 @@ function VgD.CardTriggerOperation(chkop)
                         VgF.AtkUp(c, g, atk_up, nil)
                     end)
                 end
-                if VgD.OperationWhenCardTrigger(e, tp, eg, ep, ev, re, r, rp, c, 0) then
+                if VgD.ActiviteAdditionalEffect(e, tp, eg, ep, ev, re, r, rp, c, 0) then
                     table.insert(ops, VgF.Stringid(VgID + 5, 6))
                     table.insert(sel, function ()
-                    return VgD.OperationWhenCardTrigger(e, tp, eg, ep, ev, re, r, rp, c, 1)
+                    return VgD.ActiviteAdditionalEffect(e, tp, eg, ep, ev, re, r, rp, c, 1)
                 end)
                 end
                 while #ops > 0 do
@@ -492,8 +504,8 @@ function VgD.CardTriggerOperation(chkop)
                     table.remove(sel, i)
                 end
             else
-                if VgD.OperationWhenCardTrigger(e, tp, eg, ep, ev, re, r, rp, c, 0) then VgD.OperationWhenCardTrigger(e, tp, eg, ep, ev, re, r, rp, c, 1) end
-                if c:IsRelateToEffect(e) then VgF.Sendto(LOCATION_HAND, c, nil, REASON_TRIGGER) end
+                if VgD.ActiviteAdditionalEffect(e, tp, eg, ep, ev, re, r, rp, c, 0) then VgD.ActiviteAdditionalEffect(e, tp, eg, ep, ev, re, r, rp, c, 1) end
+                if c:IsLocation(LOCATION_TRIGGER) then VgF.Sendto(LOCATION_HAND, c, nil, REASON_TRIGGER) end
             end
             local bc = Duel.GetAttacker()
             local label = bc:GetFlagEffectLabel(FLAG_ATTACK_TRIGGER)
@@ -510,7 +522,7 @@ function VgD.CardTriggerOperation(chkop)
             if c:IsTrigger(TRIGGER_SUPER) then
                 local ops = {}
                 local sel = {}
-                if c:IsRelateToEffect(e) then
+                if c:IsLocation(LOCATION_TRIGGER) then
                     table.insert(ops, VgF.Stringid(VgID + 5, 3))
                     table.insert(sel, function ()
                         VgF.Sendto(LOCATION_REMOVED, c, REASON_TRIGGER)
@@ -537,10 +549,10 @@ function VgD.CardTriggerOperation(chkop)
                         VgF.AtkUp(c, g, atk_up, nil)
                     end)
                 end
-                if VgD.OperationWhenCardTrigger(e, tp, eg, ep, ev, re, r, rp, c, 0) then
+                if VgD.ActiviteAdditionalEffect(e, tp, eg, ep, ev, re, r, rp, c, 0) then
                     table.insert(ops, VgF.Stringid(VgID + 5, 5))
                     table.insert(sel, function ()
-                        VgD.OperationWhenCardTrigger(e, tp, eg, ep, ev, re, r, rp, c, 1)
+                        VgD.ActiviteAdditionalEffect(e, tp, eg, ep, ev, re, r, rp, c, 1)
                     end)
                 end
                 while #ops > 0 do
@@ -550,8 +562,8 @@ function VgD.CardTriggerOperation(chkop)
                     table.remove(sel, i)
                 end
             else
-                if VgD.OperationWhenCardTrigger(e, tp, eg, ep, ev, re, r, rp, c, 0) then VgD.OperationWhenCardTrigger(e, tp, eg, ep, ev, re, r, rp, c, 1) end
-                if c:IsRelateToEffect(e) then
+                if VgD.ActiviteAdditionalEffect(e, tp, eg, ep, ev, re, r, rp, c, 0) then VgD.ActiviteAdditionalEffect(e, tp, eg, ep, ev, re, r, rp, c, 1) end
+                if c:IsLocation(LOCATION_TRIGGER) then
                     VgF.Sendto(LOCATION_DAMAGE, c, tp, POS_FACEUP_ATTACK, REASON_EFFECT)
                     Duel.Damage(tp, 1, REASON_EFFECT)
                 end
@@ -574,7 +586,7 @@ function VgD.CardTriggerOperation(chkop)
     end
 end
 
-function VgD.OperationWhenCardTrigger(e, tp, eg, ep, ev, re, r, rp, c, chk)
+function VgD.ActiviteAdditionalEffect(e, tp, eg, ep, ev, re, r, rp, c, chk)
     local additional_effect = c.additional_effect
     if not additional_effect or #additional_effect == 0 then return end
     if VgF.GetValueType(additional_effect['chk']) == "boolean" then
@@ -592,9 +604,6 @@ function VgD.OperationWhenCardTrigger(e, tp, eg, ep, ev, re, r, rp, c, chk)
         local activate_chk = true
         if type(additional_effect['cost']) == "function" then activate_chk = Duel.SelectYesNo(tp, VgF.Stringid(VgID, 15)) end
         if activate_chk then
-            Duel.HintSelection(Group.FromCards(c))
-            local _, m = c:GetOriginalCode()
-            Duel.Hint(HINT_CARD, 0, m)
             if type(additional_effect['cost']) == "function" then additional_effect['cost'](e, tp, eg, ep, ev, re, r, rp, 1) end
             if type(additional_effect['tg']) == "function" then additional_effect['tg'](e, tp, eg, ep, ev, re, r, rp, 1) end
             additional_effect['op'](e, tp, eg, ep, ev, re, r, rp)
@@ -603,19 +612,19 @@ function VgD.OperationWhenCardTrigger(e, tp, eg, ep, ev, re, r, rp, c, chk)
     return false
 end
 
----使卡片具有Call到R位的功能，已包含在 vgd.VgCard(c) 内
+---使卡片具有Call到R位的功能，已包含在 vgd.VgCard 内
 ---@param c Card 要注册Call到R位功能的卡
-function VgD.CallToR(c)
-    local e1 = Effect.CreateEffect(c)
-    e1:SetDescription(1152)
-    e1:SetType(EFFECT_TYPE_FIELD)
-    e1:SetCode(EFFECT_SPSUMMON_PROC)
-    e1:SetRange(LOCATION_HAND)
-    e1:SetProperty(EFFECT_FLAG_SPSUM_PARAM)
-    e1:SetTargetRange(POS_FACEUP_ATTACK, 0)
-    e1:SetCondition(VgD.CallCondition)
-    e1:SetOperation(VgD.CallOperation)
-    c:RegisterEffect(e1)
+function VgD.Register.CallToR(c)
+    local e = Effect.CreateEffect(c)
+    e:SetDescription(1152)
+    e:SetType(EFFECT_TYPE_FIELD)
+    e:SetCode(EFFECT_SPSUMMON_PROC)
+    e:SetRange(LOCATION_HAND)
+    e:SetProperty(EFFECT_FLAG_SPSUM_PARAM)
+    e:SetTargetRange(POS_FACEUP_ATTACK, 0)
+    e:SetCondition(VgD.CallCondition)
+    e:SetOperation(VgD.CallOperation)
+    c:RegisterEffect(e)
 end
 function VgD.CallCondition(e, c)
     if c == nil then return true end
@@ -624,7 +633,7 @@ function VgD.CallCondition(e, c)
     return VgF.Condition.Level(e)
 end
 function VgD.CallFilter(c, tp, zone)
-    return vgf.filter.IsR(c) and zone == VgF.SequenceToGlobal(tp, c:GetLocation(), c:GetSequence())
+    return VgF.Filter.IsR(c) and zone == VgF.SequenceToGlobal(tp, c:GetLocation(), c:GetSequence())
 end
 function VgD.CallOperation(e)
     local c = e:GetHandler()
@@ -644,230 +653,269 @@ function VgD.CallOperation(e)
     e:SetValue(function () return SUMMON_VALUE_CALL, zone end)
 end
 
----使卡片遵守VG的战斗规则，已包含在 vgd.VgCard(c) 内
----@param c Card 要注册战斗规则的卡
-function VgD.MonsterBattle(c)
-    --攻击转守备
-    local e1 = Effect.CreateEffect(c)
-    e1:SetType(EFFECT_TYPE_SINGLE + EFFECT_TYPE_SET)
-    e1:SetCode(EVENT_ATTACK_ANNOUNCE)
-    e1:SetProperty(EFFECT_FLAG_CANNOT_DISABLE)
-    e1:SetOperation(function (e, tp, eg, ep, ev, re, r, rp)
-        local tc = e:GetHandler()
-        Duel.ChangePosition(tc, POS_FACEUP_DEFENSE)
-        local label = 1
-        if tc:IsSkill(SKILL_TWINDRIVE) then
-            label = label + 1
-        elseif tc:IsSkill(SKILL_TRIPLEDRIVE) then
-            label = label + 2
-        end
-        tc:RegisterFlagEffect(FLAG_ATTACK_TRIGGER, RESET_EVENT + RESETS_STANDARD, 0, 1, label)
-        Duel.RaiseEvent(tc, EVENT_CUSTOM + EVENT_TRIGGERCOUNTUP, e, 0, tp, tp, 0)
-    end)
-    c:RegisterEffect(e1)
-    --回合开始转攻
-    local e2 = Effect.CreateEffect(c)
-    e2:SetType(EFFECT_TYPE_FIELD + EFFECT_TYPE_SET)
-    e2:SetCode(EVENT_PREDRAW)
-    e2:SetRange(LOCATION_ALL)
-    e2:SetCountLimit(1, VgID + 4)
-    e2:SetProperty(EFFECT_FLAG_CANNOT_DISABLE)
-    e2:SetCondition(VgF.Condition.FirstCard)
-    e2:SetOperation(function (e, tp, eg, ep, ev, re, r, rp)
-        local g = Duel.GetMatchingGroup(Card.IsPosition, tp, LOCATION_CIRCLE, 0, nil, POS_FACEUP_DEFENSE)
-        if g:GetCount() > 0 and Duel.GetTurnPlayer() == tp then
-            Duel.ChangePosition(g, POS_FACEUP_ATTACK)
-            Duel.Hint(HINT_LINES, tp, VgF.Stringid(VgID, 8))
-        end
-    end)
-    c:RegisterEffect(e2)
-    --扣血
-    local e3 = Effect.CreateEffect(c)
-    e3:SetType(EFFECT_TYPE_SINGLE + EFFECT_TYPE_TRIGGER_F)
-    e3:SetCode(EVENT_BATTLED)
-    e3:SetRange(LOCATION_CIRCLE)
-    e3:SetProperty(EFFECT_FLAG_CANNOT_DISABLE)
-    e3:SetCondition(function (e, tp, eg, ep, ev, re, r, rp)
-        local tc = e:GetHandler()
-        local bc = tc:GetBattleTarget()
-        if not bc or not bc:IsRelateToBattle() then return false end
-        local atk = bc:GetAttack()
-        local def = tc:GetAttack()
-        if Duel.GetAttackTarget():GetFlagEffect(FLAG_DEFENSE_ENTIRELY) > 0 and Duel.GetAttackTarget():GetFlagEffectLabel(FLAG_DEFENSE_ENTIRELY) == 10402017 and bc:IsLevelBelow(2) then return false end
-        if Duel.GetAttackTarget():GetFlagEffect(FLAG_DEFENSE_ENTIRELY) > 0 and Duel.GetAttackTarget():GetFlagEffectLabel(FLAG_DEFENSE_ENTIRELY) == 0 then return false end
-        return vgf.filter.IsV(tc) and tc == Duel.GetAttackTarget() and atk >= def and bc:GetLeftScale() > 0
-    end)
-    e3:SetOperation(function (e, tp, eg, ep, ev, re, r, rp)
-        local bc = Duel.GetAttacker()
-        local label = bc:GetLeftScale() - 1
-        bc:RegisterFlagEffect(FLAG_DAMAGE_TRIGGER, RESET_EVENT + RESETS_STANDARD, 0, 1, label)
-        VgD.Trigger(e, tp, eg, ep, ev, re, r, rp)
-    end)
-    c:RegisterEffect(e3)
-    --攻击判定
-    local e4 = Effect.CreateEffect(c)
-    e4:SetType(EFFECT_TYPE_QUICK_F)
-    e4:SetRange(LOCATION_CIRCLE)
-    e4:SetCode(EVENT_PRE_DAMAGE_CALCULATE)
-    e4:SetProperty(EFFECT_FLAG_CANNOT_DISABLE)
-    e4:SetCondition(function (e, tp, eg, ep, ev, re, r, rp)
-        local tc = e:GetHandler()
-        if not vgf.filter.IsV(tc) and tc:GetFlagEffect(FLAG_ALSO_CAN_TRIGGER) == 0 then return false end
-        return tc:GetFlagEffectLabel(FLAG_ATTACK_TRIGGER) and tc:GetFlagEffectLabel(FLAG_ATTACK_TRIGGER) > 0 and Duel.GetAttacker() == tc
-    end)
-    e4:SetCost(function (e, tp, eg, ep, ev, re, r, rp, chk)
-        local tc = e:GetHandler()
-        if chk == 0 then return tc:GetFlagEffect(FLAG_COUNT_TRIGGER) == 0 end
-        tc:RegisterFlagEffect(FLAG_COUNT_TRIGGER, RESET_EVENT + RESETS_STANDARD + RESET_PHASE + PHASE_DAMAGE_CAL, 0, 1)
-    end)
-    e4:SetOperation(VgD.Trigger)
-    c:RegisterEffect(e4)
-    --多次判定
-    local e5 = Effect.CreateEffect(c)
-    e5:SetType(EFFECT_TYPE_FIELD + EFFECT_TYPE_TRIGGER_F)
-    e5:SetCode(EVENT_CUSTOM + EVENT_TRIGGER)
-    e5:SetRange(LOCATION_CIRCLE)
-    e5:SetProperty(EFFECT_FLAG_CANNOT_DISABLE)
-    e5:SetCondition(function (e, tp, eg, ep, ev, re, r, rp)
-        return VgF.ReturnCard(eg):GetControler() == tp and vgf.filter.IsV(e:GetHandler()) and Duel.GetFlagEffect(tp, FLAG_EFFECT_DAMAGE) == 0
-    end)
-    e5:SetOperation(VgD.Trigger)
-    c:RegisterEffect(e5)
-    --支援
-    local e6 = Effect.CreateEffect(c)
-    e6:SetType(EFFECT_TYPE_FIELD + EFFECT_TYPE_TRIGGER_O)
-    e6:SetRange(LOCATION_CIRCLE)
-    e6:SetCode(EVENT_ATTACK_ANNOUNCE)
-    e6:SetProperty(EFFECT_FLAG_CANNOT_DISABLE)
-    e6:SetCondition(function (e, tp, eg, ep, ev, re, r, rp)
-        local tc = e:GetHandler()
-        if not tc:IsSkill(SKILL_BOOST) or Duel.GetTurnPlayer() ~= tp or not VgF.GetColumnGroup(Duel.GetAttacker()):IsContains(tc) then return false end
-        return true
-    end)
-    e6:SetTarget(function (e, tp, eg, ep, ev, re, r, rp, chk)
-        if chk == 0 then return e:GetHandler():IsPosition(POS_FACEUP_ATTACK) end
-    end)
-    e6:SetOperation(function (e, tp, eg, ep, ev, re, r, rp)
-        local tc = e:GetHandler()
-        Duel.ChangePosition(tc, POS_FACEUP_DEFENSE)
-        tc:RegisterFlagEffect(FLAG_SUPPORT, RESET_EVENT + RESETS_STANDARD, 0, 1)
-        Duel.GetAttacker():RegisterFlagEffect(FLAG_SUPPORTED, RESET_EVENT + RESETS_STANDARD, 0, 1)
-        Duel.RaiseEvent(tc, EVENT_CUSTOM + EVENT_SUPPORT, e, 0, tp, tp, 0)
-    end)
-    c:RegisterEffect(e6)
-    local e9 = Effect.CreateEffect(c)
-    e9:SetType(EFFECT_TYPE_SINGLE)
-    e9:SetProperty(EFFECT_FLAG_SINGLE_RANGE + EFFECT_FLAG_CANNOT_DISABLE)
-    e9:SetCode(EFFECT_UPDATE_ATTACK)
-    e9:SetRange(LOCATION_CIRCLE)
-    e9:SetValue(function (e)
-        local tp = e:GetHandlerPlayer()
-        local atk = 0
-        if Duel.GetAttacker() == e:GetHandler() then
-            local g = Duel.GetMatchingGroup(function (tc)
-                return tc:GetFlagEffect(FLAG_SUPPORT) > 0
-            end, tp, LOCATION_CIRCLE, 0, nil)
-            for tc in VgF.Next(g) do
-                atk = atk + tc:GetAttack()
+---使卡片遵守VG的战斗规则，已包含在 vgd.VgCard 内
+function VgD.Register.MonsterBattle(c)
+    if not c then
+        --横置攻击
+        if true then
+            if true then
+                local e = Effect.GlobalEffect()
+                e:SetType(EFFECT_TYPE_FIELD + EFFECT_TYPE_CONTINUOUS)
+                e:SetCode(EVENT_ATTACK_ANNOUNCE)
+                e:SetProperty(EFFECT_FLAG_IGNORE_IMMUNE)
+                e:SetOperation(function ()
+                    local tc = Duel.GetAttacker()
+                    local tp = tc:GetControler()
+                    Duel.ChangePosition(tc, POS_FACEUP_DEFENSE)
+                    local e1=Effect.CreateEffect(tc)
+                    e1:SetType(EFFECT_TYPE_SINGLE)
+                    e1:SetProperty(EFFECT_FLAG_SINGLE_RANGE)
+                    e1:SetRange(LOCATION_CIRCLE)
+                    e1:SetCode(EFFECT_INDESTRUCTABLE_BATTLE)
+                    e1:SetReset(RESET_EVENT+RESETS_STANDARD)
+                    e1:SetValue(1)
+                    tc:RegisterEffect(e1)
+                    local e2 = e1:Clone()
+                    e2:SetCondition(VgF.Condition.IsV)
+                    Duel.GetAttackTarget():RegisterEffect(e2)
+                    vgf.effect.Reset(tc,{e1, e2},EVENT_BATTLED)
+                    local label = 1
+                    if tc:IsSkill(SKILL_TWINDRIVE) then
+                        label = label + 1
+                    elseif tc:IsSkill(SKILL_TRIPLEDRIVE) then
+                        label = label + 2
+                    end
+                    tc:RegisterFlagEffect(FLAG_ATTACK_TRIGGER, RESET_EVENT + RESETS_STANDARD, 0, 1, label)
+                    Duel.RaiseEvent(tc, EVENT_CUSTOM + EVENT_TRIGGER_COUNT_UP, e, 0, tp, tp, 0)
+                end)
+                Duel.RegisterEffect(e, 0)
             end
-            return atk
-        elseif Duel.GetAttackTarget() == e:GetHandler() then
-            local g = Duel.GetMatchingGroup(nil, tp, LOCATION_G_CIRCLE, 0, nil)
-            for tc in VgF.Next(g) do
-                local def = tc:GetDefense()
-                if def < 0 then def = 0 end
-                atk = atk + def
+
+            if true then
+                local e = Effect.GlobalEffect()
+                e:SetType(EFFECT_TYPE_FIELD)
+                e:SetCode(EFFECT_DEFENSE_ATTACK)
+                e:SetTargetRange(LOCATION_CIRCLE, LOCATION_CIRCLE)
+                e:SetValue(1)
+                Duel.RegisterEffect(e, 0)
             end
-            return atk
-        else
-            return 0
+
+            if true then
+                local e = Effect.GlobalEffect()
+                e:SetType(EFFECT_TYPE_FIELD)
+                e:SetCode(EFFECT_CANNOT_ATTACK_ANNOUNCE)
+                e:SetTargetRange(LOCATION_CIRCLE, LOCATION_CIRCLE)
+                e:SetTarget(function (_, c)
+                    return c:IsPosition(POS_DEFENSE) or (VgF.Filter.Back(c) and c:GetFlagEffect(FLAG_ATTACK_AT_REAR) == 0)
+                end)
+                Duel.RegisterEffect(e, 0)
+            end
+
+            if true then
+                local e = Effect.GlobalEffect()
+                e:SetType(EFFECT_TYPE_FIELD)
+                e:SetCode(EFFECT_CANNOT_DIRECT_ATTACK)
+                e:SetTargetRange(LOCATION_CIRCLE, LOCATION_CIRCLE)
+                Duel.RegisterEffect(e, 0)
+            end
+
+            if true then
+                local e = Effect.GlobalEffect()
+                e:SetType(EFFECT_TYPE_FIELD)
+                e:SetCode(EFFECT_AVOID_BATTLE_DAMAGE)
+                e:SetTargetRange(LOCATION_CIRCLE, LOCATION_CIRCLE)
+                e:SetValue(1)
+                Duel.RegisterEffect(e, 0)
+            end
+
+            if true then
+                local e = Effect.GlobalEffect()
+                e:SetType(EFFECT_TYPE_FIELD)
+                e:SetCode(EFFECT_EXTRA_ATTACK)
+                e:SetTargetRange(LOCATION_CIRCLE, LOCATION_CIRCLE)
+                e:SetValue(MAX_ID)
+                Duel.RegisterEffect(e, 0)
+            end
+
+            if true then
+                local e = Effect.GlobalEffect()
+                e:SetType(EFFECT_TYPE_FIELD)
+                e:SetCode(EFFECT_CANNOT_BE_BATTLE_TARGET)
+                e:SetTargetRange(LOCATION_CIRCLE, LOCATION_CIRCLE)
+                e:SetTarget(function (_, c)
+                    return VgF.Filter.Back(c)
+                end)
+                e:SetValue(VgF.True)
+                Duel.RegisterEffect(e, 0)
+            end
         end
-    end)
-    c:RegisterEffect(e9)
-    --防御
-    local e7 = Effect.CreateEffect(c)
-    e7:SetCategory(CATEGORY_DEFENDER)
-    e7:SetType(EFFECT_TYPE_FIELD + EFFECT_TYPE_TRIGGER_O)
-    e7:SetCode(EVENT_BATTLE_START)
-    e7:SetRange(LOCATION_CIRCLE + LOCATION_HAND)
-    e7:SetProperty(EFFECT_FLAG_CANNOT_DISABLE)
-    e7:SetCountLimit(1)
-    e7:SetCondition(function (e, tp, eg, ep, ev, re, r, rp)
-        local bc = Duel.GetAttackTarget()
-        return bc and bc:IsControler(tp) and bc ~= e:GetHandler()
-    end)
-    e7:SetTarget(function (e, tp, eg, ep, ev, re, r, rp, chk)
-        if chk == 0 then return VgF.IsAbleToGCircle(e:GetHandler()) end
-    end)
-    e7:SetOperation(function (e, tp, eg, ep, ev, re, r, rp)
-        VgF.Sendto(LOCATION_G_CIRCLE, e:GetHandler(), tp, POS_FACEUP, REASON_EFFECT)
-    end)
-    c:RegisterEffect(e7)
-    local e8 = Effect.CreateEffect(c)
-    e8:SetType(EFFECT_TYPE_FIELD + EFFECT_TYPE_SET)
-    e8:SetCode(EVENT_DAMAGE_STEP_END)
-    e8:SetProperty(EFFECT_FLAG_DAMAGE_STEP + EFFECT_FLAG_CANNOT_DISABLE + EFFECT_FLAG_DELAY)
-    e8:SetRange(LOCATION_ALL)
-    e8:SetCondition(VgF.Condition.FirstCard)
-    e8:SetOperation(function (e, tp, eg, ep, ev, re, r, rp)
-        local g = Duel.GetFieldGroup(tp, LOCATION_G_CIRCLE, 0)
-        if g:GetCount() > 0 then VgF.Sendto(LOCATION_DROP, g, REASON_RULE) end
-    end)
-    c:RegisterEffect(e8)
-    --其他永续
-    local e10 = Effect.CreateEffect(c)
-    e10:SetType(EFFECT_TYPE_SINGLE)
-    e10:SetCode(EFFECT_DEFENSE_ATTACK)
-    e10:SetProperty(EFFECT_FLAG_CANNOT_DISABLE)
-    e10:SetValue(1)
-    c:RegisterEffect(e10)
-    local e11 = Effect.CreateEffect(c)
-    e11:SetType(EFFECT_TYPE_SINGLE)
-    e11:SetCode(EFFECT_CANNOT_ATTACK_ANNOUNCE)
-    e11:SetProperty(EFFECT_FLAG_CANNOT_DISABLE)
-    e11:SetCondition(function (e)
-        return e:GetHandler():IsPosition(POS_DEFENSE) or (vgf.filter.Back(e:GetHandler()) and e:GetHandler():GetFlagEffect(FLAG_ATTACK_AT_REAR) == 0)
-    end)
-    c:RegisterEffect(e11)
-    local e12 = Effect.CreateEffect(c)
-    e12:SetType(EFFECT_TYPE_SINGLE)
-    e12:SetCode(EFFECT_CANNOT_DIRECT_ATTACK)
-    e12:SetProperty(EFFECT_FLAG_CANNOT_DISABLE)
-    c:RegisterEffect(e12)
-    local e13 = Effect.CreateEffect(c)
-    e13:SetType(EFFECT_TYPE_SINGLE)
-    e13:SetCode(EFFECT_AVOID_BATTLE_DAMAGE)
-    e13:SetProperty(EFFECT_FLAG_CANNOT_DISABLE)
-    e13:SetValue(1)
-    c:RegisterEffect(e13)
-    local e14 = Effect.CreateEffect(c)
-    e14:SetType(EFFECT_TYPE_SINGLE)
-    e14:SetProperty(EFFECT_FLAG_SINGLE_RANGE + EFFECT_FLAG_CANNOT_DISABLE)
-    e14:SetRange(LOCATION_CIRCLE)
-    e14:SetCode(EFFECT_INDESTRUCTABLE_BATTLE)
-    e14:SetCondition(function (e)
-        return vgf.filter.IsV(e:GetHandler()) or Duel.GetAttacker() == e:GetHandler()
-    end)
-    e14:SetValue(1)
-    c:RegisterEffect(e14)
-    local e15 = Effect.CreateEffect(c)
-    e15:SetType(EFFECT_TYPE_SINGLE)
-    e15:SetCode(EFFECT_EXTRA_ATTACK)
-    e15:SetProperty(EFFECT_FLAG_CANNOT_DISABLE)
-    e15:SetValue(100)
-    c:RegisterEffect(e15)
-    local e16 = Effect.CreateEffect(c)
-    e16:SetType(EFFECT_TYPE_SINGLE)
-    e16:SetCode(EFFECT_CANNOT_BE_BATTLE_TARGET)
-    e16:SetProperty(EFFECT_FLAG_SINGLE_RANGE + EFFECT_FLAG_CANNOT_DISABLE)
-    e16:SetRange(LOCATION_CIRCLE)
-    e16:SetCondition(function (e)
-        return vgf.filter.Back(e:GetHandler())
-    end)
-    e16:SetValue(VgF.True)
-    c:RegisterEffect(e16)
+        --回合开始转攻
+        if true then
+            local e = Effect.GlobalEffect()
+            e:SetType(EFFECT_TYPE_FIELD + EFFECT_TYPE_CONTINUOUS)
+            e:SetCode(EVENT_PREDRAW)
+            e:SetCountLimit(1, VgID + 4)
+            e:SetProperty(EFFECT_FLAG_IGNORE_IMMUNE)
+            e:SetOperation(function ()
+                local tp = Duel.GetTurnPlayer()
+                local g = Duel.GetMatchingGroup(Card.IsPosition, tp, LOCATION_CIRCLE, 0, nil, POS_FACEUP_DEFENSE)
+                if g:GetCount() > 0 then
+                    Duel.ChangePosition(g, POS_FACEUP_ATTACK)
+                    Duel.Hint(HINT_LINES, tp, VgF.Stringid(VgID, 8))
+                end
+            end)
+            Duel.RegisterEffect(e, 0)
+        end
+        --判定
+        if true then
+            if true then
+                local e = Effect.GlobalEffect()
+                e:SetType(EFFECT_TYPE_FIELD + EFFECT_TYPE_CONTINUOUS)
+                e:SetCode(EVENT_BATTLED)
+                e:SetProperty(EFFECT_FLAG_IGNORE_IMMUNE)
+                e:SetOperation(function ()
+                    local tc = Duel.GetAttacker()
+                    local atk = tc:GetAttack()
+                    for bc in VgF.Next(VgF.GetValueType(Duel.GetAttackTarget()) == "Group" and Duel.GetAttackTarget() or Group.FromCards(Duel.GetAttackTarget())) do
+                        if not bc or not bc:IsRelateToBattle() then goto continue end
+                        local flag_sentinel_label = Duel.GetAttackTarget():GetFlagEffectLabel(FLAG_SENTINEL)
+                        if flag_sentinel_label and (flag_sentinel_label == 0 or (flag_sentinel_label == 10402017 and bc:IsLevelBelow(2))) then goto continue end
+                        local def = tc:GetAttack()
+                        if not VgF.Filter.IsV(tc) or atk < def or tc:GetLeftScale() == 0 then goto continue end
+                        tc:RegisterFlagEffect(FLAG_DAMAGE_TRIGGER, RESET_EVENT + RESETS_STANDARD, 0, 1, tc:GetLeftScale() - 1)
+                        VgD.Trigger(bc:GetControler())
+                        ::continue::
+                    end
+                end)
+                Duel.RegisterEffect(e, 0)
+            end
+
+            if true then
+                local e = Effect.GlobalEffect()
+                e:SetType(EFFECT_TYPE_FIELD + EFFECT_TYPE_CONTINUOUS)
+                e:SetCode(EVENT_PRE_DAMAGE_CALCULATE)
+                e:SetCost(function (_, tp, eg, ep, ev, re, r, rp, chk)
+                    local tc = Duel.GetAttacker()
+                    if chk == 0 then return tc:GetFlagEffect(FLAG_COUNT_TRIGGER) == 0 end
+                    tc:RegisterFlagEffect(FLAG_COUNT_TRIGGER, RESET_EVENT + RESETS_STANDARD + RESET_PHASE + PHASE_DAMAGE_CAL, 0, 1)
+                end)
+                e:SetOperation(function ()
+                    local tc = Duel.GetAttacker()
+                    local tp = tc:GetControler()
+                    if not tc:GetFlagEffectLabel(FLAG_ATTACK_TRIGGER) or tc:GetFlagEffectLabel(FLAG_ATTACK_TRIGGER) == 0 or (VgF.Filter.IsR(tc) and tc:GetFlagEffect(FLAG_ALSO_CAN_TRIGGER) == 0) then return end
+                    VgD.Trigger(tp)
+                end)
+                Duel.RegisterEffect(e, 0)
+            end
+            
+            if true then
+                local e = Effect.GlobalEffect()
+                e:SetType(EFFECT_TYPE_FIELD + EFFECT_TYPE_CONTINUOUS)
+                e:SetCode(EVENT_CUSTOM + EVENT_TRIGGER)
+                e:SetOperation(function (_, _, eg, ep, ev, re, r, rp)
+                    local tc = VgF.ReturnCard(eg)
+                    local tp = tc:GetControler()
+                    VgD.Trigger(tp)
+                end)
+                Duel.RegisterEffect(e, 0)
+            end
+        end
+
+        if true then
+            local e1 = Effect.GlobalEffect()
+            e1:SetType(EFFECT_TYPE_FIELD)
+            e1:SetCode(EFFECT_UPDATE_ATTACK)
+            e1:SetTargetRange(LOCATION_CIRCLE, LOCATION_CIRCLE)
+            e1:SetTarget(function (_, tc)
+                return Duel.GetAttacker() == tc
+            end)
+            e1:SetValue(function ()
+                local tp = Duel.GetAttacker():GetControler()
+                local atk = 0
+                local g = Duel.GetMatchingGroup(function (tc)
+                    return tc:GetFlagEffect(FLAG_SUPPORT) > 0
+                end, tp, LOCATION_CIRCLE, 0, nil)
+                for tc in VgF.Next(g) do
+                    atk = atk + tc:GetAttack()
+                end
+                return atk
+            end)
+            Duel.RegisterEffect(e1, 0)
+            local e2 = e1:Clone()
+            e2:SetTarget(function (_, tc)
+                return Duel.GetAttackTarget() == tc
+            end)
+            e2:SetValue(function ()
+                local tp = Duel.GetAttackTarget():GetControler()
+                local atk = 0
+                local g = Duel.GetMatchingGroup(nil, tp, LOCATION_G_CIRCLE, 0, nil)
+                for tc in VgF.Next(g) do
+                    local def = tc:GetDefense()
+                    if def < 0 then def = 0 end
+                    atk = atk + def
+                end
+                return atk
+            end)
+            Duel.RegisterEffect(e2, 0)
+        end
+
+        if true then
+            local e = Effect.GlobalEffect()
+            e:SetType(EFFECT_TYPE_FIELD + EFFECT_TYPE_CONTINUOUS)
+            e:SetCode(EVENT_DAMAGE_STEP_END)
+            e:SetOperation(function ()
+                local g = Duel.GetFieldGroup(0, LOCATION_G_CIRCLE, LOCATION_G_CIRCLE)
+                if g:GetCount() > 0 then VgF.Sendto(LOCATION_DROP, g, REASON_RULE) end
+            end)
+            Duel.RegisterEffect(e, 0)
+        end
+    else
+        --支援
+        local e1 = Effect.CreateEffect(c)
+        e1:SetType(EFFECT_TYPE_FIELD + EFFECT_TYPE_TRIGGER_O)
+        e1:SetRange(LOCATION_CIRCLE)
+        e1:SetCode(EVENT_ATTACK_ANNOUNCE)
+        e1:SetProperty(EFFECT_FLAG_CANNOT_DISABLE)
+        e1:SetCondition(function (e, tp, eg, ep, ev, re, r, rp)
+            local tc = e:GetHandler()
+            if not tc:IsSkill(SKILL_BOOST) or Duel.GetTurnPlayer() ~= tp or not VgF.GetColumnGroup(Duel.GetAttacker()):IsContains(tc) then return false end
+            return true
+        end)
+        e1:SetTarget(function (e, tp, eg, ep, ev, re, r, rp, chk)
+            if chk == 0 then return e:GetHandler():IsPosition(POS_FACEUP_ATTACK) end
+        end)
+        e1:SetOperation(function (e, tp, eg, ep, ev, re, r, rp)
+            local tc = e:GetHandler()
+            Duel.ChangePosition(tc, POS_FACEUP_DEFENSE)
+            VgF.Effect.Reset(tc, {
+                tc:RegisterFlagEffect(FLAG_SUPPORT, RESET_EVENT + RESETS_STANDARD, 0, 1),
+                Duel.GetAttacker():RegisterFlagEffect(FLAG_SUPPORTED, RESET_EVENT + RESETS_STANDARD, 0, 1)
+            }, EVENT_BATTLED)
+            Duel.RaiseEvent(tc, EVENT_CUSTOM + EVENT_SUPPORT, e, 0, tp, tp, 0)
+        end)
+        c:RegisterEffect(e1)
+        --防御/截击
+        local e2 = Effect.CreateEffect(c)
+        e2:SetCategory(CATEGORY_DEFENDER)
+        e2:SetType(EFFECT_TYPE_FIELD + EFFECT_TYPE_TRIGGER_O)
+        e2:SetCode(EVENT_BATTLE_START)
+        e2:SetRange(LOCATION_CIRCLE + LOCATION_HAND)
+        e2:SetProperty(EFFECT_FLAG_CANNOT_DISABLE)
+        e2:SetCountLimit(1)
+        e2:SetCondition(function (e, tp, eg, ep, ev, re, r, rp)
+            local bc = Duel.GetAttackTarget()
+            return bc and bc:IsControler(tp) and bc ~= e:GetHandler()
+        end)
+        e2:SetTarget(function (e, tp, eg, ep, ev, re, r, rp, chk)
+            if chk == 0 then return VgF.IsAbleToGCircle(e:GetHandler()) end
+        end)
+        e2:SetOperation(function (e, tp, eg, ep, ev, re, r, rp)
+            VgF.Sendto(LOCATION_G_CIRCLE, e:GetHandler(), tp, POS_FACEUP, REASON_EFFECT)
+        end)
+        c:RegisterEffect(e2)
+    end
 end
-function VgD.Trigger(e, tp, eg, ep, ev, re, r, rp)
+function VgD.Trigger(tp)
     local tg = Duel.GetDecktopGroup(tp, 1)
     Duel.DisableShuffleCheck()
     VgF.Sendto(LOCATION_TRIGGER, tg:GetFirst())
@@ -898,7 +946,7 @@ function VgD.OverDress(c, filter)
     e1:SetOperation(VgD.OverDressOperation(filter))
     c:RegisterEffect(e1)
     local e2 = Effect.CreateEffect(c)
-    e2:SetType(EFFECT_TYPE_SINGLE + EFFECT_TYPE_SET)
+    e2:SetType(EFFECT_TYPE_SINGLE + EFFECT_TYPE_CONTINUOUS)
     e2:SetCode(EVENT_SPSUMMON_SUCCESS)
     e2:SetProperty(EFFECT_FLAG_CANNOT_DISABLE)
     e2:SetOperation(function (e, tp, eg, ep, ev, re, r, rp)
@@ -1406,7 +1454,7 @@ function VgD.AbilityAuto(c, m, loc, typ, code, op, cost, con, tg, count, propert
     elseif code == EVENT_TO_G_CIRCLE then
         typ = typ or (cost and EFFECT_TYPE_TRIGGER_O or EFFECT_TYPE_TRIGGER_F)
         op = op or function (e, tp, eg, ep, ev, re, r, rp)
-            if vgf.filter.IsR(Duel.GetAttackTarget()) then
+            if VgF.Filter.IsR(Duel.GetAttackTarget()) then
                 local e1 = Effect.CreateEffect(e:GetHandler())
                 e1:SetType(EFFECT_TYPE_SINGLE)
                 e1:SetProperty(EFFECT_FLAG_SINGLE_RANGE)
@@ -1416,8 +1464,8 @@ function VgD.AbilityAuto(c, m, loc, typ, code, op, cost, con, tg, count, propert
                 e1:SetValue(1)
                 Duel.GetAttackTarget():RegisterEffect(e1)
                 vgf.effect.Reset(e:GetHandler(), e1, EVENT_BATTLED)
-            elseif vgf.filter.IsV(Duel.GetAttackTarget()) then
-                Duel.GetAttackTarget():RegisterFlagEffect(FLAG_DEFENSE_ENTIRELY, RESET_EVENT + RESETS_STANDARD, 0, 1)
+            elseif VgF.Filter.IsV(Duel.GetAttackTarget()) then
+                VgF.Effect.Reset(Duel.GetAttackTarget(), Duel.GetAttackTarget():RegisterFlagEffect(FLAG_SENTINEL, RESET_EVENT + RESETS_STANDARD, 0, 1), EVENT_BATTLED)
             end
         end
         -- set effect
@@ -1473,7 +1521,7 @@ function VgD.BeRidedByCard(c, m, filter, op, cost, con, tg, id)
     local desc = VgF.Stringid(m, id or 2)
     -- set effect
     local e = Effect.CreateEffect(c)
-    e:SetType(EFFECT_TYPE_SINGLE + EFFECT_TYPE_SET)
+    e:SetType(EFFECT_TYPE_SINGLE + EFFECT_TYPE_CONTINUOUS)
     e:SetCode(EVENT_BE_MATERIAL)
     e:SetProperty(EFFECT_FLAG_EVENT_PLAYER)
     e:SetCondition(VgD.BeRidedByCardCondition(con, filter))
@@ -1630,9 +1678,9 @@ function VgD.TriggerCountUp(c, m, num, con, reset, hc)
     hc = hc and VgF.ReturnCard(hc) or c
     -- set effect
     local e = Effect.CreateEffect(c)
-    e:SetType(EFFECT_TYPE_FIELD + EFFECT_TYPE_SET)
+    e:SetType(EFFECT_TYPE_FIELD + EFFECT_TYPE_CONTINUOUS)
     e:SetRange(LOCATION_CIRCLE)
-    e:SetCode(EVENT_CUSTOM + EVENT_TRIGGERCOUNTUP)
+    e:SetCode(EVENT_CUSTOM + EVENT_TRIGGER_COUNT_UP)
     e:SetProperty(EFFECT_FLAG_DELAY)
     e:SetCondition(condition)
     if reset then e:SetReset(RESET_EVENT + RESETS_STANDARD + reset) end
@@ -1835,16 +1883,16 @@ function VgD.CallInPrisonCondition(val)
         local eg, ep, ev, re, r, rp
         if Duel.GetTurnPlayer() == e:GetHandlerPlayer() then return false end
         if val == 1 then
-            return (vgf.cost.SoulBlast(1)(e, tp, eg, ep, ev, re, r, rp, 0) and VgF.IsExistingMatchingCard(VgD.CallInPrisonFilter, tp, LOCATION_HAND, 0, 1, nil, e, tp))
+            return (VgF.Cost.SoulBlast(1)(e, tp, eg, ep, ev, re, r, rp, 0) and VgF.IsExistingMatchingCard(VgD.CallInPrisonFilter, tp, LOCATION_HAND, 0, 1, nil, e, tp))
         elseif val == 2 then
-            return (vgf.cost.CounterBlast(1)(e, tp, eg, ep, ev, re, r, rp, 0) and VgF.IsExistingMatchingCard(VgD.CallInPrisonFilter, tp, LOCATION_HAND, 0, 2, nil, e, tp))
+            return (VgF.Cost.CounterBlast(1)(e, tp, eg, ep, ev, re, r, rp, 0) and VgF.IsExistingMatchingCard(VgD.CallInPrisonFilter, tp, LOCATION_HAND, 0, 2, nil, e, tp))
         end
     end
 end
 function VgD.CallInPrisonOperation(val)
     return function(e, tp, eg, ep, ev, re, r, rp, c, sg, og)
         if val == 1 then
-            vgf.cost.SoulBlast(1)(e, tp, eg, ep, ev, re, r, rp, 1)
+            VgF.Cost.SoulBlast(1)(e, tp, eg, ep, ev, re, r, rp, 1)
             local g = VgF.SelectMatchingCard(HINTMSG_CALL, e, tp, VgD.CallInPrisonFilter, tp, LOCATION_ORDER, 0, 1, 1, nil, e, tp)
             if g:GetFirst():IsType(TYPE_UNIT) then
                 VgF.Sendto(LOCATION_CIRCLE, g, 0, tp)
@@ -1852,7 +1900,7 @@ function VgD.CallInPrisonOperation(val)
                 VgF.Sendto(LOCATION_DROP, g, REASON_EFFECT)
             end
         elseif val == 2 then
-            vgf.cost.CounterBlast(1)(e, tp, eg, ep, ev, re, r, rp, 1)
+            VgF.Cost.CounterBlast(1)(e, tp, eg, ep, ev, re, r, rp, 1)
             local tg = VgF.SelectMatchingCard(HINTMSG_CALL, e, tp, VgD.CallInPrisonFilter, tp, LOCATION_ORDER, 0, 2, 2, nil, e, tp)
             local g = tg:Filter(Card.IsType, nil, TYPE_UNIT)
             if g:GetCount() > 0 then
@@ -1902,7 +1950,7 @@ function VgD.GlobalCheckEffect(c, m, code, con, op)
     end
     -- set effect
     local ge = Effect.CreateEffect(c)
-    ge:SetType(EFFECT_TYPE_FIELD + EFFECT_TYPE_SET)
+    ge:SetType(EFFECT_TYPE_FIELD + EFFECT_TYPE_CONTINUOUS)
     ge:SetCode(code)
     if con then ge:SetCondition(con) end
     ge:SetOperation(op)

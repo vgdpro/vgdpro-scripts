@@ -24,7 +24,7 @@ function cm.op(e,tp,eg,ep,ev,re,r,rp)
 		tc:RegisterEffect(e1)
 		vgf.effect.Reset(c,e1,EVENT_BATTLED)
 	elseif vgf.filter.IsV(tc) then
-		tc:RegisterFlagEffect(FLAG_DEFENSE_ENTIRELY,RESET_EVENT+RESETS_STANDARD,0,1,m)
+		tc:RegisterFlagEffect(FLAG_SENTINEL,RESET_EVENT+RESETS_STANDARD,0,1,m)
 	end
 end
 function cm.con1(e)

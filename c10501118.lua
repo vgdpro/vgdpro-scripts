@@ -24,7 +24,7 @@ function cm.op(e,tp,eg,ep,ev,re,r,rp)
         vgf.effect.Reset(c,e1,EVENT_BATTLED)
     end
     local e4=Effect.CreateEffect(c)
-    e4:SetType(EFFECT_TYPE_FIELD+EFFECT_TYPE_SET)
+    e4:SetType(EFFECT_TYPE_FIELD+EFFECT_TYPE_CONTINUOUS)
     e4:SetCode(EFFECT_SEND_REPLACE)
     e4:SetTarget(cm.reptg)
     e4:SetValue(cm.repval)

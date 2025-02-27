@@ -13,7 +13,7 @@ function cm.op(e,tp,eg,ep,ev,re,r,rp)
 		vgf.AtkUp(c,c,15000)
 	end
     local e1=Effect.CreateEffect(c)
-    e1:SetType(EFFECT_TYPE_FIELD+EFFECT_TYPE_SET)
+    e1:SetType(EFFECT_TYPE_FIELD+EFFECT_TYPE_CONTINUOUS)
     e1:SetCode(EVENT_BATTLED)
     e1:SetCountLimit(1)
     e1:SetOperation(cm.op2)
