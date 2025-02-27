@@ -121,7 +121,7 @@ end
 function VgF.GetAvailableLocation(tp, zone)
     local z
     if zone then z = zone else z = 0x1f end
-    local rg = Duel.(Card.IsPosition, tp, LOCATION_CIRCLE, 0, nil, POS_FACEDOWN_ATTACK)
+    local rg = Duel.GetMatchingGroup(Card.IsPosition, tp, LOCATION_CIRCLE, 0, nil, POS_FACEDOWN_ATTACK)
     for tc in VgF.Next(rg) do
         local szone = VgF.SequenceToGlobal(tp, tc:GetLocation(), tc:GetSequence())
         z = bit.bxor(z, szone)
@@ -322,7 +322,7 @@ end
 
 function VgF.Condition.FirstCard(e)
     local tp = e:GetHandlerPlayer()
-    local g = Duel.(nil, tp, LOCATION_ALL, 0, nil)
+    local g = Duel.GetMatchingGroup(nil, tp, LOCATION_ALL, 0, nil)
     return e:GetHandler() == g:GetFirst()
 end
 function VgF.Condition.FirstTurn()
@@ -424,7 +424,7 @@ function VgF.Cost.EnergyBlast(val)
             end
             return VgF.IsExistingMatchingCard(Card.IsCode, tp, LOCATION_CREST, 0, val, nil, CARD_ENERGY)
         end
-        local sg = Duel.(Card.IsCode, tp, LOCATION_CREST, 0, nil, CARD_ENERGY)
+        local sg = Duel.GetMatchingGroup(Card.IsCode, tp, LOCATION_CREST, 0, nil, CARD_ENERGY)
         local g = sg:GetCardsFromGroup(val)
         return VgF.Sendto(0, g, tp, POS_FACEUP, REASON_COST)
     end
@@ -441,10 +441,10 @@ function VgF.Cost.SoulBlast(val)
                 local m = c:GetOriginalCode()
                 VgF.AddAlchemagic(m, "LOCATION_SOUL", "LOCATION_DROP", val, val)
             end
-            return Duel.(VgF.Filter.IsV, tp, LOCATION_CIRCLE, 0, nil, nil):GetFirst():GetOverlayCount() >= val
+            return Duel.GetMatchingGroup(VgF.Filter.IsV, tp, LOCATION_CIRCLE, 0, nil, nil):GetFirst():GetOverlayCount() >= val
         end
         Duel.Hint(HINT_SELECTMSG, tp, HINTMSG_REMOVEXYZ)
-        local g = Duel.(VgF.Filter.IsV, tp, LOCATION_CIRCLE, 0, nil):GetFirst():GetOverlayGroup():Select(tp, nil, val, val, nil)
+        local g = Duel.GetMatchingGroup(VgF.Filter.IsV, tp, LOCATION_CIRCLE, 0, nil):GetFirst():GetOverlayGroup():Select(tp, nil, val, val, nil)
         return VgF.Sendto(LOCATION_DROP, g, REASON_COST)
     end
 end
@@ -581,7 +581,7 @@ function VgF.Operation.SoulCharge(val)
             end
             return Duel.GetFieldGroupCount(tp, LOCATION_DECK, 0) >= val
         end
-        local rc = Duel.(VgF.Filter.IsV, tp, LOCATION_CIRCLE, 0, nil):GetFirst()
+        local rc = Duel.GetMatchingGroup(VgF.Filter.IsV, tp, LOCATION_CIRCLE, 0, nil):GetFirst()
         local g = Duel.GetDecktopGroup(tp, val)
         Duel.DisableShuffleCheck()
         Duel.RaiseEvent(g, EVENT_CUSTOM + EVENT_OVERLAY_FILL, e, 0, tp, tp, val)
