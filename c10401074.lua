@@ -27,10 +27,10 @@ function cm.costtg(e,re,tp)
     return re:IsHasCategory(CATEGORY_DEFENDER) and re:GetHandler():IsLocation(LOCATION_HAND) and re:GetHandlerPlayer()==tp and not vgf.IsExistingMatchingCard(nil,tp,LOCATION_G_CIRCLE,0,1,nil) and Duel.GetAttacker()==e:GetHandler() and re:IsActiveType(TYPE_UNIT)
 end
 function cm.costchk(e,re,tp)
-    return vgf.IsExistingMatchingCard(vgf.IsAbleToGCircle,tp,LOCATION_HAND,0,1,re:GetHandler(),LOCATION_HAND)
+    return vgf.IsExistingMatchingCard(Card.IsAbleToGCircle,tp,LOCATION_HAND,0,1,re:GetHandler(),LOCATION_HAND)
 end
 function cm.costop(e,tp,eg,ep,ev,re,r,rp)
     local c=e:GetLabelObject()
-	local g=vgf.SelectMatchingCard(HINTMSG_TO_G_CIRCLE,e,tp,vgf.IsAbleToGCircle,tp,LOCATION_HAND,0,1,1,c,LOCATION_HAND)
+	local g=vgf.SelectMatchingCard(HINTMSG_TO_G_CIRCLE,e,tp,Card.IsAbleToGCircle,tp,LOCATION_HAND,0,1,1,c,LOCATION_HAND)
     vgf.Sendto(LOCATION_G_CIRCLE,g,tp,POS_FACEUP,REASON_EFFECT)
 end

@@ -52,7 +52,7 @@ function cm.op2(e,tp,eg,ep,ev,re,r,rp)
     local token2=Duel.CreateToken(tp,code)
     local token3=Duel.CreateToken(tp,code)
     local sg=Group.FromCards(token1,token2,token3)
-    local g=vgf.GetCardsFromGroup(sg,ct)
+    local g=sg:GetCardsFromGroup(ct)
     vgf.Sendto(LOCATION_CREST,g,tp,POS_FACEUP_ATTACK,REASON_EFFECT)
 end
 function cm.op3(e,tp,eg,ep,ev,re,r,rp)

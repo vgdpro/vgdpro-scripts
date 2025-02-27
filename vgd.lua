@@ -902,7 +902,7 @@ function VgD.Register.MonsterBattle(c)
             return bc and bc:IsControler(tp) and bc ~= e:GetHandler()
         end)
         e2:SetTarget(function (e, tp, eg, ep, ev, re, r, rp, chk)
-            if chk == 0 then return VgF.IsAbleToGCircle(e:GetHandler()) end
+            if chk == 0 then return e:GetHandler():IsAbleToGCircle() end
         end)
         e2:SetOperation(function (e, tp, eg, ep, ev, re, r, rp)
             VgF.Sendto(LOCATION_G_CIRCLE, e:GetHandler(), tp, POS_FACEUP, REASON_EFFECT)

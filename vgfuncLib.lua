@@ -53,6 +53,15 @@ function VgF.Next(g)
             end
 end
 
+---返回函数，该函数与f的结果总是相反的。
+---@param f function 要操作的bool函数
+---@return function 经过操作的函数
+function VgF.Not(f)
+    return  function(...)
+                return not f(...)
+            end
+end
+
 ---返回v在lua中的变量类型，以string方式呈现。
 ---@param v any 要获取类型的变量（或常量）
 ---@return string 以字符串形式呈现的类型
@@ -89,20 +98,6 @@ function VgF.ReturnGroup(tc)
     return g
 end
 
----返回g的前val张卡。
----@param g Group 要操作的卡片组
----@param val number 要获取的卡片数量
-function VgF.GetCardsFromGroup(g, val)
-    if VgF.GetValueType(g) == "Group" then
-        local sg = Group.CreateGroup()
-        for tc in VgF.Next(g) do
-            if sg:GetCount() >= val then break end
-            sg:AddCard(tc)
-        end
-        return sg
-    end
-end
-
 ---根据控制者，区域和编号获取zone；不合法的数据会返回0
 ---@param p number 控制者
 ---@param loc number 所在区域，若不是LOCATION_CIRCLE或LOCATION_SZONE则返回0
@@ -117,6 +112,53 @@ function VgF.SequenceToGlobal(p, loc, seq)
     end
     return 0
 end
+
+---返回c所在列的所有单位。
+---@param c Card 指示某一列的卡
+---@return Group 这一列的所有单位
+function VgF.GetColumnGroup(c)
+    local tp = c:GetControler()
+    local g = Group.CreateGroup()
+     if c:GetSequence() == 0 then
+        local sg1 = VgF.GetMatchingGroup(Card.IsSequence, tp, LOCATION_CIRCLE, 0, nil, 1)
+        local sg2 = VgF.GetMatchingGroup(Card.IsSequence, tp, 0, LOCATION_CIRCLE, nil, 3, 4)
+        if sg1:GetCount() > 0 then g:Merge(sg1) end
+        if sg2:GetCount() > 0 then g:Merge(sg2) end
+    end
+    if c:GetSequence() == 1 then
+        local sg1 = VgF.GetMatchingGroup(Card.IsSequence, tp, LOCATION_CIRCLE, 0, nil, 0)
+        local sg2 = VgF.GetMatchingGroup(Card.IsSequence, tp, 0, LOCATION_CIRCLE, nil, 3, 4)
+        if sg1:GetCount() > 0 then g:Merge(sg1) end
+        if sg2:GetCount() > 0 then g:Merge(sg2) end
+    end
+    if c:GetSequence() == 2 then
+        local sg1 = VgF.GetMatchingGroup(Card.IsSequence, tp, LOCATION_CIRCLE, 0, nil, 5)
+        local sg2 = VgF.GetMatchingGroup(Card.IsSequence, tp, 0, LOCATION_CIRCLE, nil, 2, 5)
+        if sg1:GetCount() > 0 then g:Merge(sg1) end
+        if sg2:GetCount() > 0 then g:Merge(sg2) end
+    end
+    if c:GetSequence() == 3 then
+        local sg1 = VgF.GetMatchingGroup(Card.IsSequence, tp, LOCATION_CIRCLE, 0, nil, 4)
+        local sg2 = VgF.GetMatchingGroup(Card.IsSequence, tp, 0, LOCATION_CIRCLE, nil, 0, 1)
+        if sg1:GetCount() > 0 then g:Merge(sg1) end
+        if sg2:GetCount() > 0 then g:Merge(sg2) end
+    end
+    if c:GetSequence() == 4 then
+        local sg1 = VgF.GetMatchingGroup(Card.IsSequence, tp, LOCATION_CIRCLE, 0, nil, 3)
+        local sg2 = VgF.GetMatchingGroup(Card.IsSequence, tp, 0, LOCATION_CIRCLE, nil, 0, 1)
+        if sg1:GetCount() > 0 then g:Merge(sg1) end
+        if sg2:GetCount() > 0 then g:Merge(sg2) end
+    end
+    if c:GetSequence() == 5 then
+        local sg1 = VgF.GetMatchingGroup(Card.IsSequence, tp, LOCATION_CIRCLE, 0, nil, 2)
+        local sg2 = VgF.GetMatchingGroup(Card.IsSequence, tp, 0, LOCATION_CIRCLE, nil, 2, 5)
+        if sg1:GetCount() > 0 then g:Merge(sg1) end
+        if sg2:GetCount() > 0 then g:Merge(sg2) end
+    end
+    return g
+end
+
+--数组操作-----------------------------------------------------------------------------------
 
 function table.copy(copy, original)
     copy = {}
@@ -134,6 +176,8 @@ function table.indexOf(table, element)
     end
     return -1
 end
+
+--bit 位运算-----------------------------------------------------------------------------------
 
 function bit.ReturnCount(n)
     if n == 0 then
@@ -182,59 +226,6 @@ end
 ---@return number 运算结果
 function bit.bnot(a)
     return ~a
-end
-
----返回函数，该函数与f的结果总是相反的。
----@param f function 要操作的bool函数
----@return function 经过操作的函数
-function VgF.Not(f)
-    return  function(...)
-                return not f(...)
-            end
-end
----返回c所在列的所有单位。
----@param c Card 指示某一列的卡
----@return Group 这一列的所有单位
-function VgF.GetColumnGroup(c)
-    local tp = c:GetControler()
-    local g = Group.CreateGroup()
-     if c:GetSequence() == 0 then
-        local sg1 = VgF.GetMatchingGroup(Card.IsSequence, tp, LOCATION_CIRCLE, 0, nil, 1)
-        local sg2 = VgF.GetMatchingGroup(Card.IsSequence, tp, 0, LOCATION_CIRCLE, nil, 3, 4)
-        if sg1:GetCount() > 0 then g:Merge(sg1) end
-        if sg2:GetCount() > 0 then g:Merge(sg2) end
-    end
-    if c:GetSequence() == 1 then
-        local sg1 = VgF.GetMatchingGroup(Card.IsSequence, tp, LOCATION_CIRCLE, 0, nil, 0)
-        local sg2 = VgF.GetMatchingGroup(Card.IsSequence, tp, 0, LOCATION_CIRCLE, nil, 3, 4)
-        if sg1:GetCount() > 0 then g:Merge(sg1) end
-        if sg2:GetCount() > 0 then g:Merge(sg2) end
-    end
-    if c:GetSequence() == 2 then
-        local sg1 = VgF.GetMatchingGroup(Card.IsSequence, tp, LOCATION_CIRCLE, 0, nil, 5)
-        local sg2 = VgF.GetMatchingGroup(Card.IsSequence, tp, 0, LOCATION_CIRCLE, nil, 2, 5)
-        if sg1:GetCount() > 0 then g:Merge(sg1) end
-        if sg2:GetCount() > 0 then g:Merge(sg2) end
-    end
-    if c:GetSequence() == 3 then
-        local sg1 = VgF.GetMatchingGroup(Card.IsSequence, tp, LOCATION_CIRCLE, 0, nil, 4)
-        local sg2 = VgF.GetMatchingGroup(Card.IsSequence, tp, 0, LOCATION_CIRCLE, nil, 0, 1)
-        if sg1:GetCount() > 0 then g:Merge(sg1) end
-        if sg2:GetCount() > 0 then g:Merge(sg2) end
-    end
-    if c:GetSequence() == 4 then
-        local sg1 = VgF.GetMatchingGroup(Card.IsSequence, tp, LOCATION_CIRCLE, 0, nil, 3)
-        local sg2 = VgF.GetMatchingGroup(Card.IsSequence, tp, 0, LOCATION_CIRCLE, nil, 0, 1)
-        if sg1:GetCount() > 0 then g:Merge(sg1) end
-        if sg2:GetCount() > 0 then g:Merge(sg2) end
-    end
-    if c:GetSequence() == 5 then
-        local sg1 = VgF.GetMatchingGroup(Card.IsSequence, tp, LOCATION_CIRCLE, 0, nil, 2)
-        local sg2 = VgF.GetMatchingGroup(Card.IsSequence, tp, 0, LOCATION_CIRCLE, nil, 2, 5)
-        if sg1:GetCount() > 0 then g:Merge(sg1) end
-        if sg2:GetCount() > 0 then g:Merge(sg2) end
-    end
-    return g
 end
 
 ---以c的名义，使g（中的每一张卡）的攻击力上升val，并在reset时重置。
@@ -422,18 +413,6 @@ function VgF.LevelUp(c, g, val, reset, resetcount)
         end
     end
 end
----判断c是否可以以规则的手段到G区域。
----@param c Card 要判断的卡
----@return boolean 指示c能否去到G区域。
-function VgF.IsAbleToGCircle(c)
-    if c:IsLocation(LOCATION_HAND) then
-        if Duel.IsPlayerAffectedByEffect(c:GetControler(), AFFECT_CODE_DEFENDER_CANNOT_TO_G_CIRCLE) and c:GetBaseDefense() == 0 then return false end
-        return c:IsType(TYPE_UNIT)
-    elseif c:IsLocation(LOCATION_CIRCLE) then
-        return c:IsSkill(SKILL_INTERCEPT) and Card.IsSequence(c, 0, 4) and c:IsLocation(LOCATION_CIRCLE) and c:IsFaceup()
-    end
-    return false
-end
 
 --Effect类函数-------------------------------------------------------------------------------
 
@@ -615,7 +594,7 @@ function VgF.Cost.EnergyBlast(val)
             return VgF.IsExistingMatchingCard(Card.IsCode, tp, LOCATION_CREST, 0, val, nil, CARD_ENERGY)
         end
         local sg = Duel.GetMatchingGroup(Card.IsCode, tp, LOCATION_CREST, 0, nil, CARD_ENERGY)
-        local g = VgF.GetCardsFromGroup(sg, val)
+        local g = sg:GetCardsFromGroup(val)
         return VgF.Sendto(0, g, tp, POS_FACEUP, REASON_COST)
     end
 end
@@ -914,6 +893,19 @@ end
 
 --Card库自定义函数-----------------------------------------------------------------------
 
+---判断c是否可以以规则的手段到G区域。
+---@param c Card 要判断的卡
+---@return boolean 指示c能否去到G区域。
+function Card.IsAbleToGCircle(c)
+    if c:IsLocation(LOCATION_HAND) then
+        if Duel.IsPlayerAffectedByEffect(c:GetControler(), AFFECT_CODE_DEFENDER_CANNOT_TO_G_CIRCLE) and c:GetBaseDefense() == 0 then return false end
+        return c:IsType(TYPE_UNIT)
+    elseif c:IsLocation(LOCATION_CIRCLE) then
+        return c:IsSkill(SKILL_INTERCEPT) and Card.IsSequence(c, 0, 4) and c:IsLocation(LOCATION_CIRCLE) and c:IsFaceup()
+    end
+    return false
+end
+
 ---判断c是否在当前区域的某（几）个编号上
 ---@param c Card 要判断的卡
 ---@param ... number 编号
@@ -937,11 +929,26 @@ end
 
 --Group库自定义函数-----------------------------------------------------------------------
 
+---返回g的前val张卡。
+---@param g Group 要操作的卡片组
+---@param val number 要获取的卡片数量
+function Group.GetCardsFromGroup(g, val)
+    if VgF.GetValueType(g) == "Group" then
+        local sg = Group.CreateGroup()
+        for tc in VgF.Next(g) do
+            if sg:GetCount() >= val then break end
+            sg:AddCard(tc)
+        end
+        return sg
+    end
+end
+
 function Group.ForEach(g, f, ...)
     local ext_params = {...}
     if #g == 0 then return end
     for c in VgF.Next(g) do
-        f(c, table.unpack(ext_params))
+        local chk = f(c, table.unpack(ext_params))
+        if chk == "break" then break end
     end
 end
 
