@@ -113,6 +113,17 @@ function VgF.SequenceToGlobal(p, loc, seq)
     return 0
 end
 
+function VgF.GetAvailableLocation(tp, zone)
+    local z
+    if zone then z = zone else z = 0x1f end
+    local rg = Duel.GetMatchingGroup(Card.IsPosition, tp, LOCATION_CIRCLE, 0, nil, POS_FACEDOWN_ATTACK)
+    for tc in VgF.Next(rg) do
+        local szone = VgF.SequenceToGlobal(tp, tc:GetLocation(), tc:GetSequence())
+        z = bit.bxor(z, szone)
+    end
+    return z
+end
+
 ---返回c所在列的所有单位。
 ---@param c Card 指示某一列的卡
 ---@return Group 这一列的所有单位
@@ -156,6 +167,36 @@ function VgF.GetColumnGroup(c)
         if sg2:GetCount() > 0 then g:Merge(sg2) end
     end
     return g
+end
+
+---检查并转换 loc 以及 con 用于【起】等模板函数
+function VgF.GetLocCondition(loc, con)
+    local con_exf = VgF.True
+    if loc == LOCATION_R_CIRCLE then
+        loc, con_exf = LOCATION_CIRCLE, VgF.Condition.IsR
+    elseif loc == LOCATION_V_CIRCLE then
+        loc, con_exf = LOCATION_CIRCLE, VgF.Condition.IsV
+    end
+    loc = loc or LOCATION_CIRCLE
+    local condition = function(e, tp, eg, ep, ev, re, r, rp)
+        return (not con or con(e, tp, eg, ep, ev, re, r, rp)) and con_exf(e)
+    end
+    return loc, condition
+end
+
+--函数检查器--------------------------------------------------------------------------------
+function VgF.IllegalFunctionCheck(name, c)
+    if VgF.GetValueType(c) ~= "Card" then Debug.Message("VgD."..name.." param c isn't Card") end
+    local m = c:GetOriginalCode()
+    local chk = function(key)
+        return function(func)
+            local ftyp = type(func)
+            if ftyp == "nil" or ftyp == "function" then return false end
+            Debug.Message("c"..m.." VgD."..name.." param "..key.." isn't function | nil")
+            return true
+        end
+    end
+    return {con = chk("con"), cost = chk("cost"), tg = chk("tg"), op = chk("op")}
 end
 
 --数组操作-----------------------------------------------------------------------------------
@@ -226,192 +267,6 @@ end
 ---@return number 运算结果
 function bit.bnot(a)
     return ~a
-end
-
----以c的名义，使g（中的每一张卡）的攻击力上升val，并在reset时重置。
----@param c Card 要使卡上升攻击力的卡
----@param g Card|Group 要被上升攻击力的卡
----@param val number|string 要上升的攻击力（可以为负）
----@param reset number|nil 指示重置的时点，默认为“回合结束时”。无论如何，都会在离场时重置。
-function VgF.AtkUp(c, g, val, reset, resetcount)
-    if not c or not g then return end
-    if not resetcount then resetcount = 1 end
-    if not reset then reset = RESET_PHASE + PHASE_END end
-    if not val or (VgF.GetValueType(val) == "number" and val == 0) then return end
-    if VgF.GetValueType(g) == "Group" and g:GetCount() > 0 then
-        local e = {}
-        for tc in VgF.Next(g) do
-            if tc:IsLocation(LOCATION_CIRCLE) then
-                if VgF.GetValueType(val) == "string" and val == "DOUBLE" then
-                    val = tc:GetAttack()
-                end
-                local e1 = Effect.CreateEffect(c)
-                e1:SetType(EFFECT_TYPE_SINGLE)
-                e1:SetCode(EFFECT_UPDATE_ATTACK)
-                e1:SetValue(val)
-                e1:SetReset(RESET_EVENT + RESETS_STANDARD + reset, resetcount)
-                tc:RegisterEffect(e1)
-                table.insert(e, e1)
-            end
-        end
-        return e
-    elseif VgF.GetValueType(g) == "Card" then
-        local tc = g
-        if tc:IsLocation(LOCATION_CIRCLE) then
-            local tc = VgF.ReturnCard(g)
-            if VgF.GetValueType(val) == "string" and val == "DOUBLE" then
-                val = tc:GetAttack()
-            end
-            local e1 = Effect.CreateEffect(c)
-            e1:SetType(EFFECT_TYPE_SINGLE)
-            e1:SetCode(EFFECT_UPDATE_ATTACK)
-            e1:SetValue(val)
-            e1:SetReset(RESET_EVENT + RESETS_STANDARD + reset, resetcount)
-            tc:RegisterEffect(e1)
-            return e1
-        end
-    end
-end
----以c的名义，使g（中的每一张卡）的盾值上升val，并在reset时重置。
----@param c Card 要使卡上升盾值的卡
----@param g Card|Group 要被上升盾值的卡
----@param val number|string 要上升的盾值（可以为负）
----@param reset number|nil 指示重置的时点，默认为“回合结束时”。无论如何，都会在离场时重置。
-function VgF.DefUp(c, g, val, reset, resetcount)
-    if not c or not g then return end
-    if not reset then reset = RESET_PHASE + PHASE_END end
-    if not resetcount then resetcount = 1 end
-    if not val or (VgF.GetValueType(val) == "number" and val == 0) then return end
-    if VgF.GetValueType(g) == "Group" and g:GetCount() > 0 then
-        local e = {}
-        for tc in VgF.Next(g) do
-            if tc:IsLocation(LOCATION_CIRCLE) then
-                if VgF.GetValueType(val) == "string" and val == "DOUBLE" then
-                    val = tc:GetDefense()
-                end
-                local e1 = Effect.CreateEffect(c)
-                e1:SetType(EFFECT_TYPE_SINGLE)
-                e1:SetCode(EFFECT_UPDATE_DEFENSE)
-                e1:SetValue(val)
-                e1:SetReset(RESET_EVENT + RESETS_STANDARD + reset, resetcount)
-                tc:RegisterEffect(e1)
-                table.insert(e, e1)
-            end
-        end
-        return e
-    elseif VgF.GetValueType(g) == "Card" then
-        local tc = g
-        if tc:IsLocation(LOCATION_CIRCLE) then
-            if VgF.GetValueType(val) == "string" and val == "DOUBLE" then
-                val = tc:GetDefense()
-            end
-            local e1 = Effect.CreateEffect(c)
-            e1:SetType(EFFECT_TYPE_SINGLE)
-            e1:SetCode(EFFECT_UPDATE_DEFENSE)
-            e1:SetValue(val)
-            e1:SetReset(RESET_EVENT + RESETS_STANDARD + reset, resetcount)
-            tc:RegisterEffect(e1)
-            return e1
-        end
-    end
-end
----以c的名义，使g（中的每一张卡）的☆上升val，并在reset时重置。
----@param c Card 要使卡上升☆的卡
----@param g Card|Group 要被上升☆的卡 
----@param val number|string 要上升的☆（可以为负）
----@param reset number|nil 指示重置的时点，默认为“回合结束时”。无论如何，都会在离场时重置。
-function VgF.StarUp(c, g, val, reset, resetcount)
-    if not c or not g then return end
-    if not reset then reset = RESET_PHASE + PHASE_END end
-    if not resetcount then resetcount = 1 end
-    if not val or (VgF.GetValueType(val) == "number" and val == 0) then return end
-    if VgF.GetValueType(g) == "Group" and g:GetCount() > 0 then
-        local t1 = {}
-        local t2 = {}
-        for tc in VgF.Next(g) do
-            if tc:IsLocation(LOCATION_CIRCLE) then
-                if VgF.GetValueType(val) == "string" and val == "DOUBLE" then
-                    val = tc:GetLeftScale()
-                end
-                local e1 = Effect.CreateEffect(c)
-                e1:SetType(EFFECT_TYPE_SINGLE)
-                e1:SetCode(EFFECT_UPDATE_LSCALE)
-                e1:SetProperty(EFFECT_FLAG_SINGLE_RANGE)
-                e1:SetRange(LOCATION_CIRCLE)
-                e1:SetValue(val)
-                e1:SetReset(RESET_EVENT + RESETS_STANDARD + reset, resetcount)
-                tc:RegisterEffect(e1)
-                local e2 = e1:Clone()
-                e2:SetCode(EFFECT_UPDATE_RSCALE)
-                tc:RegisterEffect(e2)
-                table.insert(t1, e1)
-                table.insert(t2, e2)
-            end
-        end
-        return t1, t2
-    elseif VgF.GetValueType(g) == "Card" then
-        local tc = VgF.ReturnCard(g)
-        if tc:IsLocation(LOCATION_CIRCLE) then
-            if VgF.GetValueType(val) == "string" and val == "DOUBLE" then
-                val = tc:GetLeftScale()
-            end
-            local e1 = Effect.CreateEffect(c)
-            e1:SetType(EFFECT_TYPE_SINGLE)
-            e1:SetCode(EFFECT_UPDATE_LSCALE)
-            e1:SetProperty(EFFECT_FLAG_SINGLE_RANGE)
-            e1:SetRange(LOCATION_CIRCLE)
-            e1:SetValue(val)
-            e1:SetReset(RESET_EVENT + RESETS_STANDARD + reset, resetcount)
-            tc:RegisterEffect(e1)
-            local e2 = e1:Clone()
-            e2:SetCode(EFFECT_UPDATE_RSCALE)
-            tc:RegisterEffect(e2)
-            return e1, e2
-        end
-    end
-end
----以c的名义，使g（中的每一张卡）的等级上升val，并在reset时重置。
----@param c Card 要使卡上升等级的卡
----@param g Card|Group 要被上升等级的卡
----@param val number|string 要上升的等级（可以为负,等级最低为0）
----@param reset number|nil 指示重置的时点，默认为“回合结束时”。无论如何，都会在离场时重置。
-function VgF.LevelUp(c, g, val, reset, resetcount)
-    if not c or not g then return end
-    if not reset then reset = RESET_PHASE + PHASE_END end
-    if not resetcount then resetcount = 1 end
-    if not val or (VgF.GetValueType(val) == "number" and val == 0) then return end
-    if VgF.GetValueType(g) == "Group" and g:GetCount() > 0 then
-        local e = {}
-        for tc in VgF.Next(g) do
-            if tc:IsLocation(LOCATION_CIRCLE) then
-                if VgF.GetValueType(val) == "string" and val == "DOUBLE" then
-                    val = tc:GetLevel()
-                end
-                local e1 = Effect.CreateEffect(c)
-                e1:SetType(EFFECT_TYPE_SINGLE)
-                e1:SetCode(EFFECT_UPDATE_LEVEL)
-                e1:SetValue(val)
-                e1:SetReset(RESET_EVENT + RESETS_STANDARD + reset, resetcount)
-                tc:RegisterEffect(e1)
-                table.insert(e, e1)
-            end
-        end
-        return e
-    elseif VgF.GetValueType(g) == "Card" then
-        local tc = g
-        if tc:IsLocation(LOCATION_CIRCLE) then
-            if VgF.GetValueType(val) == "string" and val == "DOUBLE" then
-                val = tc:GetLevel()
-            end
-            local e1 = Effect.CreateEffect(c)
-            e1:SetType(EFFECT_TYPE_SINGLE)
-            e1:SetCode(EFFECT_UPDATE_LEVEL)
-            e1:SetValue(val)
-            e1:SetReset(RESET_EVENT + RESETS_STANDARD + reset, resetcount)
-            tc:RegisterEffect(e1)
-            return e1
-        end
-    end
 end
 
 --Effect类函数-------------------------------------------------------------------------------
@@ -1072,41 +927,7 @@ function Group.SelectDoubleSubGroup(g, p, f1, int_min1, int_max1, f2, int_min2, 
     return result
 end
 
---Other--------------------------------------------------------------------------------------
-
----返回p场上的先导者。
----@param p number 要获取先导者的玩家。不合法则返回nil。
----@return Card|nil p场上的先导者
-function VgF.GetVMonster(p)
-    if p ~= 0 and p ~= 1 then return end
-    return Duel.GetMatchingGroup(VgF.Filter.IsV, p, LOCATION_CIRCLE, 0, nil):GetFirst()
-end
-
----收容g（中的每一张卡）到p的监狱。没有监狱时，不操作。
----@param g Card|Group
----@param p number
-function VgF.SendtoPrison(g, p)
-    if not VgF.CheckPrison(p) or not g then return end
-    local og = Duel.GetFieldGroup(p, LOCATION_ORDER, 0)
-    local oc = og:Filter(Card.IsSequence, nil, og:GetCount() - 1):GetFirst()
-    if VgF.GetValueType(g) == "Card" then
-        VgF.Sendto(LOCATION_ORDER, g, p, POS_FACEUP_ATTACK, REASON_EFFECT, oc:GetSequence() - 1)
-        g:RegisterFlagEffect(FLAG_IMPRISON, RESET_EVENT + RESETS_STANDARD, EFFECT_FLAG_CLIENT_HINT, 1, 0, VgF.Stringid(10105015, 0))
-    elseif VgF.GetValueType(g) == "Group" then
-        for tc in VgF.Next(g) do
-            VgF.Sendto(LOCATION_ORDER, tc, p, POS_FACEUP_ATTACK, REASON_EFFECT, oc:GetSequence() - 1)
-            tc:RegisterFlagEffect(FLAG_IMPRISON, RESET_EVENT + RESETS_STANDARD, EFFECT_FLAG_CLIENT_HINT, 1, 0, VgF.Stringid(10105015, 0))
-        end
-    end
-end
-
----检测p场上有没有监狱。
----@param p number
----@return boolean 指示p场上有没有监狱。
-function VgF.CheckPrison(p)
-    local og = Duel.GetFieldGroup(p, LOCATION_ORDER, 0)
-    return og:IsExists(Card.IsSetCard, 1, nil, 0x3040)
-end
+--封装操作---------------------------------------------------------------------------------
 
 function VgF.IsExistingMatchingCard(f, tp, loc_self, loc_op, int, except_g, ...)
     return VgF.GetMatchingGroupCount(f, tp, loc_self, loc_op, except_g, ...) >= int
@@ -1369,16 +1190,6 @@ function VgF.Sendto(loc, sg, ...)
     return 0
 end
 
-function VgF.GetAvailableLocation(tp, zone)
-    local z
-    if zone then z = zone else z = 0x1f end
-    local rg = Duel.GetMatchingGroup(Card.IsPosition, tp, LOCATION_CIRCLE, 0, nil, POS_FACEDOWN_ATTACK)
-    for tc in VgF.Next(rg) do
-        local szone = VgF.SequenceToGlobal(tp, tc:GetLocation(), tc:GetSequence())
-        z = bit.bxor(z, szone)
-    end
-    return z
-end
 ---将g（中的每一张卡）Call到单位区。返回Call成功的数量。
 ---@param g Card|Group 要Call的卡（片组）
 ---@param sumtype number Call的方式，默认填0
@@ -1458,6 +1269,228 @@ function VgF.Call(g, sumtype, tp, zone, pos)
     end
 end
 
+--其他关键字----------------------------------------------------------------------------------
+
+---返回p场上的先导者。
+---@param p number 要获取先导者的玩家。不合法则返回nil。
+---@return Card|nil p场上的先导者
+function VgF.GetVMonster(p)
+    if p ~= 0 and p ~= 1 then return end
+    return Duel.GetMatchingGroup(VgF.Filter.IsV, p, LOCATION_CIRCLE, 0, nil):GetFirst()
+end
+
+---以c的名义，使g（中的每一张卡）的攻击力上升val，并在reset时重置。
+---@param c Card 要使卡上升攻击力的卡
+---@param g Card|Group 要被上升攻击力的卡
+---@param val number|string 要上升的攻击力（可以为负）
+---@param reset number|nil 指示重置的时点，默认为“回合结束时”。无论如何，都会在离场时重置。
+function VgF.AtkUp(c, g, val, reset, resetcount)
+    if not c or not g then return end
+    if not resetcount then resetcount = 1 end
+    if not reset then reset = RESET_PHASE + PHASE_END end
+    if not val or (VgF.GetValueType(val) == "number" and val == 0) then return end
+    if VgF.GetValueType(g) == "Group" and g:GetCount() > 0 then
+        local e = {}
+        for tc in VgF.Next(g) do
+            if tc:IsLocation(LOCATION_CIRCLE) then
+                if VgF.GetValueType(val) == "string" and val == "DOUBLE" then
+                    val = tc:GetAttack()
+                end
+                local e1 = Effect.CreateEffect(c)
+                e1:SetType(EFFECT_TYPE_SINGLE)
+                e1:SetCode(EFFECT_UPDATE_ATTACK)
+                e1:SetValue(val)
+                e1:SetReset(RESET_EVENT + RESETS_STANDARD + reset, resetcount)
+                tc:RegisterEffect(e1)
+                table.insert(e, e1)
+            end
+        end
+        return e
+    elseif VgF.GetValueType(g) == "Card" then
+        local tc = g
+        if tc:IsLocation(LOCATION_CIRCLE) then
+            local tc = VgF.ReturnCard(g)
+            if VgF.GetValueType(val) == "string" and val == "DOUBLE" then
+                val = tc:GetAttack()
+            end
+            local e1 = Effect.CreateEffect(c)
+            e1:SetType(EFFECT_TYPE_SINGLE)
+            e1:SetCode(EFFECT_UPDATE_ATTACK)
+            e1:SetValue(val)
+            e1:SetReset(RESET_EVENT + RESETS_STANDARD + reset, resetcount)
+            tc:RegisterEffect(e1)
+            return e1
+        end
+    end
+end
+---以c的名义，使g（中的每一张卡）的盾值上升val，并在reset时重置。
+---@param c Card 要使卡上升盾值的卡
+---@param g Card|Group 要被上升盾值的卡
+---@param val number|string 要上升的盾值（可以为负）
+---@param reset number|nil 指示重置的时点，默认为“回合结束时”。无论如何，都会在离场时重置。
+function VgF.DefUp(c, g, val, reset, resetcount)
+    if not c or not g then return end
+    if not reset then reset = RESET_PHASE + PHASE_END end
+    if not resetcount then resetcount = 1 end
+    if not val or (VgF.GetValueType(val) == "number" and val == 0) then return end
+    if VgF.GetValueType(g) == "Group" and g:GetCount() > 0 then
+        local e = {}
+        for tc in VgF.Next(g) do
+            if tc:IsLocation(LOCATION_CIRCLE) then
+                if VgF.GetValueType(val) == "string" and val == "DOUBLE" then
+                    val = tc:GetDefense()
+                end
+                local e1 = Effect.CreateEffect(c)
+                e1:SetType(EFFECT_TYPE_SINGLE)
+                e1:SetCode(EFFECT_UPDATE_DEFENSE)
+                e1:SetValue(val)
+                e1:SetReset(RESET_EVENT + RESETS_STANDARD + reset, resetcount)
+                tc:RegisterEffect(e1)
+                table.insert(e, e1)
+            end
+        end
+        return e
+    elseif VgF.GetValueType(g) == "Card" then
+        local tc = g
+        if tc:IsLocation(LOCATION_CIRCLE) then
+            if VgF.GetValueType(val) == "string" and val == "DOUBLE" then
+                val = tc:GetDefense()
+            end
+            local e1 = Effect.CreateEffect(c)
+            e1:SetType(EFFECT_TYPE_SINGLE)
+            e1:SetCode(EFFECT_UPDATE_DEFENSE)
+            e1:SetValue(val)
+            e1:SetReset(RESET_EVENT + RESETS_STANDARD + reset, resetcount)
+            tc:RegisterEffect(e1)
+            return e1
+        end
+    end
+end
+---以c的名义，使g（中的每一张卡）的☆上升val，并在reset时重置。
+---@param c Card 要使卡上升☆的卡
+---@param g Card|Group 要被上升☆的卡 
+---@param val number|string 要上升的☆（可以为负）
+---@param reset number|nil 指示重置的时点，默认为“回合结束时”。无论如何，都会在离场时重置。
+function VgF.StarUp(c, g, val, reset, resetcount)
+    if not c or not g then return end
+    if not reset then reset = RESET_PHASE + PHASE_END end
+    if not resetcount then resetcount = 1 end
+    if not val or (VgF.GetValueType(val) == "number" and val == 0) then return end
+    if VgF.GetValueType(g) == "Group" and g:GetCount() > 0 then
+        local t1 = {}
+        local t2 = {}
+        for tc in VgF.Next(g) do
+            if tc:IsLocation(LOCATION_CIRCLE) then
+                if VgF.GetValueType(val) == "string" and val == "DOUBLE" then
+                    val = tc:GetLeftScale()
+                end
+                local e1 = Effect.CreateEffect(c)
+                e1:SetType(EFFECT_TYPE_SINGLE)
+                e1:SetCode(EFFECT_UPDATE_LSCALE)
+                e1:SetProperty(EFFECT_FLAG_SINGLE_RANGE)
+                e1:SetRange(LOCATION_CIRCLE)
+                e1:SetValue(val)
+                e1:SetReset(RESET_EVENT + RESETS_STANDARD + reset, resetcount)
+                tc:RegisterEffect(e1)
+                local e2 = e1:Clone()
+                e2:SetCode(EFFECT_UPDATE_RSCALE)
+                tc:RegisterEffect(e2)
+                table.insert(t1, e1)
+                table.insert(t2, e2)
+            end
+        end
+        return t1, t2
+    elseif VgF.GetValueType(g) == "Card" then
+        local tc = VgF.ReturnCard(g)
+        if tc:IsLocation(LOCATION_CIRCLE) then
+            if VgF.GetValueType(val) == "string" and val == "DOUBLE" then
+                val = tc:GetLeftScale()
+            end
+            local e1 = Effect.CreateEffect(c)
+            e1:SetType(EFFECT_TYPE_SINGLE)
+            e1:SetCode(EFFECT_UPDATE_LSCALE)
+            e1:SetProperty(EFFECT_FLAG_SINGLE_RANGE)
+            e1:SetRange(LOCATION_CIRCLE)
+            e1:SetValue(val)
+            e1:SetReset(RESET_EVENT + RESETS_STANDARD + reset, resetcount)
+            tc:RegisterEffect(e1)
+            local e2 = e1:Clone()
+            e2:SetCode(EFFECT_UPDATE_RSCALE)
+            tc:RegisterEffect(e2)
+            return e1, e2
+        end
+    end
+end
+---以c的名义，使g（中的每一张卡）的等级上升val，并在reset时重置。
+---@param c Card 要使卡上升等级的卡
+---@param g Card|Group 要被上升等级的卡
+---@param val number|string 要上升的等级（可以为负,等级最低为0）
+---@param reset number|nil 指示重置的时点，默认为“回合结束时”。无论如何，都会在离场时重置。
+function VgF.LevelUp(c, g, val, reset, resetcount)
+    if not c or not g then return end
+    if not reset then reset = RESET_PHASE + PHASE_END end
+    if not resetcount then resetcount = 1 end
+    if not val or (VgF.GetValueType(val) == "number" and val == 0) then return end
+    if VgF.GetValueType(g) == "Group" and g:GetCount() > 0 then
+        local e = {}
+        for tc in VgF.Next(g) do
+            if tc:IsLocation(LOCATION_CIRCLE) then
+                if VgF.GetValueType(val) == "string" and val == "DOUBLE" then
+                    val = tc:GetLevel()
+                end
+                local e1 = Effect.CreateEffect(c)
+                e1:SetType(EFFECT_TYPE_SINGLE)
+                e1:SetCode(EFFECT_UPDATE_LEVEL)
+                e1:SetValue(val)
+                e1:SetReset(RESET_EVENT + RESETS_STANDARD + reset, resetcount)
+                tc:RegisterEffect(e1)
+                table.insert(e, e1)
+            end
+        end
+        return e
+    elseif VgF.GetValueType(g) == "Card" then
+        local tc = g
+        if tc:IsLocation(LOCATION_CIRCLE) then
+            if VgF.GetValueType(val) == "string" and val == "DOUBLE" then
+                val = tc:GetLevel()
+            end
+            local e1 = Effect.CreateEffect(c)
+            e1:SetType(EFFECT_TYPE_SINGLE)
+            e1:SetCode(EFFECT_UPDATE_LEVEL)
+            e1:SetValue(val)
+            e1:SetReset(RESET_EVENT + RESETS_STANDARD + reset, resetcount)
+            tc:RegisterEffect(e1)
+            return e1
+        end
+    end
+end
+
+---收容g（中的每一张卡）到p的监狱。没有监狱时，不操作。
+---@param g Card|Group
+---@param p number
+function VgF.SendtoPrison(g, p)
+    if not VgF.CheckPrison(p) or not g then return end
+    local og = Duel.GetFieldGroup(p, LOCATION_ORDER, 0)
+    local oc = og:Filter(Card.IsSequence, nil, og:GetCount() - 1):GetFirst()
+    if VgF.GetValueType(g) == "Card" then
+        VgF.Sendto(LOCATION_ORDER, g, p, POS_FACEUP_ATTACK, REASON_EFFECT, oc:GetSequence() - 1)
+        g:RegisterFlagEffect(FLAG_IMPRISON, RESET_EVENT + RESETS_STANDARD, EFFECT_FLAG_CLIENT_HINT, 1, 0, VgF.Stringid(10105015, 0))
+    elseif VgF.GetValueType(g) == "Group" then
+        for tc in VgF.Next(g) do
+            VgF.Sendto(LOCATION_ORDER, tc, p, POS_FACEUP_ATTACK, REASON_EFFECT, oc:GetSequence() - 1)
+            tc:RegisterFlagEffect(FLAG_IMPRISON, RESET_EVENT + RESETS_STANDARD, EFFECT_FLAG_CLIENT_HINT, 1, 0, VgF.Stringid(10105015, 0))
+        end
+    end
+end
+
+---检测p场上有没有监狱。
+---@param p number
+---@return boolean 指示p场上有没有监狱。
+function VgF.CheckPrison(p)
+    local og = Duel.GetFieldGroup(p, LOCATION_ORDER, 0)
+    return og:IsExists(Card.IsSetCard, 1, nil, 0x3040)
+end
+
 -- 白翼能力在你的封锁区中的卡只有奇数的等级的场合有效
 function VgF.WhiteWings(e)
     local tp = e:GetHandlerPlayer()
@@ -1534,33 +1567,4 @@ function VgF.AddAlchemagic(m, from, to, min, max, filter)
         table.insert(cm.order_cost['max'], (max[i] and max[i] >= min[i]) and max[i] or (min[i] or 1))
         table.insert(cm.order_cost['filter'], filter[i])
     end
-end
-
----创建一个函数检查器 检查func是否为nil或函数
-function VgF.IllegalFunctionCheck(name, c)
-    if VgF.GetValueType(c) ~= "Card" then Debug.Message("VgD."..name.." param c isn't Card") end
-    local m = c:GetOriginalCode()
-    local chk = function(key)
-        return function(func)
-            local ftyp = type(func)
-            if ftyp == "nil" or ftyp == "function" then return false end
-            Debug.Message("c"..m.." VgD."..name.." param "..key.." isn't function | nil")
-            return true
-        end
-    end
-    return {con = chk("con"), cost = chk("cost"), tg = chk("tg"), op = chk("op")}
-end
----检查并转换 loc 以及 con 用于【起】等模板函数
-function VgF.GetLocCondition(loc, con)
-    local con_exf = VgF.True
-    if loc == LOCATION_R_CIRCLE then
-        loc, con_exf = LOCATION_CIRCLE, VgF.Condition.IsR
-    elseif loc == LOCATION_V_CIRCLE then
-        loc, con_exf = LOCATION_CIRCLE, VgF.Condition.IsV
-    end
-    loc = loc or LOCATION_CIRCLE
-    local condition = function(e, tp, eg, ep, ev, re, r, rp)
-        return (not con or con(e, tp, eg, ep, ev, re, r, rp)) and con_exf(e)
-    end
-    return loc, condition
 end
