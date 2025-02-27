@@ -168,7 +168,7 @@ function VgF.GetSoulGroup(p)
     return tc and tc:GetOverlayGroup() or Group.CreateGroup()
 end
 
---函数检查器--------------------------------------------------------------------------------
+--catalogue:函数检查器--------------------------------------------------------------------------------
 function VgF.IllegalFunctionCheck(name, c)
     if VgF.GetValueType(c) ~= "Card" then Debug.Message("VgD."..name.." param c isn't Card") end
     local m = c:GetOriginalCode()
@@ -183,7 +183,7 @@ function VgF.IllegalFunctionCheck(name, c)
     return {con = chk("con"), cost = chk("cost"), tg = chk("tg"), op = chk("op")}
 end
 
---数组操作-----------------------------------------------------------------------------------
+--catalogue:数组操作-----------------------------------------------------------------------------------
 
 function table.copy(copy, original)
     copy = {}
@@ -253,7 +253,7 @@ function bit.bnot(a)
     return ~a
 end
 
---Effect类函数-------------------------------------------------------------------------------
+--catalogue:Effect类函数-------------------------------------------------------------------------------
 
 VgF.Effect.Damage = nil
 
@@ -278,7 +278,7 @@ function VgF.Effect.ResetOperation(e, tp, eg, ep, ev, re, r, rp)
     e:Reset()
 end
 
---Condition函数------------------------------------------------------------------------------------
+--catalogue:Condition函数------------------------------------------------------------------------------------
 
 function VgF.Condition.FirstCard(e)
     local tp = e:GetHandlerPlayer()
@@ -326,7 +326,7 @@ end
 function VgF.Condition.PlayerEffect(e, tp, eg, ep, ev, re, r, rp)
     return true
 end
---Cost函数----------------------------------------------------------------------------------------
+--catalogue:Cost函数----------------------------------------------------------------------------------------
 
 ---用于效果的Cost。它返回一个执行“【费用】[将手牌中的val张卡舍弃]”的函数。
 function VgF.Cost.And(...)
@@ -546,7 +546,7 @@ function VgF.IsCanBeCalled(c, e, tp, sumtype, pos, zone)
     return z > 0 and c:IsCanBeSpecialSummoned(e, sumtype, tp, false, false, pos, tp, zone)
 end
 
---Cost和Operation均可使用的函数------------------------------------------------------
+----catalogue:Cost和Operation均可使用的函数------------------------------------------------------
 
 ---它返回一个执行“[将单位横置]”的函数。
 ---@param c Card 横置的卡
@@ -592,7 +592,7 @@ function VgF.Operation.SoulCharge(val)
     end
 end
 
---Operation函数------------------------------------------------------
+----catalogue:Operation函数------------------------------------------------------
 
 ---用于效果的Operation。它返回一个执行“[计数回充val]”的函数。
 ---@param val number 计数回充的数量
@@ -724,7 +724,7 @@ function VgF.Operation.Damage(val, p)
     end
 end
 
---Card库自定义函数-----------------------------------------------------------------------
+----catalogue:Card库自定义函数-----------------------------------------------------------------------
 
 ---返回卡片 c 所在列的所有单位。
 ---@param c Card 指示某一列的卡
@@ -845,7 +845,7 @@ function Card.IsCanBeCalled(c, e, tp, calltyp, callpos, zone)
     return loccount > 0 and c:IsCanBeSpecialSummoned(e, calltyp, tp, false, false, callpos, tp, zone)
 end
 
---Group库自定义函数-----------------------------------------------------------------------
+--catalogue:Group库自定义函数-----------------------------------------------------------------------
 
 ---返回g的前val张卡。
 ---@param g Group 要操作的卡片组
@@ -1005,7 +1005,7 @@ function Group.SelectDoubleSubGroup(g, p, f1, int_min1, int_max1, f2, int_min2, 
     return result
 end
 
---封装操作---------------------------------------------------------------------------------
+--catalogue:封装操作---------------------------------------------------------------------------------
 
 ---过滤函数，返回玩家 p 来看的指定位置满足过滤条件 f 并且不等于 ex 的卡
 ---loc_self 代表玩家 p 来看的自己的位置，loc_oppo 代表玩家 p 来看的对方的位置
@@ -1160,7 +1160,7 @@ function VgF.Call(g, calltyp, p, zone, callpos)
     return Duel.SpecialSummonComplete()
 end
 
---其他关键字----------------------------------------------------------------------------------
+--catalogue:其他关键字----------------------------------------------------------------------------------
 
 ---返回p场上的先导者。
 ---@param p number 要获取先导者的玩家。不合法则返回nil。
