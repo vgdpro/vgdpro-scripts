@@ -733,7 +733,34 @@ function Card.IsAbleToGCircle(c)
     return false
 end
 
----判断c是否在当前区域的某（几）个编号上
+function Card.IsTrigger(c, skill)
+    return c:IsRace(skill)
+end
+
+Card.IsAbleToBind = Card.IsAbleToRemove
+Card.IsAbleToBindAsCost = Card.IsAbleToRemoveAsCost
+
+---返回卡片 c 是不是先导者。
+---@param c Card 要判断的卡
+---@return boolean 指示是否是先导者
+function Card.IsVanguard(c)
+    return c:GetSequence() == 5
+end
+---返回卡片 c 是不是后防者。
+---@param c Card 要判断的卡
+---@return boolean 指示是否是后防者
+function Card.IsRearguard(c)
+    return c:GetSequence() < 5
+end
+---返回卡片 c 召唤类型是不是V
+function Card.IsSummonTypeV(c)
+    return c:IsSummonType(SUMMON_TYPE_RIDE) or c:IsSummonType(SUMMON_TYPE_SELFRIDE)
+end
+---返回卡片 c 召唤类型是不是R
+function Card.IsSummonTypeR(c)
+    return not c:IsSummonTypeV()
+end
+---返回卡片 c 是否在当前区域的某（几）个编号上
 ---@param c Card 要判断的卡
 ---@param ... number 编号
 ---@return boolean 指示是否在给定编号上
@@ -745,13 +772,51 @@ function Card.IsSequence(c, ...)
     end
     return false
 end
-
+---返回卡片 c 是否在前列。
+---@param c Card 要判断的卡
+---@return boolean 指示c是否是前列的单位
+function Card.IsFrontrow(c)
+    return c:IsSequence(0, 5, 4) and c:IsLocation(LOCATION_MZONE)
+end
+---返回卡片 c 是否在后列。
+---@param c Card 要判断的卡
+---@return boolean 指示c是否是后列的单位
+function Card.IsBackrow(c)
+    return c:IsSequence(1, 2, 3) and c:IsLocation(LOCATION_MZONE)
+end
+---返回卡片 c 技能是否是 skill
+---@param c Card 要判断的卡
+---@param skill number 要判断的技能
+---@return boolean 卡片 c 技能是否是 skill
 function Card.IsSkill(c, skill)
     return c:IsAttribute(skill)
 end
-
-function Card.IsTrigger(c, skill)
-    return c:IsRace(skill)
+---返回卡片 c 是否可以以规则的手段到G区域。
+---@param c Card 要判断的卡
+---@return boolean 卡片 c 是否可以以规则的手段到G区域。
+function Card.IsAbleToGZone(c)
+    if c:IsLocation(LOCATION_HAND) and c:IsType(TYPE_MONSTER) then return true end
+    return c:IsLocation(LOCATION_MZONE) and c:IsSkill(SKILL_BLOCK) and c:IsSequence(0, 4) and c:IsFaceup()
+end
+---返回卡片 c 是否可以被玩家 tp 用效果 e[以 calltyp 方式和 callpos 表示形式] Call 到玩家 tp [的区域 zone]
+---@param c Card 要判断的卡
+---@param e Effect 效果
+---@param calltyp number|nil Call 方式
+---@param callpos number|nil 表示形式
+---@param zone any|nil 区域
+---@return boolean 返回卡片 c 是否可以被玩家 tp 用效果 e[以 calltyp 方式和 callpos 表示形式] Call 到玩家 tp [的区域 zone]
+function Card.IsCanBeCalled(c, e, tp, calltyp, callpos, zone)
+    calltyp = calltyp or 0
+    callpos = callpos or POS_FACEUP_ATTACK 
+    if zone == "FromSoulToV" then 
+        local _, code = c:GetOriginalCode()
+        local atk, def, lv, race, att = c:GetBaseAttack(), c:GetBaseDefense(), c:GetOriginalLevel(), c:GetOriginalRace(), c:GetOriginalAttribute()
+        return Duel.IsPlayerCanSpecialSummonMonster(tp, code, nil, TYPE_MONSTER + TYPE_EFFECT, atk, def, lv, race, att, callpos, tp, calltyp)
+    end
+    if zone == "NoMonster" and Duel.GetLocationCount(tp, LOCATION_MZONE) == 0 then return false end
+    if type(zone) ~= "number" then zone = 0x1f end
+    if VgF.GetAvailableLocation(tp, zone) == 0 then return false end
+    return loccount > 0 and c:IsCanBeSpecialSummoned(e, calltyp, tp, false, false, callpos, tp, zone)
 end
 
 --Group库自定义函数-----------------------------------------------------------------------
