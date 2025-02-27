@@ -1527,3 +1527,186 @@ function VgF.AddAlchemagic(m, from, to, min, max, filter)
         table.insert(cm.order_cost['filter'], filter[i])
     end
 end
+
+---以 r 原因把卡片(组) g 送去弃牌区
+---@param g Card|Group 操作的卡片组
+---@param r number 原因
+---@param rp number|nil 的默认值是发动这个行为的玩家。如果传入参数，则视为 rp 的行为
+---@return number 实际被操作的数量
+function VgF.ToDrop(g, r, rp)
+    g = VgF.ReturnGroup(g)
+    r = r or 0
+    if #g == 0 then return 0 end
+    local sg = VgF.GetUnderGroup(g)
+    Duel.SendtoGrave(sg, r, rp)
+    local result = 0
+    local hg = g:Filter(Card.IsLocation, nil, LOCATION_HAND)
+    if #hg > 0 then
+        result = Duel.SendtoGrave(hg, r | REASON_DISCARD, rp)
+        g = g - hg
+    end
+    result = result + Duel.SendtoGrave(g, r, rp)
+    return result
+end
+---返回牌堆 : 以 r 原因把卡片(组) g 送去玩家 p 的卡组
+---@param g Card|Group 操作的卡片组
+---@param p number 如果 p == nil 则返回卡的持有者的卡组
+---@param seq number|nil 0 : 弹回卡组顶端, 1 : 弹回卡组底端, 2 : 弹回卡组并洗牌（洗牌前暂时放在底端）
+---@param r number 原因
+---@param rp number|nil 默认值是发动这个行为的玩家。如果传入参数，则视为 rp 的行为
+---@param send_activating bool|nil send_activating = true 应该是取消卡的发动时的确定送墓的状态(参考对象：头奖壶7)
+---@return number 实际被操作的数量
+function VgF.ToDeck(g, p, seq, r, rp, send_activating)
+    send_activating = send_activating or false
+    g = VgF.ReturnGroup(g)
+    if #g == 0 then return 0 end
+    local sg = VgF.GetUnderGroup(g)
+    Duel.SendtoDeck(sg, p, seq, r, rp, send_activating)
+    return Duel.SendtoDeck(sg, p, seq, r, rp, send_activating)
+end
+---返回手牌 : 以 r 原因把卡片(组) g 送去玩家 p 的手牌
+---@param g Card|Group 操作的卡片组
+---@param p number|nil 如果 p == nil 则返回卡的持有者的手牌
+---@param r number 原因
+---@param rp number|nil 默认值是发动这个行为的玩家。如果传入参数，则视为 rp 的行为
+---@return number 实际被操作的数量
+function VgF.ToHand(g, p, r, rp)
+    g = VgF.ReturnGroup(g)
+    if #g == 0 then return 0 end
+    local sg = VgF.GetUnderGroup(g)
+    Duel.SendtoHand(sg, p, r, rp)
+    sg = Duel.GetOperatedGroup()
+    local result = Duel.SendtoHand(g, p, r, rp)
+    local cg = Duel.GetOperatedGroup() + sg
+    for tp = 0, 1 do
+        local pcg = cg:Filter(Card.IsControler, nil, tp)
+        if #pcg > 0 then
+            Duel.ConfirmCards(1 - tp, pcg)
+            Duel.ShuffleHand(tp)
+        end
+    end
+    return result
+end
+---封锁 : 以 r 原因，pos 表示形式封锁卡片(组) g
+---@param g Card|Group 操作的卡片组
+---@param pos number 表示形式
+---@param r number 如果包含 REASON_TEMPORARY，那么视为是暂时除外，可以通过 Duel.ReturnToField 返回到场上
+---@param rp number|nil 默认值是发动这个行为的玩家。如果传入参数，则视为 rp 的行为
+---@return number 实际被操作的数量
+function VgF.Bind(g, pos, r, rp)
+    g = VgF.ReturnGroup(g)
+    if #g == 0 then return 0 end
+    local sg = VgF.GetUnderGroup(g)
+    Duel.Remove(sg, pos, r, rp)
+    return Duel.Remove(g, pos, r, rp)
+end
+---除外 : 以 r 的原因把卡片(组) g 除外
+---@param g Card|Group 操作的卡片组
+---@param r number 原因
+---@return number 实际被操作的数量
+function VgF.Remove(g, r)
+    g = VgF.ReturnGroup(g)
+    if #g == 0 then return 0 end
+    local sg = VgF.GetUnderGroup(g)
+    Duel.Exile(sg, r)
+    return Duel.Exile(g, r)
+end
+---把卡片(组) g 作为卡片 c 的灵魂放置
+---@param g Card|Group 操作的卡片组
+---@param c Card|nil 操作的卡片
+---@return number 实际被操作的数量
+function VgF.ToSoul(g, c)
+    g = VgF.ReturnGroup(g)
+    if #g == 0 then return 0 end
+    if c then
+        local sg = VgF.GetUnderGroup(g)
+        Duel.Overlay(c, sg)
+        Duel.Overlay(c, g)
+    else
+        for tp = 0, 1 do
+            c = VgF.GetVanguard(tp)
+            local pg = g:Filter(Card.IsControler, nil, tp)
+            local psg = VgF.GetUnderGroup(pg)
+            if #psg > 0 then
+                Duel.Overlay(c, psg)
+            end
+            if #pg > 0 then
+                Duel.Overlay(c, pg)
+            end
+        end
+    end
+    return #g
+end
+---把卡片(组) g 送去判定区
+---@param g Card|Group 操作的卡片组
+---@return number 实际被操作的数量
+function VgF.ToTrigger(g)
+    g = VgF.ReturnGroup(g)
+    if #g == 0 then return 0 end
+    local ct = 0
+    for tc in VgF.Next(g) do
+        local tp = tc:GetControler()
+        if Duel.MoveToField(tc, tp, tp, loc, POS_FACEUP, true) then ct = ct + 1 end
+    end
+    return ct
+end
+---将卡片(组) g Call 到单位区。返回 Call 成功的数量
+---@param g Card|Group 要Call的卡（片组）
+---@param calltyp number Call的方式，默认填0
+---@param p number Call的玩家
+---@param zone number|nil 指示要Call到的格子。<br>前列的R：17； 后列的R：14； 全部的R：31； V：32
+---@param callpos number|nil 表示形式
+---@return number Call 成功的数量
+--[[
+function VgF.Call(g, calltyp, p, zone, callpos)
+    g = VgF.ReturnGroup(g)
+    if #g == 0 then return 0 end
+    local c = g:GetFirst()
+    calltyp = calltyp or 0
+    callpos = callpos or POS_FACEUP_ATTACK 
+    if zone == "NoMonster" then
+        return Duel.SpecialSummon(g, calltyp, p, p, false, false, callpos)
+    elseif zone == "FromSoulToV" then
+        if not c:IsCanBeCalled(nil, p, calltyp, callpos, "FromSoulToV") then return 0 end
+        VgF.Sendto(0, c, p, POS_FACEUP, REASON_EFFECT)
+        local _, code = c:GetOriginalCode()
+        c = Duel.CreateToken(p, code)
+        return VgF.Call(c, calltyp, p, 0x20, callpos)
+    elseif VgF.GetValueType(zone) == "number" and zone > 0 then
+        zone = VgF.GetAvailableLocation(p, zone)
+        if bit.ReturnCount(zone) > 1 then
+            Duel.Hint(HINT_SELECTMSG, p, HINTMSG_CallZONE)
+            zone = Duel.SelectField(p, 1, LOCATION_MZONE, 0, 0xff ~ zone)
+        end
+        g = Duel.GetMatchingGroup(VgD.CallFilter, p, LOCATION_MZONE, 0, nil, p, zone)
+        if zone == 0x20 then -- Vanguard loc
+            local vc = VgF.GetVMonster(p)
+            if vc then
+                VgF.ToSoul(vc, c)
+            end
+        elseif #g > 0 then
+            if calltyp & SUMMON_VALUE_OVERDRESS > 0 then 
+                VgF.ToSoul(g, c)
+            else 
+                VgF.ToDrop(g, REASON_COST)
+            end
+        end
+        return Duel.SpecialSummon(c, calltyp, p, p, false, false, callpos, zone)
+    end
+    zone = 0xff ~ VgF.GetAvailableLocation(p)
+    for c in VgF.Next(g) do
+        if c:IsLocation(LOCATION_RIDE) then
+            VgF.ToSoul(VgF.GetVanguard(p), c)
+            Duel.SpecialSummonStep(c, calltyp, p, p, false, false, callpos, 0x20)
+        else
+            Duel.Hint(HINT_SELECTMSG, p, HINTMSG_CallZONE)
+            local szone = Duel.SelectField(p, 1, LOCATION_MZONE, 0, zone)
+            local dc = Duel.GetMatchingGroup(VgD.CallFilter, p, LOCATION_MZONE, 0, nil, p, szone):GetFirst()
+            if dc then VgF.ToDrop(dc, REASON_COST) end
+            Duel.SpecialSummonStep(c, calltyp, p, p, false, false, callpos, szone)
+            zone = zone | szone
+        end
+    end
+    return Duel.SpecialSummonComplete()
+end
+--]]
