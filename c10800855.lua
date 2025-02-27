@@ -1,7 +1,6 @@
 --能量发生器
 local cm,m,o=GetID()
 function cm.initial_effect(c)
-	vgd.Rule(c)
     local e1=Effect.CreateEffect(c)
     e1:SetType(EFFECT_TYPE_SINGLE+EFFECT_TYPE_CONTINUOUS)
     e1:SetProperty(EFFECT_FLAG_DELAY)
