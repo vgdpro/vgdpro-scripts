@@ -15,6 +15,6 @@ function cm.op(e,tp,eg,ep,ev,re,r,rp)
     end
 end
 function cm.filter(c,tp,mc)
-    local g=vgf.GetColumnGroup(mc)
+    local g=Card.GetColumnGroup(mc)
     return g:GetCount()>0 and g:IsContains(c)
 end

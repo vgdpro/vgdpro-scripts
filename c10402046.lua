@@ -8,7 +8,7 @@ function cm.op(e,tp,eg,ep,ev,re,r,rp)
 	local c=e:GetHandler()
 	local g=vgf.SelectMatchingCard(HINTMSG_RMONSTER,e,tp,nil,tp,0,LOCATION_V_CIRCLE,1,1,nil)
 	vgf.Sendto(LOCATION_DROP,g,REASON_EFFECT)
-	vgd.TriggerCountUp(c, m, 1, nil, RESET_PHASE+PHASE_END)
+	vgd.DriveUp(c, m, 1, nil, RESET_PHASE+PHASE_END)
 end
 function cm.checkfilter(c,tp)
 	return c:IsControler(tp) and c:IsPreviousLocation(LOCATION_CIRCLE)

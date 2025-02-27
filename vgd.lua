@@ -316,19 +316,19 @@ function VgD.Register.CardTrigger(c)
     e1:SetType(EFFECT_TYPE_SINGLE + EFFECT_TYPE_CONTINUOUS)
     e1:SetCode(EVENT_MOVE)
     e1:SetProperty(EFFECT_FLAG_DELAY)
-    e1:SetCondition(VgD.CardTriggerCondtion('Damage'))
-    e1:SetOperation(VgD.CardTriggerOperation('Damage'))
+    e1:SetCondition(VgD.Register.CardTriggerCondtion('Damage'))
+    e1:SetOperation(VgD.Register.CardTriggerOperation('Damage'))
     c:RegisterEffect(e1)
     local e2 = e1:Clone()
-    e2:SetCondition(VgD.CardTriggerCondtion('Normal'))
-    e2:SetOperation(VgD.CardTriggerOperation('Normal'))
+    e2:SetCondition(VgD.Register.CardTriggerCondtion('Normal'))
+    e2:SetOperation(VgD.Register.CardTriggerOperation('Normal'))
     c:RegisterEffect(e2)
     local e3 = e1:Clone()
-    e3:SetCondition(VgD.CardTriggerCondtion('EffectDamage'))
-    e3:SetOperation(VgD.CardTriggerOperation('EffectDamage'))
+    e3:SetCondition(VgD.Register.CardTriggerCondtion('EffectDamage'))
+    e3:SetOperation(VgD.Register.CardTriggerOperation('EffectDamage'))
     c:RegisterEffect(e3)
 end
-function VgD.CardTriggerCondtion(chkcon)
+function VgD.Register.CardTriggerCondtion(chkcon)
     return function (e, tp, eg, ep, ev, re, r, rp)
         local c = e:GetHandler()
         if chkcon == 'EffectDamage' then
@@ -341,7 +341,7 @@ function VgD.CardTriggerCondtion(chkcon)
         return Duel.GetAttacker() and Duel.GetAttacker():GetControler() == cp and c:IsLocation(LOCATION_TRIGGER) and Duel.GetFlagEffect(tp, FLAG_EFFECT_DAMAGE) == 0
     end
 end
-function VgD.CardTriggerOperation(chkop)
+function VgD.Register.CardTriggerOperation(chkop)
     return function (e, tp, eg, ep, ev, re, r, rp)
         local c = e:GetHandler()
         local _, m = c:GetOriginalCode()
@@ -873,7 +873,7 @@ function VgD.Register.MonsterBattle(c)
         e1:SetProperty(EFFECT_FLAG_CANNOT_DISABLE)
         e1:SetCondition(function (e, tp, eg, ep, ev, re, r, rp)
             local tc = e:GetHandler()
-            if not tc:IsSkill(SKILL_BOOST) or Duel.GetTurnPlayer() ~= tp or not VgF.GetColumnGroup(Duel.GetAttacker()):IsContains(tc) then return false end
+            if not tc:IsSkill(SKILL_BOOST) or Duel.GetTurnPlayer() ~= tp or not Card.GetColumnGroup(Duel.GetAttacker()):IsContains(tc) then return false end
             return true
         end)
         e1:SetTarget(function (e, tp, eg, ep, ev, re, r, rp, chk)
@@ -1661,9 +1661,9 @@ end
 ---@param reset number|nil 效果的重置条件
 ---@param hc Card|nil 效果的拥有者, 没有则为 c
 ---@return Effect|nil 这个效果
-function VgD.TriggerCountUp(c, m, num, con, reset, hc)
+function VgD.DriveUp(c, m, num, con, reset, hc)
     -- check func
-    if VgF.IllegalFunctionCheck("TriggerCountUp", c).con(con) then return end
+    if VgF.IllegalFunctionCheck("DriveUp", c).con(con) then return end
     -- set param
     local cm = _G["c"..(m or c:GetOriginalCode())]
     cm.is_has_continuous = cm.is_has_continuous or not reset
@@ -1679,11 +1679,11 @@ function VgD.TriggerCountUp(c, m, num, con, reset, hc)
     e:SetProperty(EFFECT_FLAG_DELAY)
     e:SetCondition(condition)
     if reset then e:SetReset(RESET_EVENT + RESETS_STANDARD + reset) end
-    e:SetOperation(VgD.TriggerCountUpOperation(num))
+    e:SetOperation(VgD.DriveUpOperation(num))
     hc:RegisterEffect(e)
     return e
 end
-function VgD.TriggerCountUpOperation(num)
+function VgD.DriveUpOperation(num)
     return function (e, tp, eg, ep, ev, re, r, rp)
         local c = e:GetHandler()
         local label = c:GetFlagEffectLabel(FLAG_ATTACK_TRIGGER)

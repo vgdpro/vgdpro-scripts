@@ -6,7 +6,7 @@ function cm.initial_effect(c)
 end
 function cm.op(e,tp,eg,ep,ev,re,r,rp)
 	local c=e:GetHandler()
-	local g=vgf.GetColumnGroup(c):FilterSelect(tp,cm.filter,1,1,nil,tp)
+	local g=Card.GetColumnGroup(c):FilterSelect(tp,cm.filter,1,1,nil,tp)
 	local atk=2000
 	if Duel.GetFlagEffectLabel(tp,FLAG_CONDITION)==10102001 then
 		atk=5000

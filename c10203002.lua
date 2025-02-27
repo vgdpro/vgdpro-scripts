@@ -20,5 +20,5 @@ function cm.operation1(e,tp,eg,ep,ev,re,r,rp)
 	end
 end
 function cm.cfilter(c,mc)
-	return vgf.GetColumnGroup(c):IsContains(mc) and c:IsControler(mc:GetControler()) and c:GetFlagEffect(FLAG_SUPPORT)>0
+	return Card.GetColumnGroup(c):IsContains(mc) and c:IsControler(mc:GetControler()) and c:GetFlagEffect(FLAG_SUPPORT)>0
 end

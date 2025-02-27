@@ -9,7 +9,7 @@ function cm.op(e,tp,eg,ep,ev,re,r,rp)
 	local c=e:GetHandler()
 	if c:IsRelateToEffect(e) and c:IsFaceup() then
 		Duel.ChangePosition(c,POS_FACEUP_ATTACK)
-		vgd.TriggerCountUp(c,m,-1,nil,RESET_PHASE+PHASE_END)
+		vgd.DriveUp(c,m,-1,nil,RESET_PHASE+PHASE_END)
 	end
 end
 function cm.cost(e,tp,eg,ep,ev,re,r,rp,chk)

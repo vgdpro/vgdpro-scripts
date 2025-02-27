@@ -15,5 +15,5 @@ function cm.con(e,tp,eg,ep,ev,re,r,rp)
 	return vgf.IsExistingMatchingCard(cm.cfilter,tp,LOCATION_CIRCLE,0,1,nil,e:GetHandler()) and Duel.GetAttacker()==e:GetHandler() and vgf.con.IsR(e)
 end
 function cm.cfilter(c,mc)
-	return vgf.GetColumnGroup(c):IsContains(mc) and c:IsControler(mc:GetControler()) and c:GetFlagEffect(FLAG_SUPPORT)>0
+	return Card.GetColumnGroup(c):IsContains(mc) and c:IsControler(mc:GetControler()) and c:GetFlagEffect(FLAG_SUPPORT)>0
 end

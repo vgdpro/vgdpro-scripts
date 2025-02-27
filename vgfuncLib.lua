@@ -124,51 +124,6 @@ function VgF.GetAvailableLocation(tp, zone)
     return z
 end
 
----返回c所在列的所有单位。
----@param c Card 指示某一列的卡
----@return Group 这一列的所有单位
-function VgF.GetColumnGroup(c)
-    local tp = c:GetControler()
-    local g = Group.CreateGroup()
-     if c:GetSequence() == 0 then
-        local sg1 = VgF.GetMatchingGroup(Card.IsSequence, tp, LOCATION_CIRCLE, 0, nil, 1)
-        local sg2 = VgF.GetMatchingGroup(Card.IsSequence, tp, 0, LOCATION_CIRCLE, nil, 3, 4)
-        if sg1:GetCount() > 0 then g:Merge(sg1) end
-        if sg2:GetCount() > 0 then g:Merge(sg2) end
-    end
-    if c:GetSequence() == 1 then
-        local sg1 = VgF.GetMatchingGroup(Card.IsSequence, tp, LOCATION_CIRCLE, 0, nil, 0)
-        local sg2 = VgF.GetMatchingGroup(Card.IsSequence, tp, 0, LOCATION_CIRCLE, nil, 3, 4)
-        if sg1:GetCount() > 0 then g:Merge(sg1) end
-        if sg2:GetCount() > 0 then g:Merge(sg2) end
-    end
-    if c:GetSequence() == 2 then
-        local sg1 = VgF.GetMatchingGroup(Card.IsSequence, tp, LOCATION_CIRCLE, 0, nil, 5)
-        local sg2 = VgF.GetMatchingGroup(Card.IsSequence, tp, 0, LOCATION_CIRCLE, nil, 2, 5)
-        if sg1:GetCount() > 0 then g:Merge(sg1) end
-        if sg2:GetCount() > 0 then g:Merge(sg2) end
-    end
-    if c:GetSequence() == 3 then
-        local sg1 = VgF.GetMatchingGroup(Card.IsSequence, tp, LOCATION_CIRCLE, 0, nil, 4)
-        local sg2 = VgF.GetMatchingGroup(Card.IsSequence, tp, 0, LOCATION_CIRCLE, nil, 0, 1)
-        if sg1:GetCount() > 0 then g:Merge(sg1) end
-        if sg2:GetCount() > 0 then g:Merge(sg2) end
-    end
-    if c:GetSequence() == 4 then
-        local sg1 = VgF.GetMatchingGroup(Card.IsSequence, tp, LOCATION_CIRCLE, 0, nil, 3)
-        local sg2 = VgF.GetMatchingGroup(Card.IsSequence, tp, 0, LOCATION_CIRCLE, nil, 0, 1)
-        if sg1:GetCount() > 0 then g:Merge(sg1) end
-        if sg2:GetCount() > 0 then g:Merge(sg2) end
-    end
-    if c:GetSequence() == 5 then
-        local sg1 = VgF.GetMatchingGroup(Card.IsSequence, tp, LOCATION_CIRCLE, 0, nil, 2)
-        local sg2 = VgF.GetMatchingGroup(Card.IsSequence, tp, 0, LOCATION_CIRCLE, nil, 2, 5)
-        if sg1:GetCount() > 0 then g:Merge(sg1) end
-        if sg2:GetCount() > 0 then g:Merge(sg2) end
-    end
-    return g
-end
-
 ---检查并转换 loc 以及 con 用于【起】等模板函数
 function VgF.GetLocCondition(loc, con)
     local con_exf = VgF.True
@@ -549,8 +504,7 @@ end
 function VgF.Cost.RetireGroup(g)
     return function (e, tp, eg, ep, ev, re, r, rp, chk)
         g = g or Group.FromCards(e:GetHandler())
-        local fg = g:Filter(function(c) return c:IsAbleToGraveAsCost() and (c ~= e:GetHandler() or c:IsRelateToEffect(e)) end, nil)
-        if chk == 0 then return #g == #fg end
+        if chk == 0 then return g:Every(function(c) return c:IsAbleToGraveAsCost() and (c ~= e:GetHandler() or c:IsRelateToEffect(e)) end, nil) end
         VgF.Sendto(LOCATION_DROP, g, REASON_COST)
     end
 end
@@ -748,6 +702,51 @@ end
 
 --Card库自定义函数-----------------------------------------------------------------------
 
+---返回c所在列的所有单位。
+---@param c Card 指示某一列的卡
+---@return Group 这一列的所有单位
+function Card.GetColumnGroup(c)
+    local tp = c:GetControler()
+    local g = Group.CreateGroup()
+     if c:GetSequence() == 0 then
+        local sg1 = VgF.GetMatchingGroup(Card.IsSequence, tp, LOCATION_CIRCLE, 0, nil, 1)
+        local sg2 = VgF.GetMatchingGroup(Card.IsSequence, tp, 0, LOCATION_CIRCLE, nil, 3, 4)
+        if sg1:GetCount() > 0 then g:Merge(sg1) end
+        if sg2:GetCount() > 0 then g:Merge(sg2) end
+    end
+    if c:GetSequence() == 1 then
+        local sg1 = VgF.GetMatchingGroup(Card.IsSequence, tp, LOCATION_CIRCLE, 0, nil, 0)
+        local sg2 = VgF.GetMatchingGroup(Card.IsSequence, tp, 0, LOCATION_CIRCLE, nil, 3, 4)
+        if sg1:GetCount() > 0 then g:Merge(sg1) end
+        if sg2:GetCount() > 0 then g:Merge(sg2) end
+    end
+    if c:GetSequence() == 2 then
+        local sg1 = VgF.GetMatchingGroup(Card.IsSequence, tp, LOCATION_CIRCLE, 0, nil, 5)
+        local sg2 = VgF.GetMatchingGroup(Card.IsSequence, tp, 0, LOCATION_CIRCLE, nil, 2, 5)
+        if sg1:GetCount() > 0 then g:Merge(sg1) end
+        if sg2:GetCount() > 0 then g:Merge(sg2) end
+    end
+    if c:GetSequence() == 3 then
+        local sg1 = VgF.GetMatchingGroup(Card.IsSequence, tp, LOCATION_CIRCLE, 0, nil, 4)
+        local sg2 = VgF.GetMatchingGroup(Card.IsSequence, tp, 0, LOCATION_CIRCLE, nil, 0, 1)
+        if sg1:GetCount() > 0 then g:Merge(sg1) end
+        if sg2:GetCount() > 0 then g:Merge(sg2) end
+    end
+    if c:GetSequence() == 4 then
+        local sg1 = VgF.GetMatchingGroup(Card.IsSequence, tp, LOCATION_CIRCLE, 0, nil, 3)
+        local sg2 = VgF.GetMatchingGroup(Card.IsSequence, tp, 0, LOCATION_CIRCLE, nil, 0, 1)
+        if sg1:GetCount() > 0 then g:Merge(sg1) end
+        if sg2:GetCount() > 0 then g:Merge(sg2) end
+    end
+    if c:GetSequence() == 5 then
+        local sg1 = VgF.GetMatchingGroup(Card.IsSequence, tp, LOCATION_CIRCLE, 0, nil, 2)
+        local sg2 = VgF.GetMatchingGroup(Card.IsSequence, tp, 0, LOCATION_CIRCLE, nil, 2, 5)
+        if sg1:GetCount() > 0 then g:Merge(sg1) end
+        if sg2:GetCount() > 0 then g:Merge(sg2) end
+    end
+    return g
+end
+
 ---判断c是否可以以规则的手段到G区域。
 ---@param c Card 要判断的卡
 ---@return boolean 指示c能否去到G区域。
@@ -798,6 +797,10 @@ function Group.GetCardsFromGroup(g, val)
     end
 end
 
+---遍历g的每一张卡
+---@param g Group 要操作的卡片组
+---@param f function 遍历时的回调函数
+---@param ... any 额外参数
 function Group.ForEach(g, f, ...)
     local ext_params = {...}
     if #g == 0 then return end
@@ -805,6 +808,17 @@ function Group.ForEach(g, f, ...)
         local chk = f(c, table.unpack(ext_params))
         if chk == "break" then break end
     end
+end
+
+---判断g中的不等于except的卡是否均符合函数f
+---@param g Group 要操作的卡片组
+---@param f function 过滤函数
+---@param except Card|Group|nil 不记入的卡
+---@param ... any 额外参数
+function Group.Every(g, f, except, ...)
+    local ext_params = {...}
+    except = VgF.GetValueType(except) == "Card" and Group.FromCards(except) or except
+    return g:Filter(f, except, table.unpack(ext_params)):GetCount() == g:GetCount() - except:GetCount()
 end
 
 function Group.CheckSubGroup(g, f, min, max, ...)

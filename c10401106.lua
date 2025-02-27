@@ -9,7 +9,7 @@ end
 function cm.op(e,tp,eg,ep,ev,re,r,rp)
 	local g=vgf.SelectMatchingCard(HINTMSG_OPPO,e,tp,vgf.filter.IsR,tp,0,LOCATION_CIRCLE,1,1,nil)
 	if g:GetCount()==0 then return end
-	local sg=vgf.GetColumnGroup(g:GetFirst()):Filter(cm.filter,nil,1-tp)
+	local sg=Card.GetColumnGroup(g:GetFirst()):Filter(cm.filter,nil,1-tp)
 	if sg:GetCount()>0 then g:Sub(sg) end
 	vgf.Sendto(LOCATION_DECK,g,nil,0,REASON_EFFECT)
 	local og=Duel.GetOperatedGroup()

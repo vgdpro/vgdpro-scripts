@@ -35,5 +35,5 @@ function cm.op1(e,tp,eg,ep,ev,re,r,rp)
 		Duel.ConfirmCards(1-tp,g)
 		vgf.Sendto(LOCATION_DECK,g,tp,SEQ_DECKTOP,REASON_EFFECT)
 	end
-	vgd.TriggerCountUp(c,m,1,nil,RESET_PHASE+PHASE_END)
+	vgd.DriveUp(c,m,1,nil,RESET_PHASE+PHASE_END)
 end

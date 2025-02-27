@@ -22,7 +22,7 @@ end
 function cm.op2(e,tp,eg,ep,ev,re,r,rp)
 	local c=e:GetHandler()
 	if not c:IsRelateToEffect(e) or c:IsFacedown() then e:Reset() return end
-	local g=vgf.GetColumnGroup(c):Filter(cm.filter,nil,tp)
+	local g=Card.GetColumnGroup(c):Filter(cm.filter,nil,tp)
 	vgf.Sendto(LOCATION_DROP,g,REASON_EFFECT)
 	Duel.Draw(tp,1,REASON_EFFECT)
 	e:Reset()
