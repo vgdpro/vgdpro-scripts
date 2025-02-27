@@ -724,6 +724,19 @@ function VgF.Operation.Damage(val, p)
     end
 end
 
+---对[这张卡]进行操作。
+---@param f function(e, tp, eg, ep, ev, re, r, rp, c, ...) 回调函数
+---@param ... any 额外参数
+function VgF.Operation.ThisCard(f, ...)
+    local ext_params = {...}
+    return function (e, tp, eg, ep, ev, re, r, rp)
+        local c = e:GetHandler()
+        if c:IsRelateToEffect(e) and c:IsFaceup() then
+            f(e, tp, eg, ep, ev, re, r, rp, c, table.unpack(ext_params))
+        end
+    end
+end
+
 ----catalogue:Card库自定义函数-----------------------------------------------------------------------
 
 ---返回卡片 c 所在列的所有单位。
