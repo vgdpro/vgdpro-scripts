@@ -854,27 +854,26 @@ FLAG_ID_CHAINING		= 1
 FLAG_ID_UNION			= 2
 FLAG_ID_NO_NORMAL_DRAW	= 3
 --Flag
-FLAG_COUNT_TRIGGER      = VgID   --计数标识
-FLAG_ATTACK_TRIGGER     = VgID + 1 --多次攻击判定标识
-FLAG_DAMAGE_TRIGGER     = VgID + 2 --多次伤害判定标识
-FLAG_SENTINEL   = VgID + 3 --完全防御标识
-FLAG_CONDITION          = VgID + 4 --处于XX状态标识
-FLAG_SUPPORT            = VgID + 5 --支援状态标识
-FLAG_SUPPORTED          = VgID + 6 --被支援
-FLAG_ATTACK_AT_REAR     = VgID + 7 --后列攻击
-FLAG_IMPRISON           = VgID + 8 --被收容
-FLAG_ORDER_COUNT_LIMIT  = VgID + 9 --指令卡次数
-FLAG_ORDER_USED_COUNT   = VgID + 10--指令卡已使用次数
-FLAG_ALSO_CAN_TRIGGER   = VgID + 11--后防着也能驱动判定
-FLAG_EFFECT_DAMAGE      = VgID + 12--效果伤害标识
+FLAG_ATTACK_TRIGGER     = VgID + 1  --攻击判定标识
+FLAG_DAMAGE_TRIGGER     = VgID + 2  --伤害判定标识
+FLAG_SENTINEL           = VgID + 3  --完全防御标识
+FLAG_CONDITION          = VgID + 4  --处于XX状态标识
+FLAG_SUPPORT            = VgID + 5  --支援状态标识
+FLAG_SUPPORTED          = VgID + 6  --被支援
+FLAG_ATTACK_AT_REAR     = VgID + 7  --后列攻击
+FLAG_IMPRISON           = VgID + 8  --被收容
+FLAG_ORDER_COUNT_LIMIT  = VgID + 9  --指令卡次数
+FLAG_ORDER_USED_COUNT   = VgID + 10 --指令卡已使用次数
+FLAG_ALSO_CAN_TRIGGER   = VgID + 11 --后防着也能驱动判定
+FLAG_EFFECT_DAMAGE      = VgID + 12 --效果伤害标识
 --AffectedByEffect
-AFFECT_CODE_ALCHEMAGIC  = VgID   --魔合成
-AFFECT_CODE_ALCHEMAGIC_DIFFERENT_NAME   = VgID + 1      --魔合成(卡名不同)
-AFFECT_CODE_BOTH_WINGS  = VgID + 2 --你的卡片的白翼能力和黑翼能力两方均有效
-AFFECT_CODE_DARK_NIGHT       = VgID + 3 --黑夜
-AFFECT_CODE_ABYSSAL_DARK_NIGHT  = VgID + 4 --深渊黑夜
-AFFECT_CODE_SOUL_BLAST_FREE_WHEN_ALCHEMAGIC   = VgID + 5 --魔合成可以不支付灵魂爆发
-AFFECT_CODE_DEFENDER_CANNOT_TO_G_CIRCLE    = VgID + 6      --不能将守护者从手牌CALL到G上
+AFFECT_CODE_ALCHEMAGIC                          = VgID          --魔合成
+AFFECT_CODE_ALCHEMAGIC_DIFFERENT_NAME           = VgID + 1      --魔合成(卡名不同)
+AFFECT_CODE_BOTH_WINGS                          = VgID + 2      --你的卡片的白翼能力和黑翼能力两方均有效
+AFFECT_CODE_DARK_NIGHT                          = VgID + 3      --黑夜
+AFFECT_CODE_ABYSSAL_DARK_NIGHT                  = VgID + 4      --深渊黑夜
+AFFECT_CODE_SOUL_BLAST_FREE_WHEN_ALCHEMAGIC     = VgID + 5      --魔合成可以不支付灵魂爆发
+AFFECT_CODE_DEFENDER_CANNOT_TO_G_CIRCLE         = VgID + 6      --不能将守护者从手牌CALL到G上
 
 
 AFFECT_CODE_OVERLAY_INSTEAD_WHEN_RIDE   =10501082   --不执行『选择手牌中的1张卡，舍弃』而是执行『灵魂爆发1』来将卡RIDE
