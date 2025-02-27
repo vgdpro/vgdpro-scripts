@@ -229,28 +229,18 @@ end
 VgF.Effect.Damage = nil
 
 function VgF.Effect.Reset(c, e, code, con)
-    if VgF.GetValueType(e) == "Effect" then
+    e = VgF.GetValueType(e) == "Effect" and {e} or (type(e) == "table" and e or nil)
+    if not e then return end
+    for i, v in ipairs(e) do
         local e1 = Effect.CreateEffect(c)
         e1:SetType(EFFECT_TYPE_FIELD + EFFECT_TYPE_CONTINUOUS)
         e1:SetCode(code)
         e1:SetProperty(EFFECT_FLAG_CANNOT_DISABLE)
         e1:SetRange(LOCATION_ALL)
-        e1:SetLabelObject(e)
+        e1:SetLabelObject(v)
         if VgF.GetValueType(con) == "function" then e1:SetCondition(con) end
         e1:SetOperation(VgF.Effect.ResetOperation)
         c:RegisterEffect(e1)
-    elseif VgF.GetValueType(e) == "table" then
-        for i, v in ipairs(e) do
-            local e1 = Effect.CreateEffect(c)
-            e1:SetType(EFFECT_TYPE_FIELD + EFFECT_TYPE_CONTINUOUS)
-            e1:SetCode(code)
-            e1:SetProperty(EFFECT_FLAG_CANNOT_DISABLE)
-            e1:SetRange(LOCATION_ALL)
-            e1:SetLabelObject(v)
-            if VgF.GetValueType(con) == "function" then e1:SetCondition(con) end
-            e1:SetOperation(VgF.Effect.ResetOperation)
-            c:RegisterEffect(e1)
-        end
     end
 end
 function VgF.Effect.ResetOperation(e, tp, eg, ep, ev, re, r, rp)
@@ -708,42 +698,25 @@ end
 function Card.GetColumnGroup(c)
     local tp = c:GetControler()
     local g = Group.CreateGroup()
-     if c:GetSequence() == 0 then
-        local sg1 = VgF.GetMatchingGroup(Card.IsSequence, tp, LOCATION_CIRCLE, 0, nil, 1)
+     if c:IsSequence(0, 1) then
+        -- 左列
+        local sg1 = VgF.GetMatchingGroup(Card.IsSequence, tp, LOCATION_CIRCLE, 0, nil, 0, 1)
         local sg2 = VgF.GetMatchingGroup(Card.IsSequence, tp, 0, LOCATION_CIRCLE, nil, 3, 4)
         if sg1:GetCount() > 0 then g:Merge(sg1) end
         if sg2:GetCount() > 0 then g:Merge(sg2) end
-    end
-    if c:GetSequence() == 1 then
-        local sg1 = VgF.GetMatchingGroup(Card.IsSequence, tp, LOCATION_CIRCLE, 0, nil, 0)
-        local sg2 = VgF.GetMatchingGroup(Card.IsSequence, tp, 0, LOCATION_CIRCLE, nil, 3, 4)
-        if sg1:GetCount() > 0 then g:Merge(sg1) end
-        if sg2:GetCount() > 0 then g:Merge(sg2) end
-    end
-    if c:GetSequence() == 2 then
-        local sg1 = VgF.GetMatchingGroup(Card.IsSequence, tp, LOCATION_CIRCLE, 0, nil, 5)
-        local sg2 = VgF.GetMatchingGroup(Card.IsSequence, tp, 0, LOCATION_CIRCLE, nil, 2, 5)
-        if sg1:GetCount() > 0 then g:Merge(sg1) end
-        if sg2:GetCount() > 0 then g:Merge(sg2) end
-    end
-    if c:GetSequence() == 3 then
-        local sg1 = VgF.GetMatchingGroup(Card.IsSequence, tp, LOCATION_CIRCLE, 0, nil, 4)
+    elseif c:IsSequence(2, 5) then
+        -- 中列
+        local sg = VgF.GetMatchingGroup(Card.IsSequence, tp, LOCATION_CIRCLE, LOCATION_CIRCLE, nil, 2, 5)
+        if sg:GetCount() > 0 then g:Merge(sg) end
+    elseif c:IsSequence(3, 4) then
+        -- 右列
+        local sg1 = VgF.GetMatchingGroup(Card.IsSequence, tp, LOCATION_CIRCLE, 0, nil, 3, 4)
         local sg2 = VgF.GetMatchingGroup(Card.IsSequence, tp, 0, LOCATION_CIRCLE, nil, 0, 1)
         if sg1:GetCount() > 0 then g:Merge(sg1) end
         if sg2:GetCount() > 0 then g:Merge(sg2) end
     end
-    if c:GetSequence() == 4 then
-        local sg1 = VgF.GetMatchingGroup(Card.IsSequence, tp, LOCATION_CIRCLE, 0, nil, 3)
-        local sg2 = VgF.GetMatchingGroup(Card.IsSequence, tp, 0, LOCATION_CIRCLE, nil, 0, 1)
-        if sg1:GetCount() > 0 then g:Merge(sg1) end
-        if sg2:GetCount() > 0 then g:Merge(sg2) end
-    end
-    if c:GetSequence() == 5 then
-        local sg1 = VgF.GetMatchingGroup(Card.IsSequence, tp, LOCATION_CIRCLE, 0, nil, 2)
-        local sg2 = VgF.GetMatchingGroup(Card.IsSequence, tp, 0, LOCATION_CIRCLE, nil, 2, 5)
-        if sg1:GetCount() > 0 then g:Merge(sg1) end
-        if sg2:GetCount() > 0 then g:Merge(sg2) end
-    end
+    -- 排除自身
+    g:RemoveCard(c)
     return g
 end
 
