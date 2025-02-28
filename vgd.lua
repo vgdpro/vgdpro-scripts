@@ -235,7 +235,7 @@ function VgD.Register.RideFilter2(c, lv, code, rc)
 end
 function VgD.Register.RideCondition()
     local tp = Duel.GetTurnPlayer()
-    local rc = Duel.GetMatchingGroup(VgF.Filter.IsV, tp, LOCATION_CIRCLE, 0, nil):GetFirst()
+    local rc = Duel.GetMatchingGroup(Card.IsV, tp, LOCATION_CIRCLE, 0, nil):GetFirst()
     if not rc then return false end
     local lv = rc:GetLevel()
     local code = rc:GetCode()
@@ -308,7 +308,7 @@ function VgD.Register.RideOperation()
         e1:SetTargetRange(LOCATION_CIRCLE, 0)
         e1:SetValue(10000)
         e1:SetTarget(function (te, tc)
-            return VgF.Filter.Front(tc)
+            return Card.IsFrontrow(tc)
         end)
         e1:SetReset(RESET_PHASE + PHASE_END)
         Duel.RegisterEffect(e1, tp)
@@ -710,7 +710,7 @@ function VgD.Register.MonsterBattle(c)
                 e:SetCode(EFFECT_CANNOT_ATTACK_ANNOUNCE)
                 e:SetTargetRange(LOCATION_CIRCLE, LOCATION_CIRCLE)
                 e:SetTarget(function (_, c)
-                    return c:IsPosition(POS_DEFENSE) or (VgF.Filter.Back(c) and c:GetFlagEffect(FLAG_ATTACK_AT_REAR) == 0)
+                    return c:IsPosition(POS_DEFENSE) or (Card.IsBackrow(c) and c:GetFlagEffect(FLAG_ATTACK_AT_REAR) == 0)
                 end)
                 Duel.RegisterEffect(e, 0)
             end
@@ -747,7 +747,7 @@ function VgD.Register.MonsterBattle(c)
                 e:SetCode(EFFECT_CANNOT_BE_BATTLE_TARGET)
                 e:SetTargetRange(LOCATION_CIRCLE, LOCATION_CIRCLE)
                 e:SetTarget(function (_, c)
-                    return VgF.Filter.Back(c)
+                    return Card.IsBackrow(c)
                 end)
                 e:SetValue(VgF.True)
                 Duel.RegisterEffect(e, 0)
@@ -801,7 +801,7 @@ function VgD.Register.MonsterBattle(c)
                 e:SetOperation(function ()
                     local tc = Duel.GetAttacker()
                     local tp = tc:GetControler()
-                    if not tc:GetFlagEffectLabel(FLAG_ATTACK_TRIGGER) or tc:GetFlagEffectLabel(FLAG_ATTACK_TRIGGER) == 0 or VgF.Filter.IsR(tc:IsRearguard() and tc:GetFlagEffect(FLAG_ALSO_CAN_TRIGGER) == 0) then return end
+                    if not tc:GetFlagEffectLabel(FLAG_ATTACK_TRIGGER) or tc:GetFlagEffectLabel(FLAG_ATTACK_TRIGGER) == 0 or Card.IsR(tc:IsRearguard() and tc:GetFlagEffect(FLAG_ALSO_CAN_TRIGGER) == 0) then return end
                     VgD.Register.Trigger(tp)
                 end)
                 Duel.RegisterEffect(e, 0)
@@ -1906,7 +1906,7 @@ function VgD.CallInPrisonOperation(val)
     end
 end
 function VgD.CallInPrisonFilter(c, e, tp)
-    return c:GetFlagEffect(FLAG_IMPRISON) > 0 and (VgF.IsCanBeCalled(c, e, tp) or not c:IsType(TYPE_UNIT))
+    return c:GetFlagEffect(FLAG_IMPRISON) > 0 and (Card.IsCanBeCalled(c, e, tp) or not c:IsType(TYPE_UNIT))
 end
 
 --其他----------------------------------------------------------------------------------------

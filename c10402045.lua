@@ -10,9 +10,9 @@ function cm.op(e,tp,eg,ep,ev,re,r,rp)
     if c:IsRelateToEffect(e) and c:IsFaceup() then
         vgf.AtkUp(c,c,10000,nil)
     end
-	if vgf.cost.And(vgf.cost.SoulBlast(1),vgf.cost.Retire(vgf.filter.IsR,1,1,c))(e,tp,eg,ep,ev,re,r,rp,0) and Duel.SelectEffectYesNo(tp,vgf.stringid(VgID,10)) then
+	if vgf.cost.And(vgf.cost.SoulBlast(1),vgf.cost.Retire(Card.IsR,1,1,c))(e,tp,eg,ep,ev,re,r,rp,0) and Duel.SelectEffectYesNo(tp,vgf.stringid(VgID,10)) then
 		Duel.BreakEffect()
-		vgf.cost.And(vgf.cost.SoulBlast(1),vgf.cost.Retire(vgf.filter.IsR,1,1,c))(e,tp,eg,ep,ev,re,r,rp,0)
+		vgf.cost.And(vgf.cost.SoulBlast(1),vgf.cost.Retire(Card.IsR,1,1,c))(e,tp,eg,ep,ev,re,r,rp,0)
 		local g=Duel.GetDecktopGroup(tp,5)
 		Duel.ConfirmCards(tp,g)
 		Duel.DisableShuffleCheck()
@@ -25,5 +25,5 @@ function cm.op(e,tp,eg,ep,ev,re,r,rp)
 	end
 end
 function cm.filter(c,e,tp)
-	return vgf.IsCanBeCalled(c,e,tp) and c:IsLevelBelow(1)
+	return c:IsCanBeCalled(e,tp) and c:IsLevelBelow(1)
 end

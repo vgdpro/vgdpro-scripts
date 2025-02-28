@@ -295,7 +295,7 @@ function VgF.Condition.Level(e_or_c)
     local c = VgF.GetValueType(e_or_c) == "Effect" and e_or_c:GetHandler() or e_or_c
     local tp, lv = c:GetControler(), c:GetLevel()
     return VgF.IsExistingMatchingCard(function (tc)
-        return VgF.Filter.IsV(tc) and tc:IsLevelAbove(lv)
+        return Card.IsV(tc) and tc:IsLevelAbove(lv)
     end, tp, LOCATION_CIRCLE, 0, 1, nil)
 end
 
@@ -303,18 +303,17 @@ end
 ---@param e Effect
 ---@return boolean
 function VgF.Condition.IsR(e)
-    return VgF.Filter.IsR(e:GetHandler())
+    return Card.IsR(e:GetHandler())
 end
 ---用于效果的Condition，判断e是否以先导者发动。
 ---@param e Effect
 ---@return boolean
 function VgF.Condition.IsV(e)
-    return VgF.Filter.IsV(e:GetHandler())
+    return e:GetHandler():IsV()
 end
 
 function VgF.Condition.RideOnVCircle(e)
-    local c = e:GetHandler()
-    return VgF.Filter.RideOnVCircle(c)
+    return e:GetHandler():IsRideOnVCircle()
 end
 
 function VgF.Condition.RideOnRCircle(e)
@@ -444,10 +443,10 @@ function VgF.Cost.SoulBlast(val)
                 local m = c:GetOriginalCode()
                 VgF.AddAlchemagic(m, "LOCATION_SOUL", "LOCATION_DROP", val, val)
             end
-            return Duel.GetMatchingGroup(VgF.Filter.IsV, tp, LOCATION_CIRCLE, 0, nil, nil):GetFirst():GetOverlayCount() >= val
+            return Duel.GetMatchingGroup(Card.IsV, tp, LOCATION_CIRCLE, 0, nil, nil):GetFirst():GetOverlayCount() >= val
         end
         Duel.Hint(HINT_SELECTMSG, tp, HINTMSG_REMOVEXYZ)
-        local g = Duel.GetMatchingGroup(VgF.Filter.IsV, tp, LOCATION_CIRCLE, 0, nil):GetFirst():GetOverlayGroup():Select(tp, nil, val, val, nil)
+        local g = Duel.GetMatchingGroup(Card.IsV, tp, LOCATION_CIRCLE, 0, nil):GetFirst():GetOverlayGroup():Select(tp, nil, val, val, nil)
         return VgF.Sendto(LOCATION_DROP, g, REASON_COST)
     end
 end
@@ -584,7 +583,7 @@ function VgF.Operation.SoulCharge(val)
             end
             return Duel.GetFieldGroupCount(tp, LOCATION_DECK, 0) >= val
         end
-        local rc = Duel.GetMatchingGroup(VgF.Filter.IsV, tp, LOCATION_CIRCLE, 0, nil):GetFirst()
+        local rc = Duel.GetMatchingGroup(Card.IsV, tp, LOCATION_CIRCLE, 0, nil):GetFirst()
         local g = Duel.GetDecktopGroup(tp, val)
         Duel.DisableShuffleCheck()
         Duel.RaiseEvent(g, EVENT_CUSTOM + EVENT_OVERLAY_FILL, e, 0, tp, tp, val)
@@ -1180,7 +1179,7 @@ end
 ---@return Card|nil p场上的先导者
 function VgF.GetVMonster(p)
     if p ~= 0 and p ~= 1 then return end
-    return Duel.GetMatchingGroup(VgF.Filter.IsV, p, LOCATION_CIRCLE, 0, nil):GetFirst()
+    return Duel.GetMatchingGroup(Card.IsV, p, LOCATION_CIRCLE, 0, nil):GetFirst()
 end
 
 ---以c的名义，使g（中的每一张卡）的攻击力上升val，并在reset时重置。

@@ -13,5 +13,4 @@ function cm.op(e,tp,eg,ep,ev,re,r,rp)
 	if sg:GetCount()>0 then vgf.Sendto(LOCATION_CIRCLE,sg,0,tp) end
 end
 function cm.filter(c,lv,e,tp)
-	return c:IsLevelBelow(lv) and vgf.IsCanBeCalled(c,e,tp)
-end
+	return c:IsLevelBelow(lv) and c:IsCanBeCalled(e,tp)end

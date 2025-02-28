@@ -13,7 +13,7 @@ function cm.operation(e,tp,eg,ep,ev,re,r,rp)
 	Duel.DisableShuffleCheck()
 	local ct=bit.ReturnCount(vgf.GetAvailableLocation(tp))
 	Duel.Hint(HINT_SELECTMSG,tp,HINTMSG_CALL)
-	local sg=g:FilterSelect(tp,vgf.IsCanBeCalled,0,ct,nil,e,tp)
+	local sg=g:FilterSelect(tp,Card.IsCanBeCalled,0,ct,nil,e,tp)
 	if sg:GetCount()>0 then
 		vgf.Sendto(LOCATION_CIRCLE,sg,0,tp)
 		g:Sub(sg)

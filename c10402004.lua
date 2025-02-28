@@ -10,5 +10,4 @@ function cm.op(e,tp,eg,ep,ev,re,r,rp)
 	vgf.Sendto(LOCATION_CIRCLE,g,0,tp,"NoMonster")
 end
 function cm.filter(c,e,tp)
-	return vgf.IsCanBeCalled(c,e,tp)
-end
+	return c:IsCanBeCalled(e,tp)end

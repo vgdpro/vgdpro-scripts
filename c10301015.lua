@@ -5,8 +5,8 @@ function cm.initial_effect(c)
 end
 function cm.operation(e,tp,eg,ep,ev,re,r,rp)
 	local c=e:GetHandler()
-	local g=vgf.SelectMatchingCard(HINTMSG_VMONSTER,e,tp,vgf.filter.IsV,tp,LOCATION_CIRCLE,0,1,1,nil)
-	vgd.action.AbilityCont(c, m, LOCATION_CIRCLE, EFFECT_TYPE_FIELD, EFFECT_UPDATE_ATTACK, 5000, nil, cm.tg, LOCATION_CIRCLE, 0, RESET_PHASE+PHASE_END, g:GetFirst()
+	local g=vgf.SelectMatchingCard(HINTMSG_VMONSTER,e,tp,Card.IsV,tp,LOCATION_CIRCLE,0,1,1,nil)
+	vgd.action.AbilityCont(c, m, LOCATION_CIRCLE, EFFECT_TYPE_FIELD, EFFECT_UPDATE_ATTACK, 5000, nil, cm.tg, LOCATION_CIRCLE, 0, RESET_PHASE+PHASE_END, g:GetFirst())
 end
 function cm.tg(e,c)
 	return c:IsRearguard()end

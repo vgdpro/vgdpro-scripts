@@ -16,7 +16,7 @@ function cm.op(e,tp,eg,ep,re,r,rp)
 	local g=Duel.GetDecktopGroup(tp,1)
 	Duel.ConfirmCards(g)
 	Duel.DisableShuffleCheck()
-	local sg=g:FilterSelect(tp,vgf.IsCanBeCalled,0,1,nil,e,tp)
+	local sg=g:FilterSelect(tp,Card.IsCanBeCalled,0,1,nil,e,tp)
 	if sg:GetCount()>0 then
 		vgf.Sendto(LOCATION_CIRCLE,g,0,tp)
 		g:Sub(sg)

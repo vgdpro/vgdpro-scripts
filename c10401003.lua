@@ -13,14 +13,14 @@ function cm.op(e,tp,eg,ep,ev,re,r,rp)
 		end
 	end
 	if ct>=15 then
-		local g1=vgf.GetMatchingGroup(vgf.filter.IsR,tp,LOCATION_CIRCLE,0,nil)
-		local g2=vgf.GetMatchingGroup(vgf.filter.IsR,tp,0,LOCATION_CIRCLE,nil)
+		local g1=vgf.GetMatchingGroup(Card.IsR,tp,LOCATION_CIRCLE,0,nil)
+		local g2=vgf.GetMatchingGroup(Card.IsR,tp,0,LOCATION_CIRCLE,nil)
 		local tc1=vgf.GetVMonster(tp)
 		local tc2=vgf.GetVMonster(1-tp)
 		vgf.Sendto(LOCATION_SOUL,g1,tc1)
 		vgf.Sendto(LOCATION_SOUL,g2,tc2)
 		if vgf.GetAvailableLocation(tp)>0 then
-			local g=tc1:GetOverlayGroup():FilterSelect(tp,vgf.IsCanBeCalled,tp,0,2,nil,e,tp)
+			local g=tc1:GetOverlayGroup():FilterSelect(tp,Card.IsCanBeCalled,tp,0,2,nil,e,tp)
 			vgf.Sendto(LOCATION_CIRCLE,g,0,tp)
 		end
 	end

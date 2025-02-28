@@ -7,6 +7,6 @@ end
 function cm.op(e,tp,eg,ep,ev,re,r,rp)
     local c=e:GetHandler()
     -- 选择你的1张先导者
-    local g=vgf.SelectMatchingCard(HINTMSG_VMONSTER,tp,vgf.filter.IsV,tp,LOCATION_CIRCLE,0,1,1,nil)
+    local g=vgf.SelectMatchingCard(HINTMSG_VMONSTER,tp,Card.IsV,tp,LOCATION_CIRCLE,0,1,1,nil)
     vgf.AtkUp(c,g,5000)
 end

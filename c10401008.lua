@@ -12,7 +12,7 @@ function cm.filter(c,tp)
 end
 function cm.op(e,tp,eg,ep,ev,re,r,rp)
 	local c=e:GetHandler()
-	local g=vgf.SelectMatchingCard(HINTMSG_RMONSTER,e,tp,vgf.filter.IsR,tp,LOCATION_CIRCLE,0,1,1,nil)
+	local g=vgf.SelectMatchingCard(HINTMSG_RMONSTER,e,tp,Card.IsR,tp,LOCATION_CIRCLE,0,1,1,nil)
 	vgf.AtkUp(c,g,10000)
 end
 function cm.checkcon(e,tp,eg,ep,ev,re,r,rp)

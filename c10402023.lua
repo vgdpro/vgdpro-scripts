@@ -11,5 +11,5 @@ function cm.initial_effect(c)
 end
 function cm.tg(e,tc)
 	local c=e:GetHandler()
-	return tc:IsFrontrow() and c):IsContains(tc:GetColumnGroup() and tc:IsControler(c:GetControler())
+	return tc:IsFrontrow() and c:IsContains(tc:GetColumnGroup()) and tc:IsControler(c:GetControler())
 end

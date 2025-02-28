@@ -19,5 +19,4 @@ function cm.operation(e,tp,eg,ep,ev,re,r,rp)
 	end
 end
 function cm.filter(c,e,tp)
-	return c:IsLevelAbove(2) and vgf.IsCanBeCalled(c,e,tp)
-end
+	return c:IsLevelAbove(2) and c:IsCanBeCalled(e,tp)end

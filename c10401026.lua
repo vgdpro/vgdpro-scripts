@@ -7,16 +7,16 @@ function cm.initial_effect(c)
 end
 function cm.condition2(e,tp,eg,ep,ev,re,r,rp)
 	local c=Duel.GetAttacker()
-	return vgf.con.IsR(e) and vgf.GetMatchingGroupCount(vgf.filter.IsR,tp,0,LOCATION_CIRCLE,nil)<=2 and c:IsVanguard()end
+	return vgf.con.IsR(e) and vgf.GetMatchingGroupCount(Card.IsR,tp,0,LOCATION_CIRCLE,nil)<=2 and c:IsVanguard()end
 function cm.cost(e,tp,eg,ep,ev,re,r,rp,chk)
     local c=e:GetHandler()
     if chk==0 then return c:IsRelateToEffect(e) end
-    local rc=vgf.GetMatchingGroup(vgf.filter.IsV,tp,LOCATION_CIRCLE,0,nil):GetFirst()
+    local rc=vgf.GetMatchingGroup(Card.IsV,tp,LOCATION_CIRCLE,0,nil):GetFirst()
 	vgf.Sendto(LOCATION_SOUL,c,rc)
 end
 function cm.operation2(e,tp,eg,ep,ev,re,r,rp)
 	local c=e:GetHandler()
-	local g=vgf.SelectMatchingCard(HINTMSG_CRITICAL_STRIKE,e,tp,vgf.filter.IsV,tp,LOCATION_CIRCLE,0,1,1,nil)
+	local g=vgf.SelectMatchingCard(HINTMSG_CRITICAL_STRIKE,e,tp,Card.IsV,tp,LOCATION_CIRCLE,0,1,1,nil)
 	if g:GetCount()>0 then
 		local e1=vgf.StarUp(c,g,1,nil)
 		vgf.effect.Reset(c,e1,EVENT_BATTLED)

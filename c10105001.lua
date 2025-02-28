@@ -13,7 +13,7 @@ function cm.filter(c)
 end
 function cm.op1(e,tp,eg,ep,ev,re,r,rp)
 	if not vgf.CheckPrison(tp) then return end
-	local g1=vgf.SelectMatchingCard(HINTMSG_IMPRISON,e,tp,vgf.filter.IsR,tp,0,LOCATION_CIRCLE,2,2,nil)
+	local g1=vgf.SelectMatchingCard(HINTMSG_IMPRISON,e,tp,Card.IsR,tp,0,LOCATION_CIRCLE,2,2,nil)
 	vgf.SendtoPrison(g1,tp)
 end
 function cm.con2(e,c)

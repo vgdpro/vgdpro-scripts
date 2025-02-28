@@ -13,5 +13,5 @@ function cm.condition(e,tp,eg,ep,ev,re,r,rp)
 	return c:IsRearguard() and vgf.IsExistingMatchingCard(cm.filter,tp,LOCATION_CIRCLE,0,1,nil)
 end
 function cm.filter(c)
-	return vgf.filter.IsV and c:IsSetCard(0x77)
+	return Card.IsV and c:IsSetCard(0x77)
 end

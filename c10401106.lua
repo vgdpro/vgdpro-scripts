@@ -6,9 +6,10 @@ end
 function cm.filter(c,p)
 	return c:IsControler(p) and c:IsRearguard()end
 function cm.op(e,tp,eg,ep,ev,re,r,rp)
-	local g=vgf.SelectMatchingCard(HINTMSG_OPPO,e,tp,vgf.filter.IsR,tp,0,LOCATION_CIRCLE,1,1,nil)
+	local g=vgf.SelectMatchingCard(HINTMSG_OPPO,e,tp,Card.IsR,tp,0,LOCATION_CIRCLE,1,1,nil)
 	if g:GetCount()==0 then return end
-	local g:GetFirst()):Filter(cm.filter,nil,1-tp:GetColumnGroup()	if sg:GetCount()>0 then g:Sub(sg) end
+	local sg = g:GetFirst():GetColumnGroup():Filter(cm.filter,nil,1-tp)
+	if sg:GetCount()>0 then g:Sub(sg) end
 	vgf.Sendto(LOCATION_DECK,g,nil,0,REASON_EFFECT)
 	local og=Duel.GetOperatedGroup()
 	if #og>1 then
@@ -21,9 +22,9 @@ function cm.op(e,tp,eg,ep,ev,re,r,rp)
 end
 function cm.cost(e,tp,eg,ep,ev,re,r,rp,chk)
 	if chk==0 then
-		vgf.GetMatchingGroup(vgf.filter.IsV,tp,LOCATION_CIRCLE,0,nil,nil):GetFirst():GetOverlayGroup():IsExists(Card.IsLevel,1,nil,3)
+		vgf.GetMatchingGroup(Card.IsV,tp,LOCATION_CIRCLE,0,nil,nil):GetFirst():GetOverlayGroup():IsExists(Card.IsLevel,1,nil,3)
 	end
 	Duel.Hint(HINT_SELECTMSG,tp,HINTMSG_REMOVEXYZ)
-	local g=vgf.GetMatchingGroup(vgf.filter.IsV,tp,LOCATION_CIRCLE,0,nil):GetFirst():GetOverlayGroup():FilterSelect(tp,Card.IsLevel,1,1,nil,3)
+	local g=vgf.GetMatchingGroup(Card.IsV,tp,LOCATION_CIRCLE,0,nil):GetFirst():GetOverlayGroup():FilterSelect(tp,Card.IsLevel,1,1,nil,3)
 	vgf.Sendto(LOCATION_DROP,g,REASON_COST)
 end

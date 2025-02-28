@@ -10,8 +10,8 @@ function cm.operation(e,tp,eg,ep,ev,re,r,rp)
 	Duel.DisableShuffleCheck()
 	local off=1
     local ops={}
-	local a=vgf.IsCanBeCalled(tc,e,tp)
-    if a then
+	local a = tc:IsCanBeCalled(e,tp)
+	if a then
         ops[off]=1152
         off=off+1
     end

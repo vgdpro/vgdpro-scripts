@@ -13,7 +13,7 @@ function cm.filter(c)
 	return c:IsCanChangePosition() and c:IsPosition(POS_FACEUP_ATTACK) and c:IsRearguard()end
 function cm.op(e,tp,eg,ep,ev,re,r,rp)
 	local c=e:GetHandler()
-	local g=vgf.SelectMatchingCard(HINTMSG_LEAVEFIELD,e,tp,vgf.filter.IsV,tp,0,LOCATION_CIRCLE,1,1,nil)
+	local g=vgf.SelectMatchingCard(HINTMSG_LEAVEFIELD,e,tp,Card.IsV,tp,0,LOCATION_CIRCLE,1,1,nil)
 	if g:GetCount()>0 then vgf.Sendto(LOCATION_DROP,g,REASON_EFFECT) end
 	if c:IsRelateToEffect(e) and c:IsFaceup() then
 		vgf.AtkUp(c,c,10000)
@@ -29,7 +29,7 @@ function cm.op1(e,tp,eg,ep,ev,re,r,rp)
 	Duel.ConfirmCards(g)
 	local ct1=vgf.GetAvailableLocation(tp)
 	Duel.Hint(HINT_SELECTMSG,tp,HINTMSG_CALL)
-	local sg=g:FilterSelect(tp,vgf.IsCanBeCalled,0,ct1,nil,e,tp)
+	local sg=g:FilterSelect(tp,Card.IsCanBeCalled,0,ct1,nil,e,tp)
 	if sg:GetCount()>0 then
 		vgf.Sendto(LOCATION_CIRCLE,sg,0,tp)
 		g:Sub(sg)

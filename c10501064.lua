@@ -21,5 +21,4 @@ function cm.op(e,tp,eg,ep,ev,re,r,rp)
 end
 
 function cm.filter(c,e,tp)
-	return not c:IsTrigger(TRIGGER_NONE) and vgf.IsCanBeCalled(c,e,tp)
-end
+	return not c:IsTrigger(TRIGGER_NONE) and c:IsCanBeCalled(e,tp)end

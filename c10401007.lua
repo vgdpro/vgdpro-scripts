@@ -11,7 +11,7 @@ function cm.cost(e,tp,eg,ep,ev,re,r,rp,chk)
 	vgf.cost.SoulBlast(1)(e,tp,eg,ep,ev,re,r,rp,chk)
 end
 function cm.op(e,tp,eg,ep,ev,re,r,rp)
-	local g=vgf.SelectMatchingCard(HINTMSG_CALL,e,tp,vgf.IsCanBeCalled,tp,LOCATION_HAND,0,1,1,nil,e,tp)
+	local g=vgf.SelectMatchingCard(HINTMSG_CALL,e,tp,Card.IsCanBeCalled,tp,LOCATION_HAND,0,1,1,nil,e,tp)
 	if vgf.Sendto(LOCATION_CIRCLE,g,0,tp)>0 and g:GetFirst():IsLevel(3) then
 		Duel.Draw(tp,2,REASON_EFFECT)
 	end

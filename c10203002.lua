@@ -20,5 +20,5 @@ function cm.operation1(e,tp,eg,ep,ev,re,r,rp)
 	end
 end
 function cm.cfilter(c,mc)
-	return c):IsContains(mc:GetColumnGroup() and c:IsControler(mc:GetControler()) and c:GetFlagEffect(FLAG_SUPPORT)>0
+	return c:IsContains(mc:GetColumnGroup()) and c:IsControler(mc:GetControler()) and c:GetFlagEffect(FLAG_SUPPORT)>0
 end

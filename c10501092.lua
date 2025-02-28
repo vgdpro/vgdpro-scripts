@@ -6,7 +6,7 @@ function cm.initial_effect(c)
 end
 function cm.op(e,tp,eg,ep,ev,re,r,rp)
 	local c=e:GetHandler()
-    local g=vgf.SelectMatchingCard(HINTMSG_ATKUP,tp,vgf.filter.IsR,tp,LOCATION_CIRCLE,0,1,1,nil)
+    local g=vgf.SelectMatchingCard(HINTMSG_ATKUP,tp,Card.IsR,tp,LOCATION_CIRCLE,0,1,1,nil)
     vgf.AtkUp(c,g,5000)
 end
 function cm.con(e,tp,eg,ep,ev,re,r,rp)

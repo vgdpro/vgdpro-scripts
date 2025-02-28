@@ -25,8 +25,7 @@ function cm.condition(e,tp,eg,ep,ev,re,r,rp)
 	return Duel.GetAttacker()==c
 end
 function cm.filter(c,e,tp)
-	return c:IsSetCard(0x76) and vgf.IsCanBeCalled(c,e,tp)
-end
+	return c:IsSetCard(0x76) and c:IsCanBeCalled(e,tp)end
 function cm.checkfilter(c)
 	return c:IsRideOnVCircle() and c:IsLevelAbove(3)
 end

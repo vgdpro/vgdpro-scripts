@@ -38,5 +38,4 @@ function cm.op1(e,tp,eg,ep,ev,re,r,rp)
 	vgf.Sendto(LOCATION_CIRCLE,g,SUMMON_TYPE_RIDE,tp,"FromSouloV",POS_FACEDOWN_DEFENCE)
 end
 function cm.filter(c,e,tp)
-	return c:IsSetCard(0x202) and vgf.IsCanBeCalled(c,e,tp,SUMMON_TYPE_RIDE,POS_FACEDOWN_DEFENCE,"FromSouloV")
-end
+	return c:IsSetCard(0x202) and c:IsCanBeCalled(e,tp,SUMMON_TYPE_RIDE,POS_FACEDOWN_DEFENCE,"FromSouloV")end

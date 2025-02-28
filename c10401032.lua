@@ -16,6 +16,6 @@ function cm.condition1(e,tp,eg,ep,ev,re,r,rp)
 end
 function cm.operation(e,tp,eg,ep,ev,re,r,rp)
 	local c=e:GetHandler()
-	local g=vgf.GetMatchingGroup(vgf.filter.Front,tp,LOCATION_CIRCLE,0,nil)
+	local g=vgf.GetMatchingGroup(Card.IsFrontrow,tp,LOCATION_CIRCLE,0,nil)
     vgf.AtkUp(c,g,5000,nil)
 end

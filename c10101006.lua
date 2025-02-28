@@ -12,7 +12,7 @@ function cm.operation(e,tp,eg,ep,ev,re,r,rp)
 	end
 	if vgf.cost.SoulBlast(2)(e,tp,eg,ep,ev,re,r,rp,0) and Duel.SelectEffectYesNo(tp,vgf.stringid(VgID,10)) then
         vgf.cost.SoulBlast(2)(e,tp,eg,ep,ev,re,r,rp,1)
-		local g=vgf.SelectMatchingCard(HINTMSG_LEAVEFIELD,e,tp,vgf.filter.IsR,tp,0,LOCATION_CIRCLE,1,1,nil)
+		local g=vgf.SelectMatchingCard(HINTMSG_LEAVEFIELD,e,tp,Card.IsR,tp,0,LOCATION_CIRCLE,1,1,nil)
 		vgf.Sendto(LOCATION_DROP,g,REASON_EFFECT)
 	end
 end

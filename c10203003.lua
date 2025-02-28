@@ -48,5 +48,4 @@ function cm.filter(c)
 	return c:IsSetCard(0x77)
 end
 function cm.filter1(c,e,tp)
-	return c:IsLevelBelow(2) and vgf.IsCanBeCalled(c,e,tp)
-end
+	return c:IsLevelBelow(2) and c:IsCanBeCalled(e,tp)end

@@ -7,7 +7,7 @@ function cm.condition(e,tp,eg,ep,ev,re,r,rp)
 end
 function cm.operation(e,tp,eg,ep,ev,re,r,rp)
 	local c=e:GetHandler()
-	if c:IsRelateToEffect(e) and vgf.IsCanBeCalled(c,e,tp) then
+	if c:IsRelateToEffect(e) and c:IsCanBeCalled(e,tp) then
 		vgf.Sendto(LOCATION_CIRCLE,c,0,tp)
 	end
 end

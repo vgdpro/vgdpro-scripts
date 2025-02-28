@@ -1,7 +1,7 @@
 local cm,m,o=GetID()
 function cm.initial_effect(c)
-	vgd.action.AbilityCont(c, m, LOCATION_CIRCLE, EFFECT_TYPE_SINGLE, EFFECT_UPDATE_ATTACK, 5000, function(e)
-	vgd.action.AbilityCont(c, m, LOCATION_G_CIRCLE, EFFECT_TYPE_SINGLE, 5000, EFFECT_UPDATE_DEFENSE, cm.con)
+	vgd.action.AbilityCont(c, m, LOCATION_R_CIRCLE, EFFECT_TYPE_SINGLE, EFFECT_UPDATE_ATTACK, 5000, cm.con)
+	vgd.action.AbilityCont(c, m, LOCATION_G_CIRCLE, EFFECT_TYPE_SINGLE, EFFECT_UPDATE_DEFENSE, 5000, cm.con)
 	vgd.action.AbilityAuto(c,m,nil,EFFECT_TYPE_SINGLE,EVENT_SPSUMMON_SUCCESS,cm.op,vgf.cost.SoulBlast(1),vgf.con.RideOnRCircle)
 end
 function cm.con(e)
@@ -18,4 +18,5 @@ function cm.op(e,tp,eg,ep,ev,re,r,rp)
 	end
 end
 function cm.filter1(c)
-	return c:IsRearguard() and c:IsFrontrow()end
+	return c:IsRearguard() and c:IsFrontrow()
+end

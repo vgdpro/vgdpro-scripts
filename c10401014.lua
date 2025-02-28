@@ -12,8 +12,8 @@ function cm.op(e,tp,eg,ep,ev,re,r,rp)
 end
 function cm.cost(e,tp,eg,ep,ev,re,r,rp,chk)
 	local c=e:GetHandler()
-	if chk==0 then return vgf.IsExistingMatchingCard(vgf.filter.IsR,tp,LOCATION_CIRCLE,0,1,c) end
-	local g=vgf.SelectMatchingCard(HINTMSG_XMATERIAL,e,tp,vgf.filter.IsR,tp,LOCATION_CIRCLE,0,1,1,c)
+	if chk==0 then return vgf.IsExistingMatchingCard(Card.IsR,tp,LOCATION_CIRCLE,0,1,c) end
+	local g=vgf.SelectMatchingCard(HINTMSG_XMATERIAL,e,tp,Card.IsR,tp,LOCATION_CIRCLE,0,1,1,c)
 	vgf.Sendto(LOCATION_SOUL,g)
 end
 function cm.con(e,tp,eg,ep,ev,re,r,rp)
