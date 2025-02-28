@@ -21,7 +21,7 @@ function cm.initial_effect(c)
     e3:SetRange(LOCATION_CREST)
     e3:SetCountLimit(1)
     e3:SetCost(vgf.cost.EnergyBlast(7))
-    e3:SetOperation(cm.op3)
+    e3:SetOperation(vgf.op.Draw())
     c:RegisterEffect(e3)
 end
 function cm.con1(e,tp,eg,ep,ev,re,r,rp)
@@ -53,7 +53,4 @@ function cm.op2(e,tp,eg,ep,ev,re,r,rp)
     local sg=Group.FromCards(token1,token2,token3)
     local g=sg:GetCardsFromGroup(ct)
     vgf.Sendto(LOCATION_CREST,g,tp,POS_FACEUP_ATTACK,REASON_EFFECT)
-end
-function cm.op3(e,tp,eg,ep,ev,re,r,rp)
-    Duel.Draw(tp,1,REASON_EFFECT)
 end
