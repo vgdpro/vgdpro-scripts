@@ -1484,6 +1484,7 @@ function VgD.Action.AbilityAuto(c, m, loc, typ, code, op, cost, con, tg, count, 
 
     typ = (typ or EFFECT_TYPE_SINGLE) + (cost and EFFECT_TYPE_TRIGGER_O or EFFECT_TYPE_TRIGGER_F)
     loc, con = VgF.GetLocCondition(loc, con)
+    typ, code, con = VgF.GetTypCodeCondition(typ, code, con)
     -- set effect
     local e = Effect.CreateEffect(c)
     e:SetDescription(VgF.Stringid(VgID + 1, id or 1))
@@ -1503,7 +1504,7 @@ end
 ---【自】这个单位被 Ride 时触发（待更改）
 ---@param c Card 被Ride的卡
 ---@param m number|nil 指示脚本的整数。cxxx的脚本应填入xxx。cm的脚本应填入m。
----@param filter number|nil Ride c 的卡
+---@param filter number|function|nil Ride c 的卡
 ---@param op function|nil 这个效果的处理函数
 ---@param cost function|nil 这个效果的费用函数
 ---@param con function|nil 这个效果的条件函数

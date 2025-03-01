@@ -13,7 +13,7 @@ function cm.op(e,tp,eg,ep,ev,re,r,rp)
     end
 end
 function cm.filter(c)
-    return c:IsCode(0xc040) and c:IsAbleToHand()
+    return c:IsCode(0xc040)
 end
 function cm.cost1(e,tp,eg,ep,ev,re,r,rp,chk)
     if chk==0 then return vgf.GetMatchingGroupCount(nil,tp,LOCATION_HAND,0,nil)>0 end

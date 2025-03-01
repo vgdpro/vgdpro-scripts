@@ -9,7 +9,8 @@ function cm.ridefilter(c)
 	return c:IsLevel(3) and c:IsSetCard(0x12d)
 end
 function cm.filter(c,e,tp)
-	return c:IsLevelBelow(3) and c:IsCanBeCalled(e,tp)end
+	return c:IsLevelBelow(3) and vgf.IsCanBeCalled(c,e,tp)
+end
 -- 选择你的手牌中的至多1张等级3以下的卡，CALL到R上
 function cm.operation(e,tp,eg,ep,ev,re,r,rp)
 	local c=e:GetHandler()

@@ -1,10 +1,10 @@
 local cm,m,o=GetID()
 function cm.initial_effect(c)
-	vgd.action.AbilityAuto(c,m,LOCATION_R_CIRCLE,EFFECT_TYPE_FIELD,EVENT_CUSTOM+EVENT_SUPPORT,cm.operation,cm.cost,cm.condition)
+	vgd.action.AbilityAuto(c,m,LOCATION_R_CIRCLE,EFFECT_TYPE_SINGLE,EVENT_CUSTOM+EVENT_SUPPORT,cm.operation,cm.cost,cm.condition)
 end
 -- 你的单位有4个以上的话
 function cm.condition(e,tp,eg,ep,ev,re,r,rp)
-	return vgf.IsExistingMatchingCard(nil,tp,LOCATION_CIRCLE+LOCATION_G_CIRCLE,0,4,nil) and eg:GetFirst() == e:GetHandler()
+	return vgf.IsExistingMatchingCard(nil,tp,LOCATION_CIRCLE,0,4,nil)
 end
 -- 计数爆发1，能量爆发2
 cm.cost=vgf.cost.And(vgf.cost.CounterBlast(1),vgf.cost.EnergyBlast(2))

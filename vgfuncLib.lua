@@ -153,6 +153,17 @@ function VgF.GetLocCondition(loc, con)
     return loc or LOCATION_MZONE, condition
 end
 
+---检查并转换typ 以及 code 用于【自】能力函数
+function VgF.GetTypCodeCondition(typ, code, con)
+    if bit.band(code, EVENT_CUSTOM) > 0 and bit.band(typ, EFFECT_TYPE_SINGLE) > 0 then
+        local condition = function(e, tp, eg, ep, ev, re, r, rp)
+            return (not con or con(e, tp, eg, ep, ev, re, r, rp)) and (not eg or eg:GetFirst() == e:GetHandler())
+        end
+        return EFFECT_TYPE_FIELD, code, condition
+    end
+    return typ, code, con
+end
+
 ---返回玩家 p 场上的先导者。
 ---@param p number 要获取先导者的玩家。不合法则返回nil。
 ---@return Card|nil p场上的先导者
@@ -1120,7 +1131,7 @@ end
 ---@param zone number|nil 指示要Call到的格子。<br>前列的R：17； 后列的R：14； 全部的R：31； V：32
 ---@param callpos number|nil 表示形式
 ---@return number Call 成功的数量
-function VgF.Call(g, calltyp, p, zone, callpos)
+function VgF.Sendto(LOCATION_CIRCLE,g, calltyp, p, zone, callpos)
     g = VgF.ReturnGroup(g)
     if #g == 0 then return 0 end
     local c = g:GetFirst()
@@ -1133,7 +1144,7 @@ function VgF.Call(g, calltyp, p, zone, callpos)
         VgF.Sendto(0, c, p, POS_FACEUP, REASON_EFFECT)
         local _, code = c:GetOriginalCode()
         c = Duel.CreateToken(p, code)
-        return VgF.Call(c, calltyp, p, 0x20, callpos)
+        return VgF.Sendto(LOCATION_CIRCLE,c, calltyp, p, 0x20, callpos)
     elseif VgF.GetValueType(zone) == "number" and zone > 0 then
         zone = VgF.GetAvailableLocation(p, zone)
         if bit.ReturnCount(zone) > 1 then

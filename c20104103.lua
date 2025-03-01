@@ -11,9 +11,10 @@ function cm.operation(e,tp,eg,ep,ev,re,r,rp)
 	local g=Duel.GetDecktopGroup(tp,1)
 	local tc=vgf.ReturnCard(g)
 	Duel.DisableShuffleCheck()
-	if tc:IsLevelBelow(2) and tc:IsType(TYPE_NORMAL) and tc:IsType(TYPE_UNIT) and tc:IsCanBeCalled(e,tp)		and Duel.SelectYesNo(tp,vgf.Stringid(m,0)) then
+	if tc:IsLevelBelow(2) and tc:IsType(TYPE_NORMAL) and vgf.IsCanBeCalled(tc,e,tp)
+		and Duel.SelectYesNo(tp,vgf.Stringid(m,0)) then
 		-- 将那张卡CALL到R上
-		vgf.Sendto(LOCATION_CIRCLE,tc,0,tp)
+		vgf.Sendto(LOCATION_CIRCLE,c,0,tp)
 	else
 		-- 将那张卡加入手牌，选择你的手牌中的1张卡，舍弃
 		local tg=vgf.SelectMatchingCard(HINTMSG_DISCARD,e,tp,nil,tp,LOCATION_HAND,0,1,1,nil)
@@ -24,5 +25,5 @@ end
 function cm.powercon(e)
 	local tp=e:GetHandlerPlayer()
 	local v=vgf.GetVMonster(tp)
-	return Duel.GetTurnPlayer()==tp and v and v:IsLevelAbove(3) and v:IsSetCard(0x12d)
+	return Duel.GetTurnPlayer()==tp and v:IsLevelAbove(3) and v:IsSetCard(0x12d)
 end
