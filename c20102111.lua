@@ -13,6 +13,6 @@ function cm.operation(e,tp,eg,ep,ev,re,r,rp)
 	Duel.Draw(tp,1,REASON_EFFECT)
 	local c=e:GetHandler()
 	if c:IsFaceup() and c:IsRelateToEffect(e) then
-		vgf.effect.Reset(vgf.AtkUp(c,c,5000), EVENT_BATTLED)
+		vgf.effect.Reset(c,vgf.AtkUp(c,c,5000), EVENT_BATTLED)
 	end
 end
