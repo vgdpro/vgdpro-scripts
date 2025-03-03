@@ -542,18 +542,18 @@ function VgF.Cost.RetireGroup(g)
         VgF.Sendto(LOCATION_DROP, g, REASON_COST)
     end
 end
-function VgF.IsCanBeCalled(c, e, tp, sumtype, pos, zone)
+function VgF.IsCanBeCalled(c, e, tp, calltyp, pos, zone)
     local z = 0
     if VgF.GetValueType(zone) == "number" then z = VgF.GetAvailableLocation(tp, zone)
     elseif VgF.GetValueType(zone) == "string" and zone == "NoMonster" then z = Duel.GetLocationCount(tp, LOCATION_CIRCLE) zone = 0xff
     else z = VgF.GetAvailableLocation(tp) zone = 0xff end
-    if VgF.GetValueType(sumtype) ~= "number" then sumtype = 0 end
+    if VgF.GetValueType(calltyp) ~= "number" then calltyp = 0 end
     if VgF.GetValueType(pos) ~= "number" then pos = POS_FACEUP_ATTACK end
     if VgF.GetValueType(zone) == "string" and zone == "FromSouloV" then
         local _, code = c:GetOriginalCode()
         return Duel.IsPlayerCanSpecialSummonMonster(tp, code, nil, TYPE_UNIT + TYPE_NORMAL, c:GetBaseAttack(), c:GetBaseDefense(), c:GetOriginalLevel(), c:GetOriginalRace(), c:GetOriginalAttribute())
     end
-    return z > 0 and c:IsCanBeSpecialSummoned(e, sumtype, tp, false, false, pos, tp, zone)
+    return z > 0 and c:IsCanBeSpecialSummoned(e, calltyp, tp, false, false, pos, tp, zone)
 end
 
 ----catalogue:Cost和Operation均可使用的函数------------------------------------------------------
@@ -736,12 +736,15 @@ end
 
 ---对[这张卡]进行操作。
 ---@param f function(e, tp, eg, ep, ev, re, r, rp, c, ...) 回调函数
+---@param t table 需要对卡本身做的判断
 ---@param ... any 额外参数
-function VgF.Operation.ThisCard(f, ...)
+function VgF.Operation.ThisCard(f, t, ...)
     local ext_params = {...}
     return function (e, tp, eg, ep, ev, re, r, rp)
         local c = e:GetHandler()
-        if c:IsRelateToEffect(e) and c:IsFaceup() then
+        if t['pos_chk'] and not c:IsFaceup() then return end
+        if t['pos_chk'] and not c:IsCanBeCalled(c, e, tp, t['pos_chk']['type'], t['pos_chk']['pos'], t['pos_chk']['zone']) then return end
+        if c:IsRelateToEffect(e) then
             f(e, tp, eg, ep, ev, re, r, rp, c, table.unpack(ext_params))
         end
     end
@@ -1127,60 +1130,84 @@ end
 ---将卡片(组) g Call 到单位区。返回 Call 成功的数量
 ---@param g Card|Group 要Call的卡（片组）
 ---@param calltyp number Call的方式，默认填0
----@param p number Call的玩家
+---@param tp number Call的玩家
 ---@param zone number|nil 指示要Call到的格子。<br>前列的R：17； 后列的R：14； 全部的R：31； V：32
----@param callpos number|nil 表示形式
+---@param pos number|nil 表示形式
 ---@return number Call 成功的数量
-function VgF.Sendto(LOCATION_CIRCLE,g, calltyp, p, zone, callpos)
-    g = VgF.ReturnGroup(g)
-    if #g == 0 then return 0 end
-    local c = g:GetFirst()
-    calltyp = calltyp or 0
-    callpos = callpos or POS_FACEUP_ATTACK 
-    if zone == "NoMonster" then
-        return Duel.SpecialSummon(g, calltyp, p, p, false, false, callpos)
-    elseif zone == "FromSoulToV" then
-        if not c:IsCanBeCalled(nil, p, calltyp, callpos, "FromSoulToV") then return 0 end
-        VgF.Sendto(0, c, p, POS_FACEUP, REASON_EFFECT)
-        local _, code = c:GetOriginalCode()
-        c = Duel.CreateToken(p, code)
-        return VgF.Sendto(LOCATION_CIRCLE,c, calltyp, p, 0x20, callpos)
+function VgF.Call(g, calltyp, tp, zone, pos)
+    if (VgF.GetValueType(g) ~= "Card" and VgF.GetValueType(g) ~= "Group") or (VgF.GetValueType(g) == "Group" and g:GetCount() == 0) then return 0 end
+    if VgF.GetValueType(pos) ~= "number" then pos = POS_FACEUP_ATTACK end
+    if VgF.GetValueType(zone) == "string" and zone == "NoMonster" then
+        return Duel.SpecialSummon(g, calltyp, tp, tp, false, false, pos)
+    elseif VgF.GetValueType(zone) == "string" and zone == "FromSouloV" then
+        local tc = VgF.ReturnCard(g)
+        if not VgF.IsCanBeCalled(tc, nil, tp, calltyp, pos, "FromSouloV") then return 0 end
+        VgF.Sendto(0, tc, tp, POS_FACEUP, REASON_EFFECT)
+        local _, code = tc:GetOriginalCode()
+        local c = Duel.CreateToken(tp, code)
+        return VgF.Call(c, calltyp, tp, 0x20, pos)
     elseif VgF.GetValueType(zone) == "number" and zone > 0 then
-        zone = VgF.GetAvailableLocation(p, zone)
-        if bit.ReturnCount(zone) > 1 then
-            Duel.Hint(HINT_SELECTMSG, p, HINTMSG_CallZONE)
-            zone = Duel.SelectField(p, 1, LOCATION_MZONE, 0, 0xff ~ zone)
-        end
-        g = Duel.GetMatchingGroup(VgD.CallFilter, p, LOCATION_MZONE, 0, nil, p, zone)
-        if zone == 0x20 then -- Vanguard loc
-            local vc = VgF.GetVMonster(p)
-            if vc then
-                VgF.ToSoul(vc, c)
-            end
-        elseif #g > 0 then
-            if calltyp & SUMMON_VALUE_OVERDRESS > 0 then 
-                VgF.ToSoul(g, c)
-            else 
-                VgF.ToDrop(g, REASON_COST)
-            end
-        end
-        return Duel.SpecialSummon(c, calltyp, p, p, false, false, callpos, zone)
-    end
-    zone = 0xff ~ VgF.GetAvailableLocation(p)
-    for c in VgF.Next(g) do
-        if c:IsLocation(LOCATION_RIDE) then
-            VgF.ToSoul(VgF.GetVanguard(p), c)
-            Duel.SpecialSummonStep(c, calltyp, p, p, false, false, callpos, 0x20)
+        local sc = VgF.ReturnCard(g)
+        local z = VgF.GetAvailableLocation(tp, zone)
+        local ct = bit.ReturnCount(z)
+        local szone
+        if ct > 1 then
+            z = bit.bnot(z)
+            z = bit.bor(z, 0xffffff00)
+            Duel.Hint(HINT_SELECTMSG, tp, HINTMSG_CallZONE)
+            szone = Duel.SelectField(tp, 1, LOCATION_CIRCLE, 0, z)
         else
-            Duel.Hint(HINT_SELECTMSG, p, HINTMSG_CallZONE)
-            local szone = Duel.SelectField(p, 1, LOCATION_MZONE, 0, zone)
-            local dc = Duel.GetMatchingGroup(VgD.CallFilter, p, LOCATION_MZONE, 0, nil, p, szone):GetFirst()
-            if dc then VgF.ToDrop(dc, REASON_COST) end
-            Duel.SpecialSummonStep(c, calltyp, p, p, false, false, callpos, szone)
-            zone = zone | szone
+            szone = z
         end
+        if szone == 0x20 then
+            if VgF.GetVMonster(tp) then
+                local tc = VgF.GetVMonster(tp)
+                local mg = tc:GetOverlayGroup()
+                if mg:GetCount() ~= 0 then
+                    VgF.Sendto(LOCATION_SOUL, mg, sc)
+                end
+                sc:SetMaterial(Group.FromCards(tc))
+                VgF.Sendto(LOCATION_SOUL, Group.FromCards(tc), sc)
+            end
+        elseif VgF.IsExistingMatchingCard(VgF.CallFilter, tp, LOCATION_CIRCLE, 0, 1, nil, tp, szone) then
+            local tc = Duel.GetMatchingGroup(VgF.CallFilter, tp, LOCATION_CIRCLE, 0, nil, tp, szone):GetFirst()
+            if bit.band(calltyp, SUMMON_VALUE_OVERDRESS) > 0 then VgF.Sendto(LOCATION_SOUL, Group.FromCards(tc), sc)
+            else VgF.Sendto(LOCATION_DROP, tc, REASON_COST)
+            end
+        end
+        return Duel.SpecialSummon(sc, calltyp, tp, tp, false, false, pos, szone)
+    else
+        local sg
+        local z = bit.bnot(VgF.GetAvailableLocation(tp))
+        z = bit.bor(z, 0xffffff00)
+        if VgF.GetValueType(g) == "Card" then sg = Group.FromCards(g) else sg = Group.Clone(g) end
+        for sc in VgF.Next(sg) do
+            if sc:IsLocation(LOCATION_RIDE) then
+                local rc = Duel.GetMatchingGroup(Card.IsV, tp, LOCATION_CIRCLE, 0, nil):GetFirst()
+                local mg = rc:GetOverlayGroup()
+                if mg:GetCount() ~= 0 then
+                    VgF.Sendto(LOCATION_SOUL, mg, sc)
+                end
+                sc:SetMaterial(Group.FromCards(rc))
+                VgF.Sendto(LOCATION_SOUL, Group.FromCards(rc), sc)
+                Duel.SpecialSummonStep(sc, calltyp, tp, tp, false, false, pos, 0x20)
+            else
+                Duel.Hint(HINT_SELECTMSG, tp, HINTMSG_CallZONE)
+                local szone = Duel.SelectField(tp, 1, LOCATION_CIRCLE, 0, z)
+                if VgF.IsExistingMatchingCard(VgF.CallFilter, tp, LOCATION_CIRCLE, 0, 1, nil, tp, szone) then
+                    local tc = Duel.GetMatchingGroup(VgF.CallFilter, tp, LOCATION_CIRCLE, 0, nil, tp, szone):GetFirst()
+                    VgF.Sendto(LOCATION_DROP, tc, REASON_COST)
+                end
+                Duel.SpecialSummonStep(sc, calltyp, tp, tp, false, false, pos, szone)
+                z = bit.bor(z, szone)
+            end
+        end
+        return Duel.SpecialSummonComplete()
     end
-    return Duel.SpecialSummonComplete()
+end
+
+function VgF.CallFilter(c, tp, zone)
+    return c:IsRearguard() and zone == VgF.SequenceToGlobal(tp, c:GetLocation(), c:GetSequence())
 end
 
 --catalogue:其他关键字----------------------------------------------------------------------------------

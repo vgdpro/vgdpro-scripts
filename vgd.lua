@@ -636,9 +636,6 @@ function VgD.Register.CallCondition(e, c)
     if VgF.GetAvailableLocation(tp) <= 0 then return end
     return VgF.Condition.Level(e)
 end
-function VgD.Register.CallFilter(c, tp, zone)
-    return c:IsRearguard() and zone == VgF.SequenceToGlobal(tp, c:GetLocation(), c:GetSequence())
-end
 function VgD.Register.CallOperation(e)
     local c = e:GetHandler()
     local tp = e:GetHandlerPlayer()
@@ -650,8 +647,8 @@ function VgD.Register.CallOperation(e)
     end
     Duel.Hint(HINT_SELECTMSG, tp, HINTMSG_CallZONE)
     local zone = Duel.SelectField(tp, 1, LOCATION_CIRCLE, 0, z)
-    if VgF.IsExistingMatchingCard(VgD.Register.CallFilter, tp, LOCATION_CIRCLE, 0, 1, nil, tp, zone) then
-        local tc = Duel.GetMatchingGroup(VgD.Register.CallFilter, tp, LOCATION_CIRCLE, 0, nil, tp, zone):GetFirst()
+    if VgF.IsExistingMatchingCard(VgF.CallFilter, tp, LOCATION_CIRCLE, 0, 1, nil, tp, zone) then
+        local tc = Duel.GetMatchingGroup(VgF.CallFilter, tp, LOCATION_CIRCLE, 0, nil, tp, zone):GetFirst()
         VgF.Sendto(LOCATION_DROP, tc, REASON_COST)
     end
     e:SetValue(function () return SUMMON_VALUE_CALL, zone end)
