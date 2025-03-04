@@ -4,8 +4,7 @@ function cm.initial_effect(c)
 	vgd.action.AbilityCont(c, m, LOCATION_CIRCLE, EFFECT_TYPE_SINGLE, EFFECT_UPDATE_ATTACK, 5000, cm.con)
 end
 function cm.con(e,tp,eg,ep,ev,re,r,rp)
-	local ct=Duel.GetFlagEffectLabel(tp,FLAG_CONDITION)
-	return vgf.GetValueType(ct)=="number" and ct==10102001
+	return vgf.filter.FinalRush(tp)
 end
 
 function cm.op(e,tp,eg,ep,ev,re,r,rp)

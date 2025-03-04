@@ -15,6 +15,5 @@ function cm.op2(e,tp,eg,ep,ev,re,r,rp)
 	Duel.ChangePosition(g,POS_FACEUP_ATTACK)
 end
 function cm.con2(e,tp,eg,ep,ev,re,r,rp)
-	local ct=Duel.GetFlagEffectLabel(tp,FLAG_CONDITION)
-	return vgf.GetValueType(ct)=="number" and ct==10102001 and vgf.con.IsV(e)
+	return vgf.filter.FinalRush(tp) and vgf.con.IsV(e)
 end

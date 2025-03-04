@@ -4,10 +4,12 @@ VgF.Operation = {}
 VgF.Cost = {}
 VgF.Condition = {}
 VgF.Effect = {}
+VgF.Filter = {}
 VgF.op = VgF.Operation
 VgF.cost = VgF.Cost
 VgF.con = VgF.Condition
 VgF.effect = VgF.Effect
+VgF.filter = VgF.Filter
 vgf = VgF
 bit = {}
 
@@ -1200,6 +1202,13 @@ end
 
 function VgF.CallFilter(c, tp, zone)
     return c:IsRearguard() and zone == VgF.SequenceToGlobal(tp, c:GetLocation(), c:GetSequence())
+end
+
+--catalogue:关键字相关检测函数----------------------------------------------------------------------------------
+-- 一气呵成之势
+function VgF.Filter.FinalRush(tp)
+	local ct = Duel.GetFlagEffectLabel(tp,FLAG_CONDITION)
+    return type(ct) == "number" and ct == 10102001
 end
 
 --catalogue:其他关键字----------------------------------------------------------------------------------

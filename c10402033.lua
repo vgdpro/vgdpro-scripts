@@ -12,8 +12,7 @@ function cm.op(e,tp,eg,ep,ev,re,r,rp)
 	e1:SetValue(cm.aclimit)
 	e1:SetReset(RESET_PHASE+PHASE_END)
 	Duel.RegisterEffect(e1,tp)
-	local ct=Duel.GetFlagEffectLabel(tp,FLAG_CONDITION)
-	if vgf.GetValueType(ct)=="number" and ct==10102001 and c:IsRelateToEffect(e) and c:IsFaceup() then
+	if vgf.filter.FinalRush(tp) and c:IsRelateToEffect(e) and c:IsFaceup() then
 		vgf.AtkUp(c,c,5000,nil)
 	end
 end

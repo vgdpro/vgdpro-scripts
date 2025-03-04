@@ -17,6 +17,5 @@ function cm.cost(e,tp,eg,ep,ev,re,r,rp,chk)
 	vgf.Sendto(LOCATION_SOUL,g)
 end
 function cm.con(e,tp,eg,ep,ev,re,r,rp)
-	local ct=Duel.GetFlagEffectLabel(tp,FLAG_CONDITION)
-	return vgf.GetValueType(ct)=="number" and ct==10102001 and vgf.con.IsR(e)
+	return vgf.filter.FinalRush(tp) and vgf.con.IsR(e)
 end
