@@ -11,8 +11,7 @@ function cm.operation(e,tp,eg,ep,ev,re,r,rp)
 	local g=Duel.GetDecktopGroup(tp,1)
 	local tc=vgf.ReturnCard(g)
 	Duel.DisableShuffleCheck()
-	if tc:IsLevelBelow(2) and tc:IsType(TYPE_NORMAL) and vgf.IsCanBeCalled(tc,e,tp)
-		and Duel.SelectYesNo(tp,vgf.Stringid(m,0)) then
+	if tc:IsLevelBelow(2) and tc:IsType(TYPE_NORMAL) and tc:IsCanBeCalled(e,tp)		and Duel.SelectYesNo(tp,vgf.Stringid(m,0)) then
 		-- 将那张卡CALL到R上
 		vgf.Sendto(LOCATION_CIRCLE,c,0,tp)
 	else

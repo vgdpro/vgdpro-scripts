@@ -23,8 +23,7 @@ function cm.thop(e,tp,eg,ep,ev,re,r,rp)
 	end
 end
 function cm.filter(c,e,tp)
-	return c:IsLevelBelow(3) and vgf.IsCanBeCalled(c,e,tp)
-end
+	return c:IsLevelBelow(3) and c:IsCanBeCalled(e,tp)end
 -- 能量爆发4
 cm.cost=vgf.cost.EnergyBlast(4)
 -- 将你的牌堆顶的2张卡舍弃

@@ -14,7 +14,7 @@ function cm.operation(e,tp,eg,ep,ev,re,r,rp)
 	if g:GetCount()>0 and vgf.Sendto(LOCATION_HAND,g,nil,REASON_EFFECT)>0 then
 		-- 返回了的话，你可以将这张卡CALL到R上
 		local c=e:GetHandler()
-		if c:IsRelateToEffect(e) and vgf.IsCanBeCalled(c,e,tp) and Duel.SelectYesNo(tp,vgf.Stringid(m,0)) then
+		if c:IsRelateToEffect(e) and c:IsCanBeCalled(e,tp) and Duel.SelectYesNo(tp,vgf.Stringid(m,0)) then
 			vgf.Sendto(LOCATION_CIRCLE,c,0,tp)
 		end
 	end

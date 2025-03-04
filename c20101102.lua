@@ -11,8 +11,7 @@ end
 -- 你可以将这张卡CALL到R上
 function cm.operation(e,tp,eg,ep,ev,re,r,rp)
 	local c=e:GetHandler()
-	if c:IsRelateToEffect(e) and vgf.IsCanBeCalled(c,e,tp)
-		and Duel.SelectYesNo(tp,vgf.Stringid(m,0)) and vgf.Sendto(LOCATION_CIRCLE,c,0,tp) == 0 then
+	if c:IsRelateToEffect(e) and c:IsCanBeCalled(e,tp)		and Duel.SelectYesNo(tp,vgf.Stringid(m,0)) and vgf.Sendto(LOCATION_CIRCLE,c,0,tp) == 0 then
 		-- 没有CALL出场的话，能量填充3
 		vgf.op.EnergyCharge(3)
 	end

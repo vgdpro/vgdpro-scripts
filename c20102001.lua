@@ -21,8 +21,7 @@ function cm.thop(e,tp,eg,ep,ev,re,r,rp)
 	end
 end
 function cm.filter(c,e,tp)
-	return c:IsLevelBelow(3) and vgf.IsCanBeCalled(c,e,tp)
-end
+	return c:IsLevelBelow(3) and c:IsCanBeCalled(e,tp)end
 -- 攻击先导者时
 function cm.condition(e,tp,eg,ep,ev,re,r,rp)
 	local tc=Duel.GetAttackTarget()

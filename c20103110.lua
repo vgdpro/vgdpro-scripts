@@ -9,7 +9,7 @@ end
 -- 将这张卡横置CALL到R上
 function cm.operation(e,tp,eg,ep,ev,re,r,rp)
 	local c=e:GetHandler()
-	if c:IsRelateToEffect(e) and vgf.IsCanBeCalled(c,e,tp,0,POS_FACEUP_DEFENSE) then
+	if c:IsRelateToEffect(e) and c:IsCanBeCalled(e,tp,0,POS_FACEUP_DEFENSE) then
 		vgf.Sendto(LOCATION_CIRCLE,c,0,tp,nil,POS_FACEUP_DEFENSE)
 	end
 end

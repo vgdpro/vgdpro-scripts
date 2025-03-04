@@ -6,8 +6,7 @@ function cm.initial_effect(c)
 	vgd.action.AbilityCont(c,m,LOCATION_G_CIRCLE,EFFECT_TYPE_SINGLE,EFFECT_UPDATE_ATTACK,5000,cm.powercon)
 end
 function cm.filter(c)
-	return c:IsLevelBelow(2) and c:IsType(TYPE_NORMAL) and vgf.IsCanBeCalled(c,e,tp)
-end
+	return c:IsLevelBelow(2) and c:IsType(TYPE_NORMAL) and c:IsCanBeCalled(e,tp)end
 function cm.thfilter(c,tc)
 	return c:IsCode(tc:GetCode())
 end
