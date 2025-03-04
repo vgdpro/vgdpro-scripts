@@ -7,7 +7,7 @@ function cm.con(e,tp,eg,ep,ev,re,r,rp)
 end
 function cm.op(e,tp,eg,ep,ev,re,r,rp)
 	local g=vgf.SelectMatchingCard(HINTMSG_CALL,e,tp,cm.filter,tp,LOCATION_SOUL,0,0,1,nil,e,tp)
-	vgf.Sendto(LOCATION_CIRCLE,g,0,tp,"NoMonster")
+	vgf.Sendto(LOCATION_CIRCLE,g,0,tp,"NoUnit")
 end
 function cm.filter(c,e,tp)
 	return c:IsCanBeCalled(e,tp)end

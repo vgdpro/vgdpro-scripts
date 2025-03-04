@@ -542,19 +542,6 @@ function VgF.Cost.RetireGroup(g)
         VgF.Sendto(LOCATION_DROP, g, REASON_COST)
     end
 end
-function VgF.IsCanBeCalled(c, e, tp, calltyp, pos, zone)
-    local z = 0
-    if VgF.GetValueType(zone) == "number" then z = VgF.GetAvailableLocation(tp, zone)
-    elseif VgF.GetValueType(zone) == "string" and zone == "NoMonster" then z = Duel.GetLocationCount(tp, LOCATION_CIRCLE) zone = 0xff
-    else z = VgF.GetAvailableLocation(tp) zone = 0xff end
-    if VgF.GetValueType(calltyp) ~= "number" then calltyp = 0 end
-    if VgF.GetValueType(pos) ~= "number" then pos = POS_FACEUP_ATTACK end
-    if VgF.GetValueType(zone) == "string" and zone == "FromSouloV" then
-        local _, code = c:GetOriginalCode()
-        return Duel.IsPlayerCanSpecialSummonMonster(tp, code, nil, TYPE_UNIT + TYPE_NORMAL, c:GetBaseAttack(), c:GetBaseDefense(), c:GetOriginalLevel(), c:GetOriginalRace(), c:GetOriginalAttribute())
-    end
-    return z > 0 and c:IsCanBeSpecialSummoned(e, calltyp, tp, false, false, pos, tp, zone)
-end
 
 ----catalogue:Cost和Operation均可使用的函数------------------------------------------------------
 
@@ -649,7 +636,7 @@ function VgF.Operation.CardsFromTo(reason ,loc_to, loc_from, f, int_max, int_min
             end
         elseif loc_to == LOCATION_V_CIRCLE then
             local g = VgF.SelectMatchingCard(HINTMSG_CALL, e, tp, function (c)
-                if not VgF.IsCanBeCalled(c, e, tp) then return false end
+                if not c:IsCanBeCalled(e, tp) then return false end
                 return VgF.GetValueType(f) ~= "function" or f(c, table.unpack(ext_params))
             end, tp, loc_from, 0, int_min, int_max, nil)
             if g:GetCount() > 0 then
@@ -660,7 +647,7 @@ function VgF.Operation.CardsFromTo(reason ,loc_to, loc_from, f, int_max, int_min
         elseif loc_to == LOCATION_CIRCLE then
             if VgF.GetAvailableLocation(tp) < int_min then return 0 end
             local g = VgF.SelectMatchingCard(HINTMSG_CALL, e, tp, function (c)
-                if not VgF.IsCanBeCalled(c, e, tp) then return false end
+                if not c:IsCanBeCalled(e, tp) then return false end
                 return VgF.GetValueType(f) ~= "function" or f(c, table.unpack(ext_params))
             end, tp, loc_from, 0, int_min, int_max, nil)
             if g:GetCount() > 0 then
@@ -865,16 +852,16 @@ end
 ---@return boolean 返回卡片 c 是否可以被玩家 tp 用效果 e[以 calltyp 方式和 callpos 表示形式] Call 到玩家 tp [的区域 zone]
 function Card.IsCanBeCalled(c, e, tp, calltyp, callpos, zone)
     calltyp = calltyp or 0
-    callpos = callpos or POS_FACEUP_ATTACK 
-    if zone == "FromSoulToV" then 
+    callpos = callpos or POS_FACEUP_ATTACK
+    if zone == "FromSoulToV" then
         local _, code = c:GetOriginalCode()
         local atk, def, lv, race, att = c:GetBaseAttack(), c:GetBaseDefense(), c:GetOriginalLevel(), c:GetOriginalRace(), c:GetOriginalAttribute()
-        return Duel.IsPlayerCanSpecialSummonMonster(tp, code, nil, TYPE_MONSTER + TYPE_EFFECT, atk, def, lv, race, att, callpos, tp, calltyp)
+        return Duel.IsPlayerCanSpecialSummonMonster(tp, code, nil, TYPE_UNIT + TYPE_NORMAL, atk, def, lv, race, att, callpos, tp, calltyp)
     end
-    if zone == "NoMonster" and Duel.GetLocationCount(tp, LOCATION_CIRCLE) == 0 then return false end
+    if zone == "NoUnit" and Duel.GetLocationCount(tp, LOCATION_CIRCLE) == 0 then return false end
     if type(zone) ~= "number" then zone = 0x1f end
     if VgF.GetAvailableLocation(tp, zone) == 0 then return false end
-    return loccount > 0 and c:IsCanBeSpecialSummoned(e, calltyp, tp, false, false, callpos, tp, zone)
+    return c:IsCanBeSpecialSummoned(e, calltyp, tp, false, false, callpos, tp, zone)
 end
 
 --catalogue:Group库自定义函数-----------------------------------------------------------------------
@@ -1142,11 +1129,11 @@ end
 function VgF.Call(g, calltyp, tp, zone, pos)
     if (VgF.GetValueType(g) ~= "Card" and VgF.GetValueType(g) ~= "Group") or (VgF.GetValueType(g) == "Group" and g:GetCount() == 0) then return 0 end
     if VgF.GetValueType(pos) ~= "number" then pos = POS_FACEUP_ATTACK end
-    if VgF.GetValueType(zone) == "string" and zone == "NoMonster" then
+    if VgF.GetValueType(zone) == "string" and zone == "NoUnit" then
         return Duel.SpecialSummon(g, calltyp, tp, tp, false, false, pos)
     elseif VgF.GetValueType(zone) == "string" and zone == "FromSouloV" then
         local tc = VgF.ReturnCard(g)
-        if not VgF.IsCanBeCalled(tc, nil, tp, calltyp, pos, "FromSouloV") then return 0 end
+        if not tc:IsCanBeCalled(nil, tp, calltyp, pos, "FromSouloV") then return 0 end
         VgF.Sendto(0, tc, tp, POS_FACEUP, REASON_EFFECT)
         local _, code = tc:GetOriginalCode()
         local c = Duel.CreateToken(tp, code)

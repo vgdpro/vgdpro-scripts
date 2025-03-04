@@ -15,7 +15,7 @@ function cm.op(e,tp,eg,ep,ev,re,r,rp)
 	Duel.Hint(HINT_SELECTMSG,tp,HINTMSG_CALL)
 	local sg=g:FilterSelect(tp,cm.filter,0,2,nil,e,tp)
 	if #sg>0 then
-		vgf.Sendto(LOCATION_CIRCLE,sg,0,tp,"NoMonster")
+		vgf.Sendto(LOCATION_CIRCLE,sg,0,tp,"NoUnit")
 	end
 	Duel.ShuffleDeck(tp)
 end
