@@ -29,6 +29,6 @@ function cm.operation2(e,tp,eg,ep,ev,re,r,rp)
 	vgf.Sendto(LOCATION_DROP,g,REASON_EFFECT)
 	if c:IsRelateToEffect(e) and c:IsFaceup() then
 		vgf.AtkUp(c,c,5000)
-		vgf.StarUp(c,c,1)
+		VgF.CriticalUp(c,c,1)
 	end
 end

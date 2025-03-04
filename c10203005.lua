@@ -20,7 +20,7 @@ function cm.op(e,tp,eg,ep,ev,re,r,rp)
 	local c=e:GetHandler()
 	if c:IsRelateToEffect(e) and c:IsFaceup() then
 		vgf.AtkUp(c,c,15000)
-		if Duel.GetFlagEffect(tp,m)>0 then vgf.StarUp(c,c,1) end
+		if Duel.GetFlagEffect(tp,m)>0 then VgF.CriticalUp(c,c,1) end
 	end
 end
 function cm.checkcon(e,tp,eg,ep,ev,re,r,rp)

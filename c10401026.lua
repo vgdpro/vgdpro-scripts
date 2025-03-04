@@ -18,7 +18,7 @@ function cm.operation2(e,tp,eg,ep,ev,re,r,rp)
 	local c=e:GetHandler()
 	local g=vgf.SelectMatchingCard(HINTMSG_CRITICAL_STRIKE,e,tp,Card.IsVanguard,tp,LOCATION_CIRCLE,0,1,1,nil)
 	if g:GetCount()>0 then
-		local e1=vgf.StarUp(c,g,1,nil)
+		local e1=VgF.CriticalUp(c,g,1,nil)
 		vgf.effect.Reset(c,e1,EVENT_BATTLED)
     end
 end

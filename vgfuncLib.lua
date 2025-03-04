@@ -1313,7 +1313,7 @@ end
 ---@param g Card|Group 要被上升☆的卡 
 ---@param val number|string 要上升的☆（可以为负）
 ---@param reset number|nil 指示重置的时点，默认为“回合结束时”。无论如何，都会在离场时重置。
-function VgF.StarUp(c, g, val, reset, resetcount)
+function VgF.CriticalUp(c, g, val, reset, resetcount)
     if not c or not g then return end
     if not reset then reset = RESET_PHASE + PHASE_END end
     if not resetcount then resetcount = 1 end

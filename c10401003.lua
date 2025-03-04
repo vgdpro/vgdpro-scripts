@@ -8,7 +8,7 @@ function cm.op(e,tp,eg,ep,ev,re,r,rp)
 	if ct>=5 then Duel.Draw(tp,1,REASON_EFFECT) end
 	if ct>=10 then
 		if c:IsRelateToEffect(e) and c:IsFaceup() then
-			local t={vgf.AtkUp(c,c,10000),vgf.StarUp(c,c,1)}
+			local t={vgf.AtkUp(c,c,10000),VgF.CriticalUp(c,c,1)}
 			vgf.effect.Reset(c,t,EVENT_BATTLED)
 		end
 	end

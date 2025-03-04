@@ -350,17 +350,17 @@ function VgD.Register.CardTriggerOperation(chkop)
         local c = e:GetHandler()
         local _, m = c:GetOriginalCode()
         Duel.Hint(HINT_CARD, 0, m)
-        if c:IsTrigger(TRIGGER_CRITICAL_STRIKE) then
+        if c:IsTrigger(TRIGGER_CRITICAL) then
             local g1 = VgF.SelectMatchingCard(HINTMSG_CRITICAL_STRIKE, e, tp, nil, tp, LOCATION_CIRCLE, 0, 1, 1, nil)
             local star_up = c.trigger_star_up or 1
             local atk_up = c.trigger_atk_up or 10000
-            if c:IsHasEffect(EFFECT_CHANGE_TRIGGER_STAR) then
-                star_up = c:IsHasEffect(EFFECT_CHANGE_TRIGGER_STAR):GetValue()
+            if c:IsHasEffect(EFFECT_CHANGE_TRIGGER_CRITICAL) then
+                star_up = c:IsHasEffect(EFFECT_CHANGE_TRIGGER_CRITICAL):GetValue()
             end
             if c:IsHasEffect(EFFECT_CHANGE_TRIGGER_ATK) then
                 atk_up = c:IsHasEffect(EFFECT_CHANGE_TRIGGER_ATK):GetValue()
             end
-            VgF.StarUp(c, g1, star_up, nil)
+            VgF.CriticalUp(c, g1, star_up, nil)
             local g2 = VgF.SelectMatchingCard(HINTMSG_ATKUP, e, tp, nil, tp, LOCATION_CIRCLE, 0, 1, 1, nil)
             VgF.AtkUp(c, g2, atk_up, nil)
         elseif c:IsTrigger(TRIGGER_DRAW) then
@@ -394,7 +394,7 @@ function VgD.Register.CardTriggerOperation(chkop)
                     Duel.Recover(tp, sg:GetCount(), REASON_RULE)
                 end
             end
-        elseif c:IsTrigger(TRIGGER_ADVANCE) then
+        elseif c:IsTrigger(TRIGGER_FRONT) then
             local g = Duel.GetMatchingGroup(Card.IsSequence, tp, LOCATION_CIRCLE, 0, nil, 0, 4, 5)
             local atk_up = c.trigger_atk_up or 10000
             if c:IsHasEffect(EFFECT_CHANGE_TRIGGER_ATK) then
@@ -403,7 +403,7 @@ function VgD.Register.CardTriggerOperation(chkop)
             VgF.AtkUp(c, g, atk_up, nil)
         end
         if chkop == 'Damage' then
-            if c:IsTrigger(TRIGGER_SUPER) then
+            if c:IsTrigger(TRIGGER_OVER) then
                 local ops = {}
                 local sel = {}
                 if c:IsLocation(LOCATION_TRIGGER) then
@@ -465,7 +465,7 @@ function VgD.Register.CardTriggerOperation(chkop)
                 Duel.RaiseEvent(bc, EVENT_CUSTOM + EVENT_DAMAGE_TRIGGER, e, 0, tp, tp, 0)
             end
         elseif chkop == 'Normal' then
-            if c:IsTrigger(TRIGGER_SUPER) then
+            if c:IsTrigger(TRIGGER_OVER) then
                 local ops = {}
                 local sel = {}
                 if c:IsLocation(LOCATION_TRIGGER) then
@@ -523,7 +523,7 @@ function VgD.Register.CardTriggerOperation(chkop)
                 bc:ResetFlagEffect(FLAG_ATTACK_TRIGGER)
             end
         else
-            if c:IsTrigger(TRIGGER_SUPER) then
+            if c:IsTrigger(TRIGGER_OVER) then
                 local ops = {}
                 local sel = {}
                 if c:IsLocation(LOCATION_TRIGGER) then
@@ -798,7 +798,7 @@ function VgD.Register.MonsterBattle(c)
                 e:SetOperation(function ()
                     local tc = Duel.GetAttacker()
                     local tp = tc:GetControler()
-                    if not tc:GetFlagEffectLabel(FLAG_ATTACK_TRIGGER) or tc:GetFlagEffectLabel(FLAG_ATTACK_TRIGGER) == 0 or Card.IsR(tc:IsRearguard() and tc:GetFlagEffect(FLAG_ALSO_CAN_TRIGGER) == 0) then return end
+                    if not tc:GetFlagEffectLabel(FLAG_ATTACK_TRIGGER) or tc:GetFlagEffectLabel(FLAG_ATTACK_TRIGGER) == 0 or tc:IsRearguard() and tc:IsHasEffect(EFFECT_ALSO_CAN_TRIGGER) then return end
                     VgD.Register.Trigger(tp)
                 end)
                 Duel.RegisterEffect(e, 0)
@@ -1943,4 +1943,25 @@ function VgD.Action.GlobalCheckEffect(c, m, code, con, op)
     if con then ge:SetCondition(con) end
     ge:SetOperation(op)
     Duel.RegisterEffect(ge, 0)
+end
+
+---注册一个不做用于卡的全局适用效果（非对玩家效果）
+---@param c Card 效果的创建者
+---@param tp number 效果的拥有方（玩家）
+---@param code number 效果的内容
+---@param range table|number 效果的适用范围
+---@param tg function 效果的适用卡片过滤
+function VgD.Action.Affect(c, tp, code, range, tg, reset)
+    range = type(range) == "table" and range or (type(range) == "number" and {range} or {})
+    reset = reset or RESET_PHASE + PHASE_END
+    tg = tg or VgF.True
+    -- set effect
+	local e=Effect.CreateEffect(c)
+	e:SetType(EFFECT_TYPE_FIELD)
+	e:SetProperty(EFFECT_FLAG_IGNORE_IMMUNE)
+	e:SetCode(code)
+    e:SetTargetRange(range[0] or 0, range[1] or 0)
+    e:SetTarget(tg)
+	e:SetReset(reset)
+    Duel.RegisterEffect(e, tp)
 end

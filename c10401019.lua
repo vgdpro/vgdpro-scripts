@@ -6,5 +6,5 @@ function cm.op(e,tp,eg,ep,ev,re,r,rp)
 	local c=e:GetHandler()
 	local g=vgf.GetMatchingGroup(Card.IsFrontrow,tp,LOCATION_CIRCLE,0,nil)
 	vgf.AtkUp(c,g,"DOUBLE")
-	vgf.StarUp(c,g,"DOUBLE")
+	VgF.CriticalUp(c,g,"DOUBLE")
 end

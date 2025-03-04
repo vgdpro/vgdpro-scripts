@@ -8,5 +8,5 @@ function cm.op(e,tp,eg,ep,ev,re,r,rp)
 	local g=vgf.SelectMatchingCard(HINTMSG_LEAVEFIELD,e,tp,Card.IsRearguard,tp,0,LOCATION_CIRCLE,2,2,nil)
 	vgf.Sendto(LOCATION_DROP,g,REASON_EFFECT)
 	vgf.AtkUp(c,c,10000)
-	vgf.StarUp(c,c,1)
+	VgF.CriticalUp(c,c,1)
 end

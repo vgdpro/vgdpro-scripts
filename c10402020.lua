@@ -12,7 +12,7 @@ function cm.operation(e,tp,eg,ep,ev,re,r,rp)
 	if c:GetFlagEffect(m)>0 and c:IsRelateToEffect(e) and c:IsFaceup() then
 		a=Duel.SelectOption(tp,vgf.Stringid(m,0),vgf.Stringid(m,1))
 	end
-	if a==0 then Duel.Draw(tp,1,REASON_EFFECT) else vgf.AtkUp(c,c,5000) vgf.StarUp(c,c,1) end
+	if a==0 then Duel.Draw(tp,1,REASON_EFFECT) else vgf.AtkUp(c,c,5000) VgF.CriticalUp(c,c,1) end
 end
 function cm.filter(c)
 	return c:IsRearguard() and c:IsLevel(3)

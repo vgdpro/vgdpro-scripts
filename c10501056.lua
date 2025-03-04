@@ -17,7 +17,7 @@ end
 function cm.op(e,tp,eg,ep,ev,re,r,rp)
 	local c=e:GetHandler()
 	local g=vgf.SelectMatchingCard(HINTMSG_VMONSTER,e,tp,nil,tp,LOCATION_V_CIRCLE,0,nil)
-	vgf.StarUp(c,g,1,nil)
+	VgF.CriticalUp(c,g,1,nil)
 end
 
 function cm.filter(c)

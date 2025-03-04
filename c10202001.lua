@@ -55,7 +55,7 @@ function cm.operation(e,tp,eg,ep,ev,re,r,rp)
 		vgf.AtkUp(c,tc,-atk)
 	end
 	if vgf.IsExistingMatchingCard(tp,cm.filter,tp,0,LOCATION_CIRCLE,1,1,nil) then
-		vgf.StarUp(c,c,1)
+		VgF.CriticalUp(c,c,1)
 	end
 end
 function cm.filter(c)

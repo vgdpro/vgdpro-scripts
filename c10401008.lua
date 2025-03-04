@@ -30,7 +30,7 @@ function cm.cost1(e,tp,eg,ep,ev,re,r,rp,chk)
 end
 function cm.op1(e,tp,eg,ep,ev,re,r,rp)
 	local c=e:GetHandler()
-	local g=vgf.SelectMatchingCard(HINTMSG_TODECK,e,tp,Card.IsTrigger,tp,LOCATION_HAND,0,0,1,nil,TRIGGER_ADVANCE+TRIGGER_CRITICAL_STRIKE)
+	local g=vgf.SelectMatchingCard(HINTMSG_TODECK,e,tp,Card.IsTrigger,tp,LOCATION_HAND,0,0,1,nil,TRIGGER_FRONT+TRIGGER_CRITICAL)
 	if g:GetCount()>0 then
 		Duel.ConfirmCards(1-tp,g)
 		vgf.Sendto(LOCATION_DECK,g,tp,SEQ_DECKTOP,REASON_EFFECT)

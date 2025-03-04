@@ -32,7 +32,7 @@ function cm.con2(e,tp,eg,ep,ev,re,r,rp)
 end
 function cm.op2(e,tp,eg,ep,ev,re,r,rp)
 	local c=e:GetHandler()
-	vgf.StarUp(c,c,1)
+	VgF.CriticalUp(c,c,1)
 end
 function cm.con3(e)
 	return vgf.con.IsV(e) and vgf.BlackWings(e)

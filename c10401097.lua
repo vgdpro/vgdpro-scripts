@@ -8,6 +8,6 @@ end
 function cm.op(e,tp,eg,ep,ev,re,r,rp)
 	local c=e:GetHandler()
 	if c:IsRelateToEffect(e) and c:IsFaceup() then
-		vgf.StarUp(c,c,1)
+		VgF.CriticalUp(c,c,1)
 	end
 end

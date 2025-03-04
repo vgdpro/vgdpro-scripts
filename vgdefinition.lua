@@ -75,11 +75,11 @@ SKILL_REGALIS_PIECE	= 0x40		--结晶碎片
 --触发类型
 TRIGGER_ALL			= 0x3ffffff	--All
 TRIGGER_NONE		    = 0x1		--无
-TRIGGER_CRITICAL_STRIKE = 0x2		--暴击触发
+TRIGGER_CRITICAL        = 0x2		--暴击触发
 TRIGGER_DRAW			= 0x4		--抽牌触发
 TRIGGER_HEAL			= 0x8		--治愈触发
-TRIGGER_ADVANCE		    = 0x10		--前列触发
-TRIGGER_SUPER		    = 0x20		--超限触发
+TRIGGER_FRONT		    = 0x10		--前列触发
+TRIGGER_OVER		    = 0x20		--超限触发
 --组合类型
 TRIGGER_CARDS           = 0x3e       --触发单位卡
 --Category	效果分类
@@ -401,7 +401,7 @@ EFFECT_CHANGE_DAMAGE			= 82		--改变伤害数值
 EFFECT_REFLECT_DAMAGE			= 83		--反射伤害
 EFFECT_CANNOT_ATTACK			= 85		--不能攻击
 EFFECT_CANNOT_ATTACK_ANNOUNCE	= 86		--不能攻击宣言
-EFFECT_CANNOT_CHANGE_POS_E		= 87 	--不会被卡的效果变成守备表示（攻击性云魔物）
+EFFECT_CANNOT_CHANGE_POS_E		= 87		--不会被卡的效果变成守备表示（攻击性云魔物）
 EFFECT_ACTIVATE_COST			= 90		--发动代价（魔力之枷）
 EFFECT_SUMMON_COST				= 91		--召唤代价
 EFFECT_SPSUMMON_COST			= 92		--特殊召唤代价（暴君龙）
@@ -409,8 +409,8 @@ EFFECT_FLIPSUMMON_COST			= 93		--翻转召唤代价
 EFFECT_MSET_COST				= 94		--怪兽放置代价
 EFFECT_SSET_COST				= 95		--魔陷放置代价
 EFFECT_ATTACK_COST				= 96		--攻击代价（霞之谷猎鹰）
-EFFECT_CANMOVE_PARALLEL		    = 97        --横向移动
-EFFECT_UPDATE_CRITICAL          = 98        --增减暴击值
+EFFECT_CANMOVE_PARALLEL		    = 97		--横向移动
+EFFECT_UPDATE_CRITICAL          = 98		--增减暴击值
 
 EFFECT_UPDATE_ATTACK			= 100	--增减攻击力
 EFFECT_SET_ATTACK				= 101	--设置自身攻击力、攻击力变成X特殊召唤、持续改变攻击力
@@ -433,8 +433,8 @@ EFFECT_CHANGE_TYPE				= 117	--改变卡片种类
 EFFECT_ADD_RACE					= 120	--增加种族
 EFFECT_REMOVE_RACE				= 121	--删除种族
 EFFECT_CHANGE_RACE				= 122	--改变种族
-EFFECT_ADD_SKILL			    =125	--增加技能
-EFFECT_REMOVE_SKILL			    =126	--删除技能
+EFFECT_ADD_SKILL			    = 125	--增加技能
+EFFECT_REMOVE_SKILL			    = 126	--删除技能
 EFFECT_CHANGE_SKILL 			= 127	--改变技能
 EFFECT_UPDATE_LEVEL				= 130	--改变等级
 EFFECT_CHANGE_LEVEL				= 131	--设置等级
@@ -574,7 +574,7 @@ EFFECT_EXTRA_PENDULUM_SUMMON	= 360	--extra pendulum summon
 EFFECT_MATERIAL_LIMIT			= 361	--
 EFFECT_SET_BATTLE_ATTACK		= 362	--战斗的伤害计算用设置的攻击力进行
 EFFECT_SET_BATTLE_DEFENSE		= 363	--战斗的伤害计算用设置的守备力进行
-EFFECT_OVERLAY_RITUAL_MATERIAL  =364	--此卡的超量素材也能用于仪式召唤
+EFFECT_OVERLAY_RITUAL_MATERIAL  = 364	--此卡的超量素材也能用于仪式召唤
 EFFECT_CHANGE_GRAVE_ATTRIBUTE	= 365	--墓地的卡将会改变属性（升级转变）
 EFFECT_CHANGE_GRAVE_RACE		= 366	--墓地的卡将会改变种族（升级转变）
 EFFECT_ACTIVATION_COUNT_LIMIT	= 367	--reserve
@@ -584,12 +584,14 @@ EFFECT_KAISER_COLOSSEUM			= 370	--皇帝斗技场
 EFFECT_REPLACE_DAMAGE			= 371	--伤害由特定行动代替
 EFFECT_EXTRA_LEAVEFIELD_COUNT   = 372	--增加额外退场数量
 EFFECT_FLAG_EFFECT				= 0x20000000	--标记类效果，即RegisterFlagEffect()创建的效果
-EFFECT_CANNOT_TO_REMOVED          = 0x688  ----不能除外
+EFFECT_CANNOT_TO_REMOVED        = 0x688  ----不能除外
 
-EFFECT_CHANGE_TRIGGER_STAR      = 373
-EFFECT_CHANGE_TRIGGER_ATK       = 374
-EFFECT_CHANGE_TRIGGER_RECOVER   = 375
-EFFECT_CHANGE_TRIGGER_DRAW      = 376
+EFFECT_CHANGE_TRIGGER_CRITICAL  = 373	--更改判定时的暴击值
+EFFECT_CHANGE_TRIGGER_ATK       = 374	--更改判定时的攻击力
+EFFECT_CHANGE_TRIGGER_RECOVER   = 375	--更改判定时的回复量
+EFFECT_CHANGE_TRIGGER_DRAW      = 376	--更改判定时的抽卡数
+
+EFFECT_ALSO_CAN_TRIGGER         = 377   --（不是作为先导者的卡）也能驱动判定
 
 --下面是诱发效果的诱发事件、时点 （如果是TYPE_SINGLE则自己发生以下事件后触发，如果TYPE_FIELD则场上任何卡发生以下事件都触发）
 EVENT_STARTUP					= 1000	--N/A
@@ -672,14 +674,14 @@ EVENT_ADD_COUNTER				= 0x10000	--增加指示物时
 EVENT_REMOVE_COUNTER			= 0x20000	--去除指示物时(A指示物)，Card.RemoveCounter()必須手動觸發此事件
 EVENT_CUSTOM					= 0x10000000	--自訂事件
 --自定时点
-EVENT_TRIGGER           = VgID   --判定时点
-EVENT_CRITICAL_STRIKE   = VgID + 1 --暴击值结算时点
-EVENT_DAMAGE_TRIGGER    = VgID + 2 --受伤判定完毕时点
-EVENT_RIDE_START        = VgID + 3 --骑升时点
-EVENT_SUPPORT           = VgID + 4 --支援时点
-EVENT_TRIGGER_COUNT_UP    = VgID + 5 --驱动追加
-EVENT_SING              = VgID + 6 --演唱时
-EVENT_OVERLAY_FILL      = VgID + 7 --灵魂填充时
+EVENT_TRIGGER           = VgID      --判定时点
+EVENT_CRITICAL_STRIKE   = VgID + 1  --暴击值结算时点
+EVENT_DAMAGE_TRIGGER    = VgID + 2  --受伤判定完毕时点
+EVENT_RIDE_START        = VgID + 3  --骑升时点
+EVENT_SUPPORT           = VgID + 4  --支援时点
+EVENT_TRIGGER_COUNT_UP  = VgID + 5  --驱动追加
+EVENT_SING              = VgID + 6  --演唱时
+EVENT_OVERLAY_FILL      = VgID + 7  --灵魂填充时
 
 --攻击时(EVENT_ATTACK_ANNOUNCE)
 --支援时(EVENT_CUSTOM + EVENT_SUPPORT)
