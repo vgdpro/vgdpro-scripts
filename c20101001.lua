@@ -25,7 +25,7 @@ function cm.condition(e,tp,eg,ep,ev,re,r,rp)
 --效果二处理
 function cm.operation2(e,tp,eg,ep,ev,re,r,rp)
 	local c=e:GetHandler()
-	local g=vgf.SelectMatchingCard(HINTMSG_LEAVEFIELD,e,tp,Card.IsR,tp,0,LOCATION_CIRCLE,1,1,nil)
+	local g=vgf.SelectMatchingCard(HINTMSG_LEAVEFIELD,e,tp,Card.IsRearguard,tp,0,LOCATION_CIRCLE,1,1,nil)
 	vgf.Sendto(LOCATION_DROP,g,REASON_EFFECT)
 	if c:IsRelateToEffect(e) and c:IsFaceup() then
 		vgf.AtkUp(c,c,5000)

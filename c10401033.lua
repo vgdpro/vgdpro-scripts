@@ -14,7 +14,7 @@ function cm.operation(e,tp,eg,ep,ev,re,r,rp)
 end
 function cm.cost(e,tp,eg,ep,ev,re,r,rp,chk)
 	if chk==0 then return vgf.GetMatchingGroupCount(nil,tp,0,LOCATION_HAND,nil)>=1 end
-	local rc=vgf.GetMatchingGroup(Card.IsV,tp,LOCATION_CIRCLE,0,nil):GetFirst()
+	local rc=vgf.GetMatchingGroup(Card.IsVanguard,tp,LOCATION_CIRCLE,0,nil):GetFirst()
 	local g=vgf.SelectMatchingCard(HINTMSG_OVERLAY,e,tp,nil,tp,LOCATION_HAND,0,1,1,nil,e,tp)
 	vgf.Sendto(LOCATION_SOUL,g,rc)
 end

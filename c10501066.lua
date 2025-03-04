@@ -8,7 +8,7 @@ end
 function cm.op(e,tp,eg,ep,ev,re,r,rp)
 	local c=e:GetHandler()
 	vgf.op.SoulCharge(1)(e,tp,eg,ep,ev,re,r,rp)
-	local g=vgf.SelectMatchingCard(HINTMSG_RMONSTER,e,tp,Card.IsR,tp,0,LOCATION_CIRCLE,1,1,nil)
+	local g=vgf.SelectMatchingCard(HINTMSG_RMONSTER,e,tp,Card.IsRearguard,tp,0,LOCATION_CIRCLE,1,1,nil)
 	local tc=vgf.ReturnCard(g)
 	if tc then
 		local e1=Effect.CreateEffect(c)

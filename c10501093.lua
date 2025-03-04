@@ -6,6 +6,6 @@ function cm.initial_effect(c)
 end
 function cm.con(e,tp,eg,ep,ev,re,r,rp)
     local ct1=bit.ReturnCount(vgf.GetAvailableLocation(tp))
-    local ct2=vgf.GetMatchingGroupCount(Card.IsR,tp,LOCATION_CIRCLE,0,nil)
+    local ct2=vgf.GetMatchingGroupCount(Card.IsRearguard,tp,LOCATION_CIRCLE,0,nil)
     return ct1-ct2>=3
 end

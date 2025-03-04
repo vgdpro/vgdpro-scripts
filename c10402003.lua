@@ -12,6 +12,6 @@ function cm.cost(e,tp,eg,ep,ev,re,r,rp,chk)
 end
 function cm.op(e,tp,eg,ep,ev,re,r,rp)
 	local c=e:GetHandler()
-	local g=vgf.SelectMatchingCard(HINTMSG_ATKUP,e,tp,Card.IsV,tp,LOCATION_CIRCLE,0,1,1,nil)
+	local g=vgf.SelectMatchingCard(HINTMSG_ATKUP,e,tp,Card.IsVanguard,tp,LOCATION_CIRCLE,0,1,1,nil)
 	vgf.AtkUp(c,g,10000)
 end

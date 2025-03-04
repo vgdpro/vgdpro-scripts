@@ -3,7 +3,7 @@ VgF = {}
 VgF.Operation = {}
 VgF.Cost = {}
 VgF.Condition = {}
-VgF.Filter = {}
+VgF.Effect = {}
 VgF.op = VgF.Operation
 VgF.cost = VgF.Cost
 VgF.con = VgF.Condition
@@ -320,7 +320,7 @@ end
 ---@param e Effect
 ---@return boolean
 function VgF.Condition.IsV(e)
-    return e:GetHandler():IsV()
+    return e:GetHandler():IsVanguard()
 end
 
 function VgF.Condition.RideOnVCircle(e)
@@ -454,10 +454,10 @@ function VgF.Cost.SoulBlast(val)
                 local m = c:GetOriginalCode()
                 VgF.AddAlchemagic(m, "LOCATION_SOUL", "LOCATION_DROP", val, val)
             end
-            return Duel.GetMatchingGroup(Card.IsV, tp, LOCATION_CIRCLE, 0, nil, nil):GetFirst():GetOverlayCount() >= val
+            return Duel.GetMatchingGroup(Card.IsVanguard, tp, LOCATION_CIRCLE, 0, nil, nil):GetFirst():GetOverlayCount() >= val
         end
         Duel.Hint(HINT_SELECTMSG, tp, HINTMSG_REMOVEXYZ)
-        local g = Duel.GetMatchingGroup(Card.IsV, tp, LOCATION_CIRCLE, 0, nil):GetFirst():GetOverlayGroup():Select(tp, nil, val, val, nil)
+        local g = Duel.GetMatchingGroup(Card.IsVanguard, tp, LOCATION_CIRCLE, 0, nil):GetFirst():GetOverlayGroup():Select(tp, nil, val, val, nil)
         return VgF.Sendto(LOCATION_DROP, g, REASON_COST)
     end
 end
@@ -594,7 +594,7 @@ function VgF.Operation.SoulCharge(val)
             end
             return Duel.GetFieldGroupCount(tp, LOCATION_DECK, 0) >= val
         end
-        local rc = Duel.GetMatchingGroup(Card.IsV, tp, LOCATION_CIRCLE, 0, nil):GetFirst()
+        local rc = Duel.GetMatchingGroup(Card.IsVanguard, tp, LOCATION_CIRCLE, 0, nil):GetFirst()
         local g = Duel.GetDecktopGroup(tp, val)
         Duel.DisableShuffleCheck()
         Duel.RaiseEvent(g, EVENT_CUSTOM + EVENT_OVERLAY_FILL, e, 0, tp, tp, val)
@@ -797,12 +797,18 @@ Card.IsAbleToBindAsCost = Card.IsAbleToRemoveAsCost
 function Card.IsVanguard(c)
     return c:IsSequence(5)
 end
+
+Card.IsV = Card.IsVanguard
+
 ---返回卡片 c 是不是后防者。
 ---@param c Card 要判断的卡
 ---@return boolean 指示是否是后防者
 function Card.IsRearguard(c)
     return c:GetSequence() < 5
 end
+
+Card.IsR = Card.IsRearguard
+
 ---返回卡片 c 召唤类型是不是V
 function Card.IsRideOnVCircle(c)
     return c:IsSummonType(SUMMON_TYPE_RIDE) or c:IsSummonType(SUMMON_TYPE_SELFRIDE)
@@ -1183,7 +1189,7 @@ function VgF.Call(g, calltyp, tp, zone, pos)
         if VgF.GetValueType(g) == "Card" then sg = Group.FromCards(g) else sg = Group.Clone(g) end
         for sc in VgF.Next(sg) do
             if sc:IsLocation(LOCATION_RIDE) then
-                local rc = Duel.GetMatchingGroup(Card.IsV, tp, LOCATION_CIRCLE, 0, nil):GetFirst()
+                local rc = Duel.GetMatchingGroup(Card.IsVanguard, tp, LOCATION_CIRCLE, 0, nil):GetFirst()
                 local mg = rc:GetOverlayGroup()
                 if mg:GetCount() ~= 0 then
                     VgF.Sendto(LOCATION_SOUL, mg, sc)
@@ -1217,7 +1223,7 @@ end
 ---@return Card|nil p场上的先导者
 function VgF.GetVMonster(p)
     if p ~= 0 and p ~= 1 then return end
-    return Duel.GetMatchingGroup(Card.IsV, p, LOCATION_CIRCLE, 0, nil):GetFirst()
+    return Duel.GetMatchingGroup(Card.IsVanguard, p, LOCATION_CIRCLE, 0, nil):GetFirst()
 end
 
 ---以c的名义，使g（中的每一张卡）的攻击力上升val，并在reset时重置。

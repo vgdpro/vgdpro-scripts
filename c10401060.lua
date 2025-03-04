@@ -4,7 +4,7 @@ function cm.initial_effect(c)
 	vgd.action.AbilityAuto(c,m,LOCATION_CIRCLE,EFFECT_TYPE_FIELD,EVENT_TO_GRAVE,cm.op,vgf.cost.And(vgf.cost.CounterBlast(1),vgf.cost.Retire()),cm.con)
 end
 function cm.op(e,tp,eg,ep,ev,re,r,rp)
-	local g=vgf.SelectMatchingCard(HINTMSG_LEAVEFIELD,e,tp,Card.IsR,tp,0,LOCATION_CIRCLE,1,1,nil)
+	local g=vgf.SelectMatchingCard(HINTMSG_LEAVEFIELD,e,tp,Card.IsRearguard,tp,0,LOCATION_CIRCLE,1,1,nil)
 	vgf.Sendto(LOCATION_DROP,g,REASON_EFFECT)
 end
 function cm.filter(c,tp)

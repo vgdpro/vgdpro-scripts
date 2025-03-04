@@ -10,7 +10,7 @@ function cm.con(e,tp,eg,ep,ev,re,r,rp)
 end
 function cm.op(e,tp,eg,ep,ev,re,r,rp)
 	local c=e:GetHandler()
-	local tc=vgf.SelectMatchingCard(HINTMSG_VMONSTER,e,tp,Card.IsV,tp,LOCATION_CIRCLE,0,1,1,nil):GetFirst()
+	local tc=vgf.SelectMatchingCard(HINTMSG_VMONSTER,e,tp,Card.IsVanguard,tp,LOCATION_CIRCLE,0,1,1,nil):GetFirst()
 	if tc:IsSkill(SKILL_TWINDRIVE) then
 		local e1=Effect.CreateEffect(c)
 		e1:SetType(EFFECT_TYPE_SINGLE)

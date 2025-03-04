@@ -9,7 +9,7 @@ end
 function cm.con1(e)
 	local c=e:GetHandler()
 	local tp=e:GetHandlerPlayer()
-	return vgf.con.IsV(e) and not vgf.IsExistingMatchingCard(Card.IsR,tp,LOCATION_CIRCLE,0,1,nil) and Duel.GetTurnPlayer()==tp
+	return vgf.con.IsV(e) and not vgf.IsExistingMatchingCard(Card.IsRearguard,tp,LOCATION_CIRCLE,0,1,nil) and Duel.GetTurnPlayer()==tp
 end
 function cm.con2(e)
     local c=e:GetHandler()

@@ -13,8 +13,8 @@ function cm.op(e,tp,eg,ep,ev,re,r,rp)
 		end
 	end
 	if ct>=15 then
-		local g1=vgf.GetMatchingGroup(Card.IsR,tp,LOCATION_CIRCLE,0,nil)
-		local g2=vgf.GetMatchingGroup(Card.IsR,tp,0,LOCATION_CIRCLE,nil)
+		local g1=vgf.GetMatchingGroup(Card.IsRearguard,tp,LOCATION_CIRCLE,0,nil)
+		local g2=vgf.GetMatchingGroup(Card.IsRearguard,tp,0,LOCATION_CIRCLE,nil)
 		local tc1=vgf.GetVMonster(tp)
 		local tc2=vgf.GetVMonster(1-tp)
 		vgf.Sendto(LOCATION_SOUL,g1,tc1)

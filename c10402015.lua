@@ -9,7 +9,7 @@ function cm.op(e,tp,eg,ep,ev,re,r,rp)
 	local c=e:GetHandler()
 	if c:IsRelateToEffect(e) and c:IsFaceup() then
 		local val=5000
-		if vgf.IsExistingMatchingCard(Card.IsR,tp,LOCATION_CIRCLE,0,3,c) then val=10000 end
+		if vgf.IsExistingMatchingCard(Card.IsRearguard,tp,LOCATION_CIRCLE,0,3,c) then val=10000 end
 		local e1=vgf.AtkUp(c,c,val)
 		vgf.effect.Reset(c,e1,EVENT_BATTLED)
 	end

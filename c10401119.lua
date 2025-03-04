@@ -8,6 +8,6 @@ function cm.op(e,tp,eg,ep,ev,re,r,rp)
     local c=e:GetHandler()
 	local g=vgf.SelectMatchingCard(HINTMSG_ATKUP,e,tp,nil,tp,LOCATION_CIRCLE,0,1,1,nil)
 	vgf.AtkUp(c,g,5000,EVENT_BATTLED)
-	local sg=vgf.SelectMatchingCard(HINTMSG_RTOHAND,Card.IsR,e,tp,Card.IsR,tp,LOCATION_CIRCLE,0,1,1,Duel.GetAttackTarget())
+	local sg=vgf.SelectMatchingCard(HINTMSG_RTOHAND,Card.IsRearguard,e,tp,Card.IsRearguard,tp,LOCATION_CIRCLE,0,1,1,Duel.GetAttackTarget())
 	vgf.Sendto(LOCATION_HAND,sg,REASON_EFFECT)
 end

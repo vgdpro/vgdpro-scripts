@@ -9,6 +9,6 @@ end
 function cm.operation(e,tp,eg,ep,ev,re,r,rp)
 	local c=e:GetHandler()
 	if not vgf.CheckPrison(tp) then return end
-	local g=vgf.SelectMatchingCard(HINTMSG_IMPRISON,e,tp,Card.IsR,tp,0,LOCATION_CIRCLE,1,1,nil)
+	local g=vgf.SelectMatchingCard(HINTMSG_IMPRISON,e,tp,Card.IsRearguard,tp,0,LOCATION_CIRCLE,1,1,nil)
 	vgf.SendtoPrison(g,tp)
 end

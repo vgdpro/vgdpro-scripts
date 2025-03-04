@@ -235,7 +235,7 @@ function VgD.Register.RideFilter2(c, lv, code, rc)
 end
 function VgD.Register.RideCondition()
     local tp = Duel.GetTurnPlayer()
-    local rc = Duel.GetMatchingGroup(Card.IsV, tp, LOCATION_CIRCLE, 0, nil):GetFirst()
+    local rc = Duel.GetMatchingGroup(Card.IsVanguard, tp, LOCATION_CIRCLE, 0, nil):GetFirst()
     if not rc then return false end
     local lv = rc:GetLevel()
     local code = rc:GetCode()

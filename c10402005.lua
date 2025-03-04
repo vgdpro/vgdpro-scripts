@@ -15,6 +15,6 @@ function cm.con(e,tp,eg,ep,ev,re,r,rp)
 	return vgf.con.IsR(e) and Duel.GetAttacker()==e:GetHandler()
 end
 function cm.op(e,tp,eg,ep,ev,re,r,rp)
-	local g=vgf.SelectMatchingCard(HINTMSG_LEAVEONFIELD,e,tp,Card.IsR,tp,0,LOCATION_CIRCLE,0,1,nil)
+	local g=vgf.SelectMatchingCard(HINTMSG_LEAVEONFIELD,e,tp,Card.IsRearguard,tp,0,LOCATION_CIRCLE,0,1,nil)
 	vgf.Sendto(LOCATION_DROP,g,REASON_EFFECT)
 end

@@ -23,5 +23,5 @@ function cm.operation1(e,tp,eg,ep,ev,re,r,rp)
 	end
 end
 function cm.condition (e,tp,eg,ep,ev,re,r,rp)
-	return vgf.GetMatchingGroupCount(Card.IsR,tp,0,LOCATION_CIRCLE,nil)<=2
+	return vgf.GetMatchingGroupCount(Card.IsRearguard,tp,0,LOCATION_CIRCLE,nil)<=2
 end

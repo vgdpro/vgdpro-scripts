@@ -7,5 +7,5 @@ end
 function cm.con1(e)
     local c= e:GetHandler()
     local tp=e:GetHandlerPlayer()
-    return vgf.con.IsR(e) and vgf.IsExistingMatchingCard(Card.IsR,tp,LOCATION_CIRCLE,0,3,c)
+    return vgf.con.IsR(e) and vgf.IsExistingMatchingCard(Card.IsRearguard,tp,LOCATION_CIRCLE,0,3,c)
 end

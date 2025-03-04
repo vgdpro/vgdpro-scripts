@@ -7,7 +7,7 @@ end
 function cm.cost(e,tp,eg,ep,ev,re,r,rp,chk)
 	local c=e:GetHandler()
 	if chk==0 then return c:IsRelateToEffect(e) end
-	local rc=vgf.GetMatchingGroup(Card.IsV,tp,LOCATION_CIRCLE,0,nil):GetFirst()
+	local rc=vgf.GetMatchingGroup(Card.IsVanguard,tp,LOCATION_CIRCLE,0,nil):GetFirst()
 	vgf.Sendto(LOCATION_SOUL,c,rc)
 end
 function cm.op(e,tp,eg,ep,ev,re,r,rp)

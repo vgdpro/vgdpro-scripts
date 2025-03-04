@@ -8,7 +8,7 @@ function cm.operation(e,tp,eg,ep,ev,re,r,rp)
 	local c=e:GetHandler()
 	local ct=1
 	if c:IsSummonType(SUMMON_TYPE_SELFRIDE) then ct=3 end
-    local g=vgf.SelectMatchingCard(HINTMSG_ATKUP,e,tp,Card.IsR,tp,LOCATION_CIRCLE,0,1,ct,nil)
+    local g=vgf.SelectMatchingCard(HINTMSG_ATKUP,e,tp,Card.IsRearguard,tp,LOCATION_CIRCLE,0,1,ct,nil)
     if g then
 		Duel.Hintselectgion(g)
 		for tc in vgf.Next(g) do
