@@ -156,7 +156,7 @@ function VgF.GetLocCondition(loc, con)
 end
 
 ---检查并转换typ 以及 code 用于【自】能力函数
-function VgF.GetTypCodeCondition(typ, code, con)
+function VgF.GetTypeCodeCondition(typ, code, con)
     if bit.band(code, EVENT_CUSTOM) > 0 and bit.band(typ, EFFECT_TYPE_SINGLE) > 0 then
         local condition = function(e, tp, eg, ep, ev, re, r, rp)
             return (not con or con(e, tp, eg, ep, ev, re, r, rp)) and (not eg or eg:GetFirst() == e:GetHandler())
@@ -1032,8 +1032,8 @@ end
 ---loc_self 代表玩家 p 来看的自己的位置，loc_oppo 代表玩家 p 来看的对方的位置
 ---第6个参数开始为额外参数
 function VgF.GetMatchingGroup(f, p, loc_self, loc_oppo, ex, ...)
-    local loc_self, loc_self_con = VgF.GetlocCondition(loc_self)
-    local loc_oppo, loc_oppo_con = VgF.GetlocCondition(loc_oppo)
+    local loc_self, loc_self_con = VgF.GetLocCondition(loc_self)
+    local loc_oppo, loc_oppo_con = VgF.GetLocCondition(loc_oppo)
     local g = Duel.GetMatchingGroup(loc_self_con, p, loc_self, 0, nil)
     g = g + Duel.GetMatchingGroup(loc_oppo_con, p, 0, loc_oppo, nil)
     g = g - Duel.GetMatchingGroup(Card.IsFacedown, p, LOCATION_CIRCLE, LOCATION_CIRCLE, nil)
