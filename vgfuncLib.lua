@@ -150,9 +150,12 @@ end
 function VgF.GetLocCondition(loc, con)
     local loc, loc_con = VgF.FixVRLoc(loc)
     local condition = function(e, tp, eg, ep, ev, re, r, rp)
-        return (not con or con(e, tp, eg, ep, ev, re, r, rp)) and loc_con(e:GetHandler())
+        local c = e
+        if VgF.GetValueType(e) == "Effect" then c = e:GetHandler() end
+        if VgF.GetValueType(c) ~= "Card" or not loc_con(c) then return false end
+        return not con or con(e, tp, eg, ep, ev, re, r, rp)
     end
-    return loc or LOCATION_CIRCLE, condition
+    return loc or LOCATION_MZONE, condition
 end
 
 ---检查并转换typ 以及 code 用于【自】能力函数
