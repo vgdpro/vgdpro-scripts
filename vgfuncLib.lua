@@ -1037,10 +1037,10 @@ function VgF.GetMatchingGroup(f, p, loc_self, loc_oppo, ex, ...)
     local g = Duel.GetMatchingGroup(loc_self_con, p, loc_self, 0, nil)
     g = g + Duel.GetMatchingGroup(loc_oppo_con, p, 0, loc_oppo, nil)
     g = g - Duel.GetMatchingGroup(Card.IsFacedown, p, LOCATION_CIRCLE, LOCATION_CIRCLE, nil)
-    if loc_self & LOCATION_OVERLAY > 0 then
+    if loc_self & LOCATION_SOUL > 0 then
         g = g + VgF.GetSoulGroup(p)
     end
-    if loc_oppo & LOCATION_OVERLAY > 0 then
+    if loc_oppo & LOCATION_SOUL > 0 then
         g = g + VgF.GetSoulGroup(1 - p)
     end
     return g:Filter(f, ex, ...)
@@ -1070,8 +1070,8 @@ function VgF.SelectMatchingCard(msg, e, sp, f, p, loc_self, loc_oppo, min, max, 
         Duel.ConfirmCards(sp, Duel.GetFieldGroup(sp, LOCATION_DECK, 0))
         check_deck = true
     end
-    local filter = function(c, e)
-        return c:IsCanBeEffectTarget(e) or not c:IsLocation(LOCATION_CIRCLE)
+    local filter = function(c, re)
+        return c:IsCanBeEffectTarget(re) or not c:IsLocation(LOCATION_CIRCLE)
     end
     local g = VgF.GetMatchingGroup(filter, p, loc_self, loc_oppo, ex, e)
     Duel.Hint(HINT_SELECTMSG, sp, msg)
