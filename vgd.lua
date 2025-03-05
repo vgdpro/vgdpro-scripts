@@ -1481,7 +1481,7 @@ function VgD.Action.AbilityAuto(c, m, loc, typ, code, op, cost, con, tg, count, 
 
     typ = (typ or EFFECT_TYPE_SINGLE) + (cost and EFFECT_TYPE_TRIGGER_O or EFFECT_TYPE_TRIGGER_F)
     loc, con = VgF.GetLocCondition(loc, con)
-    typ, code, con = VgF.GetTypCodeCondition(typ, code, con)
+    typ, code, con = VgF.GetTypeCodeCondition(typ, code, con)
     -- set effect
     local e = Effect.CreateEffect(c)
     e:SetDescription(VgF.Stringid(VgID + 1, id or 1))
