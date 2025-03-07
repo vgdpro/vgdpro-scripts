@@ -1034,7 +1034,7 @@ end
 function VgF.GetMatchingGroup(f, p, loc_self, loc_oppo, ex, ...)
     function GetLocFilter()
         local loc_filter = {VgF.True, VgF.True}
-        for i, loc in ipairs({loc_self, loc_oppo}) do
+        for i, loc in ipairs({loc_self or 0, loc_oppo or 0}) do
             if loc & LOCATION_V_CIRCLE > 0 and loc & LOCATION_R_CIRCLE > 0 then
                 loc = (loc - LOCATION_V_CIRCLE - LOCATION_R_CIRCLE) | LOCATION_CIRCLE
             elseif loc & LOCATION_V_CIRCLE > 0 then
