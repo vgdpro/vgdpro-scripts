@@ -1032,11 +1032,25 @@ end
 ---loc_self 代表玩家 p 来看的自己的位置，loc_oppo 代表玩家 p 来看的对方的位置
 ---第6个参数开始为额外参数
 function VgF.GetMatchingGroup(f, p, loc_self, loc_oppo, ex, ...)
-    local loc_self, loc_self_con = VgF.GetLocCondition(loc_self)
-    local loc_oppo, loc_oppo_con = VgF.GetLocCondition(loc_oppo)
-    local g = Duel.GetMatchingGroup(loc_self_con, p, loc_self, 0, nil)
-    g = g + Duel.GetMatchingGroup(loc_oppo_con, p, 0, loc_oppo, nil)
-    g = g - Duel.GetMatchingGroup(Card.IsFacedown, p, LOCATION_CIRCLE, LOCATION_CIRCLE, nil)
+    function GetLocFilter()
+        local loc_filter = {VgF.True, VgF.True}
+        for i, loc in ipairs({loc_self, loc_oppo}) do
+            if loc & LOCATION_V_CIRCLE > 0 and loc & LOCATION_R_CIRCLE > 0 then
+                loc = (loc - LOCATION_V_CIRCLE - LOCATION_R_CIRCLE) | LOCATION_CIRCLE
+            elseif loc & LOCATION_V_CIRCLE > 0 then
+                loc = (loc - LOCATION_V_CIRCLE) | LOCATION_CIRCLE
+                loc_filter[i] = Card.IsVanguard
+            elseif loc & LOCATION_R_CIRCLE > 0 then
+                loc = (loc - LOCATION_R_CIRCLE) | LOCATION_CIRCLE
+                loc_filter[i] = Card.IsRearguard
+            end
+        end
+        return table.unpack(loc_filter)
+    end
+    local loc_self_filter, loc_oppo_filter = GetLocFilter()
+    local g = Duel.GetMatchingGroup(loc_self_filter, p, loc_self, 0, nil)
+    g:Merge(Duel.GetMatchingGroup(loc_oppo_filter, p, 0, loc_oppo, nil))
+    g:Sub(Duel.GetMatchingGroup(Card.IsFacedown, p, LOCATION_CIRCLE, LOCATION_CIRCLE, nil))
     if loc_self & LOCATION_SOUL > 0 then
         g = g + VgF.GetSoulGroup(p)
     end
