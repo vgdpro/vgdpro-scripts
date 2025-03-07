@@ -1032,9 +1032,10 @@ end
 ---loc_self 代表玩家 p 来看的自己的位置，loc_oppo 代表玩家 p 来看的对方的位置
 ---第6个参数开始为额外参数
 function VgF.GetMatchingGroup(f, p, loc_self, loc_oppo, ex, ...)
+    loc_self, loc_oppo = type(loc_self) == "number" and loc_self or 0, type(loc_oppo) == "number" and loc_oppo or 0
     function GetLocFilter()
         local loc_filter = {VgF.True, VgF.True}
-        for i, loc in ipairs({loc_self or 0, loc_oppo or 0}) do
+        for i, loc in ipairs({loc_self, loc_oppo}) do
             if loc & LOCATION_V_CIRCLE > 0 and loc & LOCATION_R_CIRCLE > 0 then
                 loc = (loc - LOCATION_V_CIRCLE - LOCATION_R_CIRCLE) | LOCATION_CIRCLE
             elseif loc & LOCATION_V_CIRCLE > 0 then
