@@ -784,7 +784,7 @@ function VgD.Register.MonsterBattle(c)
                         local def = tc:GetAttack()
                         if not tc:IsVanguard() or atk < def or tc:GetLeftScale() == 0 then goto continue end
                         tc:RegisterFlagEffect(FLAG_DAMAGE_TRIGGER, RESET_EVENT + RESETS_STANDARD, 0, 1, tc:GetLeftScale() - 1)
-                        VgD.Register.Trigger(bc:GetControler())
+                        VgF.Trigger(bc:GetControler())
                         ::continue::
                     end
                 end)
@@ -798,8 +798,8 @@ function VgD.Register.MonsterBattle(c)
                 e:SetOperation(function ()
                     local tc = Duel.GetAttacker()
                     local tp = tc:GetControler()
-                    if not tc:GetFlagEffectLabel(FLAG_ATTACK_TRIGGER) or tc:GetFlagEffectLabel(FLAG_ATTACK_TRIGGER) == 0 or tc:IsRearguard() and tc:IsHasEffect(EFFECT_ALSO_CAN_TRIGGER) then return end
-                    VgD.Register.Trigger(tp)
+                    if not tc:GetFlagEffectLabel(FLAG_ATTACK_TRIGGER) or tc:GetFlagEffectLabel(FLAG_ATTACK_TRIGGER) == 0 or (tc:IsRearguard() and not tc:IsHasEffect(EFFECT_ALSO_CAN_TRIGGER)) then return end
+                    VgF.Trigger(tp)
                 end)
                 Duel.RegisterEffect(e, 0)
             end
@@ -811,7 +811,7 @@ function VgD.Register.MonsterBattle(c)
                 e:SetOperation(function (_, _, eg, ep, ev, re, r, rp)
                     local tc = VgF.ReturnCard(eg)
                     local tp = tc:GetControler()
-                    VgD.Register.Trigger(tp)
+                    VgF.Trigger(tp)
                 end)
                 Duel.RegisterEffect(e, 0)
             end
@@ -910,11 +910,6 @@ function VgD.Register.MonsterBattle(c)
         end)
         c:RegisterEffect(e2)
     end
-end
-function VgD.Register.Trigger(tp)
-    local tg = Duel.GetDecktopGroup(tp, 1)
-    Duel.DisableShuffleCheck()
-    VgF.Sendto(LOCATION_TRIGGER, tg:GetFirst())
 end
 
 --起自永以外关键字----------------------------------------------------------------------------------------
@@ -1416,7 +1411,7 @@ end
 ---【自】效果模板：当单位在loc时，code时点被触发时执行的效果
 ---@param c Card 拥有这个效果的卡 
 ---@param m number|nil 指示脚本的整数。cxxx的脚本应填入xxx。cm的脚本应填入m。
----@param loc number 可以发动的区域
+---@param loc number|nil 可以发动的区域
 ---@param typ number 若是自己状态变化引发，则填EFFECT_TYPE_SINGLE；<br>若是场上任意一卡状态变化引发，则填EFFECT_TYPE_FIELD。
 ---@param code number 触发的时点
 ---@param op function|nil 这个效果的处理函数
@@ -1438,8 +1433,8 @@ function VgD.Action.AbilityAuto(c, m, loc, typ, code, op, cost, con, tg, count, 
         -- set param
         typ = typ or EFFECT_TYPE_SINGLE
         -- set effect
-        local e1 = VgD.AbilityAuto(c, m, loc, typ, EVENT_BATTLE_DESTROYING, op, cost, con, tg, count, property, id)
-        local e2 = VgD.AbilityAuto(c, m, loc, EFFECT_TYPE_FIELD, EVENT_CUSTOM + EVENT_DAMAGE_TRIGGER, op, cost, function (e, tp, eg, ep, ev, re, r, rp)
+        local e1 = VgD.Action.AbilityAuto(c, m, loc, typ, EVENT_BATTLE_DESTROYING, op, cost, con, tg, count, property, id)
+        local e2 = VgD.Action.AbilityAuto(c, m, loc, EFFECT_TYPE_FIELD, EVENT_CUSTOM + EVENT_DAMAGE_TRIGGER, op, cost, function (e, tp, eg, ep, ev, re, r, rp)
             if con and not con(e, tp, eg, ep, ev, re, r, rp) then return false end
             local p = e:GetHandlerPlayer()
             if code == EVENT_BE_HITTED then p = 1 - p end
@@ -1487,7 +1482,7 @@ function VgD.Action.AbilityAuto(c, m, loc, typ, code, op, cost, con, tg, count, 
     e:SetDescription(VgF.Stringid(VgID + 1, id or 1))
     e:SetType(typ)
     e:SetCode(code)
-    e:SetRange(loc)
+    if loc then e:SetRange(loc) end
     e:SetProperty((property or 0) + EFFECT_FLAG_DAMAGE_STEP + EFFECT_FLAG_DELAY)
     if count then e:SetCountLimit(count) end
     e:SetCondition(con)

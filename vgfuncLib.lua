@@ -132,23 +132,26 @@ end
 ---根据 loc 回传转换后的 loc 以及 con, 用于区分V/R/M
 function VgF.FixVRLoc(loc)
     local loc_con = VgF.True
-    local has_v = loc & LOCATION_V_CIRCLE > 0
-    local has_r = loc & LOCATION_R_CIRCLE > 0
-    if has_v and has_r then
-        loc = (loc - LOCATION_V_CIRCLE - LOCATION_R_CIRCLE) | LOCATION_CIRCLE
-    elseif has_v then
-        loc = (loc - LOCATION_V_CIRCLE) | LOCATION_CIRCLE
-        loc_con = Card.IsVanguard
-    elseif has_r then
-        loc = (loc - LOCATION_R_CIRCLE) | LOCATION_CIRCLE
-        loc_con = Card.IsRearguard
+    if loc then
+        local has_v = loc & LOCATION_V_CIRCLE > 0
+        local has_r = loc & LOCATION_R_CIRCLE > 0
+        if has_v and has_r then
+            loc = (loc - LOCATION_V_CIRCLE - LOCATION_R_CIRCLE) | LOCATION_CIRCLE
+        elseif has_v then
+            loc = (loc - LOCATION_V_CIRCLE) | LOCATION_CIRCLE
+            loc_con = Card.IsVanguard
+        elseif has_r then
+            loc = (loc - LOCATION_R_CIRCLE) | LOCATION_CIRCLE
+            loc_con = Card.IsRearguard
+        end
     end
     return loc, loc_con
 end
 
 ---检查并转换 loc 以及 con 用于【起】等模板函数
 function VgF.GetLocCondition(loc, con)
-    local loc, loc_con = VgF.FixVRLoc(loc)
+    local loc_con
+    loc, loc_con = VgF.FixVRLoc(loc)
     local condition = function(e, tp, eg, ep, ev, re, r, rp)
         return (not con or con(e, tp, eg, ep, ev, re, r, rp)) and loc_con(e:GetHandler())
     end
@@ -1058,7 +1061,7 @@ function VgF.GetMatchingGroup(f, p, loc_self, loc_oppo, ex, ...)
     if loc_oppo & LOCATION_SOUL > 0 then
         g = g + VgF.GetSoulGroup(1 - p)
     end
-    return g:Filter(f, ex, ...)
+    return g:Filter(f or VgF.True, ex, ...)
 end
 
 ---过滤函数，返回玩家 p 来看的指定位置满足过滤条件 f 并且不等于 ex 的卡的数量
@@ -1217,6 +1220,11 @@ end
 
 function VgF.CallFilter(c, tp, zone)
     return c:IsRearguard() and zone == VgF.SequenceToGlobal(tp, c:GetLocation(), c:GetSequence())
+end
+
+function VgF.Trigger(tp, to_tp)
+    Duel.DisableShuffleCheck()
+    VgF.Sendto(LOCATION_TRIGGER, Duel.GetDecktopGroup(tp, 1), to_tp or tp)
 end
 
 --catalogue:关键字相关检测函数----------------------------------------------------------------------------------
@@ -1638,13 +1646,9 @@ end
 ---把卡片(组) g 送去判定区
 ---@param g Card|Group 操作的卡片组
 ---@return number 实际被操作的数量
-function VgF.ToTrigger(g)
-    g = VgF.ReturnGroup(g)
-    if #g == 0 then return 0 end
-    local ct = 0
-    for tc in VgF.Next(g) do
-        local tp = tc:GetControler()
-        if Duel.MoveToField(tc, tp, tp, loc, POS_FACEUP, true) then ct = ct + 1 end
-    end
-    return ct
+function VgF.ToTrigger(g, tp)
+    local c = VgF.ReturnCard(g)
+    if not c then return 0 end
+    if Duel.MoveToField(c, tp, tp, LOCATION_TRIGGER, POS_FACEUP, true) then return 1 end
+    return 0
 end
