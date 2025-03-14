@@ -906,7 +906,7 @@ end
 function Group.Every(g, f, except, ...)
     local ext_params = {...}
     except = VgF.GetValueType(except) == "Card" and Group.FromCards(except) or except
-    return g:Filter(f, except, table.unpack(ext_params)):GetCount() == g:GetCount() - except:GetCount()
+    return g:Filter(f, except, table.unpack(ext_params)):GetCount() == g:GetCount() - (except and except:GetCount() or 0)
 end
 
 function Group.CheckSubGroup(g, f, min, max, ...)
