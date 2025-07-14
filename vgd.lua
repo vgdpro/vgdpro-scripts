@@ -572,19 +572,19 @@ function VgD.Register.CardTriggerOperation(chkop)
                     Duel.Damage(tp, 1, REASON_EFFECT)
                 end
             end
-            if VgF.GetValueType(VgF.Effect.Damage) ~= "Effect" then return end
-            local bc = VgF.Effect.Damage:GetHandler()
-            local label = bc:GetFlagEffectLabel(FLAG_DAMAGE_TRIGGER)
+            if VgF.Effect.DamagePlayer < 0 then return end
+            local p = VgF.Effect.DamagePlayer
+            local label = Duel.GetFlagEffectLabel(p, FLAG_DAMAGE_TRIGGER)
             if not label then return end
             if label > 0 then
                 label = label - 1
                 Duel.RaiseEvent(c, EVENT_CUSTOM + EVENT_TRIGGER, e, 0, tp, tp, 0)
-                bc:ResetFlagEffect(FLAG_DAMAGE_TRIGGER)
-                bc:RegisterFlagEffect(FLAG_DAMAGE_TRIGGER, 0, 0, 1, label)
+                Duel.ResetFlagEffect(p, FLAG_DAMAGE_TRIGGER)
+                Duel.RegisterFlagEffect(p, FLAG_DAMAGE_TRIGGER, 0, 0, 1, label)
             elseif label == 0 then
-                bc:ResetFlagEffect(FLAG_DAMAGE_TRIGGER)
-                VgF.Effect.Damage:Reset()
-                VgF.Effect.Damage = nil
+                Duel.ResetFlagEffect(p, FLAG_DAMAGE_TRIGGER)
+                Duel.ResetFlagEffect(p, FLAG_EFFECT_DAMAGE)
+                VgF.Effect.Damage = -1
             end
         end
     end
@@ -803,7 +803,7 @@ function VgD.Register.MonsterBattle(c)
                 end)
                 Duel.RegisterEffect(e, 0)
             end
-            
+
             if true then
                 local e = Effect.GlobalEffect()
                 e:SetType(EFFECT_TYPE_FIELD + EFFECT_TYPE_CONTINUOUS)

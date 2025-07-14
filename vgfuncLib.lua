@@ -271,7 +271,7 @@ end
 
 --catalogue:Effect类函数-------------------------------------------------------------------------------
 
-VgF.Effect.Damage = nil
+VgF.Effect.DamagePlayer = -1
 
 function VgF.Effect.Reset(c, e, code, con)
     e = VgF.GetValueType(e) == "Effect" and {e} or (type(e) == "table" and e or nil)
@@ -704,25 +704,10 @@ end
 ---@param p number 受伤的玩家
 function VgF.Operation.Damage(val, p)
     return function (e, tp, eg, ep, ev, re, r, rp)
-        local c = e:GetHandler()
-        c:RegisterFlagEffect(FLAG_DAMAGE_TRIGGER, RESET_EVENT + RESETS_STANDARD, 0, 1, val - 1)
+        Duel.RegisterFlagEffect(p, FLAG_DAMAGE_TRIGGER, 0, 0, 1, val - 1)
         Duel.RegisterFlagEffect(p, FLAG_EFFECT_DAMAGE, 0, 0, 1)
         VgD.Trigger(e, p, eg, ep, ev, re, r, rp)
-        local e1 = Effect.CreateEffect(c)
-        e1:SetType(EFFECT_TYPE_FIELD + EFFECT_TYPE_TRIGGER_F)
-        e1:SetCode(EVENT_CUSTOM + EVENT_TRIGGER)
-        e1:SetRange(LOCATION_ALL)
-        e1:SetProperty(EFFECT_FLAG_CANNOT_DISABLE)
-        e1:SetCondition(function (te, ttp, teg, tep, tev, tre, tr, trp)
-            return Duel.GetFlagEffect(p, FLAG_EFFECT_DAMAGE) > 0
-        end)
-        e1:SetOperation(VgD.Trigger)
-        c:RegisterEffect(e1)
-        if VgF.GetValueType(VgF.Effect.Damage) == "Effect" then
-            VgF.Effect.Damage:Reset()
-            VgF.Effect.Damage = nil
-        end
-        VgF.Effect.Damage = e1
+        VgF.Effect.DamagePlayer = p
     end
 end
 
