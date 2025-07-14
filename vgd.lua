@@ -1513,49 +1513,27 @@ function VgD.Action.AbilityAutoRided(c, m, filter, op, cost, con, tg, id)
     local desc = VgF.Stringid(m, id or 2)
     -- set effect
     local e = Effect.CreateEffect(c)
-    e:SetType(EFFECT_TYPE_SINGLE + EFFECT_TYPE_CONTINUOUS)
-    e:SetCode(EVENT_BE_MATERIAL)
-    e:SetProperty(EFFECT_FLAG_EVENT_PLAYER)
+    e:SetType(EFFECT_TYPE_FIELD + EFFECT_TYPE_TRIGGER_O)
+    e:SetDescription(desc)
+    e:SetCode(EVENT_SPSUMMON)
+    e:SetRange(LOCATION_SOUL)
     e:SetCondition(VgD.AbilityAutoRidedCondition(con, filter))
-    e:SetOperation(VgD.AbilityAutoRidedOperation(desc, op, cost, tg))
+    if cost then e:SetCost(cost) end
+    if tg then e:SetTarget(tg) end
+    if op then e:SetOperation(op) end
     c:RegisterEffect(e)
     return e
 end
 function VgD.AbilityAutoRidedCondition(con, filter)
     return function (e, tp, eg, ep, ev, re, r, rp)
-        if r ~= REASON_RIDEUP or (con and not con(e, tp, eg, ep, ev, re, r, rp)) then return false end
-        local c, rc = e:GetHandler(), e:GetHandler():GetReasonCard()
-        filter = filter or VgF.True
-        if type(filter) == "number" then
-            return rc:IsCode(filter)
-        end
-        return filter(rc, c)
+        filter = vgf.GetValueType(filter) == 'function' and filter
+            or vgf.GetValueType(filter) == 'number' and function (c)
+                return c:IsCode(filter)
+            end or VgF.True
+        con = con or VgF.True
+        return eg:GetCount() == 1 and eg:GetFirst():GetOverlayGroup():IsContains(e:GetHandler())
+            and filter(eg:GetFirst()) and con(e, tp, eg, ep, ev, re, r, rp)
     end
-end
-function VgD.AbilityAutoRidedOperation(desc, op, cost, tg)
-    return function(e, tp, eg, ep, ev, re, r, rp)
-        local c = e:GetHandler()
-        local rc = c:GetReasonCard()
-        local typ = cost and EFFECT_TYPE_TRIGGER_O or EFFECT_TYPE_TRIGGER_F
-        local e1 = Effect.CreateEffect(rc)
-        e1:SetDescription(desc)
-        e1:SetType(typ + EFFECT_TYPE_FIELD)
-        e1:SetProperty(EFFECT_FLAG_DELAY+EFFECT_FLAG_IGNORE_IMMUNE)
-        e1:SetCode(EVENT_SPSUMMON_SUCCESS)
-        e1:SetCountLimit(1)
-        e1:SetLabelObject(c)
-        e1:SetRange(LOCATION_CIRCLE)
-        e1:SetCondition(VgD.AbilityAutoRidedOpCondtion)
-        if cost then e1:SetCost(cost) end
-        if tg then e1:SetTarget(tg) end
-        if op then e1:SetOperation(op) end
-        e1:SetReset(RESET_EVENT + RESETS_STANDARD)
-        rc:RegisterEffect(e1)
-    end
-end
-function VgD.AbilityAutoRidedOpCondtion(e, tp, eg, ep, ev, re, r, rp)
-    local c = e:GetLabelObject()
-    return eg:GetFirst() == e:GetHandler() and e:GetHandler():GetOverlayGroup():IsContains(c)
 end
 
 --起相关----------------------------------------------------------------------------------------
